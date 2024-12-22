@@ -1,5 +1,0 @@
-DestinyIdx,Enemy,Name,Sex,phyAtk,magAtk,phyDef,magDef,maxHp,skill0,skill1,skill2,skill3,skill4,skill5,skill6,skill7,skill8,skill9
-0,N,Yongsa,M,10,0,5,5,50,0,9,2,3,4,5,6,7,8,9
-1,N,Elf,F,0,10,5,5,40,0,10,2,3,4,5,6,7,8,9
-10001,Y,Slime,X,3,3,2,2,10,0,9,2,3,4,5,6,7,8,9
-10002,Y,Goblin,X,5,5,3,3,15,0,10,2,3,4,5,6,7,8,9
