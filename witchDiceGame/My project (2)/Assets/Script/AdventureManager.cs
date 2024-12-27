@@ -47,6 +47,7 @@ public class AdventureManager : MonoBehaviour
 
     private int stageNum = 0; //몇번째 스테이지인지 받는다.
     private int stageIdx = 0; //이번 스테이지에서 몇번째 맵인지(1-1 1-2의 개념) 
+    private int[] witchPower = new int[2];
 
     // Start is called before the first frame update
     void Start()
@@ -67,6 +68,10 @@ public class AdventureManager : MonoBehaviour
 
             battleFadeClick();
         }
+    }
+    public int getWitchPower(int idx)
+    {
+        return witchPower[idx];
     }
     public void CanvasAdventureActive()
     {

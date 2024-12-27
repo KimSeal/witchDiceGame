@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class BattleManager : MonoBehaviour
+public class BattleManager0 : MonoBehaviour
 {
     [SerializeField]
     public Sprite[] diceSprite = new Sprite[6];
@@ -31,7 +31,7 @@ public class BattleManager : MonoBehaviour
 
 
     // Start is called before the first frame update
-    private static BattleManager instance = null;
+    private static BattleManager0 instance = null;
 
     //아군/적군 캐릭터의 상태를 담는 배열
     private Character[] myCharacter = new Character[4];
@@ -76,45 +76,6 @@ public class BattleManager : MonoBehaviour
     // 4 : Battle 페이즈
     // 5 : End-Phase
 
-    private int witchPowerState = 0;        //마녀 능력 발동이 어느정도 진행되었는지 확인하는 변수
-    private int witchPowerMoveState = 0; // 현재 보고 있는 마녀 능력의 index를 담는 변수
-    private int witchPowerClickState = 0; //클릭한 마녀 능력을 담는 변수
-
-    private int[] clickedDice = new int[2];
-
-    public void witchPowerClick(int clickPower)
-    {
-        StartCoroutine(select_witchPower_Dice(clickPower));
-        /*
-        if (witchPowerClickState == 1) //선택 가능한 상태
-        {
-            if (witchPowerState == 0) //능력 선택안하기 (cancel)
-            {
-
-            }
-            if (witchPowerState == 1) //돌리기
-            {
-
-            }
-        }*/
-    }
-
-    //주사위 고르기
-    public IEnumerator select_witchPower_Dice(int witchPowerTemp) {
-        int diceNum = 0;
-        if (witchPowerTemp == 1) diceNum = 0;
-        clickedDice[0] = -1;
-        clickedDice[1] = -1;
-        if (diceNum == 1){
-            yield return new WaitUntil(() => clickedDice[0] != -1);
-        }
-        if (diceNum == 2)
-        {
-            yield return new WaitUntil(() => (clickedDice[0] != -1 && clickedDice[1] != -1));
-        }
-
-
-    }
 
     private bool[] witchSkillUsed = new bool[2];
     private void Awake()
@@ -130,7 +91,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public static BattleManager Instance
+    public static BattleManager0 Instance
     {
         get
         {
@@ -141,10 +102,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        //초반 turn 화살표 지우기
-        for (int i = 0;i<4;i++) {
-            GameObject.Find("arrowSet_" + i.ToString()).SetActive(false);
-        }
+
     }
     void makeCharacterObj(int chrIdx)
     {
@@ -331,7 +289,7 @@ public class BattleManager : MonoBehaviour
         }
         for (int i = 0; i < 4; i++)
         {
-            //myDiceUI[i] = GameObject.Find("obj_dice_my_" + i.ToString());
+            myDiceUI[i] = GameObject.Find("obj_dice_my_" + i.ToString());
             enemyDiceUI[i] = GameObject.Find("obj_dice_enemy_" + i.ToString());
             makeBtnText(i);
             makeCharacterObj(i);
@@ -382,7 +340,7 @@ public class BattleManager : MonoBehaviour
         //아군 선공
         
     }
-    
+
 
     public void Battle_Phase()
     {
@@ -677,25 +635,17 @@ public class BattleManager : MonoBehaviour
     {
         chooseDice = (diceIdx < 4) ? myDice[diceIdx] : enemyDice[diceIdx - 4];
         chooseDiceObj.transform.rotation = Quaternion.Euler(0, 0, chooseDice.dir * -90);
-        chooseDiceObj.GetComponent<SpriteRenderer>().sprite = diceSprite[chooseDice.curIdx];
+        chooseDiceObj.GetComponent<Image>().sprite = diceSprite[chooseDice.curIdx];
         chooseDiceIdx = diceIdx;
     }
-    public void turnDice(int input)
+    public void turnDice(int idx)
     {
-        int idx = input / 10;
-        int dir = input % 10;
-        if (idx < 4)
+        if (chooseDice != null)
         {
-            if (myDice[idx] != null)
-            {
-                
-                myDice[idx].turnDice(dir);
-                myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
-                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum()-1];
-                Debug.Log(myDice[idx].getNum() - 1);
-            }
+            chooseDice.turnDice(idx);
+            chooseDiceObj.transform.rotation = Quaternion.Euler(0, 0, chooseDice.dir * -90);
+            chooseDiceObj.GetComponent<Image>().sprite = diceSprite[chooseDice.curIdx];
         }
-        
     }
     public void setDice()
     {
@@ -705,7 +655,7 @@ public class BattleManager : MonoBehaviour
             {
                 myDice[chooseDiceIdx] = new Dice(chooseDice); //아군일때
                 myDiceUI[chooseDiceIdx].transform.rotation = Quaternion.Euler(0, 0, myDice[chooseDiceIdx].dir * -90);
-                myDiceUI[chooseDiceIdx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[chooseDiceIdx].curIdx];
+                myDiceUI[chooseDiceIdx].GetComponent<Image>().sprite = diceSprite[myDice[chooseDiceIdx].curIdx];
                 myDiceNum[chooseDiceIdx] = myDice[chooseDiceIdx].getNum();
             }
             else
@@ -713,10 +663,10 @@ public class BattleManager : MonoBehaviour
                 chooseDiceIdx -= 4;
                 enemyDice[chooseDiceIdx] = new Dice(chooseDice);//적군일때
                 enemyDiceUI[chooseDiceIdx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[chooseDiceIdx].dir * -90);
-                enemyDiceUI[chooseDiceIdx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[chooseDiceIdx].curIdx];
+                enemyDiceUI[chooseDiceIdx].GetComponent<Image>().sprite = diceSprite[enemyDice[chooseDiceIdx].curIdx];
                 enemyDiceNum[chooseDiceIdx] = enemyDice[chooseDiceIdx].getNum();
             }
-            chooseDiceObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
             chooseDiceIdx = -999;
             chooseDice = null;
         }
