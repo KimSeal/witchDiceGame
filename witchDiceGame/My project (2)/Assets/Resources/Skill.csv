@@ -1,0 +1,16 @@
+SkillIdx,SkillName,NeedDice,TargetAuto,TargetTeam,TargetObj,TargetNum,TargetChance,Var0,Var1,Var2,Command
+0,Attack,9,1,2,1,1,1,3,0,0,Attack
+1,Guard,9,0,1,1,1,1,3,0,0,Make Armor
+2,TestSkill0,123,1,1,1,1,1,3,0,0,etc
+3,TestSkill1,234,1,2,1,1,1,3,0,0,etc
+4,TestSkill2,7,1,0,1,1,1,3,0,0,etc
+5,TestSkill3,8,1,1,1,1,1,3,0,0,etc
+6,TestSkill4,6,1,2,1,1,1,3,0,0,etc
+7,TestSkill5,7,1,0,1,1,1,3,0,0,etc
+8,TestSkill6,8,1,1,1,1,1,3,0,0,etc
+9,TestSkill7,77,1,2,1,1,1,3,0,0,etc
+10,TestSkill8,88,1,0,1,1,1,3,0,0,etc
+11,TestSkill9,777,1,0,1,1,1,3,0,0,etc
+12,TestSkill10,888,0,1,1,1,1,3,0,0,etc
+13,TestSkill11,7777,0,2,1,1,1,3,0,0,etc
+14,TestSkill12,8888,0,2,1,1,1,3,0,0,etc
