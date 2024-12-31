@@ -7,7 +7,8 @@ public class Skill
 
     public int SkillIdx;
     public string SkillName;
-    public int NeedDice;
+    public int NeedDiceNum;
+    public int[] NeedDice = new int[4];
 
     public int TargetAuto;
     public int TargetTeam;
@@ -27,7 +28,12 @@ public class Skill
     {
        this.SkillIdx = skillReader.SkillIdx;
         this.SkillName = skillReader.SkillName;
-        this.NeedDice = skillReader.NeedDice;
+        this.NeedDiceNum = skillReader.NeedDiceNum;
+        this.NeedDice[0] = skillReader.NeedDice0;
+        this.NeedDice[1] = skillReader.NeedDice1;
+        this.NeedDice[2] = skillReader.NeedDice2;
+        this.NeedDice[3] = skillReader.NeedDice3;
+
         this.TargetAuto = skillReader.TargetAuto;
         this.TargetTeam = skillReader.TargetTeam;
         this.TargetObj = skillReader.TargetObj;
@@ -42,7 +48,12 @@ public class Skill
     {
         this.SkillIdx = skillReader.SkillIdx;
         this.SkillName = skillReader.SkillName;
-        this.NeedDice = skillReader.NeedDice;
+        this.NeedDiceNum = skillReader.NeedDiceNum;
+        this.NeedDice[0] = skillReader.NeedDice[0];
+        this.NeedDice[1] = skillReader.NeedDice[1];
+        this.NeedDice[2] = skillReader.NeedDice[2];
+        this.NeedDice[3] = skillReader.NeedDice[3];
+
         this.TargetAuto = skillReader.TargetAuto;
         this.TargetTeam = skillReader.TargetTeam;
         this.TargetObj = skillReader.TargetObj;
@@ -54,10 +65,20 @@ public class Skill
         this.Command = skillReader.Command;
     }
 
-
+    //예전 전투 시스템에 사용된것
     public int getNeedDice()
     {
-        return this.NeedDice;
+        return 9;
+        //return this.NeedDiceNum;
+    }
+
+    public int getNeedDice(int idx)
+    {
+        return this.NeedDice[idx];
+    }
+    public int getNeedDiceNum()
+    {
+        return this.NeedDiceNum;
     }
     // Start is called before the first frame update
 

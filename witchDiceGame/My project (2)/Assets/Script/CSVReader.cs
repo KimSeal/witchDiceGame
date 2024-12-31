@@ -9,7 +9,11 @@ public class SkillReader
 {
     public int SkillIdx;
     public string SkillName;
-    public int NeedDice;
+    public int NeedDiceNum;
+    public int NeedDice0;
+    public int NeedDice1;
+    public int NeedDice2;
+    public int NeedDice3;
 
     public int TargetAuto;
     public int TargetTeam;
