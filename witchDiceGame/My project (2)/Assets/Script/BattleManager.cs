@@ -67,6 +67,9 @@ public class BattleManager : MonoBehaviour
     public GameObject diceFullUI;
     private GameObject[] diceArrowSet = new GameObject[8];
 
+    private GameObject[] myCharacterObjUI = new GameObject[4];
+    private GameObject[] enemyCharacterObjUI = new GameObject[4];
+
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
@@ -79,8 +82,10 @@ public class BattleManager : MonoBehaviour
     // 1 : Dice-Throw Phase
     // 2 : Dice-Fix Phase
     // 3 : Skill-Select 페이즈
-    // 4 : Battle 페이즈
-    // 5 : End-Phase
+    // 4 : Battle 페이즈 - 주사위 세팅
+    // 5 : Battle 페이즈 - 스킬에서 주사위 사용
+    // 6 : End-Phase
+    //-999 : 연타 방지(즉, 버그 차단을 위한 경우의 수)
 
     private int currentMoveUI = 0;
     private int currentLightUI = 0;
@@ -97,6 +102,7 @@ public class BattleManager : MonoBehaviour
         {
             if (curPhase == 2) click_witchPower_Dice(diceIdx);
             else if (curPhase == 3) click_characterSkill_Dice(diceIdx);
+            else if (curPhase == 5) click_BattleSkill_dice(diceIdx);
         }
     }
 
@@ -159,7 +165,97 @@ public class BattleManager : MonoBehaviour
         currentMoveUI--;
     }
 
+    //phase관리를 위한 코루틴
+    //(코루틴이 너무 중첩해서 생기는 거 방지를 위해 만들어둠)
+    private IEnumerator phase_Manage_Coroutine()
+    {
+        Start_Battle_Phase();
+        Debug.Log("Start Phase Test! curPhase is " + curPhase.ToString());
+        //curPhase = 2;
+        while (true)
+        {
+            yield return new WaitUntil(() => curPhase == 1 && currentLightUI == 0 && currentMoveUI == 0);
+            Debug.Log("DiceThrow Test! curPhase is " + curPhase.ToString());
+            StartCoroutine(DiceThrowPhase_Coroutine());
+            yield return new WaitUntil(() => curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0);
+            Debug.Log("WitchPower Test! curPhase is " + curPhase.ToString());
+            StartCoroutine(witchPowerPhase_Coroutine());
+            yield return new WaitUntil(() => curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0);
+            StartCoroutine(skillSelectPhase_Coroutine());
+            yield return new WaitUntil(() => curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0);
+            StartCoroutine(moveToBattlePhase_Coroutine());
+            yield return new WaitUntil(() => curPhase == 5 && currentLightUI == 0 && currentMoveUI == 0);
+            StartCoroutine(BattlePhase_Coroutine());
+            yield return new WaitUntil(() => curPhase == 6 && currentLightUI == 0 && currentMoveUI == 0);
+            StartCoroutine(EndPhase_Coroutine());
+            yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
+            if (curPhase != 1) break;
+        }
+    }
 
+
+
+    //DiceThrow Phase  Start (phase 1- dice throw start)//
+    private IEnumerator DiceThrowPhase_Coroutine()
+    {
+        //주사위 굴리기 UI(ui 초기화)
+        StartCoroutine(MoveUI(characterUI, -75.0f));
+        StartCoroutine(MoveUI(diceFullUI, -58.0f));
+
+        for (int i=0;i<4;i++)
+        {
+            StartCoroutine(makeDark(myCharacterObjUI[i], 0.7f));
+            StartCoroutine(makeDark(enemyCharacterObjUI[i], 0.7f));
+        }
+
+        StartCoroutine(MoveUI(backGroundObj[0], -78.0f)); // 78f : skillSelect  62f: battle
+        
+        StartCoroutine(MoveUI(backGroundObj[3], -250.0f));
+
+        StartCoroutine(makeDark(backGroundObj[0], 0.7f));
+        StartCoroutine(makeDark(backGroundObj[1], 0.7f));
+        StartCoroutine(makeDark(backGroundObj[3], 0.7f));
+
+        yield return new WaitUntil(() => currentLightUI == 0 && currentMoveUI == 0); //주사위 굴리는 애니메이션 추가 예정
+
+        Dice_Throw_Phase();
+        yield return new WaitForSeconds(1f);
+        Debug.Log("phase change to 2!");
+        curPhase = 2;
+    }
+
+    public void Dice_Throw_Phase()
+    {
+        if (curPhase != 1) { return; }
+        //아군 모든 주사위 던지기
+        for (int i = 0; i < 4; i++)
+        {
+            if (myDice[i] != null)
+            {
+                myDice[i].throwDice();
+                myDiceNum[i] = myDice[i].getNum();
+                //임시 주사위 UI 변경
+                myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].dir * -90);
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[i].curIdx];
+            }
+        }
+
+        //적군 모든 주사위 던지기
+        for (int i = 0; i < 4; i++)
+        {
+            if (enemyDice[i] != null)
+            {
+                enemyDice[i].throwDice();
+                enemyDiceNum[i] = enemyDice[i].getNum();
+
+                enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].dir * -90);
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].curIdx];
+            }
+        }
+
+    }
+
+    //DiceThrow Phase End (phase 1- dice throw finish)//
 
     /// Witch Power Start (Phase 2- witch Power Select)///
 
@@ -170,16 +266,31 @@ public class BattleManager : MonoBehaviour
                                            // -1 : 마녀 파워가 결정되는 상태가 아니다.
     private int witchPowerClickState = -1; //현재 마녀 능력 사용에 필요한 dice 수를 담는다 
 
+    //witch Power 선택 시작!
+    private IEnumerator witchPowerPhase_Coroutine()
+    {
+        witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
+        StartCoroutine(makeBright(backGroundObj[1], 0.0f));
+        StartCoroutine(createWitchPowerUI());
+        StartCoroutine(MoveUI(backGroundObj[1], -108.0f));
+        yield return new WaitUntil(() => currentLightUI == 0 && currentMoveUI == 0);
+        witchPowerState = 0;
+        witchPowerMoveState = 0;
+        witchPowerClickState = -1;
+        
+    }
+
     //마녀 파워 선택 (좌우)
     public void witchPowerState_Change(int dir)
     {
-        curPhase = 2;
-        Debug.Log(curPhase);
+        Debug.Log(witchPowerMoveState);
         if (curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            
             if (witchPowerMoveState == 0) //마녀 파워 선택을 하는 경우.
             {
-                GameObject witchPowerUI = GameObject.Find("obj_witchPower");
+                
+                GameObject witchPowerUI = GameObject.Find("obj_witchPower"); //==witchPowerObj[0];
                 if (dir == 1)
                 {
                     witchPowerState++;
@@ -246,26 +357,11 @@ public class BattleManager : MonoBehaviour
             //직관성을 위해 나눔
             if (witchPowerMoveState == 2)
             {
-                StartCoroutine(MoveUI(diceFullUI, 60.0f));
-                StartCoroutine(MoveUI(backGroundObj[0], 0.0f)); // 78f : skillSelect  62f: battle
-                StartCoroutine(makeBright(backGroundObj[0], 0.0f));
-                //StartCoroutine(MoveUI(backGroundObj[1], 10.0f - 108f)); 작게 상단 이동
-                StartCoroutine(MoveUI(backGroundObj[1], -300f));
-                StartCoroutine(makeDark(backGroundObj[1], 0.7f));
-
-                //정면 보는 마녀
-                StartCoroutine(makeBright(backGroundObj[3], 0.0f));
-                StartCoroutine(MoveUI(backGroundObj[3], 59f, 0.5f));
-
-                StartCoroutine(MoveUI(characterUI, 0.0f)); //
-                StartCoroutine(MoveUI(skillSelectUI[8], -50.0f)); //
-
-                yield return new WaitUntil(() => currentMoveUI == 0 && currentLightUI == 0); //
-                //yield return new WaitUntil(() => witchPowerMoveState == 2);
-
+                
                 //다음 페이즈로 넘어가는 부분
-                curPhase = 3;
                 curClickSkill = -1;
+                witchPowerMoveState = -1;
+                curPhase = 3;
             }
         }
     }
@@ -275,16 +371,20 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 2)
         {
+            currentLightUI++;
             Color color = witchPowerObj[1].GetComponent<SpriteRenderer>().color;
             while (color.a > 0.00f)
             {
+                //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
                 witchPowerObj[1].GetComponent<SpriteRenderer>().color = color;
                 witchPowerObj[2].GetComponent<SpriteRenderer>().color = color;
                 color.a -= 0.2f;
                 yield return new WaitForSeconds(0.1f);
             }
+            //witchPowerObj[0].SetActive(false);
             witchPowerObj[1].SetActive(false);
             witchPowerObj[2].SetActive(false);
+            currentLightUI--;
         }
     }
     //마녀 좌우 선택 UI 천천히 생성
@@ -292,16 +392,23 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 2)
         {
+            currentLightUI++;
+            //witchPowerObj[0].SetActive(true);
             witchPowerObj[1].SetActive(true);
             witchPowerObj[2].SetActive(true);
             Color color = witchPowerObj[1].GetComponent<SpriteRenderer>().color;
             while (color.a < 1.00f)
             {
+                //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
                 witchPowerObj[1].GetComponent<SpriteRenderer>().color = color;
                 witchPowerObj[2].GetComponent<SpriteRenderer>().color = color;
                 color.a += 0.2f;
                 yield return new WaitForSeconds(0.1f);
             }
+            //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
+            witchPowerObj[1].GetComponent<SpriteRenderer>().color = color;
+            witchPowerObj[2].GetComponent<SpriteRenderer>().color = color;
+            currentLightUI--;
         }
     }
 
@@ -330,6 +437,33 @@ public class BattleManager : MonoBehaviour
     private GameObject[] skillSelectUI = new GameObject[9];
 
     private int curClickSkill = -1; //마지막으로 클릭한 스킬 정보를 저장한다. 저장형식은 characterIdx * 10 + skillIdx의 형태를 띈다. 선택된게 없으면 -1을 갖는다.
+
+    private IEnumerator skillSelectPhase_Coroutine()
+    {
+        StartCoroutine(MoveUI(diceFullUI, 60.0f));
+        StartCoroutine(MoveUI(backGroundObj[0], 0.0f)); // 78f : skillSelect  62f: battle
+        StartCoroutine(makeBright(backGroundObj[0], 0.0f));
+        //StartCoroutine(MoveUI(backGroundObj[1], 10.0f - 108f)); 작게 상단 이동
+        StartCoroutine(MoveUI(backGroundObj[1], -300f));
+        StartCoroutine(makeDark(backGroundObj[1], 0.7f));
+
+        //정면 보는 마녀
+        StartCoroutine(makeBright(backGroundObj[3], 0.0f));
+        StartCoroutine(MoveUI(backGroundObj[3], 59f, 0.5f));
+
+        StartCoroutine(MoveUI(characterUI, 0.0f)); //
+        StartCoroutine(MoveUI(skillSelectUI[8], -50.0f)); //
+
+        for (int i = 0; i < 4; i++)
+        {
+            StartCoroutine(makeBright(myCharacterObjUI[i], 0.0f));
+            StartCoroutine(makeBright(enemyCharacterObjUI[i], 0.0f));
+        }
+
+        yield return new WaitUntil(() => currentMoveUI == 0 && currentLightUI == 0); //
+    }
+
+
 
     //스킬 선택 중 버튼 클릭에 대한 코드
     public void click_characterSkill_Button(int input)
@@ -492,18 +626,20 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            StartCoroutine(moveToBattlePhase_Coroutine());
+            curPhase = 4;
         }
     }
 
     private IEnumerator moveToBattlePhase_Coroutine()
     {
-        if(currentLightUI == 0 && currentMoveUI == 0)
+        if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            curPhase = -999;
             StartCoroutine(MoveUI(diceFullUI, 33.0f));
             StartCoroutine(MoveUI(backGroundObj[0], -16.0f)); // 78f : skillSelect  62f: battle
             StartCoroutine(makeBright(backGroundObj[0], 0.0f));
             //StartCoroutine(MoveUI(backGroundObj[1], 10.0f));
+            StartCoroutine(MoveUI(backGroundObj[1], -475f));
             StartCoroutine(makeDark(backGroundObj[3], 0.7f));
             StartCoroutine(MoveUI(characterUI, -18.0f)); //
 
@@ -519,14 +655,177 @@ public class BattleManager : MonoBehaviour
                     StartCoroutine(makeBright(skillSelectUI[i * 2 + j], 0.0f));
             }
             //다음 페이즈로 넘어가는 부분
-            yield return new WaitUntil(() => currentMoveUI == 0); //
-            curPhase = 4;
+            yield return new WaitUntil(() => currentMoveUI == 0 && currentLightUI == 0); //
+
+            //스킬 이미지를 각 주사위에 배치
+            int curDiceNum = 0;
+            string skillNameTake = "";
+            for (int i=0;i<4;i++)  //아군 주사위 배치
+            {
+                myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+                curDiceNum = myDiceTake[i];
+                if (curDiceNum == -999)
+                {
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                }
+                else
+                {
+                    skillNameTake = myCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
+                    if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake) == null)
+                    {
+                        skillNameTake = "null";
+                    }
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake);
+                }
+                yield return new WaitForSeconds(0.2f);
+            }
+            for (int i = 0; i < 4; i++) //적군 주사위 배치
+            {
+                enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+                curDiceNum = enemyDiceTake[i];
+                if (curDiceNum == -999)
+                {
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                }
+                else
+                {
+                    skillNameTake = enemyCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
+                    if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake) == null)
+                    {
+                        skillNameTake = "null";
+                    }
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake);
+                }
+                yield return new WaitForSeconds(0.2f);
+            }
             curClickSkill = -1;
+            curPhase = 5;
         }
     }
-
-
     // Character Skill Select End (Phase 3 - Character Skill Select)//////
+
+
+    // Character Battle Start (Phase 5 - true battle phase)//////
+    private int clickDice_battlePhase = -999;
+    
+    //미완 : 공격 연동 & 스킬 데미지 & 적군 공격 등의 연동이 되어있지 않다. 
+    //아군&적군은 죽으면 운명 끊기는 거 꼭 확인할것!
+    private IEnumerator BattlePhase_Coroutine()
+    {
+        //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
+        if(curPhase == 5)
+        {
+            int nextDice = 0;
+            int nextSkill = -999;
+            //아군 스킬 클릭 
+            while (nextDice < 4)
+            {
+                if (myDiceTake[nextDice] != -999)
+                {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
+                    Debug.Log("you should click : " + nextDice.ToString());
+                    nextSkill = myDiceTake[nextDice];
+                    yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
+                    Debug.Log("My Skill Use : " + clickDice_battlePhase.ToString());
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (myDiceTake[i] == nextSkill)
+                        {
+                            myDiceTake[i] = -999;
+                            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_null");
+                            diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            if (i != 3)  diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                        }
+                    }
+                    nextSkill = 0;
+                }
+                nextDice++;
+            }
+            yield return new WaitForSeconds(1.0f);
+            nextDice = 0;
+            //적군 스킬 자동 사용
+            while (nextDice < 4)
+            {
+                if (enemyDiceTake[nextDice] != -999)
+                {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
+                    nextSkill = enemyDiceTake[nextDice];
+                    Debug.Log("Enemy Skill Use : " + clickDice_battlePhase.ToString());
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (enemyDiceTake[i] == nextSkill)
+                        {
+                            enemyDiceTake[i] = -999;
+                            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_null");
+                            if (i != 3) diceUIChain[i+3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            
+                        }
+                    }
+                    nextSkill = 0;
+                    yield return new WaitForSeconds(0.2f);
+                }
+                nextDice++;
+            }
+            nextDice = 0;
+            //배틀 끝나서 모두 사용됨.
+            for (int i=0;i<4;i++)
+            {
+                for (int j=0;j<2;j++)
+                {
+                    mySkillUsed[i, j] = false;
+                    enemySkillUsed[i, j] = false;
+                }
+            }
+            curPhase = 6;
+        }
+        
+    }
+
+    public void click_BattleSkill_dice(int input)
+    {
+        if(input < 4)
+        {
+            clickDice_battlePhase = myDiceTake[input];
+        }
+        else
+        {
+            clickDice_battlePhase = enemyDiceTake[input - 4];
+        }
+        Debug.Log(clickDice_battlePhase);
+        
+    }
+
+    // Character Battle End (Phase 5 - true battle phase)//////
+
+    // End Phase Start(phase 6 - check game finish)//
+
+    private IEnumerator EndPhase_Coroutine()
+    {
+        //아군 전멸
+        if((myCharacter[0] == null || myCharacter[0].getCurState() == 2) &&
+            (myCharacter[1] == null || myCharacter[1].getCurState() == 2) &&
+            (myCharacter[2] == null || myCharacter[2].getCurState() == 2) &&
+            (myCharacter[3] == null || myCharacter[3].getCurState() == 2))
+        {
+
+        }
+        //적군 전멸
+        else if ((enemyCharacter[0] == null || enemyCharacter[0].getCurState() == 2) &&
+            (enemyCharacter[1] == null || enemyCharacter[1].getCurState() == 2) &&
+            (enemyCharacter[2] == null || enemyCharacter[2].getCurState() == 2) &&
+            (enemyCharacter[3] == null || enemyCharacter[3].getCurState() == 2))
+        {
+
+        }
+        //전투 지속 필요
+        else
+        {
+            curPhase = 1;
+        }
+        yield return new WaitForSeconds(0.2f);
+    }
+    // End Phase End (phase 6 - check game finish)//
+
+    
+
 
     private bool[] witchSkillUsed = new bool[2];
     private void Awake()
@@ -561,6 +860,12 @@ public class BattleManager : MonoBehaviour
             diceArrowSet[i].SetActive(false);
         }
 
+        for (int i=0;i<4;i++)
+        {
+            myCharacterObjUI[i] = GameObject.Find("obj_myCharacter_" + i.ToString());
+            enemyCharacterObjUI[i] = GameObject.Find("obj_enemyCharacter_" + i.ToString());
+        }
+
         for (int i=0;i<3;i++)
         {
             diceUIChain[i] = GameObject.Find("obj_myChain_" + i.ToString());
@@ -578,6 +883,10 @@ public class BattleManager : MonoBehaviour
         backGroundObj[1] = GameObject.Find("obj_backGround_witch_witchPowerSelect");
         backGroundObj[2] = GameObject.Find("obj_backGround_backGround");
         backGroundObj[3] = GameObject.Find("obj_backGround_witch_skillSelect");
+
+        deleteWitchPowerUI();
+
+        curPhase = 0;
 
     }
 
@@ -679,6 +988,10 @@ public class BattleManager : MonoBehaviour
     void Update()
     {
         DiceText.GetComponent<TextMeshProUGUI>().text = curPhase.ToString();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(phase_Manage_Coroutine());
+        }
     }
     public void debugDice()
     {
@@ -809,35 +1122,10 @@ public class BattleManager : MonoBehaviour
 
         firstAttackTeam = Random.Range(1, 3);
         Debug.Log("StartPhase : firstAttackTeam is " + firstAttackTeam.ToString());
-
+        curPhase = 1;
     }
 
-    public void Dice_Throw_Phase()
-    {
-        if (curPhase != 1) { return; }
-        //아군 모든 주사위 던지기
-        for (int i = 0; i < 4; i++) {
-            if (myDice[i] != null) {
-                myDice[i].throwDice();
-                myDiceNum[i] = myDice[i].getNum();
-                //임시 주사위 UI 변경
-                myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].dir * -90);
-                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[i].curIdx];
-            }
-        }
-        
-        //적군 모든 주사위 던지기
-        for (int i = 0; i < 4; i++) {
-            if (enemyDice[i] != null) {
-                enemyDice[i].throwDice();
-                enemyDiceNum[i] = enemyDice[i].getNum();
-
-                enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].dir * -90);
-                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].curIdx];
-            }
-        }
-        
-    }
+    
 
     void Dice_Fix_Phase()
     {

@@ -38,8 +38,6 @@ public class CharacterManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-
         destinyReaderList = CSVReader.Read<DestinyReader>("Destiny");
         skillReaderList = CSVReader.Read<SkillReader>("Skill");
         Skill[] skillArr = new Skill[10];

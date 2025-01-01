@@ -80,6 +80,11 @@ public class Skill
     {
         return this.NeedDiceNum;
     }
+
+    public string getSkillName()
+    {
+        return this.SkillName;
+    }
     // Start is called before the first frame update
 
 }
