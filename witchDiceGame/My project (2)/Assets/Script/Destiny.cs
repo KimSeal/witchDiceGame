@@ -31,6 +31,10 @@ public class Destiny
         }
         //diceToArr();
     }
+    public int getDestinyIdx()
+    {
+        return this.DestinyIdx;
+    }
     public int getNeedDice(int idx)
     {
         return this.skillArr[idx].getNeedDice(); 

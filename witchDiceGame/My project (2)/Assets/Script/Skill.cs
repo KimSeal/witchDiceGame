@@ -2,6 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class SendSkillPacket //단일 공격에 대한 Packet이다.
+{
+    public int useCharacterIdx; //스킬을 사용한 주체
+    public int useSkillIdx; //사용된 스킬이 플레이어의 몇번째 스킬인지 Idx
+    public int[] targetIdx = new int[2]; // 대상이 되는 캐릭터의 index
+    public int[] diceNum = new int[4];  // 현재 사용되는 주사위들에 배치된 값
+    public SendSkillPacket(int useCharacterIdx, int useSkillIdx, int targetIdx0, int targetIdx1, int[] diceNum)
+    {
+        this.useCharacterIdx = useCharacterIdx;
+        this.useSkillIdx = useSkillIdx;
+        this.targetIdx[0] = targetIdx0;
+        this.targetIdx[1] = targetIdx1;
+        for (int i=0;i<4;i++)
+        {
+            this.diceNum[i] = diceNum[i];
+        }
+    }
+    
+}
+public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
+{
+    public TakeSkillPacket(int targetIdx, int damage, int stateChange)
+    {
+        this.targetIdx = targetIdx;
+        this.damage = damage;
+        this.stateChange = stateChange;
+    }
+    public int targetIdx;
+    public int damage;
+    public int stateChange;
+}
+
+
 public class Skill 
 {
 

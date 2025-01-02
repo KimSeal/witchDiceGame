@@ -381,7 +381,7 @@ public class BattleManager : MonoBehaviour
                 color.a -= 0.2f;
                 yield return new WaitForSeconds(0.1f);
             }
-            //witchPowerObj[0].SetActive(false);
+            witchPowerObj[0].SetActive(false);
             witchPowerObj[1].SetActive(false);
             witchPowerObj[2].SetActive(false);
             currentLightUI--;
@@ -393,10 +393,14 @@ public class BattleManager : MonoBehaviour
         if (curPhase == 2)
         {
             currentLightUI++;
-            //witchPowerObj[0].SetActive(true);
+            witchPowerObj[0].SetActive(true);
             witchPowerObj[1].SetActive(true);
             witchPowerObj[2].SetActive(true);
             Color color = witchPowerObj[1].GetComponent<SpriteRenderer>().color;
+            color.a = 0.0f;
+            //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
+            witchPowerObj[1].GetComponent<SpriteRenderer>().color = color;
+            witchPowerObj[2].GetComponent<SpriteRenderer>().color = color;
             while (color.a < 1.00f)
             {
                 //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
@@ -662,6 +666,7 @@ public class BattleManager : MonoBehaviour
             string skillNameTake = "";
             for (int i=0;i<4;i++)  //아군 주사위 배치
             {
+                if (myDice[i] == null) continue;
                 myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
                 curDiceNum = myDiceTake[i];
                 if (curDiceNum == -999)
@@ -681,6 +686,7 @@ public class BattleManager : MonoBehaviour
             }
             for (int i = 0; i < 4; i++) //적군 주사위 배치
             {
+                if (enemyDice[i] == null) continue;
                 enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
                 curDiceNum = enemyDiceTake[i];
                 if (curDiceNum == -999)
@@ -736,6 +742,9 @@ public class BattleManager : MonoBehaviour
                             if (i != 3)  diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         }
                     }
+                    //스킬이 사용 코드 적히는 부분
+                    
+                    //
                     nextSkill = 0;
                 }
                 nextDice++;
@@ -759,6 +768,9 @@ public class BattleManager : MonoBehaviour
                             
                         }
                     }
+                    //스킬이 사용 코드 적히는 부분
+
+                    //
                     nextSkill = 0;
                     yield return new WaitForSeconds(0.2f);
                 }
@@ -884,7 +896,7 @@ public class BattleManager : MonoBehaviour
         backGroundObj[2] = GameObject.Find("obj_backGround_backGround");
         backGroundObj[3] = GameObject.Find("obj_backGround_witch_skillSelect");
 
-        deleteWitchPowerUI();
+        
 
         curPhase = 0;
 
@@ -1089,6 +1101,7 @@ public class BattleManager : MonoBehaviour
 
     public void Start_Battle_Phase()
     {
+        
 
         //선택된 주사위 이미지 초기화
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
@@ -1106,19 +1119,27 @@ public class BattleManager : MonoBehaviour
         {
             enemyCharacter[i] = new Character(0, CharacterManager.Instance.destinyList[2]);
             if (enemyCharacter[i] != null) enemyDice[i] = new Dice();
+            else enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }
         for (int i = 0; i < 4; i++)
         {
             myCharacter[i] = CharacterManager.Instance.getCharacter(i);
             if (myCharacter[i] != null) myDice[i] = new Dice();
+            else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }
         for (int i = 0; i < 4; i++)
         {
             //myDiceUI[i] = GameObject.Find("obj_dice_my_" + i.ToString());
             //enemyDiceUI[i] = GameObject.Find("obj_dice_enemy_" + i.ToString());
-            makeBtnText(i);
-            makeCharacterObj(i);
+            
+            //makeBtnText(i);
+            //makeCharacterObj(i);
         }
+
+        witchPowerObj[0].SetActive(false);
+        witchPowerObj[1].SetActive(false);
+        witchPowerObj[2].SetActive(false);
+
 
         firstAttackTeam = Random.Range(1, 3);
         Debug.Log("StartPhase : firstAttackTeam is " + firstAttackTeam.ToString());
