@@ -714,6 +714,34 @@ public class BattleManager : MonoBehaviour
     // Character Battle Start (Phase 5 - true battle phase)//////
     private int clickDice_battlePhase = -999;
     
+    private int[] clickCharacter = new int[8];         //클릭된 캐릭터의 수
+    //private bool endClickEnemy;
+    private bool[] characterClickAble = new bool[8]; //스킬 타겟 설정시 클릭이 가능한지
+    private int characterTargetIdx = 999;                           //지금까지 스킬 타겟팅을 위해 클릭한 character의 수
+    private IEnumerator clickEnemy_Coroutine(int clickEnemyNum)
+    { //캐릭터 클릭을 위한 코루틴(입력된 갯수만큼 반복될 예정)
+        characterTargetIdx = 0;   //character인덱스 초기화
+        for (int i=0;i<clickCharacter.Length;i++)
+        {
+            clickCharacter[i] = -999;
+        }
+        while(characterTargetIdx < clickEnemyNum)
+        {
+            yield return new WaitUntil(() => clickCharacter[characterTargetIdx] != -999);
+            characterTargetIdx++;
+        }
+        characterTargetIdx = 999;
+    }
+
+    public void click_battle_character(int characterIdxInput)
+    {   //캐릭터를 누르면 해당 캐릭터 클릭이 비활성화되고
+        if (curPhase == 5 && characterTargetIdx != 999 && characterClickAble[characterIdxInput])
+        {
+            clickCharacter[this.characterTargetIdx] = characterIdxInput;
+            characterClickAble[characterIdxInput] = false;
+        }
+    }
+
     //미완 : 공격 연동 & 스킬 데미지 & 적군 공격 등의 연동이 되어있지 않다. 
     //아군&적군은 죽으면 운명 끊기는 거 꼭 확인할것!
     private IEnumerator BattlePhase_Coroutine()
@@ -743,7 +771,9 @@ public class BattleManager : MonoBehaviour
                         }
                     }
                     //스킬이 사용 코드 적히는 부분
-                    
+                    Skill curSkill = myCharacter[nextSkill / 10].skillUse(nextSkill); //사용하는 스킬에 대한 정보를 받아온다.
+                    int targetNumTemp = curSkill.getTargetNum();
+
                     //
                     nextSkill = 0;
                 }
@@ -754,6 +784,7 @@ public class BattleManager : MonoBehaviour
             //적군 스킬 자동 사용
             while (nextDice < 4)
             {
+                
                 if (enemyDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
                     nextSkill = enemyDiceTake[nextDice];
@@ -817,7 +848,7 @@ public class BattleManager : MonoBehaviour
             (myCharacter[2] == null || myCharacter[2].getCurState() == 2) &&
             (myCharacter[3] == null || myCharacter[3].getCurState() == 2))
         {
-
+            Debug.Log("you lose!");
         }
         //적군 전멸
         else if ((enemyCharacter[0] == null || enemyCharacter[0].getCurState() == 2) &&
@@ -825,7 +856,7 @@ public class BattleManager : MonoBehaviour
             (enemyCharacter[2] == null || enemyCharacter[2].getCurState() == 2) &&
             (enemyCharacter[3] == null || enemyCharacter[3].getCurState() == 2))
         {
-
+            Debug.Log("you win!");
         }
         //전투 지속 필요
         else
@@ -1109,21 +1140,26 @@ public class BattleManager : MonoBehaviour
         CharacterManager.Instance.setCharacter(0, 0);
         CharacterManager.Instance.setCharacter(1, 0);
         CharacterManager.Instance.setCharacter(2, 1);
+
+        CharacterManager.Instance.setCharacter(0, 10001);
+        CharacterManager.Instance.setCharacter(1, 10001);
+        CharacterManager.Instance.setCharacter(2, 10001);
+
         battleTimer = skillDo();
 
         DiceText = GameObject.Find("DiceCurText");
         //테스트를 위한 Character 세팅
 
         //UI test
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            enemyCharacter[i] = new Character(0, CharacterManager.Instance.destinyList[2]);
+            enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i);
             if (enemyCharacter[i] != null) enemyDice[i] = new Dice();
             else enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }
         for (int i = 0; i < 4; i++)
         {
-            myCharacter[i] = CharacterManager.Instance.getCharacter(i);
+            myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
             if (myCharacter[i] != null) myDice[i] = new Dice();
             else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }

@@ -269,22 +269,23 @@ public class BattleManager0 : MonoBehaviour
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         //플레이를 위한 장치
         CharacterManager.Instance.setCharacter(0, 0);
-        CharacterManager.Instance.setCharacter(1, 1);
-        CharacterManager.Instance.setCharacter(2, 3);
+        CharacterManager.Instance.setCharacter(1, 0);
+        CharacterManager.Instance.setCharacter(2, 1);
         battleTimer = skillDo();
 
         DiceText = GameObject.Find("DiceCurText");
         //테스트를 위한 Character 세팅
 
         //UI test
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            enemyCharacter[i] = new Character(0, CharacterManager.Instance.destinyList[2]);
+            //enemyCharacter[i] = new Character(0, CharacterManager.Instance.destinyList[2]);
+            enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i);
             if (enemyCharacter[i] != null) enemyDice[i] = new Dice();
         }
         for (int i = 0; i < 4; i++)
         {
-            myCharacter[i] = CharacterManager.Instance.getCharacter(i);
+            myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
             if (myCharacter[i] != null) myDice[i] = new Dice();
         }
         for (int i = 0; i < 4; i++)

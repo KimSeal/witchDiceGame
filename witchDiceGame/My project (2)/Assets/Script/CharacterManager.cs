@@ -29,9 +29,12 @@ public class CharacterManager : MonoBehaviour
 
 
     private Character[] myCharacter = new Character[4];
+    private Character[] enemyCharacter = new Character[4];
 
     public List<Destiny> destinyList = new List<Destiny>();
+    public List<Destiny> destinyList_monster = new List<Destiny>();
     public List<Skill> skillList = new List<Skill>();
+
     public List<DestinyReader> destinyReaderList = new List<DestinyReader>();
     public List<SkillReader> skillReaderList = new List<SkillReader>();
 
@@ -61,7 +64,8 @@ public class CharacterManager : MonoBehaviour
             skillArr[8] = skillList[destinyReaderList[i].skill8];
             skillArr[9] = skillList[destinyReaderList[i].skill9];
 
-            destinyList.Add( new Destiny(destinyReaderList[i], skillArr) );
+            if(destinyReaderList[i].DestinyIdx <= 10000) destinyList.Add(new Destiny(destinyReaderList[i], skillArr));
+            else if (destinyReaderList[i].DestinyIdx > 10000) destinyList_monster.Add(new Destiny(destinyReaderList[i], skillArr));
         }
         Debug.Log(destinyReaderList.Count);
         Debug.Log(destinyList.Count);
@@ -74,14 +78,25 @@ public class CharacterManager : MonoBehaviour
     {
 
     }
-
+    //살아있는 캐릭터 배치
     public void setCharacter(int place, int characterIdx)
     {
-        myCharacter[place] = new Character(0, destinyList[characterIdx]);
+        //아군
+        if (characterIdx <= 10000) {
+            if (characterIdx == 0) myCharacter[place] = new Yongsa(0, destinyList[characterIdx]);
+            else if (characterIdx == 1) myCharacter[place] = new Elf(0, destinyList[characterIdx]);
+        }
+        //몬스터
+        if (characterIdx > 10000) {
+            characterIdx -= 10000;
+            if (characterIdx == 1) enemyCharacter[place] = new Slime(0, destinyList_monster[characterIdx]);
+            else if (characterIdx == 2) enemyCharacter[place] = new Goblin(0, destinyList_monster[characterIdx]);
+        }
     }
-    public Character getCharacter(int idx)
+    public Character getCharacter(bool myTeam, int idx)
     {
-        return myCharacter[idx];
+        if(myTeam) return myCharacter[idx];
+        return enemyCharacter[idx];
     }
     public void setcharacterHp(int idx, int hp)
     {

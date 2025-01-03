@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character
+public abstract class Character
 {
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
@@ -51,7 +51,7 @@ public class Character
         return destiny.findSkill(skillIdx[selNum % 10]);
     }
 
-    //public List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
+    public abstract List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
 
     public int getPhyAtk(){ return phyAtk; }
     public int getMagAtk() { return magAtk; }

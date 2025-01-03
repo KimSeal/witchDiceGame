@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Yongsa : Character
+public class Slime : Character
 {
-
-    public Yongsa(int curState, Destiny destiny) : base(curState, destiny)
+    public Slime(int curState, Destiny destiny) : base(curState, destiny)
     {
 
     }
@@ -20,12 +19,7 @@ public class Yongsa : Character
     {
         
     }
-    public int returnYongsaHP()
-    {
-        return this.hp;
-    }
-
-    public List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
         /*for (int i=sendSkillPacket.targetIdx[0]; i<sendSkillPacket.targetIdx[1] ; i++)
@@ -42,5 +36,4 @@ public class Yongsa : Character
         }
         return packets;
     }
-
 }
