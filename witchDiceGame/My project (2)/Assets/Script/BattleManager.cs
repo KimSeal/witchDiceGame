@@ -95,7 +95,11 @@ public class BattleManager : MonoBehaviour
     
     private int[] clickedDice = new int[2];
 
+    private void matchEnemySkill()
+    {
+        Skill[] skillArr = new Skill[8];
 
+    }
     public void click_dice(int diceIdx)
     {
         if (currentLightUI == 0 && currentMoveUI == 0)
@@ -253,6 +257,10 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
+        enemyDiceTake[0] = 0;
+        enemyDiceTake[1] = 10;
+        enemyDiceTake[2] = 20;
     }
 
     //DiceThrow Phase End (phase 1- dice throw finish)//
@@ -714,36 +722,247 @@ public class BattleManager : MonoBehaviour
     // Character Battle Start (Phase 5 - true battle phase)//////
     private int clickDice_battlePhase = -999;
     
-    private int[] clickCharacter = new int[8];         //클릭된 캐릭터의 수
+    private int[] clickCharacter = new int[8];         //클릭된 캐릭터 종류
     //private bool endClickEnemy;
     private bool[] characterClickAble = new bool[8]; //스킬 타겟 설정시 클릭이 가능한지
-    private int characterTargetIdx = 999;                           //지금까지 스킬 타겟팅을 위해 클릭한 character의 수
-    private IEnumerator clickEnemy_Coroutine(int clickEnemyNum)
+    private int characterTargetIdx = -999;                           //지금까지 스킬 타겟팅을 위해 클릭한 character의 수
+    private IEnumerator clickEnemy_Coroutine(int clickEnemyNum, int clickAbleTeam) //clickAbleTeam은 0 : 아군 대상 / 1: 적군대상 / 2 : 전체 대상을 의미한다.
     { //캐릭터 클릭을 위한 코루틴(입력된 갯수만큼 반복될 예정)
         characterTargetIdx = 0;   //character인덱스 초기화
-        for (int i=0;i<clickCharacter.Length;i++)
-        {
+
+        for (int i = 0; i < clickCharacter.Length; i++) { //모든 클릭된 캐릭터 초기화
             clickCharacter[i] = -999;
         }
-        while(characterTargetIdx < clickEnemyNum)
+        //지금 고민중인거는 죽은 캐릭터 위치 클릭가능하게 하나? -> 일단 null일때 조건문 없애놈
+
+        if (clickAbleTeam != 2) {//아군 선택만 가능한 경우
+            for (int i = 0; i < 4; i++)
+            {
+                //if (myCharacter[i] != null && myCharacter[i].getCurState() != 2) {
+                    battleTargetUI[i].SetActive(true);
+                    characterClickAble[i] = true;
+                //}
+            }
+        }
+        else if (clickAbleTeam != 1) {//적군 선택만 가능한 경우
+            for (int i = 4; i < 8; i++) {
+                //if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() != 2) {
+                    battleTargetUI[i].SetActive(true);
+                    characterClickAble[i] = true; 
+                //}  
+            }
+        }
+
+        while (characterTargetIdx < clickEnemyNum) //클릭된 캐릭터 값을 선택수만큼 배열에 저장
         {
             yield return new WaitUntil(() => clickCharacter[characterTargetIdx] != -999);
             characterTargetIdx++;
         }
-        characterTargetIdx = 999;
+
+        //클릭하지 못하게 바꾸기
+        for (int i = 0; i < 8; i++) {
+            battleTargetUI[i].SetActive(false);
+            characterClickAble[i] = false; 
+        }
+
+
+        //해제해버리면 밖에서 못쓰니 밖에서 해제해줘야합니다!
     }
 
+    
+    
     public void click_battle_character(int characterIdxInput)
     {   //캐릭터를 누르면 해당 캐릭터 클릭이 비활성화되고
-        if (curPhase == 5 && characterTargetIdx != 999 && characterClickAble[characterIdxInput])
+        if (curPhase == 5 && characterTargetIdx != -999 && characterClickAble[characterIdxInput])
         {
-            clickCharacter[this.characterTargetIdx] = characterIdxInput;
-            characterClickAble[characterIdxInput] = false;
+            Debug.Log("hello!");
+            clickCharacter[this.characterTargetIdx] = characterIdxInput; //누른 캐릭터 저장
+            battleTargetUI[characterIdxInput].SetActive(false); //해당 target ui 배활성화
+            characterClickAble[characterIdxInput] = false;  //누를수 없게 변경
         }
+    }
+    //적군의 clickArray를 자동으로 만들어준다.
+    private void makeEnemyClick(int clickEnemyNum, int clickAbleTeam)
+    {
+        for (int i = 0; i < clickCharacter.Length; i++)
+        { //모든 클릭된 캐릭터 초기화
+            clickCharacter[i] = -999;
+        }
+        //지금 고민중인거는 죽은 캐릭터 위치 클릭가능하게 하나? -> 일단 null일때 조건문 없애놈
+
+
+        if (clickAbleTeam == 1)
+        {//아군에 대한 스킬인 경우
+            for (int i = 4; i < 8; i++)
+            {
+                if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() == 0) {
+                    characterClickAble[i] = true;
+                }
+            }
+            for (int i = 0; i < clickEnemyNum; i++)
+            {
+                int temp = enemy_target_auto_random(1) + 4 ;
+                clickCharacter[i] = temp;
+                characterClickAble[temp] = false;
+            }
+        }
+        else if (clickAbleTeam == 2)
+        {//적군 선택만 가능한 경우
+            for (int i = 0; i < 4; i++)
+            {
+                if (myCharacter[i] != null && myCharacter[i].getCurState() == 0) {
+                    characterClickAble[i] = true;
+                }  
+            }
+            for (int i=0;i<clickEnemyNum;i++) {
+                int temp = enemy_target_auto(1);
+                clickCharacter[i] = temp;
+                characterClickAble[temp] = false;
+            }
+            
+        }
+        else if (clickAbleTeam == 0)
+        {//전체 대상인 경우
+            for (int i = 0; i < 4; i++)
+            {
+                if (myCharacter[i] != null && myCharacter[i].getCurState() == 0) {
+                    characterClickAble[i] = true;
+                }
+            }
+            for (int i = 4; i < 8; i++)
+            {
+                if (enemyCharacter[i - 4] != null && enemyCharacter[i - 4].getCurState() == 0)
+                {
+                    characterClickAble[i] = true;
+                }
+            }
+            for (int i = 0; i < clickEnemyNum; i++)
+            {
+                int temp = enemy_target_auto_random(0);
+                clickCharacter[i] = temp;
+                characterClickAble[temp] = false;
+            }
+        }
+
+
+        //클릭하지 못하게 바꾸기
+        for (int i = 0; i < 8; i++)
+        {
+            characterClickAble[i] = false;
+        }
+
+    }
+    public int enemy_target_auto_random(int targetTeam)
+    {
+        //전체에 대해 가해지는 스킬인 경우
+        if (targetTeam == 0)
+        {
+            int characterNum = 0;
+            int targetNum = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                if (characterClickAble[i]) characterNum++;
+            }
+            targetNum = Random.Range(0, characterNum);
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (characterClickAble[i])
+                {
+                    targetNum--;
+                    if (targetNum < 0) return i;
+                }
+            }
+            return 0;
+        }
+        if (targetTeam == 1) // 아군에 대해 가해지는 스킬인 경우
+        {
+            int characterNum = 0;
+            int targetNum = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (characterClickAble[i]) characterNum++;
+            }
+            targetNum = Random.Range(0, characterNum);
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (characterClickAble[i])
+                {
+                    targetNum--;
+                    if (targetNum < 0) return i;
+                }
+            }
+            return 0;
+        }
+        return 0;
+    }
+    public int enemy_target_auto(int inputTargetNum)
+    {
+        //대상이 한명일 경우
+        if (inputTargetNum == 1)
+        {
+            //대상이 적군일 경우 거리 기반으로 가장 앞에 있는 적이 잘 맞도록 만들어 낸다.
+            int characterNum = 0;
+            int targetNum = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (characterClickAble[i]) characterNum++;
+            }
+            if (characterNum == 1) targetNum = 0;
+            if (characterNum == 2) targetNum = Random.Range(0, 3);
+            if (characterNum == 3) targetNum = Random.Range(0, 6);
+            if (characterNum == 4) targetNum = Random.Range(0, 10);
+
+            if (targetNum > 5) targetNum = 3;
+            else if (targetNum > 2) targetNum = 2;
+            else if (targetNum > 0) targetNum = 1;
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (characterClickAble[i])
+                {
+                    targetNum--;
+                    if (targetNum < 0) return i;
+                }
+            }
+            return 0;
+        }
+        return 0;
     }
 
     //미완 : 공격 연동 & 스킬 데미지 & 적군 공격 등의 연동이 되어있지 않다. 
     //아군&적군은 죽으면 운명 끊기는 거 꼭 확인할것!
+
+    //공격packet 생성 함수 호출 시 만드는 사용 주사위 배열
+    int[] makeDiceArrToMakePacket = new int[4];
+    //공격 packet 생성 시 받아오는 변수
+    List<TakeSkillPacket> takeSkillPacketArr = new List<TakeSkillPacket>();
+
+    //공격 packet 생성 함수 호출시 사용되는 주사위 배열을 만들어내는 함수
+    private void makeMyDice_BattlePhase(int startIdx, int endIdx)
+    {
+        for (int i=0;i<4;i++){ //초기화
+            makeDiceArrToMakePacket[i] = -999;
+        }
+
+        for (int i=0;i<= endIdx - startIdx;i++) { //유의미한 길이만큼 길이 생성
+            makeDiceArrToMakePacket[i] = myDiceNum[startIdx + i];
+        }
+    }
+    private void makeEnemyDice_BattlePhase(int startIdx, int endIdx)
+    {
+        for (int i = 0; i < 4; i++)
+        { //초기화
+            makeDiceArrToMakePacket[i] = -999;
+        }
+
+        for (int i = 0; i <= endIdx - startIdx; i++)
+        { //유의미한 길이만큼 길이 생성
+            makeDiceArrToMakePacket[i] = enemyDiceNum[startIdx + i];
+        }
+    }
+
     private IEnumerator BattlePhase_Coroutine()
     {
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
@@ -771,8 +990,38 @@ public class BattleManager : MonoBehaviour
                         }
                     }
                     //스킬이 사용 코드 적히는 부분
-                    Skill curSkill = myCharacter[nextSkill / 10].skillUse(nextSkill); //사용하는 스킬에 대한 정보를 받아온다.
-                    int targetNumTemp = curSkill.getTargetNum();
+                    int skillUseCharacter = nextSkill / 10;
+                    int skillUseIdx = nextSkill % 10;
+                    Skill curSkill = myCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
+                    
+                    characterTargetIdx = 0;
+                    for (int i=0;i<curSkill.getTargetChance();i++) { // 해당 스킬이 공격하는 숫자
+                        characterTargetIdx = 0;
+                        StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
+                        yield return new WaitUntil(() => characterTargetIdx == curSkill.getTargetNum()); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                        characterTargetIdx = -999;
+
+                        //스킬에 대한 공격용 Packet 생성
+                        makeMyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
+                        SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                        takeSkillPacketArr.Clear();
+                        takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+
+                        int tempTargetIdx;
+                        for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
+                        {
+                            tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+                            if ( tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
+                            {
+                                myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                            }
+                            else // 적군 대상으로 스킬이 들어온 경우
+                            {
+                                enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                            }
+                        }
+
+                    }
 
                     //
                     nextSkill = 0;
@@ -781,6 +1030,7 @@ public class BattleManager : MonoBehaviour
             }
             yield return new WaitForSeconds(1.0f);
             nextDice = 0;
+
             //적군 스킬 자동 사용
             while (nextDice < 4)
             {
@@ -795,11 +1045,45 @@ public class BattleManager : MonoBehaviour
                         {
                             enemyDiceTake[i] = -999;
                             enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_null");
-                            if (i != 3) diceUIChain[i+3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            if (i != 3)
+                            {
+                                diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            }
                             
                         }
                     }
                     //스킬이 사용 코드 적히는 부분
+                    int skillUseCharacter = nextSkill / 10;
+                    int skillUseIdx = nextSkill % 10;
+                    Skill curSkill = enemyCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
+
+                    for (int i = 0; i < curSkill.getTargetChance(); i++)
+                    { // 해당 스킬이 공격하는 숫자
+
+                        makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
+
+                        //스킬에 대한 공격용 Packet 생성
+                        makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
+                        SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                        takeSkillPacketArr.Clear();
+                        takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+
+                        int tempTargetIdx;
+                        for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
+                        {
+                            tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+                            if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
+                            {
+                                myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                            }
+                            else // 적군 대상으로 스킬이 들어온 경우
+                            {
+                                enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                            }
+                        }
+
+                    }
+
 
                     //
                     nextSkill = 0;
@@ -912,7 +1196,7 @@ public class BattleManager : MonoBehaviour
         for (int i=0;i<3;i++)
         {
             diceUIChain[i] = GameObject.Find("obj_myChain_" + i.ToString());
-            diceUIChain[i+3] = GameObject.Find("obj_enemyChain_" + (i+3).ToString());
+            diceUIChain[i+3] = GameObject.Find("obj_enemyChain_" + i.ToString());
         }
 
         characterUI = GameObject.Find("CharacterUI");
@@ -1129,7 +1413,7 @@ public class BattleManager : MonoBehaviour
 
     }
 
-
+    private GameObject[] battleTargetUI = new GameObject[8];
     public void Start_Battle_Phase()
     {
         
@@ -1170,6 +1454,12 @@ public class BattleManager : MonoBehaviour
             
             //makeBtnText(i);
             //makeCharacterObj(i);
+        }
+        //배틀시 타겟에 대한 UI 비활성
+        for (int i=0;i<8;i++)
+        {
+            battleTargetUI[i] = GameObject.Find("obj_battleTarget_" + i.ToString());
+            battleTargetUI[i].SetActive(false);
         }
 
         witchPowerObj[0].SetActive(false);
@@ -1304,7 +1594,7 @@ public class BattleManager : MonoBehaviour
         battlePhaseState = 0;
     }
 
-
+    
     public int enemy_target_auto()
     {
         int characterNum = 0;

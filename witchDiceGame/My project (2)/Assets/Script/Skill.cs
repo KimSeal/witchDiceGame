@@ -6,15 +6,15 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
 {
     public int useCharacterIdx; //스킬을 사용한 주체
     public int useSkillIdx; //사용된 스킬이 플레이어의 몇번째 스킬인지 Idx
-    public List<int> targetIdx = new List<int>(); // 대상이 되는 캐릭터의 index
+    public int[] targetIdx = new int[8]; // 대상이 되는 캐릭터의 index
     public int[] diceNum = new int[4];  // 현재 사용되는 주사위들에 배치된 값
-    public SendSkillPacket(int useCharacterIdx, int useSkillIdx, List<int> targetIdx,  int[] diceNum)
+    public SendSkillPacket(int useCharacterIdx, int useSkillIdx, int[] targetIdx,  int[] diceNum)
     {
         this.useCharacterIdx = useCharacterIdx;
         this.useSkillIdx = useSkillIdx;
-        for (int i=0;i<targetIdx.Count;i++)
+        for (int i=0;i<targetIdx.Length;i++)
         {
-            this.targetIdx.Add(targetIdx[i]);
+            this.targetIdx[i] = targetIdx[i];
         }
         for (int i=0;i<4;i++)
         {
@@ -31,9 +31,16 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
         this.damage = damage;
         this.stateChange = stateChange;
     }
-    public int targetIdx;
-    public int damage;
-    public int stateChange;
+    private int targetIdx;
+    private int damage;
+    private int stateChange;
+
+    public int getTargetIdx()
+    {
+        return targetIdx;
+    }
+    public int getDamage() { return damage; }
+    public int getStateChange() { return stateChange; }
 }
 
 
@@ -124,6 +131,15 @@ public class Skill
     public int getTargetNum()
     {
         return (int)this.TargetNum;
+    }
+    public int getTargetChance()
+    {
+        return ((int)this.TargetChance);
+    }
+
+    public int getTargetTeam()
+    {
+        return this.TargetTeam;
     }
 }
 

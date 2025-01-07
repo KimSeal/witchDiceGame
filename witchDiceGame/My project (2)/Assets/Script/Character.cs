@@ -47,11 +47,29 @@ public abstract class Character
     public int getHp() {return hp; }
     public int getMaxHp() { return maxHp; }
     public Skill skillUse(int selNum)
-    {//selNum : 십의 자리는 때리는 대상, 일의 자리는 고른 스킬 index
-        return destiny.findSkill(skillIdx[selNum % 10]);
+    {
+        return destiny.findSkill(skillIdx[selNum]);
+    }
+
+    public int getSkillIdx(int num)
+    {
+        return skillIdx[num];
     }
 
     public abstract List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
+
+    public void TakeSkillPacket(TakeSkillPacket takeSkillPacket)
+    {
+        this.hp -= takeSkillPacket.getDamage();
+        Debug.Log("this damage is : " + takeSkillPacket.getDamage());
+        Debug.Log("my remain Hp is : " + this.hp);
+
+        if (this.hp <= 0)
+        {
+            this.hp = 0;
+            this.curState = 2;
+        }
+    }
 
     public int getPhyAtk(){ return phyAtk; }
     public int getMagAtk() { return magAtk; }
