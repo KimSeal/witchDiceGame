@@ -68,8 +68,9 @@ public class BattleManager : MonoBehaviour
     private GameObject[] diceArrowSet = new GameObject[8];
 
     private GameObject[] myCharacterObjUI = new GameObject[4];
+    private Animator[] myCharacterObjUIAnim = new Animator[4];
     private GameObject[] enemyCharacterObjUI = new GameObject[4];
-
+    private Animator[] enemyCharacterObjUIAnim = new Animator[4];
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
@@ -94,12 +95,204 @@ public class BattleManager : MonoBehaviour
     private GameObject[] backGroundObj = new GameObject[4];
     
     private int[] clickedDice = new int[2];
+    
+    // 적군이 주사위를 보고 스킬을 배치하게 하기 위한 변수들//
+    Skill[] enemySkill = new Skill[8];
+    int[] enemySkillDiceNum = new int[8];
+    int[,] enemySkillDiceVal = new int[8, 4];
 
-    private void matchEnemySkill()
+    private void InitSetOfEnemySkill()
     {
-        Skill[] skillArr = new Skill[8];
 
+        for (int i=0;i<4;i++)
+        {
+            for (int j=0;j<2;j++)
+            {
+                
+                if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
+                {
+                    enemySkill[i + j * 4] = enemyCharacter[i].skillUse(j);
+                    enemySkillDiceNum[i + j * 4] = enemySkill[i + j * 4].getNeedDiceNum();
+                    for (int k = 0; k < 4; k++)
+                    {
+                        enemySkillDiceVal[i + j * 4, k] = enemySkill[i + j * 4].getNeedDice(k);
+                    }
+                }
+                else // 스킬을 받아올 수 없는 경우 -999(의미없는 값 넣기)  스킬에 대해서 접근 안하게 조심할것(추후에 빈 스킬 추가하는 방법도?)
+                {
+                    enemySkillDiceNum[i + j * 4] = -999;
+                    for (int k = 0; k < 4; k++)
+                    {
+                        enemySkillDiceVal[i + j * 4, k] = -999;
+                    }
+                }
+            }
+        }
     }
+
+    //현재 주사위 값들을 기반으로 스킬을 할당한다.
+    private void MakeEnemyAttackSet()
+    {
+        List<int> liveCharacterList = new List<int>();
+        List<int> liveSkillList = new List<int>();
+        for (int i = 0; i < 4; i++)
+        {
+            enemyDiceTake[i] = -999;
+        }
+        for (int i=0;i<4;i++)
+        {
+            if(enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
+            {
+                liveCharacterList.Add(i);
+            }
+        }
+
+        for (int i=0;i<8;i++)
+        {
+            if (enemySkillDiceNum[i] != -999)
+            {
+                liveSkillList.Add(i); ;
+            }
+            
+        }
+
+        for (int skillIdx0=liveSkillList.Count-1; skillIdx0>=0;skillIdx0--)
+        {
+            int skillIdx = liveSkillList[skillIdx0];
+            Debug.Log(skillIdx);
+            for (int diceIdx=0; diceIdx <= liveCharacterList.Count - enemySkillDiceNum[skillIdx]; diceIdx++)
+            {   //필요 주사위가 1칸인 경우
+                
+                if(enemySkillDiceNum[skillIdx] == 1)
+                {
+                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]])){ // 첫번쨰주사위가 겹치는 경우
+                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx /4;
+                        liveCharacterList.RemoveAt(diceIdx);
+                        break;
+                    }
+
+                }
+                //필요 주사위가 2칸인 경우
+                else if (enemySkillDiceNum[skillIdx] == 2)
+                {
+                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
+                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]))
+                    { // 첫번쨰주사위가 겹치는 경우
+                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceTake[liveCharacterList[diceIdx+1]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);
+                        break;
+                    }
+
+                }
+                else if (enemySkillDiceNum[skillIdx] == 3) //필요 주사위가 3칸인 경우
+                {
+                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
+                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
+                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]))
+                    { 
+                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceTake[liveCharacterList[diceIdx + 1]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceTake[liveCharacterList[diceIdx + 2]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);
+                        break;
+
+                    }
+
+                }
+                else if (enemySkillDiceNum[skillIdx] == 4) //필요 주사위가 4칸인 경우
+                {
+                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
+                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
+                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]) &&
+                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 3], enemyDiceNum[liveCharacterList[diceIdx + 3]]))
+                    {
+                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceTake[liveCharacterList[diceIdx + 1]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceTake[liveCharacterList[diceIdx + 2]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceTake[liveCharacterList[diceIdx + 3]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);
+                        break;
+                    }
+
+                }
+            }
+        }
+    }
+    private bool MakeMyAttackSet(int characterIdx, int skillSelIdx, int selDiceIdx)
+    {
+        Skill skill = myCharacter[characterIdx].skillUse(skillSelIdx);
+        List<int> liveCharacterList = new List<int>();
+        for (int i = selDiceIdx; i < 4; i++)
+        {
+            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0 && myDiceTake[i] == -999)
+            {
+                liveCharacterList.Add(i);
+            }
+        }
+        if (skill.getNeedDiceNum() > liveCharacterList.Count)
+        {
+            return false;
+        }
+
+        //필요 주사위가 1칸인 경우
+        if (skill.getNeedDiceNum() == 1)
+        {
+            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]))
+            { // 첫번쨰주사위가 겹치는 경우
+                myDiceTake[liveCharacterList[0]] = characterIdx  * 10 + skillSelIdx ;
+                return true;
+            }
+        }
+                //필요 주사위가 2칸인 경우
+        else if (skill.getNeedDiceNum() == 2)
+        {
+            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]))
+            { // 첫번쨰주사위가 겹치는 경우
+                myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
+                myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
+                return true;
+            }
+
+        }
+        else if (skill.getNeedDiceNum() == 3)
+        {
+            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]))
+            { // 첫번쨰주사위가 겹치는 경우
+                myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
+                myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
+                myDiceTake[liveCharacterList[2]] = characterIdx * 10 + skillSelIdx;
+                return true;
+            }
+        }
+        else if (skill.getNeedDiceNum() == 4)
+        {
+            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(3), myDiceNum[liveCharacterList[3]]))
+            { // 첫번쨰주사위가 겹치는 경우
+                myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
+                myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
+                myDiceTake[liveCharacterList[2]] = characterIdx * 10 + skillSelIdx;
+                myDiceTake[liveCharacterList[3]] = characterIdx * 10 + skillSelIdx;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
     public void click_dice(int diceIdx)
     {
         if (currentLightUI == 0 && currentMoveUI == 0)
@@ -167,6 +360,142 @@ public class BattleManager : MonoBehaviour
         gameObjTemp.transform.position = destination;
         if (witchPowerMoveState != -1) witchPowerMoveState = -1; //마녀 스킬 선책이었을 경우.
         currentMoveUI--;
+    }
+
+    //스킬 선택 시 주사위UI를 업데이트 하는 함수
+    void updateMyDiceUI()
+    {
+        int curSkillVal = -999;
+        int startIdx = -999;
+        int endIdx = -999;
+
+        //초기화
+        for (int i=0;i<4;i++)
+        {
+            if(i<3)diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
+            if (curSkillVal != -999)// 이미 시작점이 있는 경우
+            {
+                if (myDiceTake[i] != -999) // 해당 주사위가 빈칸이 아니면
+                {
+                    if (myDiceTake[i] == curSkillVal)  //같은 값을 받았을때
+                    {
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, false); //서브그리기
+                    }
+                    else // 다른 값을 받았을때
+                    {
+                        updateDiceUI_draw_chain(curSkillVal / 10, curSkillVal % 10, startIdx, endIdx); //이전 기반으로 chain 걸기
+                        curSkillVal = myDiceTake[i];
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                        startIdx = i;
+                    }
+                    endIdx = i;   //end 업데이트
+                }
+
+            }
+            else // 시작점을 찾고 있는 경우
+            {
+                if (myDiceTake[i] != -999) // 해당 주사위가 빈칸이 아니면
+                {
+                    curSkillVal = myDiceTake[i];
+                    updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                    startIdx = i; endIdx = i;
+                }
+            }
+
+        }
+        if (curSkillVal != -999) //끝에 도달했지만 chain이 필요한 경우
+        {
+            updateDiceUI_draw_chain(curSkillVal / 10, curSkillVal % 10, startIdx, endIdx); //이전 기반으로 chain 걸기
+        }
+    }
+
+    //적팀 조합에 대한 주사위 UI를 업데이트 하는 함수 : 아직 테스트 못해봄
+    void updateEnemyDiceUI()
+    {
+        int curSkillVal = -999;
+        int startIdx = -999;
+        int endIdx = -999;
+        for (int i = 4; i < 8; i++)
+        {
+            if (enemyCharacter[i - 4] == null || enemyCharacter[i - 4].getCurState() != 0) continue;
+
+            if (curSkillVal != -999)// 이미 시작점이 있는 경우
+            {
+                
+                if (enemyDiceTake[i - 4] != -999) // 해당 주사위가 빈칸이 아니면
+                {
+                    if (enemyDiceTake[i - 4] == curSkillVal)  //같은 값을 받았을때
+                    {
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, false); //서브그리기
+                    }
+                    else // 다른 값을 받았을때
+                    {
+                        updateDiceUI_draw_chain(curSkillVal / 10, curSkillVal % 10, startIdx-1, endIdx-1); //이전 기반으로 chain 걸기 (chain은 6개자리 사이즈를 사용하므로 1씩 빼주었다)
+                        curSkillVal = enemyDiceTake[i - 4];
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                        startIdx = i;
+                    }
+                    endIdx = i;   //end 업데이트
+                }
+
+            }
+            else // 시작점을 찾고 있는 경우
+            {
+                if (enemyDiceTake[i-4] != -999) // 해당 주사위가 빈칸이 아니면
+                {
+                    curSkillVal = enemyDiceTake[i - 4];
+                    updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                    startIdx = i; endIdx = i;
+                }
+            }
+
+        }
+        if (curSkillVal != -999) //끝에 도달했지만 chain이 필요한 경우
+        {
+            updateDiceUI_draw_chain(curSkillVal / 10, curSkillVal % 10, startIdx-1, endIdx-1); //이전 기반으로 chain 걸기 chain은 6개자리 사이즈를 사용하므로 1씩 빼주었다)
+        }
+    }
+
+    //주사위를 그리기 위한 함수
+    void updateDiceUI_draw(int characterIdx, int skillIdx, int diceIdx, bool startPoint)
+    {
+        string strTemp = "dice_skillChk_";
+        if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
+        strTemp += (characterIdx + 1).ToString();
+
+
+        if (startPoint) diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp);
+        else
+        {
+            diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_sub");
+        }
+
+        if (characterIdx < 4)
+        {
+            mySkillUsed[characterIdx, skillIdx] = true;
+        }
+        else //적군이 사용할 경우 적군 주사위에 적용
+        {
+            enemySkillUsed[characterIdx, skillIdx] = true;
+        }
+    }
+    //주사위간 chain을 그리기 위한 함수
+    void updateDiceUI_draw_chain(int characterIdx, int skillIdx, int diceStartIdx, int diceEndIdx)
+    {
+        string strTemp = "dice_skillChk_";
+        if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
+        strTemp += (characterIdx + 1).ToString();
+        Debug.Log(diceStartIdx.ToString() + " " + diceEndIdx.ToString());
+
+        for (int i = diceStartIdx; i < diceEndIdx; i++)
+        {
+            diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_chain");
+        }
     }
 
     //phase관리를 위한 코루틴
@@ -258,9 +587,11 @@ public class BattleManager : MonoBehaviour
         }
 
         //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
-        enemyDiceTake[0] = 0;
-        enemyDiceTake[1] = 10;
-        enemyDiceTake[2] = 20;
+        
+        
+        MakeEnemyAttackSet();
+        Debug.Log("Dice Throw Make enemy Array : " + enemyDiceTake[0].ToString() + " " + enemyDiceTake[1].ToString() + " " + enemyDiceTake[2].ToString() + " " + enemyDiceTake[3].ToString() + " ");
+        updateEnemyDiceUI();
     }
 
     //DiceThrow Phase End (phase 1- dice throw finish)//
@@ -365,8 +696,11 @@ public class BattleManager : MonoBehaviour
             //직관성을 위해 나눔
             if (witchPowerMoveState == 2)
             {
-                
+
                 //다음 페이즈로 넘어가는 부분
+                MakeEnemyAttackSet();
+                updateEnemyDiceUI();
+
                 curClickSkill = -1;
                 witchPowerMoveState = -1;
                 curPhase = 3;
@@ -558,11 +892,12 @@ public class BattleManager : MonoBehaviour
                 {   //해당 스킬에 대한 모든 주사위 해제
                     if (myDiceTake[i] == deleteSkill)
                     {
-                        diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                        if(i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");//연결 체인도 제거
+                        //diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                        //if(i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");//연결 체인도 제거
                         myDiceTake[i] = -999;
                     }
                 }
+                updateMyDiceUI();
                 //해당 스킬에 대한 버튼 해제
                 StartCoroutine(makeBright(skillSelectUI[(deleteSkill / 10) * 2 + (deleteSkill % 10)], 0.0f));
                 mySkillUsed[(deleteSkill / 10), (deleteSkill % 10)] = false;
@@ -575,64 +910,23 @@ public class BattleManager : MonoBehaviour
                 Skill useSkill = myCharacter[characterIdx].skillUse(skillIdx);
                 int needDiceNum = useSkill.getNeedDiceNum();
                 int needDiceVal;
-                //길이 부족인 경우
-                if (diceIdx + needDiceNum > 4)
+                //가능한지 확인
+                if(MakeMyAttackSet(characterIdx, skillIdx, diceIdx))
+                {   //가능한 경우 주사위의 ui를 업데이트
+                    updateMyDiceUI();
+                }
+                else //불가능한 경우
                 {
                     StartCoroutine(makeBright(skillSelectUI[characterIdx * 2 + skillIdx], 0.0f));
-                    Debug.Log("It can't! - Length Problem");
+                    Debug.Log("It can't! - wrong Dice Problem");
                 }
-                else
-                {
-                    //사용가능인지 체크하는 반복문
-                    int successChkVal = 0;
-                    for (int i=0; i< needDiceNum;i++)
-                    {
-                        needDiceVal = useSkill.getNeedDice(i);
-                        //이미 주사위가 다른 스킬에 의해 사용되고 있는 경우
-                        if (myDiceTake[i + diceIdx] != -999) break;
-                        //현재 필요한 스킬과 주사위가 일치하는 지 확인
-                        if (condition_diceSkillCheck(needDiceVal, myDiceNum[i + diceIdx]))
-                        {
-                            successChkVal++;
-                        }
-                        else break;
 
-                    }
-
-                    //가능한 경우.
-                    if(successChkVal == needDiceNum)
-                    {
-                        string strTemp = "dice_skillChk_";
-                        if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
-                        strTemp += (characterIdx + 1).ToString();
-                        for (int i=0;i<needDiceNum;i++)
-                        {
-                            if (i == 0) diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp);
-                            else
-                            {
-                                diceUIChk[diceIdx + i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_sub");
-                                diceUIChain[diceIdx + i-1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_chain");
-                            }
-                            myDiceTake[diceIdx + i] = curClickSkill;
-                        }
-                        
-                        mySkillUsed[characterIdx, skillIdx] = true;
-                    }
-                    else //불가능한 경우
-                    {
-                        StartCoroutine(makeBright(skillSelectUI[characterIdx * 2 + skillIdx], 0.0f));
-                        Debug.Log("It can't! - wrong Dice Problem");
-                    }
-                }     
-                
-
-                
                 curClickSkill = -1;
             }
             //주사위에 할당된 스킬도 클릭된 스킬도 없다면 아무것도 하지 않는다.
         }
     }
-
+    
     //phase넘어가기
     public void moveToBattlePhase()
     {
@@ -733,15 +1027,14 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < clickCharacter.Length; i++) { //모든 클릭된 캐릭터 초기화
             clickCharacter[i] = -999;
         }
-        //지금 고민중인거는 죽은 캐릭터 위치 클릭가능하게 하나? -> 일단 null일때 조건문 없애놈
-
+        //지금 고민중인거는 죽은 캐릭터 위치 클릭가능하게 하나? -> 일단 null일때 조건문 없애놈 -> 근데 아닌거 같아서 걍 null일때 안생기게 해둠
         if (clickAbleTeam != 2) {//아군 선택만 가능한 경우
             for (int i = 0; i < 4; i++)
             {
-                //if (myCharacter[i] != null && myCharacter[i].getCurState() != 2) {
+                if (myCharacter[i] != null && myCharacter[i].getCurState() != 2) {
                     battleTargetUI[i].SetActive(true);
                     characterClickAble[i] = true;
-                //}
+                }
             }
         }
         else if (clickAbleTeam != 1) {//적군 선택만 가능한 경우
@@ -781,7 +1074,7 @@ public class BattleManager : MonoBehaviour
             characterClickAble[characterIdxInput] = false;  //누를수 없게 변경
         }
     }
-    //적군의 clickArray를 자동으로 만들어준다.
+    //적군의 clickArray를 자동으로 만들어준다. (아직 테스트 안해봄)
     private void makeEnemyClick(int clickEnemyNum, int clickAbleTeam)
     {
         for (int i = 0; i < clickCharacter.Length; i++)
@@ -801,7 +1094,7 @@ public class BattleManager : MonoBehaviour
             }
             for (int i = 0; i < clickEnemyNum; i++)
             {
-                int temp = enemy_target_auto_random(1) + 4 ;
+                int temp = enemy_target_auto_random(1);
                 clickCharacter[i] = temp;
                 characterClickAble[temp] = false;
             }
@@ -879,13 +1172,13 @@ public class BattleManager : MonoBehaviour
         {
             int characterNum = 0;
             int targetNum = 0;
-            for (int i = 0; i < 4; i++)
+            for (int i = 4; i < 8; i++)
             {
                 if (characterClickAble[i]) characterNum++;
             }
             targetNum = Random.Range(0, characterNum);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 4; i < 8; i++)
             {
                 if (characterClickAble[i])
                 {
@@ -963,6 +1256,50 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void battleAnimationControl(int characterIdx, int option)
+    {
+        //option은 변화시킬 대상에 대한 정보
+        //0 : empty(아마 원복에 쓸듯해서 방치)
+        //1 : hit damage()
+        //2 : dead (아직 미사용)
+        if(characterIdx < 4)
+        {
+            if (option == 1) myCharacterObjUIAnim[characterIdx].Play("Hit");
+            else if(option == 2) myCharacterObjUIAnim[characterIdx].Play("Dead");
+        }
+        else
+        {
+            characterIdx -= 4;
+            if (option == 1) enemyCharacterObjUIAnim[characterIdx].Play("Hit");
+            else if (option == 2) enemyCharacterObjUIAnim[characterIdx].Play("Dead");
+        }
+    }
+
+    private void DeadCharacterUpdate(int idx) //캐릭터가 죽을 경우(getcurstate가 2를 반환시) 작동한다. 
+    {
+        if (idx < 4)
+        {
+            for (int i=0;i<4;i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
+            {
+                if(myDiceTake[i] / 10 == idx)
+                {
+                    myDiceTake[i] = -999;
+                    mySkillUsed[myDiceTake[i] / 10, myDiceTake[i] % 10] = false;
+                } 
+            }
+            int diceNum = myDiceNum[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+            for (int i=0;i<4;i++) 
+            {
+                if (myDiceTake[i] == diceNum) myDiceTake[i] = -999;
+            }
+            
+            myDiceNum[idx] = -999;
+            myDice[idx] = null;
+            myDiceNum[idx] = -999;
+
+            updateEnemyDiceUI();
+        }
+    }
     private IEnumerator BattlePhase_Coroutine()
     {
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
@@ -1014,10 +1351,13 @@ public class BattleManager : MonoBehaviour
                             if ( tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
                                 myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                battleAnimationControl(tempTargetIdx, 1);
+                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
                                 enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                battleAnimationControl(tempTargetIdx, 1);
                             }
                         }
 
@@ -1061,6 +1401,7 @@ public class BattleManager : MonoBehaviour
                     { // 해당 스킬이 공격하는 숫자
 
                         makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
+                        
 
                         //스킬에 대한 공격용 Packet 생성
                         makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
@@ -1075,10 +1416,12 @@ public class BattleManager : MonoBehaviour
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
                                 myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                battleAnimationControl(tempTargetIdx, 1);
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
                                 enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                battleAnimationControl(tempTargetIdx, 1);
                             }
                         }
 
@@ -1191,6 +1534,8 @@ public class BattleManager : MonoBehaviour
         {
             myCharacterObjUI[i] = GameObject.Find("obj_myCharacter_" + i.ToString());
             enemyCharacterObjUI[i] = GameObject.Find("obj_enemyCharacter_" + i.ToString());
+            myCharacterObjUIAnim[i] = myCharacterObjUI[i].GetComponent<Animator>();
+            enemyCharacterObjUIAnim[i] = enemyCharacterObjUI[i].GetComponent<Animator>();
         }
 
         for (int i=0;i<3;i++)
@@ -1422,8 +1767,8 @@ public class BattleManager : MonoBehaviour
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         //플레이를 위한 장치
         CharacterManager.Instance.setCharacter(0, 0);
-        CharacterManager.Instance.setCharacter(1, 0);
-        CharacterManager.Instance.setCharacter(2, 1);
+        //CharacterManager.Instance.setCharacter(1, 0);
+        CharacterManager.Instance.setCharacter(3, 0);
 
         CharacterManager.Instance.setCharacter(0, 10001);
         CharacterManager.Instance.setCharacter(1, 10001);
@@ -1466,6 +1811,7 @@ public class BattleManager : MonoBehaviour
         witchPowerObj[1].SetActive(false);
         witchPowerObj[2].SetActive(false);
 
+        InitSetOfEnemySkill();
 
         firstAttackTeam = Random.Range(1, 3);
         Debug.Log("StartPhase : firstAttackTeam is " + firstAttackTeam.ToString());
