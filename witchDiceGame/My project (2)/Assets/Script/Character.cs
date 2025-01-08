@@ -30,7 +30,8 @@ public abstract class Character
             this.maxHp = destiny.maxHp;
             this.hp = maxHp;
 
-            skillIdx[0] = 0; skillIdx[1] = 1;
+            skillIdx[0] = destiny.getSkillIdx(0); 
+            skillIdx[1] = destiny.getSkillIdx(1);
         }
     }
 
@@ -58,7 +59,7 @@ public abstract class Character
 
     public abstract List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
 
-    public void TakeSkillPacket(TakeSkillPacket takeSkillPacket)
+    public bool TakeSkillPacket(TakeSkillPacket takeSkillPacket)
     {
         this.hp -= takeSkillPacket.getDamage();
         Debug.Log("this damage is : " + takeSkillPacket.getDamage());
@@ -68,7 +69,9 @@ public abstract class Character
         {
             this.hp = 0;
             this.curState = 2;
+            return true;
         }
+        return false;
     }
 
     public int getPhyAtk(){ return phyAtk; }

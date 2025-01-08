@@ -27,13 +27,14 @@ public class Slime : Character
             packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
         }*/
         TakeSkillPacket takeSkillPacket;
-        if (this.destiny.getDestinyIdx() == 0)
+        Debug.Log("slime attack " + sendSkillPacket.targetIdx[0].ToString());
+        if (sendSkillPacket.useSkillIdx == 0) //슬라임의 첫번째 스킬이 호출된 경우
         {
-            if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
-            {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
-            }
+            Debug.Log("Yes, Iam add!");
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
         }
+
+
         return packets;
     }
 }

@@ -10,6 +10,7 @@ public class Destiny
     //int[] needDiceArr = new int[10];
 
     public Skill[] skillArr = new Skill[10];
+    private int[] skillIdx = new int[10];
     //1-6 일반 값. 7 홀수 8 짝수 9 아무 값이나
     //private int[,] needDice = new int[10,4];
 
@@ -28,6 +29,7 @@ public class Destiny
         for (int i=0;i<10;i++)
         {
             this.skillArr[i] = new Skill(skillSet[i]);
+            this.skillIdx[i] = this.skillArr[i].getSkillIdx();
         }
         //diceToArr();
     }
@@ -46,5 +48,9 @@ public class Destiny
     public string getName()
     {
         return this.Name;
+    }
+    public int getSkillIdx(int idx)
+    {
+        return this.skillIdx[idx];
     }
 }

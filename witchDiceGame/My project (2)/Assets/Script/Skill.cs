@@ -141,6 +141,10 @@ public class Skill
     {
         return this.TargetTeam;
     }
+    public int getSkillIdx()
+    {
+        return SkillIdx;
+    }
 }
 
 

@@ -28,6 +28,7 @@ public class Goblin : Character
             packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
         }*/
         TakeSkillPacket takeSkillPacket;
+        Debug.Log("goblin attack " + sendSkillPacket.diceNum[0].ToString());
         if (this.destiny.getDestinyIdx() == 0)
         {
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬

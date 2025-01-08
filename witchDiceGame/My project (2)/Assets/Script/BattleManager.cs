@@ -1101,6 +1101,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (clickAbleTeam == 2)
         {//적군 선택만 가능한 경우
+            Debug.Log("slime attack only 1 person!");
             for (int i = 0; i < 4; i++)
             {
                 if (myCharacter[i] != null && myCharacter[i].getCurState() == 0) {
@@ -1283,20 +1284,55 @@ public class BattleManager : MonoBehaviour
             {
                 if(myDiceTake[i] / 10 == idx)
                 {
-                    myDiceTake[i] = -999;
                     mySkillUsed[myDiceTake[i] / 10, myDiceTake[i] % 10] = false;
+                    myDiceTake[i] = -999;
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 } 
             }
-            int diceNum = myDiceNum[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+            int diceNumTemp = myDiceNum[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
             for (int i=0;i<4;i++) 
             {
-                if (myDiceTake[i] == diceNum) myDiceTake[i] = -999;
+                if (myDiceTake[i] == diceNumTemp) {
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                    myDiceTake[i] = -999; 
+                }
             }
             
             myDiceNum[idx] = -999;
             myDice[idx] = null;
-            myDiceNum[idx] = -999;
 
+            updateMyDiceUI();
+        }
+        else
+        {
+            idx -= 4;
+            for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
+            {
+                if (enemyDiceTake[i] / 10 == idx)
+                {
+                    enemySkillUsed[enemyDiceTake[i] / 10, enemyDiceTake[i] % 10] = false;
+                    enemyDiceTake[i] = -999;
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                }
+            }
+
+            int diceNumTemp = enemyDiceNum[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+            for (int i = 0; i < 4; i++)
+            {
+                if (enemyDiceTake[i] == diceNumTemp)
+                {
+                    enemyDiceTake[i] = -999;
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                }
+            }
+
+            enemyDiceNum[idx] = -999;
+            enemyDice[idx] = null;
+
+            enemySkill[idx] = null;     //적군 스킬 attackset시 포함 안되도록 설정
+            enemySkill[idx + 4] = null;
+            enemySkillDiceNum[idx] = -999;
+            enemySkillDiceNum[idx + 4] = -999;
             updateEnemyDiceUI();
         }
     }
@@ -1348,16 +1384,29 @@ public class BattleManager : MonoBehaviour
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
-                            if ( tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
+                            if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-                                myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                battleAnimationControl(tempTargetIdx, 1);
-                                
+                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                {
+                                    battleAnimationControl(tempTargetIdx, 2);
+                                    DeadCharacterUpdate(tempTargetIdx);
+                                }
+                                else
+                                {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    battleAnimationControl(tempTargetIdx, 1);
+                                }
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-                                enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                battleAnimationControl(tempTargetIdx, 1);
+                                if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                {
+                                    battleAnimationControl(tempTargetIdx, 2);
+                                    DeadCharacterUpdate(tempTargetIdx);
+                                }
+                                else
+                                { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    battleAnimationControl(tempTargetIdx, 1);
+                                }
                             }
                         }
 
@@ -1378,7 +1427,7 @@ public class BattleManager : MonoBehaviour
                 if (enemyDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
                     nextSkill = enemyDiceTake[nextDice];
-                    Debug.Log("Enemy Skill Use : " + clickDice_battlePhase.ToString());
+                    Debug.Log("Enemy Skill Use : " + nextSkill.ToString());
                     for (int i = 0; i < 4; i++)
                     {
                         if (enemyDiceTake[i] == nextSkill)
@@ -1401,27 +1450,41 @@ public class BattleManager : MonoBehaviour
                     { // 해당 스킬이 공격하는 숫자
 
                         makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
-                        
 
                         //스킬에 대한 공격용 Packet 생성
                         makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
                         SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                        
+                        Debug.Log("it is only slime skill idx testLog : "+enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx).ToString());
+                        
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
 
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
+                            
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+                            Debug.Log("target is...! : " + tempTargetIdx.ToString());
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-                                myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                battleAnimationControl(tempTargetIdx, 1);
+                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                {
+                                    battleAnimationControl(tempTargetIdx, 2);
+                                    DeadCharacterUpdate(tempTargetIdx);
+                                }
+                                else { battleAnimationControl(tempTargetIdx, 1); }
+                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-                                enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                battleAnimationControl(tempTargetIdx, 1);
+                                if(enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                {
+                                    battleAnimationControl(tempTargetIdx, 2);
+                                    DeadCharacterUpdate(tempTargetIdx);
+                                }
+                                else { battleAnimationControl(tempTargetIdx, 1); }
+                                
                             }
                         }
 
