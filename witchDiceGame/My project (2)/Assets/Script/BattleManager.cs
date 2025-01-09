@@ -101,6 +101,40 @@ public class BattleManager : MonoBehaviour
     int[] enemySkillDiceNum = new int[8];
     int[,] enemySkillDiceVal = new int[8, 4];
 
+
+    //주사위 밑에 HP UI
+    private GameObject[] myHpUI = new GameObject[4];
+    private GameObject[] enemyHpUI = new GameObject[4];
+
+    private void updateHp()
+    {
+        for (int i=0;i<4;i++)
+        {
+            myHpUI[i].GetComponent<TextMeshPro>().text = "";
+            
+            
+            if (myCharacter[i] != null) {
+                myHpUI[i].GetComponent<TextMeshPro>().text = myCharacter[i].getHp().ToString();
+            }
+
+            if (enemyHpUI[i] != null)
+            {
+                enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
+                if (enemyCharacter[i] != null)
+                {
+                    enemyHpUI[i].GetComponent<TextMeshPro>().text = enemyCharacter[i].getHp().ToString();
+                }
+            }
+            else
+            {
+                Debug.Log(i.ToString() + " / wtf where is it?!");
+            }
+
+            
+            
+
+        }
+    }
     private void InitSetOfEnemySkill()
     {
 
@@ -420,6 +454,11 @@ public class BattleManager : MonoBehaviour
         int curSkillVal = -999;
         int startIdx = -999;
         int endIdx = -999;
+        for (int i = 4; i < 8; i++)
+        {
+            if (i < 7) diceUIChain[i-1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
         for (int i = 4; i < 8; i++)
         {
             if (enemyCharacter[i - 4] == null || enemyCharacter[i - 4].getCurState() != 0) continue;
@@ -1277,9 +1316,13 @@ public class BattleManager : MonoBehaviour
     }
 
     private void DeadCharacterUpdate(int idx) //캐릭터가 죽을 경우(getcurstate가 2를 반환시) 작동한다. 
+        //플레이어 죽음으로 맛있는데! 가 아니라 플레이어 받게 되면 애니메이션은 밖에서 해줌.
     {
         if (idx < 4)
         {
+            int diceNumTemp = myDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+
+
             for (int i=0;i<4;i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
             {
                 if(myDiceTake[i] / 10 == idx)
@@ -1289,7 +1332,7 @@ public class BattleManager : MonoBehaviour
                     myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 } 
             }
-            int diceNumTemp = myDiceNum[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+            
             for (int i=0;i<4;i++) 
             {
                 if (myDiceTake[i] == diceNumTemp) {
@@ -1306,9 +1349,11 @@ public class BattleManager : MonoBehaviour
         else
         {
             idx -= 4;
+            int diceNumTemp = enemyDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+
             for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
             {
-                if (enemyDiceTake[i] / 10 == idx)
+                if (enemyDiceTake[i] / 10 == idx )
                 {
                     enemySkillUsed[enemyDiceTake[i] / 10, enemyDiceTake[i] % 10] = false;
                     enemyDiceTake[i] = -999;
@@ -1316,7 +1361,7 @@ public class BattleManager : MonoBehaviour
                 }
             }
 
-            int diceNumTemp = enemyDiceNum[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+            
             for (int i = 0; i < 4; i++)
             {
                 if (enemyDiceTake[i] == diceNumTemp)
@@ -1390,6 +1435,7 @@ public class BattleManager : MonoBehaviour
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
+                                    updateMyDiceUI();
                                 }
                                 else
                                 {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
@@ -1402,12 +1448,15 @@ public class BattleManager : MonoBehaviour
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
+                                    updateEnemyDiceUI();
                                 }
                                 else
                                 { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                     battleAnimationControl(tempTargetIdx, 1);
                                 }
                             }
+                            updateHp();
+                            updateMyDiceUI();
                         }
 
                     }
@@ -1486,6 +1535,8 @@ public class BattleManager : MonoBehaviour
                                 else { battleAnimationControl(tempTargetIdx, 1); }
                                 
                             }
+                            updateHp();
+
                         }
 
                     }
@@ -1530,21 +1581,35 @@ public class BattleManager : MonoBehaviour
 
     // End Phase Start(phase 6 - check game finish)//
 
-    private IEnumerator EndPhase_Coroutine()
+    private int winningCheck()
     {
-        //아군 전멸
-        if((myCharacter[0] == null || myCharacter[0].getCurState() == 2) &&
+        if ((myCharacter[0] == null || myCharacter[0].getCurState() == 2) &&
             (myCharacter[1] == null || myCharacter[1].getCurState() == 2) &&
             (myCharacter[2] == null || myCharacter[2].getCurState() == 2) &&
             (myCharacter[3] == null || myCharacter[3].getCurState() == 2))
         {
-            Debug.Log("you lose!");
+            return 2;
         }
         //적군 전멸
         else if ((enemyCharacter[0] == null || enemyCharacter[0].getCurState() == 2) &&
             (enemyCharacter[1] == null || enemyCharacter[1].getCurState() == 2) &&
             (enemyCharacter[2] == null || enemyCharacter[2].getCurState() == 2) &&
             (enemyCharacter[3] == null || enemyCharacter[3].getCurState() == 2))
+        {
+            return 1;
+        }
+        return 0;
+    }
+    private IEnumerator EndPhase_Coroutine()
+    {
+        int result = winningCheck();
+        //아군 전멸
+        if(result == 2)
+        {
+            Debug.Log("you lose!");
+        }
+        //적군 전멸
+        else if (result == 1)
         {
             Debug.Log("you win!");
         }
@@ -1830,30 +1895,52 @@ public class BattleManager : MonoBehaviour
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         //플레이를 위한 장치
         CharacterManager.Instance.setCharacter(0, 0);
-        //CharacterManager.Instance.setCharacter(1, 0);
+        CharacterManager.Instance.setCharacter(1, 0);
+        CharacterManager.Instance.setCharacter(2, 0);
         CharacterManager.Instance.setCharacter(3, 0);
 
         CharacterManager.Instance.setCharacter(0, 10001);
         CharacterManager.Instance.setCharacter(1, 10001);
         CharacterManager.Instance.setCharacter(2, 10001);
 
+
         battleTimer = skillDo();
 
         DiceText = GameObject.Find("DiceCurText");
         //테스트를 위한 Character 세팅
 
+
+        enemyHpUI[0] = GameObject.Find("obj_enemyCharacterHp_0");
+
+        if (enemyHpUI[0] == null) Debug.Log("why? why aren't you come?");
+        enemyHpUI[1] = GameObject.Find("obj_enemyCharacterHp_1");
+        enemyHpUI[2] = GameObject.Find("obj_enemyCharacterHp_2");
+        enemyHpUI[3] = GameObject.Find("obj_enemyCharacterHp_3");
+
         //UI test
         for (int i = 0; i < 4; i++)
         {
+            //enemyHpUI[i] = GameObject.Find("obj_enemyCharacterHp_" + i.ToString());
             enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i);
-            if (enemyCharacter[i] != null) enemyDice[i] = new Dice();
+            if (enemyCharacter[i] != null)
+            {
+                
+                enemyDice[i] = new Dice();
+            }
             else enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            
         }
         for (int i = 0; i < 4; i++)
         {
+            myHpUI[i] = GameObject.Find("obj_myCharacterHp_" + i.ToString());
             myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
-            if (myCharacter[i] != null) myDice[i] = new Dice();
+            if (myCharacter[i] != null)
+            {
+                myDice[i] = new Dice();
+                
+            }
             else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            
         }
         for (int i = 0; i < 4; i++)
         {
@@ -1870,15 +1957,45 @@ public class BattleManager : MonoBehaviour
             battleTargetUI[i].SetActive(false);
         }
 
+        for (int i=0;i<4;i++)
+        {
+            
+            if (myCharacter[i] == null || myCharacter[i].getCurState() == 2)
+            {
+                //추후 null로 바꿀것
+                myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/Yongsa/animator_Yongsa");
+            }
+            else
+            {
+                string temp = myCharacter[i].getDestiny().getName();
+                myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+            }
+            
+            if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() == 2)
+            {
+                //추후 null로 바꿀것
+                enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/Yongsa/animator_Yongsa");
+            }
+            else
+            {
+                string temp = enemyCharacter[i].getDestiny().getName();
+                enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+            }
+            
+        }
+
+
         witchPowerObj[0].SetActive(false);
         witchPowerObj[1].SetActive(false);
         witchPowerObj[2].SetActive(false);
 
+        updateHp();
         InitSetOfEnemySkill();
 
         firstAttackTeam = Random.Range(1, 3);
         Debug.Log("StartPhase : firstAttackTeam is " + firstAttackTeam.ToString());
         curPhase = 1;
+        
     }
 
     
