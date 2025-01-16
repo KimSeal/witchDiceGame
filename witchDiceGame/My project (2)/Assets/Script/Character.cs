@@ -11,12 +11,13 @@ public abstract class Character
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] {0,1};
     protected Destiny destiny; //할당된 운명에 대한 클래스.
-
+    protected Dice dice;
     
     public Character(int curState, Destiny destiny)
     {
         this.destiny = destiny;
         this.curState = curState;
+        dice = new Dice(); //일단 디폴트로 둠 추후 캐릭터마다 다르게 만들어줄 필요가 있다.
         if (curState == 0 || curState == 2)
         {
             
@@ -39,6 +40,15 @@ public abstract class Character
     {
         return destiny.getNeedDice(skillIdx[skillNum]);
     } 
+
+    public void setDice(int diceIdx, int val)
+    {
+        this.dice.setCurDice(diceIdx, val);
+    }
+    public int getDice(int diceIdx)
+    {
+        return this.dice.getDiceNum(diceIdx);
+    }
 
     public Destiny getDestiny()
     {

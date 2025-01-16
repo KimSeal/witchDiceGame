@@ -17,7 +17,8 @@ public class Dice
     //
     // Start is called before the first frame update
 
-    public Dice() { }
+    public Dice() {
+    }
     public Dice(Dice dice)
     {
         this.dir = dice.dir;
@@ -48,6 +49,12 @@ public class Dice
         }
         return temp;
     }
+
+    public int getDiceNum(int idx)
+    {
+        return this.diceNum[idx];
+    }
+
     public void throwDice()
     {
         setCurDice(Random.Range(0, 6), Random.Range(0, 4));
@@ -60,5 +67,11 @@ public class Dice
     {
         this.diceNum[idx] = val;
     }
-
+    public void setNum_useItem(int idx, int itemIdx) //아이템 사용시. 지금은 index를 받아오는데 나중에는 item으로 바꿔도 괜찮을것 같다.
+    {
+        if(itemIdx == 1)
+        {
+            diceNum[idx] = itemIdx;
+        }
+    }
 }

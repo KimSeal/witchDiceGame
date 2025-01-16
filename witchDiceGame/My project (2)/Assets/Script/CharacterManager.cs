@@ -102,4 +102,15 @@ public class CharacterManager : MonoBehaviour
     {
         myCharacter[idx].setHp(hp);
     }
+
+    public void setDiceNum(int idx, int diceIdx, int val) //해당 캐릭터의 주사위 면의 숫자를 바꾸는 함수
+    {
+        myCharacter[idx].setDice(diceIdx, val);
+    }
+
+    public int getDiceNum(int idx, int diceIdx) //해당 캐릭터의 주사위 면의 숫자를 가져오는 함수
+    {
+        return myCharacter[idx].getDice(diceIdx);
+    }
+
 }
