@@ -70,6 +70,8 @@ public class CharacterManager : MonoBehaviour
         Debug.Log(destinyReaderList.Count);
         Debug.Log(destinyList.Count);
 
+        //캐릭터 테스트 0번에 용사 배치
+        setCharacter(0, 0);
         
     }
 
@@ -78,6 +80,12 @@ public class CharacterManager : MonoBehaviour
     {
 
     }
+
+    public void changeDice(int characterIdx, int diceIdx, int diceNum)
+    {
+        myCharacter[characterIdx].changeDiceNum(diceIdx, diceNum);
+    }
+
     //살아있는 캐릭터 배치
     public void setCharacter(int place, int characterIdx)
     {

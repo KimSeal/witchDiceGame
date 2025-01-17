@@ -50,6 +50,12 @@ public abstract class Character
         return this.dice.getDiceNum(diceIdx);
     }
 
+
+    public void changeDiceNum(int idx, int val)
+    {
+        this.dice.setNum(idx, val);
+    }
+
     public Destiny getDestiny()
     {
         return destiny;

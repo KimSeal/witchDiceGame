@@ -49,6 +49,13 @@ public class DestinyReader
     public int skill9;
 }
 
+public class ItemReader
+{
+    public int idx;
+    public int type;
+    public string itemName;
+    public string content;
+}
 public class CSVReader
 {
     //static string SPLIT_RE = @",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))";
@@ -59,15 +66,20 @@ public class CSVReader
     {
         List<T> list = new List<T>();
         TextAsset data = Resources.Load(file) as TextAsset;
-        Debug.Log(data.text);
+        
         //byte[] byteData = File.ReadAllBytes(Application.dataPath + "/" + file + ".csv");
 
 
         string[] lines = Regex.Split(data.text, LINE_SPLIT_RE);
         //string[] lines = data.text.Split("\r\n");
-        Debug.Log("Test : "+ lines[0]);
+
         //if (lines.Length <= 1) return list;
+
+        /* test DebugLog)
+        Debug.Log(data.text);
+        Debug.Log("Test : " + lines[0]);
         Debug.Log("this line Num is " + lines.Length);
+        */
 
         string[] header = lines[0].Split(",");
         for (int i = 1; i < lines.Length; i++)
@@ -89,7 +101,7 @@ public class CSVReader
             //Debug.Log(i + " : " + entry);
             list.Add(entry);
         }
-        Debug.Log("CSV Reader : " + list.Count.ToString());
+        //Debug.Log("CSV Reader : " + list.Count.ToString());
         return list;
     }
 
