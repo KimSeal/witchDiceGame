@@ -65,11 +65,12 @@ public class itemManager : MonoBehaviour
 
     private GameObject[] diceBoardButton = new GameObject[6]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object
 
-    private int characterSelectIdx = 0;//현재 선택된 캐릭터의 idx
+    
 
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
 
+    private int characterSelectIdx = 0;//현재 선택된 캐릭터의 idx
     private int curSelectCharacterInfoType = 0; //현재 선택한 캐릭터 정보 창 종류
 
     public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우
@@ -96,7 +97,10 @@ public class itemManager : MonoBehaviour
         } 
         
     }
-
+    public void click_selectCharacter(int idx)
+    {
+        characterSelectIdx = idx;// 이거 character있는지 없는지 확인해야함. + info도 수정해줘야함.
+    }
 
     public void click_itemType_selectButton(int idx) // 중단부 아이템 종류 선택 버튼 클릭하는 경우
     {
