@@ -55,14 +55,14 @@ public class itemManager : MonoBehaviour
     public List<Item>[] itemList = new List<Item>[5];
     public List<ItemReader> itemReaderList = new List<ItemReader>();
 
-    private Item[,] ItemArr = new Item[5,12];
-    private bool[,] ItemExistArr = new bool[5, 12];
+    private Item[,] ItemArr = new Item[5,11];
+    private bool[,] ItemExistArr = new bool[5, 11];
 
     private GameObject[] characterBoardState = new GameObject[4]; //캐릭터 보드의 선택버튼에 대한 object
     private GameObject[] itemBoardState = new GameObject[5]; //item 보드 선택버튼에 대한 object
 
     private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
-    private GameObject[] inventoryUIArr = new GameObject[12]; // 하단부 인벤토리에 대한 오브젝트 모음
+    private GameObject[] inventoryUIArr = new GameObject[11]; // 하단부 인벤토리에 대한 오브젝트 모음
 
     private GameObject[] infoBoardObj = new GameObject[5]; //이미지, 제목, 서브 설명, hp수치, mp 수치
     private GameObject[] diceBoardObj = new GameObject[7]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object
@@ -103,6 +103,16 @@ public class itemManager : MonoBehaviour
         } 
         
     }
+
+    public void click_item_trash()
+    {
+        if(curSelectItemIndex != -1)
+        {
+            //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
+            useItem();
+        }
+    }
+
     public void click_selectCharacter(int idx) //캐릭터 선택
     {
         if(CharacterManager.Instance.getCharacterState(idx) == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
@@ -124,7 +134,7 @@ public class itemManager : MonoBehaviour
         {
             curSelectItemIndex = -1; //택한 아이템 초기화
             curSelectItemType = idx; //타입 변경   
-            for (int i=0;i < 12;i++)
+            for (int i=0;i < 11;i++)
             {
                 changeAlpha(inventoryUIArr[i], 0.0f);
             }
@@ -207,10 +217,7 @@ public class itemManager : MonoBehaviour
             diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + ItemArr[1, curSelectItemIndex].getVal1().ToString());
 
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
-            changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-            inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
-            curSelectItemIndex = -1;
+            useItem();
 
         }
     }
@@ -227,12 +234,18 @@ public class itemManager : MonoBehaviour
             equipBoardObj[idx * 3 + 2].GetComponent<TextMeshPro>().text = ItemArr[2, curSelectItemIndex].getContent();
 
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
-            changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-            inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
-            curSelectItemIndex = -1;
+            useItem();
 
         }
+    }
+
+    private void useItem()
+    {
+        changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+        inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        ItemArr[curSelectItemType, curSelectItemIndex] = null;
+        ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
+        curSelectItemIndex = -1;
     }
 
     public Item getItem(int itemType, int itemIndex)
@@ -245,7 +258,7 @@ public class itemManager : MonoBehaviour
 
     private void updateInventory() //전체 inventory 업데이트
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 11; i++)
         {
             if (ItemExistArr[curSelectItemType, i]) //아이템이 있는 경우 해당 아이템으로 변경
             {
@@ -277,11 +290,11 @@ public class itemManager : MonoBehaviour
             }
         }
         characterBoard_update(0);
-        mainCamera.transform.position = new Vector3(-1000f,0f,-1f);
+        mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
     public void click_upgradeCanvas_end()
     {
-        mainCamera.transform.position = new Vector3(-500f, 0f, -1f);
+        mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
 
     GameObject mainCamera;
@@ -323,7 +336,7 @@ public class itemManager : MonoBehaviour
         CharacterUIArr[2] = GameObject.Find("obj_itemUI_characterBtn_2");
         CharacterUIArr[3] = GameObject.Find("obj_itemUI_characterBtn_3");
 
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 11; i++)
         {
             for(int j=0;j<5;j++) ItemExistArr[j, i] = false; //아이템 없다는 것을 초기화를 통해 배정
             inventoryUIArr[i] = GameObject.Find("obj_inventory_" + i.ToString()); //inventory 오브젝트 설정
