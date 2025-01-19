@@ -1,10 +1,13 @@
-idx,type,itemName,content
-0,1,Unknown Element,Random Number!
-1,1,One Light,Make 1!
-2,1,Two Flame,Make 2!
-3,1,Three Tears,Make 3!
-4,1,Four Leaves,Make 4!
-5,1,Five Jewel,Make 5!
-6,1,Darkness Six,Make 6!
-0,0,Blue Potion,Restore 10 Mana
-1,0,Red Potion,Restore 10 Hp
+idx,type,itemName,content,val1
+0,1,Unknown Element,Random Number!,0
+1,1,One Light,Make 1!,1
+2,1,Two Flame,Make 2!,2
+3,1,Three Tears,Make 3!,3
+4,1,Four Leaves,Make 4!,4
+5,1,Five Jewel,Make 5!,5
+6,1,Darkness Six,Make 6!,6
+0,0,Blue Potion,Restore 10 Mana,10
+1,0,Red Potion,Restore 10 Hp,10
+0,2,Empty,No item here!click here and equip new item.,0
+1,2,testShirt,Test T-shirt,0
+2,2,testSword,Test T-sword,0

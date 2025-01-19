@@ -6,8 +6,9 @@ public abstract class Character
 {
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
-    protected int level =0, exp = 0, phyAtk =0 , magAtk = 0, phyDef =0, magDef=0, 
-        hp =0, maxHp = 0, armor=0, item1=-1, item2=-1;
+    protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0,
+        hp = 0, maxHp = 0, armor = 0;
+    protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] {0,1};
     protected Destiny destiny; //할당된 운명에 대한 클래스.
@@ -20,7 +21,6 @@ public abstract class Character
         dice = new Dice(); //일단 디폴트로 둠 추후 캐릭터마다 다르게 만들어줄 필요가 있다.
         if (curState == 0 || curState == 2)
         {
-            
             this.level = 1;
             this.exp = 0;
 
@@ -33,6 +33,9 @@ public abstract class Character
 
             skillIdx[0] = destiny.getSkillIdx(0); 
             skillIdx[1] = destiny.getSkillIdx(1);
+
+            item[0] = new Item(itemManager.Instance.getItem(2, 0)); //빈 아이템을 넣어준다.
+            item[1] = new Item(itemManager.Instance.getItem(2, 0));
         }
     }
 
@@ -54,6 +57,15 @@ public abstract class Character
     public void changeDiceNum(int idx, int val)
     {
         this.dice.setNum(idx, val);
+    }
+
+    public void changeEquip(int itemNum,int itemType, int itemIdx)
+    {
+        item[itemNum] = new Item(itemManager.Instance.getItem(itemType, itemIdx));
+    }
+    public Item getItem(int idx)
+    {
+        return item[idx];
     }
 
     public Destiny getDestiny()

@@ -145,6 +145,10 @@ public class Skill
     {
         return SkillIdx;
     }
+    public string getCommand()
+    {
+        return this.Command;
+    }
 }
 
 

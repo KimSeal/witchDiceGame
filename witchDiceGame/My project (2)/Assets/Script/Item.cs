@@ -8,13 +8,15 @@ public class Item : MonoBehaviour
     private int type; // 0. consumable  1. dice   2. equip   3. passive   4.destiny 
     private string itemName;
     private string content;
+    private int val1;
 
-    public Item(int idx, int type, string itemName, string content)
+    public Item(int idx, int type, string itemName, string content, int val1)
     {
         this.type = type;
         this.idx = idx;
         this.itemName = itemName;
         this.content = content;
+        this.val1 = val1;
     }
     public Item(ItemReader itemReader)
     {
@@ -22,6 +24,7 @@ public class Item : MonoBehaviour
         this.type=itemReader.type;
         this.itemName = itemReader.itemName;
         this.content=itemReader.content;
+        this.val1 = itemReader.val1;
     }
 
     public Item(Item item)
@@ -30,6 +33,7 @@ public class Item : MonoBehaviour
         this.type = item.type;
         this.itemName = item.itemName;
         this.content = item.content;
+        this.val1 = item.val1;
     }
 
     public int getIdx()
@@ -47,6 +51,10 @@ public class Item : MonoBehaviour
     public string getContent()
     {
         return content;
+    }
+    public int getVal1()
+    {
+        return val1;
     }
 
     // Start is called before the first frame update

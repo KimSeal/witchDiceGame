@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class itemManager : MonoBehaviour
 {
 
@@ -61,11 +61,14 @@ public class itemManager : MonoBehaviour
     private GameObject[] characterBoardState = new GameObject[4]; //캐릭터 보드의 선택버튼에 대한 object
     private GameObject[] itemBoardState = new GameObject[5]; //item 보드 선택버튼에 대한 object
 
+    private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
     private GameObject[] inventoryUIArr = new GameObject[12]; // 하단부 인벤토리에 대한 오브젝트 모음
 
-    private GameObject[] diceBoardButton = new GameObject[6]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object
+    private GameObject[] infoBoardObj = new GameObject[5]; //이미지, 제목, 서브 설명, hp수치, mp 수치
+    private GameObject[] diceBoardObj = new GameObject[7]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object
+    private GameObject[,] skillBoardObj = new GameObject[2,7]; //스킬에 대한 이미지 처리를 위해 사용될 object 뒤줄은 메인이미지,제목,설명,필요주사위4개 순으로 index를 갖는다.
+    private GameObject[] equipBoardObj = new GameObject[6]; //취득 아이템에 대한 이미지 처리를 위해 사용될 object
 
-    
 
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
@@ -92,14 +95,26 @@ public class itemManager : MonoBehaviour
         }
         else //아이템이 없는 경우 해제
         {
-            changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+            if (curSelectItemIndex != -1)
+            {
+                changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+            }
             curSelectItemIndex = -1;
         } 
         
     }
-    public void click_selectCharacter(int idx)
+    public void click_selectCharacter(int idx) //캐릭터 선택
     {
-        characterSelectIdx = idx;// 이거 character있는지 없는지 확인해야함. + info도 수정해줘야함.
+        if(CharacterManager.Instance.getCharacterState(idx) == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
+        {
+            characterSelectIdx = idx;
+            click_characterInfoType_selectButton(curSelectCharacterInfoType);
+            for (int i=0;i<4;i++)
+            {
+                changeAlpha(CharacterUIArr[i], 0.7f);
+            }
+            changeAlpha(CharacterUIArr[idx], 0.0f);
+        }
     }
 
     public void click_itemType_selectButton(int idx) // 중단부 아이템 종류 선택 버튼 클릭하는 경우
@@ -122,18 +137,74 @@ public class itemManager : MonoBehaviour
         curSelectCharacterInfoType = idx;
         for (int i=0;i<4;i++)
         {
-            if(i == idx) characterBoardState[i].SetActive(true);
+            if (i == idx)
+            {
+                characterBoardState[i].SetActive(true);
+                characterBoard_update(idx);
+            }
             else characterBoardState[i].SetActive(false);
         }
     }
+    private void characterBoard_update(int idx) //board 변경시 업데이트를 하기 위한 함수. character board 변경이나 character idx가 변경될 경우 사용하게 된다.
+    {
+        if (idx == 0) //개인 정보
+        {
+            Character temp = CharacterManager.Instance.getCharacter(characterSelectIdx);
+            infoBoardObj[3].GetComponent<TextMeshPro>().text = temp.getHp().ToString() + "/" + temp.getMaxHp().ToString();
+            infoBoardObj[4].GetComponent<TextMeshPro>().text = temp.getHp().ToString() + "/" + temp.getMaxHp().ToString(); //이후 Mp로 수정할것
+        }
+        else if (idx == 1) // 주사위
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                diceBoardObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterSelectIdx, i).ToString());
+            }
+        }
+        else if (idx == 2) //skill
+        {
+            Skill temp;
+            for (int i=0;i<2;i++)
+            {
+                temp = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
+                if(Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName()) == null)
+                {
+                    skillBoardObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                }
+                else
+                {
+                    skillBoardObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName());
+                }
+                
+                skillBoardObj[i, 1].GetComponent<TextMeshPro>().text = temp.getSkillName();
+                skillBoardObj[i, 2].GetComponent<TextMeshPro>().text = temp.getCommand();
+                for (int j=0;j<4; j++)
+                {
+                    Debug.Log("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
+                    skillBoardObj[i, j + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
+                }
+            }
+        }
+        else if (idx == 3) // item(equip)
+        {
+            Item temp;
+            for (int i = 0; i < 2; i++)
+            {
+                temp = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
+                equipBoardObj[i*3 + 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + temp.getItemName());
+                equipBoardObj[i * 3 + 1].GetComponent<TextMeshPro>().text = temp.getItemName();
+                equipBoardObj[i * 3 + 2].GetComponent<TextMeshPro>().text = temp.getContent();
+            }
+        }
+    }
+
 
     public void click_dice_changeNum(int idx) //
-    {   //주의! 현재는 변경될 주사위 num에 대한 정보가 없어서 idx로 처리중이다. 추후 val 1이런거 추가하면 수정필요
+    {   //주사위 변수 값은 val1으로 변경했습니다
         if (curSelectItemType == 1 && curSelectItemIndex != -1) {
-            CharacterManager.Instance.changeDice(characterSelectIdx, idx, ItemArr[1,curSelectItemIndex].getIdx());
-            Debug.Log(diceBoardButton[idx] );
+            CharacterManager.Instance.changeDice(characterSelectIdx, idx, ItemArr[1,curSelectItemIndex].getVal1());
+            Debug.Log(diceBoardObj[idx]);
 
-            diceBoardButton[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + ItemArr[1, curSelectItemIndex].getIdx().ToString());
+            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + ItemArr[1, curSelectItemIndex].getVal1().ToString());
 
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
@@ -143,6 +214,32 @@ public class itemManager : MonoBehaviour
 
         }
     }
+
+    public void click_equip_changeNum(int idx) //
+    {   //주사위 변수 값은 val1으로 변경했습니다
+        if (curSelectItemType == 2 && curSelectItemIndex != -1)
+        {
+            Debug.Log("test Debug : " + curSelectItemIndex + "/" + ItemArr[2, curSelectItemIndex].getIdx());
+            CharacterManager.Instance.changeEquip(characterSelectIdx, idx, 2, ItemArr[2, curSelectItemIndex].getIdx());
+
+            equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, curSelectItemIndex].getItemName().ToString());
+            equipBoardObj[idx * 3 + 1].GetComponent<TextMeshPro>().text = ItemArr[2, curSelectItemIndex].getItemName();
+            equipBoardObj[idx * 3 + 2].GetComponent<TextMeshPro>().text = ItemArr[2, curSelectItemIndex].getContent();
+
+            //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
+            changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+            inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
+            curSelectItemIndex = -1;
+
+        }
+    }
+
+    public Item getItem(int itemType, int itemIndex)
+    {
+        return itemList[itemType][itemIndex];
+    }
+
 
     string [] typeArr = { "consume", "dice", "equip", "passive", "destiny"}; //item type string 
 
@@ -161,10 +258,37 @@ public class itemManager : MonoBehaviour
             }
         }
     }
+
+    public void click_upgradeCanvas_start()
+    {
+        //초반 캐릭터는 살아있는 친구로 선택하는 코드 나중에 넘어올떄마다 실행시킬수 있도록 코드
+        
+        for (int i = 0; i < 4; i++)
+        {
+            changeAlpha(CharacterUIArr[i], 0.7f);
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (CharacterManager.Instance.getCharacter(i).getCurState() == 0)
+            {
+                characterSelectIdx = i;
+                changeAlpha(CharacterUIArr[i], 0.0f);
+                break;
+            }
+        }
+        characterBoard_update(0);
+        mainCamera.transform.position = new Vector3(-1000f,0f,-1f);
+    }
+    public void click_upgradeCanvas_end()
+    {
+        mainCamera.transform.position = new Vector3(-500f, 0f, -1f);
+    }
+
+    GameObject mainCamera;
     // Start is called before the first frame update
     void Start()
     {
-
+        mainCamera = GameObject.Find("Main Camera");
         curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
         curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
         curSelectCharacterInfoType = 0;
@@ -186,7 +310,18 @@ public class itemManager : MonoBehaviour
         characterBoardState[1] = GameObject.Find("itemUI_board_diceBoard");
         characterBoardState[2] = GameObject.Find("itemUI_board_skillBoard");
         characterBoardState[3] = GameObject.Find("itemUI_board_itemBoard");
-        //itemBoardState[0]
+
+        //캐릭터 정보 칸을 위한 object 받기
+        infoBoardObj[0] = GameObject.Find("board_info_characterImage");
+        infoBoardObj[1] = GameObject.Find("board_info_characterName");
+        infoBoardObj[2] = GameObject.Find("board_info_subExp");
+        infoBoardObj[3] = GameObject.Find("board_info_HPVal");
+        infoBoardObj[4] = GameObject.Find("board_info_MPVal");
+
+        CharacterUIArr[0] = GameObject.Find("obj_itemUI_characterBtn_0");
+        CharacterUIArr[1] = GameObject.Find("obj_itemUI_characterBtn_1");
+        CharacterUIArr[2] = GameObject.Find("obj_itemUI_characterBtn_2");
+        CharacterUIArr[3] = GameObject.Find("obj_itemUI_characterBtn_3");
 
         for (int i = 0; i < 12; i++)
         {
@@ -195,14 +330,35 @@ public class itemManager : MonoBehaviour
         }
         for (int i = 0; i < 6; i++)
         {
-            diceBoardButton[i] = GameObject.Find("itemUI_board_diceBoard_diceBtn_" + i.ToString()); //inventory 오브젝트 설정
+            diceBoardObj[i] = GameObject.Find("itemUI_board_diceBoard_diceBtn_" + i.ToString()); //inventory 오브젝트 설정
         }
+        diceBoardObj[6] = GameObject.Find("itemUI_board_diceInfo");
+
+
+
+        for (int i=0;i<2;i++)
+        {
+            skillBoardObj[i,0] = GameObject.Find("board_skill_skillImage_" + i.ToString());
+            skillBoardObj[i,1] = GameObject.Find("board_skill_skillTitle_" + i.ToString());
+            skillBoardObj[i,2] = GameObject.Find("board_skill_skillInfo_" + i.ToString());
+            for (int j=0;j<4;j++) {
+                skillBoardObj[i, j+3] = GameObject.Find("board_skill_needDice_" + i.ToString() + "_" + j.ToString());
+            }
+            
+            equipBoardObj[0 + i * 3] = GameObject.Find("board_equip_equipImage_" + i.ToString());
+            equipBoardObj[1 + i * 3] = GameObject.Find("board_equip_equipTitle_" + i.ToString());
+            equipBoardObj[2 + i * 3] = GameObject.Find("board_equip_equipInfo_" + i.ToString());
+        }
+
         for (int i = 1; i < 4; i++)
         {
             characterBoardState[i].SetActive(false);
+
         }
 
         
+        
+
 
         //test Sample
         for (int i=0;i<7;i++) {
@@ -213,6 +369,11 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 0] = new Item(itemList[0][0]);
         ItemExistArr[0, 1] = true;
         ItemArr[0, 1] = new Item(itemList[0][1]);
+
+        ItemExistArr[2, 0] = true;
+        ItemArr[2, 0] = new Item(itemList[2][1]);
+        ItemExistArr[2, 1] = true;
+        ItemArr[2, 1] = new Item(itemList[2][2]);
 
         updateInventory();
     }

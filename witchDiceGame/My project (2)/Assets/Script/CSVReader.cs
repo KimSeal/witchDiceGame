@@ -55,6 +55,7 @@ public class ItemReader
     public int type;
     public string itemName;
     public string content;
+    public int val1;
 }
 public class CSVReader
 {

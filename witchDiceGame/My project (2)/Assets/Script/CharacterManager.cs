@@ -72,7 +72,7 @@ public class CharacterManager : MonoBehaviour
 
         //캐릭터 테스트 0번에 용사 배치
         setCharacter(0, 0);
-        
+        setCharacter(1, 0);
     }
 
     // Update is called once per frame
@@ -81,10 +81,22 @@ public class CharacterManager : MonoBehaviour
 
     }
 
+    public int getCharacterState(int idx)
+    {
+        if (myCharacter[idx] == null) {
+            return 3; 
+        }
+        return myCharacter[idx].getCurState();
+    }
     public void changeDice(int characterIdx, int diceIdx, int diceNum)
     {
         myCharacter[characterIdx].changeDiceNum(diceIdx, diceNum);
     }
+    public void changeEquip(int characterIdx, int itemNum, int itemType, int itemIdx)
+    {
+        myCharacter[characterIdx].changeEquip(itemNum, itemType, itemIdx);
+    }
+
 
     //살아있는 캐릭터 배치
     public void setCharacter(int place, int characterIdx)
@@ -101,6 +113,11 @@ public class CharacterManager : MonoBehaviour
             else if (characterIdx == 2) enemyCharacter[place] = new Goblin(0, destinyList_monster[characterIdx]);
         }
     }
+    public Character getCharacter(int idx)
+    {
+        return myCharacter[idx];
+    }
+
     public Character getCharacter(bool myTeam, int idx)
     {
         if(myTeam) return myCharacter[idx];
@@ -119,6 +136,14 @@ public class CharacterManager : MonoBehaviour
     public int getDiceNum(int idx, int diceIdx) //해당 캐릭터의 주사위 면의 숫자를 가져오는 함수
     {
         return myCharacter[idx].getDice(diceIdx);
+    }
+    public Item getCharacterItem(int characterIdx, int itemIdx)
+    {
+        return myCharacter[characterIdx].getItem(itemIdx);
+    }
+    public Skill getCharacterSkill(int characterIdx, int skillIdx)
+    {
+        return myCharacter[characterIdx].skillUse(skillIdx);
     }
 
 }
