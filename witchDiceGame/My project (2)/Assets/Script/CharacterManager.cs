@@ -92,6 +92,12 @@ public class CharacterManager : MonoBehaviour
     {
         myCharacter[characterIdx].changeDiceNum(diceIdx, diceNum);
     }
+
+    public void throwDice(int characterIdx)
+    {
+        myCharacter[characterIdx].throwDice();
+    }
+
     public void changeEquip(int characterIdx, int itemNum, int itemType, int itemIdx)
     {
         myCharacter[characterIdx].changeEquip(itemNum, itemType, itemIdx);
@@ -131,6 +137,15 @@ public class CharacterManager : MonoBehaviour
     public void setDiceNum(int idx, int diceIdx, int val) //해당 캐릭터의 주사위 면의 숫자를 바꾸는 함수
     {
         myCharacter[idx].setDice(diceIdx, val);
+    }
+
+    public int getDiceNum(int idx) //해당 캐릭터의 주사위 면의 숫자를 가져오는 함수
+    {
+        return myCharacter[idx].getDice();
+    }
+    public int getDiceDir(int idx) //해당 캐릭터의 주사위의 각도를 가져오는 함수
+    {
+        return myCharacter[idx].getDiceDir();
     }
 
     public int getDiceNum(int idx, int diceIdx) //해당 캐릭터의 주사위 면의 숫자를 가져오는 함수

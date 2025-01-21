@@ -39,6 +39,10 @@ public abstract class Character
         }
     }
 
+    public int throwDice()
+    {
+        return this.dice.throwDice();
+    }
     public int needDice(int skillNum)
     {
         return destiny.getNeedDice(skillIdx[skillNum]);
@@ -51,6 +55,14 @@ public abstract class Character
     public int getDice(int diceIdx)
     {
         return this.dice.getDiceNum(diceIdx);
+    }
+    public int getDice()
+    {
+        return this.dice.getNum();
+    }
+    public int getDiceDir()
+    {
+        return this.dice.getDir();
     }
 
 

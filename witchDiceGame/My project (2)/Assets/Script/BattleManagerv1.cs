@@ -206,7 +206,7 @@ public class BattleManager0 : MonoBehaviour
             }
             Debug.Log("Enemy Team Win!");
             curPhase++;
-            AdventureManager.Instance.adventureFadeClick();
+            //AdventureManager.Instance.adventureFadeClick();
             
             clearBattle();
             return;
@@ -219,8 +219,8 @@ public class BattleManager0 : MonoBehaviour
                 else CharacterManager.Instance.setcharacterHp(i, myCharacter[i].getHp());
             }
             Debug.Log("Our Team Win!");
-            AdventureManager.Instance.stageClear();
-            AdventureManager.Instance.adventureFadeClick();
+            //AdventureManager.Instance.stageClear();
+            //AdventureManager.Instance.adventureFadeClick();
             
             curPhase++;
             clearBattle();

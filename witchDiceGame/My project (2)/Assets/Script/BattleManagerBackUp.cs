@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class BattleManager : MonoBehaviour
+public class BattleManagerBackUp : MonoBehaviour
 {
     [SerializeField]
     public Sprite[] diceSprite = new Sprite[6];
@@ -31,7 +31,7 @@ public class BattleManager : MonoBehaviour
 
 
     // Start is called before the first frame update
-    private static BattleManager instance = null;
+    private static BattleManagerBackUp instance = null;
 
     //아군/적군 캐릭터의 상태를 담는 배열
     private Character[] myCharacter = new Character[4];
@@ -60,6 +60,8 @@ public class BattleManager : MonoBehaviour
     public GameObject[] enemyDiceUI = new GameObject[4];
     public GameObject[] diceUIChk = new GameObject[8];
     private GameObject[] diceUIChain = new GameObject[6];
+
+    public GameObject DiceText;
 
     private GameObject characterUI;
     public GameObject diceFullUI;
@@ -127,9 +129,13 @@ public class BattleManager : MonoBehaviour
             {
                 Debug.Log(i.ToString() + " / wtf where is it?!");
             }
+
+            
+            
+
         }
     }
-    private void InitSetOfEnemySkill() //추후 적군 스킬 자동 발사를 위해 스킬을 미리 받아둔다.
+    private void InitSetOfEnemySkill()
     {
 
         for (int i=0;i<4;i++)
@@ -601,7 +607,7 @@ public class BattleManager : MonoBehaviour
                 myDice[i].throwDice();
                 myDiceNum[i] = myDice[i].getNum();
                 //임시 주사위 UI 변경
-                myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].getDir() * -90);
+                myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].dir * -90);
                 myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[i].curIdx];
             }
         }
@@ -614,7 +620,7 @@ public class BattleManager : MonoBehaviour
                 enemyDice[i].throwDice();
                 enemyDiceNum[i] = enemyDice[i].getNum();
 
-                enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
+                enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].dir * -90);
                 enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].curIdx];
             }
         }
@@ -739,36 +745,6 @@ public class BattleManager : MonoBehaviour
                 curPhase = 3;
             }
         }
-    }
-
-    public void turnDice(int input)
-    {
-        int idx = input / 10;
-        int dir = input % 10;
-        if (idx < 4)
-        {
-            if (myDice[idx] != null)
-            {
-                myDice[idx].turnDice(dir);
-                myDiceNum[idx] = myDice[idx].getNum();
-                myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
-                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
-            }
-        }
-        else
-        {
-            idx -= 4;
-            if (enemyDice[idx] != null)
-            {
-                enemyDice[idx].turnDice(dir);
-                enemyDiceNum[idx] = enemyDice[idx].getNum();
-                enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[idx].dir * -90);
-                enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[idx].getNum() - 1];
-            }
-        }
-        witchPowerClickState = -1;
-        Debug.Log("Turn Dice Here!");
-
     }
 
     //마녀 좌우 선택 UI 천천히 제거
@@ -1663,7 +1639,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public static BattleManager Instance
+    public static BattleManagerBackUp Instance
     {
         get
         {
@@ -1708,14 +1684,7 @@ public class BattleManager : MonoBehaviour
         backGroundObj[2] = GameObject.Find("obj_backGround_backGround");
         backGroundObj[3] = GameObject.Find("obj_backGround_witch_skillSelect");
 
-        // Hp 관련 UI, targeting을 위한 object find 
-        for (int i = 0; i < 4; i++)
-        {
-            enemyHpUI[i] = GameObject.Find("obj_enemyCharacterHp_" + i.ToString());
-            myHpUI[i] = GameObject.Find("obj_myCharacterHp_" + i.ToString());
-            battleTargetUI[i] = GameObject.Find("obj_battleTarget_" + i.ToString());
-            battleTargetUI[i + 4] = GameObject.Find("obj_battleTarget_" + (i + 4).ToString());
-        }
+        
 
         curPhase = 0;
 
@@ -1724,12 +1693,11 @@ public class BattleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    public void startBattle_fromAdventure()
-    {
-        StartCoroutine(phase_Manage_Coroutine());
+        DiceText.GetComponent<TextMeshProUGUI>().text = curPhase.ToString();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(phase_Manage_Coroutine());
+        }
     }
 
     private IEnumerator makeDark(GameObject gameobj, float alphaVal)
@@ -1768,7 +1736,138 @@ public class BattleManager : MonoBehaviour
         }
     }
     /*
-   
+    void makeCharacterObj(int chrIdx)
+    {
+        if (myCharacter[chrIdx] != null && myCharacter[chrIdx].getCurState() == 0) {
+            GameObject.Find("obj_character_my_" + chrIdx.ToString()).GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/man_0");
+            GameObject.Find("obj_character_my_" + chrIdx.ToString()).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                   myCharacter[chrIdx].getDestiny().Name + "\n"
+                   + myCharacter[chrIdx].getHp().ToString() + " / " + myCharacter[chrIdx].getMaxHp().ToString() + "\n";
+        }
+        else
+        {
+            GameObject.Find("obj_character_my_" + chrIdx.ToString()).GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            GameObject.Find("obj_character_my_" + chrIdx.ToString()).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                   " ";
+        }
+        if (enemyCharacter[chrIdx] != null && enemyCharacter[chrIdx].getCurState() == 0)
+        {
+            GameObject.Find("obj_character_enemy_" + chrIdx.ToString()).GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/slime_0");
+            GameObject.Find("obj_character_enemy_" + chrIdx.ToString()).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                   enemyCharacter[chrIdx].getDestiny().Name + "\n"
+                   + enemyCharacter[chrIdx].getHp().ToString() + " / " + enemyCharacter[chrIdx].getMaxHp().ToString() + "\n";
+        }
+        else
+        {
+            GameObject.Find("obj_character_enemy_" + chrIdx.ToString()).GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            GameObject.Find("obj_character_enemy_" + chrIdx.ToString()).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                   " ";
+        }
+    }
+    //UI 테스트
+    void makeBtnText(int hello)
+    {
+        if (myCharacter[hello] != null)
+        {
+            GameObject.Find("Button_my_" + hello.ToString() + "0").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                myCharacter[hello].skillUse(0).SkillName + " : " + myCharacter[hello].needDice(0).ToString();
+            GameObject.Find("Button_my_" + hello.ToString() + "1").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                 myCharacter[hello].skillUse(1).SkillName + " : " + myCharacter[hello].needDice(1).ToString();
+        }
+        else
+        {
+            GameObject.Find("Button_my_" + hello.ToString() + "0").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "no Hero Here!";
+            GameObject.Find("Button_my_" + hello.ToString() + "1").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "no Hero Here!";
+        }
+
+        if (enemyCharacter[hello] != null)
+        {
+            GameObject.Find("Button_enemy_" + hello.ToString() + "0").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                enemyCharacter[hello].skillUse(0).SkillName + " : " + enemyCharacter[hello].needDice(0).ToString();
+            GameObject.Find("Button_enemy_" + hello.ToString() + "1").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                 enemyCharacter[hello].skillUse(1).SkillName + " : " + enemyCharacter[hello].needDice(1).ToString();
+        }
+        else
+        {
+            GameObject.Find("Button_enemy_" + hello.ToString() + "0").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "no Enemy Here!";
+            GameObject.Find("Button_enemy_" + hello.ToString() + "1").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "no Enemy Here!";
+        }
+    }
+
+    
+    public void debugDice()
+    {
+        string outputString = "";
+        for (int i = 0; i < 4; i += 2)
+        {
+            outputString += i.ToString() + "th dice's state is " + myDiceTake[i].ToString() + " ";
+            outputString += (i + 1).ToString() + "th dice's state is " + myDiceTake[i + 1].ToString() + "\n";
+        }
+        Debug.Log(outputString);
+    }
+
+    public void moveToNextPhase()
+    {
+        if (!clickAble) return;
+
+        curPhase++;
+        if (curPhase == 0) { Start_Battle_Phase(); }
+        else if (curPhase == 1) { Dice_Throw_Phase(); }
+        else if (curPhase == 2) { Dice_Fix_Phase(); }
+        else if (curPhase == 3) { Skill_Select_Phase(); }
+        else if (curPhase == 4) { Battle_Phase(); }
+        else if (curPhase == 5)
+        { // 추후 End Phase추가 필요
+            End_Phase();
+        }
+    }
+
+    public void End_Phase()
+    {
+
+        if (myCharacter[0] == null && myCharacter[1] == null && myCharacter[2] == null && myCharacter[3] == null)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                CharacterManager.Instance.setcharacterHp(i, 0);
+            }
+            Debug.Log("Enemy Team Win!");
+            curPhase++;
+            //AdventureManager.Instance.adventureFadeClick();
+            
+            clearBattle();
+            return;
+        }
+        if (enemyCharacter[0] == null && enemyCharacter[1] == null && enemyCharacter[2] == null && enemyCharacter[3] == null)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if(myCharacter[i] == null) CharacterManager.Instance.setcharacterHp(i, 0);
+                else CharacterManager.Instance.setcharacterHp(i, myCharacter[i].getHp());
+            }
+            Debug.Log("Our Team Win!");
+            //AdventureManager.Instance.stageClear();
+            //AdventureManager.Instance.adventureFadeClick();
+            
+            curPhase++;
+            clearBattle();
+            return;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                mySkillUsed[i, j] = false;
+                enemySkillUsed[i, j] = false;
+            }
+        }
+        curPhase = 1;
+        Dice_Throw_Phase();
+        firstAttackTeam = (firstAttackTeam == 1) ? 2 : 1;
+        Debug.Log("End Phase : firstAttackTeam is " + firstAttackTeam.ToString());
+    }
+
 
     private void clearBattle()
     {
@@ -1792,6 +1891,7 @@ public class BattleManager : MonoBehaviour
     private GameObject[] battleTargetUI = new GameObject[8];
     public void Start_Battle_Phase()
     {
+        
 
         //선택된 주사위 이미지 초기화
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
@@ -1808,20 +1908,35 @@ public class BattleManager : MonoBehaviour
 
         //battleTimer = skillDo();
 
+        DiceText = GameObject.Find("DiceCurText");
+        //테스트를 위한 Character 세팅
+
+
+        enemyHpUI[0] = GameObject.Find("obj_enemyCharacterHp_0");
+
+        if (enemyHpUI[0] == null) Debug.Log("why? why aren't you come?");
+        enemyHpUI[1] = GameObject.Find("obj_enemyCharacterHp_1");
+        enemyHpUI[2] = GameObject.Find("obj_enemyCharacterHp_2");
+        enemyHpUI[3] = GameObject.Find("obj_enemyCharacterHp_3");
+
         //UI test
         for (int i = 0; i < 4; i++)
         {
-            //적군
+            //enemyHpUI[i] = GameObject.Find("obj_enemyCharacterHp_" + i.ToString());
             enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i);
-            if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
+            if (enemyCharacter[i] != null)
             {
+                
                 enemyDice[i] = new Dice();
             }
             else enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             
-            //어군
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            myHpUI[i] = GameObject.Find("obj_myCharacterHp_" + i.ToString());
             myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
-            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
+            if (myCharacter[i] != null)
             {
                 myDice[i] = new Dice();
                 
@@ -1829,16 +1944,24 @@ public class BattleManager : MonoBehaviour
             else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             
         }
-        
+        for (int i = 0; i < 4; i++)
+        {
+            //myDiceUI[i] = GameObject.Find("obj_dice_my_" + i.ToString());
+            //enemyDiceUI[i] = GameObject.Find("obj_dice_enemy_" + i.ToString());
+            
+            //makeBtnText(i);
+            //makeCharacterObj(i);
+        }
         //배틀시 타겟에 대한 UI 비활성
         for (int i=0;i<8;i++)
         {
+            battleTargetUI[i] = GameObject.Find("obj_battleTarget_" + i.ToString());
             battleTargetUI[i].SetActive(false);
         }
 
-        //animator 적용
         for (int i=0;i<4;i++)
         {
+            
             if (myCharacter[i] == null || myCharacter[i].getCurState() == 2)
             {
                 //추후 null로 바꿀것
@@ -1871,10 +1994,726 @@ public class BattleManager : MonoBehaviour
         updateHp();
         InitSetOfEnemySkill();
 
-        Debug.Log("StartPhase !");
+        firstAttackTeam = Random.Range(1, 3);
+        Debug.Log("StartPhase : firstAttackTeam is " + firstAttackTeam.ToString());
         curPhase = 1;
         
     }
+    public void turnDice(int input)
+    {
+        int idx = input / 10;
+        int dir = input % 10;
+        if (idx < 4)
+        {
+            if (myDice[idx] != null)
+            {
+                myDice[idx].turnDice(dir);
+                myDiceNum[idx] = myDice[idx].getNum();
+                myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
+                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
+            }
+        }
+        else
+        {
+            idx -= 4;
+            if (enemyDice[idx] != null)
+            {
+                enemyDice[idx].turnDice(dir);
+                enemyDiceNum[idx] = enemyDice[idx].getNum();
+                enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[idx].dir * -90);
+                enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[idx].getNum() - 1];
+            }
+        }
+        witchPowerClickState = -1;
+        Debug.Log("Turn Dice Here!");
 
-   
+    }
+
+    /*
+    void Dice_Fix_Phase()
+    {
+        if (curPhase == 3) return;
+        //아군 후공일시 스킬이 제시되고 주사위가 수정된다.
+        if (firstAttackTeam == 2){
+            make_enemy_attack(7, 0);
+        }
+    }
+
+    public void Skill_Select_Phase()
+    {
+        //아군 선공
+        
+    }
+    
+
+    public void Battle_Phase()
+    {
+        StartCoroutine(Battle_Phase_sub());
+    }
+    public IEnumerator Battle_Phase_sub()
+    {
+        clickAble = false;
+
+        make_enemy_attack(7, 0);
+        //아군 선공
+
+        if (firstAttackTeam == 1)
+        {
+            //아군이 선공일때는 스킬을 다 세팅한 후에야 스킬 정해짐!
+
+            battlePhaseState = 5;
+            StartCoroutine(skillDo());
+            yield return new WaitUntil(() => battlePhaseState != 5);
+
+            battlePhaseState = 6;
+            StartCoroutine(skillDo_enemy());
+            yield return new WaitUntil(() => battlePhaseState != 6);
+
+        }
+        //적군 선공
+        else if (firstAttackTeam == 2)
+        {
+            
+            battlePhaseState = 6;
+            StartCoroutine(skillDo_enemy());
+            yield return new WaitUntil(() => battlePhaseState != 6);
+
+            battlePhaseState = 5;
+            StartCoroutine(skillDo());
+            yield return new WaitUntil(() => battlePhaseState != 5);
+
+        }
+        clickAble=true;
+
+    }
+
+    public IEnumerator skillDo()
+    {
+        int hitManTemp = 0;
+        int chooseSkill = 0;
+        Skill useSkillTemp;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (myDiceTake[i] != -999 && myCharacter[myDiceTake[i] / 10].getCurState() == 0)
+            {
+                hitManTemp = myDiceTake[i] / 10;
+                chooseSkill = myDiceTake[i] % 10;
+                useSkillTemp = myCharacter[hitManTemp].skillUse(chooseSkill);
+                Debug.Log("Character " + hitManTemp.ToString() + " Use Skill " + useSkillTemp.SkillName);
+
+                clickState = 1;
+                StartCoroutine(SkillUse(useSkillTemp, hitManTemp));
+                yield return new WaitUntil(() => clickState != 1);
+
+                for (int k = 0; k < 4; k++) { makeCharacterObj(k); } //변동된 정보 등록
+                for (int j = 3; j >= i; j--) if (myDiceTake[j] == myDiceTake[i])
+                    {
+                        myDiceTake[j] = -999;  //할당되었던 주사위 해제
+                        myChkDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                        //GameObject.Find("obj_character_enemy_" + j.ToString()).GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                        mySkillUsed[hitManTemp, chooseSkill] = false;
+                    }
+            }
+        }
+        battlePhaseState = 0;
+    }
+    public IEnumerator skillDo_enemy()
+    {
+        int hitManTemp = 0;
+        int chooseSkill = 0;
+        Skill useSkillTemp;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (enemyDiceTake[i] != -999 && enemyCharacter[enemyDiceTake[i] / 10].getCurState() == 0)
+            {
+                hitManTemp = enemyDiceTake[i] / 10;
+                chooseSkill = enemyDiceTake[i] % 10;
+                useSkillTemp = enemyCharacter[hitManTemp].skillUse(chooseSkill);
+                Debug.Log("Character " + hitManTemp.ToString() + " Use Skill " + useSkillTemp.SkillName);
+
+                clickState = 101;
+                StartCoroutine(SkillUse_enemy(useSkillTemp, hitManTemp));
+                yield return new WaitUntil(() => clickState != 101);
+
+                for (int k = 0; k < 4; k++) { makeCharacterObj(k); } //변동된 정보 등록
+                for (int j = 3; j >= i; j--) if (enemyDiceTake[j] == enemyDiceTake[i])
+                    {
+                        enemyDiceTake[j] = -999;  //할당되었던 주사위 해제
+                        enemyChkDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                        //GameObject.Find("obj_character_enemy_" + j.ToString()).GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                        enemySkillUsed[hitManTemp, chooseSkill] = false;
+                    }
+            }
+        }
+        battlePhaseState = 0;
+    }
+
+    
+    public int enemy_target_auto()
+    {
+        int characterNum = 0;
+        int targetNum = 0;
+        for (int i=0;i<4;i++)
+        {
+            if (myCharacter[i] != null) characterNum++;
+        }
+        if (characterNum == 1) targetNum = 0;
+        if (characterNum == 2)
+        {
+            targetNum = Random.Range(0, 3);
+            if (targetNum > 0) targetNum = 1;
+        }
+        if (characterNum == 3)
+        {
+            targetNum = Random.Range(0, 6);
+            if (targetNum > 2) targetNum = 2;
+            else if (targetNum > 0) targetNum = 1;
+        }
+        if (characterNum == 4)
+        {
+            targetNum = Random.Range(0, 10);
+            if (targetNum > 5) targetNum = 3;
+            else if (targetNum > 2) targetNum = 2;
+            else if (targetNum > 0) targetNum = 1;
+        }
+        for (int i=3;i>=0;i--)
+        {
+            if (myCharacter[i] != null)
+            {
+                targetNum--;
+                if (targetNum < 0) return i;
+            }
+        }
+        return 0;
+    }
+    //적군 공격 타킷
+
+    public IEnumerator SkillUse(Skill skill, int atkMan)
+    {
+        Debug.Log("Stop battle!");
+        if (skill.skillType == 0)
+        {
+
+            clickMonster = -1;
+            Debug.Log("select Enemy!");
+            yield return new WaitUntil(() => clickMonster != -1);
+
+            Debug.Log("back To Battle!");
+            //죽으면 이렇게 됨.
+            if (enemyCharacter[clickMonster].damage(myCharacter[atkMan].getPhyAtk()) == 1) {
+                Debug.Log("Character " + clickMonster + " Dead!");
+                deadEventEnemy(clickMonster);
+            }
+            for (int i = 0; i < enemyCharacter.Length; i++)
+            {
+                makeBtnText(i);
+                makeCharacterObj(i);
+            }
+        }
+        else if (skill.skillType == 1)
+        {
+
+        }
+        clickState = 0;
+
+    }
+
+    public IEnumerator SkillUse_enemy(Skill skill, int atkMan)
+    {
+        Debug.Log("Stop battle!");
+        if (skill.skillType == 0)
+        {
+
+            clickSelf = -1;
+            Debug.Log("select Own Character!");
+
+            yield return new WaitForSeconds(2.0f);
+            clickSelf = enemy_target_auto(); //이거 없애면 지정 타깃으로 테스트 가능
+            
+            yield return new WaitUntil(() => clickSelf != -1);
+
+            Debug.Log("back To Battle!");
+            //죽으면 이렇게 됨.
+            if (myCharacter[clickSelf].damage(enemyCharacter[atkMan].getPhyAtk()) == 1)
+            {
+                Debug.Log("Character " + clickSelf + " Dead!");
+                deadEvent(clickSelf);
+            }
+            for (int i = 0; i < myCharacter.Length; i++)
+            {
+                makeBtnText(i);
+                makeCharacterObj(i);
+            }
+        }
+        else if (skill.skillType == 1)
+        {
+
+        }
+        clickState = 0;
+
+    }
+
+    //적이 죽었을때의 이벤트
+    void deadEventEnemy(int clickMonster0)
+    {
+        //죽은 캐릭터의 주사위에 할당되었던 스킬의 해제
+        int skillCur = enemyDiceTake[clickMonster0];
+        if (skillCur != -999)
+        {
+            for (int i = 0; i < enemyCharacter.Length; i++)
+            {
+                if (enemyDiceTake[i] == skillCur)
+                {
+                    enemyChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                    enemyDiceTake[i] = -999;
+                }
+            }
+            mySkillUsed[skillCur / 10, skillCur % 10] = false;
+        }
+
+        //해당 캐릭터로 할당된 주사위 전체 해제
+        for (int i = 0; i < enemyCharacter.Length; i++)
+        {
+            if (enemyDiceTake[i] / 10 == clickMonster0)
+            {
+                enemyDiceTake[i] = -999;
+                enemyChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+        }
+        mySkillUsed[clickMonster0, 0] = false; mySkillUsed[clickMonster0, 1] = false;
+        enemyDice[clickMonster0] = null;
+
+        enemyCharacter[clickMonster0] = null;
+
+    }
+    void deadEvent(int clickMonster0)
+    {
+        //죽은 캐릭터의 주사위에 할당되었던 스킬의 해제
+        int skillCur = myDiceTake[clickMonster0];
+        if (skillCur != -999)
+        {
+            for (int i = 0; i < myCharacter.Length; i++)
+            {
+                if (myDiceTake[i] == skillCur)
+                {
+                    myChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                    myDiceTake[i] = -999;
+                }
+            }
+            enemySkillUsed[skillCur / 10, skillCur % 10] = false;
+        }
+
+        //해당 캐릭터로 할당된 주사위 전체 해제
+        for (int i = 0; i < myCharacter.Length; i++)
+        {
+            if (myDiceTake[i] / 10 == clickMonster0)
+            {
+                myDiceTake[i] = -999;
+                myChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+        }
+        enemySkillUsed[clickMonster0, 0] = false; enemySkillUsed[clickMonster0, 1] = false;
+        myDice[clickMonster0] = null;
+
+        myCharacter[clickMonster0] = null;
+
+    }
+    public void targetMonster_0(int monsterIdx)
+    {
+        if (clickState == 1 && enemyCharacter[monsterIdx] != null && enemyCharacter[monsterIdx].getCurState() == 0)
+        {
+            clickMonster = monsterIdx;
+        }
+    }
+    public void targetSelf_0(int monsterIdx)
+    {
+        if (clickState == 101 && myCharacter[monsterIdx] != null && myCharacter[monsterIdx].getCurState() == 0)
+        {
+            clickSelf = monsterIdx;
+        }
+    }
+    //주사위 회전을 위한 함수들
+    public void clickDice(int diceIdx)
+    {
+        chooseDice = (diceIdx < 4) ? myDice[diceIdx] : enemyDice[diceIdx - 4];
+        chooseDiceObj.transform.rotation = Quaternion.Euler(0, 0, chooseDice.dir * -90);
+        chooseDiceObj.GetComponent<SpriteRenderer>().sprite = diceSprite[chooseDice.curIdx];
+        chooseDiceIdx = diceIdx;
+    }
+    
+    public void setDice()
+    {
+        if (chooseDice != null)
+        {
+            if (chooseDiceIdx < 4)
+            {
+                myDice[chooseDiceIdx] = new Dice(chooseDice); //아군일때
+                myDiceUI[chooseDiceIdx].transform.rotation = Quaternion.Euler(0, 0, myDice[chooseDiceIdx].dir * -90);
+                myDiceUI[chooseDiceIdx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[chooseDiceIdx].curIdx];
+                myDiceNum[chooseDiceIdx] = myDice[chooseDiceIdx].getNum();
+            }
+            else
+            {
+                chooseDiceIdx -= 4;
+                enemyDice[chooseDiceIdx] = new Dice(chooseDice);//적군일때
+                enemyDiceUI[chooseDiceIdx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[chooseDiceIdx].dir * -90);
+                enemyDiceUI[chooseDiceIdx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[chooseDiceIdx].curIdx];
+                enemyDiceNum[chooseDiceIdx] = enemyDice[chooseDiceIdx].getNum();
+            }
+            chooseDiceObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            chooseDiceIdx = -999;
+            chooseDice = null;
+        }
+    }
+
+    /// 아군 적군 배틀시 스킬 사용 가능 여부 판단 함수들(start)
+    public bool selectSkill_cal_con_sub(int opt, int a, int b)
+    {
+        if (opt == 0) return a == b;   //1-6 사이의 눈이 일치
+        if (opt == 1) return a % 2 == 1;  //홀수 눈
+        if (opt == 2) return a % 2 == 0; //짝수 눈
+        return true;                    //주사위 눈 무관 사용
+    }    //일치 홀수 짝수 무관 조건 확인  
+    public int selectSkill_cal_con(int i, int[] needSkill, bool[] usedDiceTemp, int[] skillDice, int opt)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            //주사위 주인이 살아있고, 주사위 쓰고 있는 사람 없고, 이번 탐색에서도 선택된적 없으면서, 내 스킬에 필요한 눈인 경우
+            if (!(myCharacter[j] == null || myCharacter[j].getCurState() != 0) &&
+                myDice[j] != null && myDiceTake[j] < 0 && !usedDiceTemp[j] && selectSkill_cal_con_sub(opt, myDiceNum[j], needSkill[i]))
+            {
+                skillDice[i] = j;
+                usedDiceTemp[j] = true;
+                return 1;
+            }
+        }
+        return 0;
+    }  //아군 주사위 사용가능 여부 확인
+    public int selectSkill_enemy_cal_con(int i, int[] needSkill, bool[] usedDiceTemp, int[] skillDice, int opt)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            //주사위 주인이 살아있고, 주사위 쓰고 있는 사람 없고, 이번 탐색에서도 선택된적 없으면서, 내 스킬에 필요한 눈인 경우
+            if (!(enemyCharacter[j] == null || enemyCharacter[j].getCurState() != 0) &&
+                enemyDice[j] != null && enemyDiceTake[j] < 0 && !usedDiceTemp[j] && selectSkill_cal_con_sub(opt, enemyDiceNum[j], needSkill[i]))
+            {
+                skillDice[i] = j;
+                usedDiceTemp[j] = true;
+                return 1;
+            }
+        }
+        return 0;
+    }  //적군 주사위 사용가능 여부 확인
+    public void selectSkill_cal(int selCharacter, int selSkillNum)
+    {
+        int needDiceArr = myCharacter[selCharacter].needDice(selSkillNum);
+        Debug.Log("We need " + needDiceArr.ToString());
+        int[] needSkill = new int[4];
+        needSkill[0] = needDiceArr / 1000;
+        needSkill[1] = needDiceArr % 1000 / 100;
+        needSkill[2] = needDiceArr % 100 / 10;
+        needSkill[3] = needDiceArr % 10;
+
+        //스킬 사용가능 여부 검색할때 쓰는 배열
+        bool[] usedDiceTemp = new bool[4] { false, false, false, false };
+
+        //스킬에 사용되는 주사위 인덱스
+        int[] skillDice = new int[4] { -999, -999, -999, -999 };
+        //스킬 성공여부 판단 변수
+        int skillSuccess = 0;
+        //스킬 사용시 중복 여부 제거
+
+        for (int i = 0; i < 4; i++)
+        {
+            //주사위 미사용 / 주사위 1-6 / 짝수,홀수,무관 의 경우 
+            if (needSkill[i] == 0) skillSuccess++;
+            else if (needSkill[i] > 0 && needSkill[i] <= 6) { skillSuccess += selectSkill_cal_con(i, needSkill, usedDiceTemp, skillDice, 0); }
+            else { skillSuccess += selectSkill_cal_con(i, needSkill, usedDiceTemp, skillDice, needSkill[i] % 6); }
+        }
+        if (skillSuccess == 4)
+        {
+            //가능한 경우!
+            for (int i = 0; i < 4; i++)
+            {
+                if (skillDice[i] != -999)
+                {
+                    Debug.Log("Select Dice : " + skillDice[i]);
+                    myDiceTake[skillDice[i]] = selCharacter * 10 + selSkillNum;
+                    myChkDice[skillDice[i]].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_" + (selCharacter * 10 + selSkillNum).ToString());
+                }
+            }
+
+            mySkillUsed[selCharacter, selSkillNum] = true;
+
+        }
+        else
+        {
+            Debug.Log(skillSuccess.ToString() + "You cant use your skill now!");
+        }
+    }   //아군 스킬 사용가능 여부 확인
+    public void selectSkill_enemy_cal(int selCharacter, int selSkillNum)
+    {
+        int needDiceArr = enemyCharacter[selCharacter].needDice(selSkillNum);
+        Debug.Log("We need " + needDiceArr.ToString());
+        int[] needSkill = new int[4];
+        needSkill[0] = needDiceArr / 1000;
+        needSkill[1] = needDiceArr % 1000 / 100;
+        needSkill[2] = needDiceArr % 100 / 10;
+        needSkill[3] = needDiceArr % 10;
+
+        //스킬 사용가능 여부 검색할때 쓰는 배열
+        bool[] usedDiceTemp = new bool[4] { false, false, false, false };
+
+        //스킬에 사용되는 주사위 인덱스
+        int[] skillDice = new int[4] { -999, -999, -999, -999 };
+        //스킬 성공여부 판단 변수
+        int skillSuccess = 0;
+        //스킬 사용시 중복 여부 제거
+
+        for (int i = 0; i < 4; i++)
+        {
+            //주사위 미사용 / 주사위 1-6 / 짝수,홀수,무관 의 경우 
+            if (needSkill[i] == 0) skillSuccess++;
+            else if (needSkill[i] > 0 && needSkill[i] <= 6) { skillSuccess += selectSkill_enemy_cal_con(i, needSkill, usedDiceTemp, skillDice, 0); }
+            else { skillSuccess += selectSkill_enemy_cal_con(i, needSkill, usedDiceTemp, skillDice, needSkill[i] % 6); }
+        }
+        if (skillSuccess == 4)
+        {
+            //가능한 경우!
+            for (int i = 0; i < 4; i++)
+            {
+                if (skillDice[i] != -999)
+                {
+                    Debug.Log("Select Dice : " + skillDice[i]);
+                    enemyDiceTake[skillDice[i]] = selCharacter * 10 + selSkillNum;
+                    enemyChkDice[skillDice[i]].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_" + (selCharacter * 10 + selSkillNum).ToString());
+                }
+            }
+
+            enemySkillUsed[selCharacter, selSkillNum] = true;
+
+        }
+        else
+        {
+            Debug.Log(skillSuccess.ToString() + "You cant use your skill now!");
+        }
+    }   //적군 스킬 사용가능 여부 확인
+    public void selectSkill(int selSkill)
+    {
+        if (curPhase != 3) return;
+        //각 스킬은 00 10 20 30
+        //          01 11 21 31 의 번호를 가진다.(아군 기준)
+        Debug.Log("selSkill : " + selSkill.ToString());
+        int selCharacter = selSkill / 10; //선택한 아군
+        int selSkillNum = selSkill % 10;  // 선택된 n번째의 스킬
+
+        //캐릭터가 배치되지 않았거나 활성화상태가 아닌경우.
+        if (myCharacter[selCharacter] == null || myCharacter[selCharacter].getCurState() != 0)
+        {
+            Debug.Log("No Character!");
+            return;
+        }
+
+
+        if (!mySkillUsed[selCharacter, selSkillNum])
+        {  //스킬이 아직 사용되지 않은 경우
+            selectSkill_cal(selCharacter, selSkillNum);//본인 스킬에 필요한 주사위 구해오기
+        }
+        else
+        {   //스킬이 이미 사용된 경우
+            Debug.Log("Realease Button : " + selSkill.ToString());
+            for (int i = 0; i < 4; i++)
+            {
+                if (myDiceTake[i] == selSkill)
+                {
+                    myDiceTake[i] = -999;
+                    myChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+            }
+            mySkillUsed[selCharacter, selSkillNum] = false;
+        }
+    }   //스킬 선택
+    public void selectSkill_enemy(int selSkill)
+    {
+        //각 스킬은 00 10 20 30
+        //          01 11 21 31 의 번호를 가진다.(적군 기준)
+        Debug.Log("selSkill : " + selSkill.ToString());
+        int selCharacter = selSkill / 10; //선택한 아군
+        int selSkillNum = selSkill % 10;  // 선택된 n번째의 스킬
+
+        //캐릭터가 배치되지 않았거나 활성화상태가 아닌경우.
+        if (enemyCharacter[selCharacter] == null || enemyCharacter[selCharacter].getCurState() != 0)
+        {
+            Debug.Log("No Character!");
+            return;
+        }
+
+
+        if (!enemySkillUsed[selCharacter, selSkillNum])
+        {  //스킬이 아직 사용되지 않은 경우
+            selectSkill_enemy_cal(selCharacter, selSkillNum);//본인 스킬에 필요한 주사위 구해오기
+        }
+        else
+        {   //스킬이 이미 사용된 경우
+            Debug.Log("Realease Button : " + selSkill.ToString());
+            for (int i = 0; i < 4; i++)
+            {
+                if (enemyDiceTake[i] == selSkill)
+                {
+                    enemyDiceTake[i] = -999;
+                    enemyChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+            }
+            enemySkillUsed[selCharacter, selSkillNum] = false;
+        }
+    }   //적군 스킬 선택
+
+
+    public bool selectSkill_enemy_cal_auto(int selCharacter, int selSkillNum)
+    {
+        int needDiceArr = enemyCharacter[selCharacter].needDice(selSkillNum);
+        Debug.Log("We need " + needDiceArr.ToString());
+        int[] needSkill = new int[4];
+        needSkill[0] = needDiceArr / 1000;
+        needSkill[1] = needDiceArr % 1000 / 100;
+        needSkill[2] = needDiceArr % 100 / 10;
+        needSkill[3] = needDiceArr % 10;
+
+        //스킬 사용가능 여부 검색할때 쓰는 배열
+        bool[] usedDiceTemp = new bool[4] { false, false, false, false };
+
+        //스킬에 사용되는 주사위 인덱스
+        int[] skillDice = new int[4] { -999, -999, -999, -999 };
+        //스킬 성공여부 판단 변수
+        int skillSuccess = 0;
+        //스킬 사용시 중복 여부 제거
+
+        for (int i = 0; i < 4; i++)
+        {
+            //주사위 미사용 / 주사위 1-6 / 짝수,홀수,무관 의 경우 
+            if (needSkill[i] == 0) skillSuccess++;
+            else if (needSkill[i] > 0 && needSkill[i] <= 6) { skillSuccess += selectSkill_enemy_cal_con(i, needSkill, usedDiceTemp, skillDice, 0); }
+            else { skillSuccess += selectSkill_enemy_cal_con(i, needSkill, usedDiceTemp, skillDice, needSkill[i] % 6); }
+        }
+        if (skillSuccess == 4)
+        {
+            //가능한 경우!
+            for (int i = 0; i < 4; i++)
+            {
+                if (skillDice[i] != -999)
+                {
+                    Debug.Log("Select Dice : " + skillDice[i]);
+                    enemyDiceTake[skillDice[i]] = selCharacter * 10 + selSkillNum;
+                }
+            }
+            enemySkillUsed[selCharacter, selSkillNum] = true;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }   //적군 스킬 사용가능 여부 확인
+    public bool selectSkill_enemy_auto(int selSkill)
+    {
+        //각 스킬은 00 10 20 30
+        //          01 11 21 31 의 번호를 가진다.(적군 기준)
+        Debug.Log("selSkill : " + selSkill.ToString());
+        int selCharacter = selSkill / 10; //선택한 아군
+        int selSkillNum = selSkill % 10;  // 선택된 n번째의 스킬
+
+        //캐릭터가 배치되지 않았거나 활성화상태가 아닌경우.
+        if (enemyCharacter[selCharacter] == null || enemyCharacter[selCharacter].getCurState() != 0)
+        {
+            Debug.Log("No Character!");
+            return false;
+        }
+
+
+        if (!enemySkillUsed[selCharacter, selSkillNum])
+        {  //스킬이 아직 사용되지 않은 경우
+            return selectSkill_enemy_cal_auto(selCharacter, selSkillNum);//본인 스킬에 필요한 주사위 구해오기
+        }
+        else
+        {   //스킬이 이미 사용된 경우
+            Debug.Log("Realease Button : " + selSkill.ToString());
+            for (int i = 0; i < 4; i++)
+            {
+                if (enemyDiceTake[i] == selSkill)
+                {
+                    enemyDiceTake[i] = -999;
+                    enemyChkDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+            }
+            enemySkillUsed[selCharacter, selSkillNum] = false;
+            return false;
+        }
+    }   //적군 스킬 선택
+
+    ///스킬 자동 배치를 위한 변수 & 함수
+    private int enemyDiceSelAuto = 0; // 적군 자동 스킬 배정시 사용되는 스킬들
+    private int enemyDiceSelNumAuto = 0; // 적군 자동 스킬 배정시 사용되는 주사위 
+    public void make_enemy_attack(int idx, int saveVal)
+    {
+        
+        //시작할 경우 선택한 dice초기화
+        if (idx == 7) {
+            for (int i = 0; i < 4; i++)
+            {
+                if (enemyDiceTake[i] != -999)
+                {
+
+                    selectSkill_enemy(enemyDiceTake[i]);
+                }
+            }
+            enemyDiceSelAuto = -999;
+            enemyDiceSelNumAuto = -999;
+        }
+        bool nextSkillChk = false;
+        for (int temp = idx; temp >= 0; temp--)
+        {
+            if (selectSkill_enemy_auto((temp / 2) * 10 + temp % 2))
+            {
+                nextSkillChk = true;
+                make_enemy_attack(temp - 1, saveVal * 10 + temp+1);
+                selectSkill_enemy_auto((temp / 2) * 10 + temp % 2);
+            }
+        }
+        if (!nextSkillChk)// 더 쓸수 있는 스킬이 없는 경우
+        { // 지금은 가장 많이 주사위를 사용하는 경우의 수를 찾는다.
+            int diceSelNum = 0;
+            for (int i=0;i<4;i++){
+                if (enemyDiceTake[i] != -999) diceSelNum++;
+            }
+            if(enemyDiceSelNumAuto < diceSelNum)
+            {
+                enemyDiceSelNumAuto = diceSelNum;
+                enemyDiceSelAuto = saveVal;
+            }
+        }
+        //최대 경우 구한뒤 패턴따라 배치
+        if(idx == 7)
+        {
+            Debug.Log("make Enemy Attack Pattern : " + enemyDiceSelAuto.ToString());
+            int temp = 1;
+            while (enemyDiceSelAuto >= temp)
+            {
+                temp *= 10;
+            }
+            temp /= 10;
+
+            while (enemyDiceSelAuto > 0)
+            {
+                Debug.Log("sel Auto Skill" + ((enemyDiceSelAuto / temp - 1) / 2 * 10) + ((enemyDiceSelAuto / temp - 1) % 2).ToString());
+                selectSkill_enemy(((enemyDiceSelAuto / temp - 1) / 2 * 10) + ((enemyDiceSelAuto / temp - 1) % 2));
+                enemyDiceSelAuto %= temp;
+                temp /= 10;
+            }
+
+        }
+
+    }
+    */
 }

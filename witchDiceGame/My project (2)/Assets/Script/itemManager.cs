@@ -290,12 +290,9 @@ public class itemManager : MonoBehaviour
             }
         }
         characterBoard_update(0);
-        mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);
+        //mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
-    public void click_upgradeCanvas_end()
-    {
-        mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
-    }
+    
 
     GameObject mainCamera;
     // Start is called before the first frame update

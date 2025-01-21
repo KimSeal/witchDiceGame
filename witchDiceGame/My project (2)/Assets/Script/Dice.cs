@@ -55,9 +55,10 @@ public class Dice
         return this.diceNum[idx];
     }
 
-    public void throwDice()
+    public int throwDice()
     {
         setCurDice(Random.Range(0, 6), Random.Range(0, 4));
+        return this.diceNum[curIdx];
     }
     public int getNum()
     {
@@ -73,5 +74,9 @@ public class Dice
         {
             diceNum[idx] = itemIdx;
         }
+    }
+    public int getDir()
+    {
+        return dir;
     }
 }
