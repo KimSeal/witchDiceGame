@@ -26,7 +26,6 @@ public class Slime : Character
         {
             packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
         }*/
-        TakeSkillPacket takeSkillPacket;
         Debug.Log("slime attack " + sendSkillPacket.targetIdx[0].ToString());
         if (sendSkillPacket.useSkillIdx == 0) //슬라임의 첫번째 스킬이 호출된 경우
         {

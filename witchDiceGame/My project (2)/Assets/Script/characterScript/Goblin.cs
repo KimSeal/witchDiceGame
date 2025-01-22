@@ -27,15 +27,14 @@ public class Goblin : Character
         {
             packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
         }*/
-        TakeSkillPacket takeSkillPacket;
         Debug.Log("goblin attack " + sendSkillPacket.diceNum[0].ToString());
-        if (this.destiny.getDestinyIdx() == 0)
+        if (sendSkillPacket.useSkillIdx == 0) //고블린의 첫번째 스킬이 호출된 경우
         {
-            if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
-            {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
-            }
+            Debug.Log("Yes, Iam add!");
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
         }
+
+
         return packets;
     }
 }

@@ -39,6 +39,11 @@ public abstract class Character
         }
     }
 
+    public Dice getDiceObj()
+    {
+        return this.dice;
+    }
+
     public int throwDice()
     {
         return this.dice.throwDice();

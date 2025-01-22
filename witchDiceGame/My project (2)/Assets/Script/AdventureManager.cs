@@ -56,8 +56,10 @@ public class AdventureManager : MonoBehaviour
 
     GameObject mainCamera;
 
-    private adventureEvent curDiceEvent; 
+    private adventureEvent curDiceEvent;
+    private adventureEvent_Packet curDiceEventPacket;
 
+    bool curCanvasIsAdventure = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -102,7 +104,7 @@ public class AdventureManager : MonoBehaviour
     {
         for (int i=0;i<20;i++)
         {
-            adventureEventArr[stageIdx] = 1; //지금은 모두 주사위 이벤트가 나오도록 설정. 나중에는 전투, 주사위 이벤트 등 어떤게 나올지 랜덤하게(단 전투가 많이) 나오게 수정해야한다.
+            adventureEventArr[i] = 1; //지금은 모두 주사위 이벤트가 나오도록 설정. 나중에는 전투, 주사위 이벤트 등 어떤게 나올지 랜덤하게(단 전투가 많이) 나오게 수정해야한다.
         }
     }
     public void startAdventure()
@@ -118,11 +120,11 @@ public class AdventureManager : MonoBehaviour
     private IEnumerator phase_Manage_Coroutine()
     {
         makeStageEventArr(); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
-
+        stageIdx = 1;
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
-        // while (stageIdx<21)
+        while (stageIdx<20)
         {
-            
+            stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "\nLevel : " + stageIdx;
             if (adventureEventArr[stageIdx] == 1) { //주사위 이벤트 일경우 해당 이벤트 진행. 
 
                 eventWatchNum = 0;
@@ -137,8 +139,22 @@ public class AdventureManager : MonoBehaviour
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
 
                 eventWatchNum = selectDiceNum - 1;
-                selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
-                eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getResultText();
+                curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
+                selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
+                eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
+                if(curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
+                {
+                    for (int i=0;i<4;i++)
+                    {
+                        if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(0, curDiceEventPacket.getVal(i));
+                        else CharacterManager.Instance.emptyEnemyCharacter(i);
+                    }
+                    enterBattleCanvas();
+                    yield return new WaitUntil(() => curCanvasIsAdventure); //돌아올때까지 대기
+                    eventInfo.GetComponent<TextMeshPro>().text = "You Win! Go to Next Level";
+                }
+                
+                yield return new WaitForSeconds(1f); //잠시 대기
                 selectDiceNum = -1; // 선택 못하게 변경
                 eventWatchNum = -1;
 
@@ -186,17 +202,25 @@ public class AdventureManager : MonoBehaviour
     //가방, 전투 페이즈 입장을 위한 함수들
     public void enterUpgradeCanvas()
     {
+        curCanvasIsAdventure = false;
         itemManager.Instance.click_upgradeCanvas_start();
         mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
     public void exitUpgradeCanvas()
     {
+        curCanvasIsAdventure = true;
         mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
     public void enterBattleCanvas()
     {
+        curCanvasIsAdventure = false;
         BattleManager.Instance.startBattle_fromAdventure();
         mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+    }
+    public void exitBattleCanvas()
+    {
+        curCanvasIsAdventure = true;
+        mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
 
     public int getWitchPower(int idx)

@@ -1,10 +1,10 @@
 eventIdx,diceNum,selectType,selectVal0,selectVal1,selectVal2,selectVal3,selectVal4,selectVal5,selectVal6,selectVal7,chooseText,resultText
-1,1,0,0,0,0,0,0,0,0,0,testChooseText0,testResultText0
-1,2,0,0,0,0,0,0,0,0,0,testChooseText1,testResultText1
-1,3,0,0,0,0,0,0,0,0,0,testChooseText2,testResultText2
-1,4,0,0,0,0,0,0,0,0,0,testChooseText3,testResultText3
-1,5,0,0,0,0,0,0,0,0,0,testChooseText4,testResultText4
-1,6,0,0,0,0,0,0,0,0,0,testChooseText5,testResultText5
+1,1,0,0,0,0,0,0,0,0,0,escape goblin carefully...,We success!
+1,2,0,0,0,0,0,0,0,0,0,escape goblin carefully...,We success!
+1,3,0,0,0,0,0,0,0,0,0,escape goblin carefully...,We success!
+1,4,3,10,0,0,0,0,0,0,0,escape goblin not carefully!,We success but hit arrow! 
+1,5,6,10002,10002,10002,-99999,0,0,0,0,talk with goblin.,Are you serious? goblin start to attack your team!
+1,6,6,-99999,10002,10002,10002,0,0,0,0,fight with goblin,testResultText5
 2,1,0,0,0,0,0,0,0,0,0,testChooseText0,testResultText0
 2,2,0,0,0,0,0,0,0,0,0,testChooseText1,testResultText1
 2,3,0,0,0,0,0,0,0,0,0,testChooseText2,testResultText2

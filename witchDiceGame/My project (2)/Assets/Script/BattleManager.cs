@@ -752,7 +752,9 @@ public class BattleManager : MonoBehaviour
                 myDice[idx].turnDice(dir);
                 myDiceNum[idx] = myDice[idx].getNum();
                 myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
-                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
+                Debug.Log("turn to sprite index is...! " + (myDice[idx].getNum() - 1).ToString());
+                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1]; 
+                
             }
         }
         else
@@ -972,7 +974,6 @@ public class BattleManager : MonoBehaviour
 
                 Skill useSkill = myCharacter[characterIdx].skillUse(skillIdx);
                 int needDiceNum = useSkill.getNeedDiceNum();
-                int needDiceVal;
                 //가능한지 확인
                 if(MakeMyAttackSet(characterIdx, skillIdx, diceIdx))
                 {   //가능한 경우 주사위의 ui를 업데이트
@@ -1631,11 +1632,13 @@ public class BattleManager : MonoBehaviour
         if(result == 2)
         {
             Debug.Log("you lose!");
+            AdventureManager.Instance.exitBattleCanvas();
         }
         //적군 전멸
         else if (result == 1)
         {
             Debug.Log("you win!");
+            AdventureManager.Instance.exitBattleCanvas();
         }
         //전투 지속 필요
         else
@@ -1796,14 +1799,23 @@ public class BattleManager : MonoBehaviour
         //선택된 주사위 이미지 초기화
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         //플레이를 위한 장치
+        /*
         CharacterManager.Instance.setCharacter(0, 0);
         CharacterManager.Instance.setCharacter(1, 0);
         CharacterManager.Instance.setCharacter(2, 0);
         CharacterManager.Instance.setCharacter(3, 0);
+        */
+        
+        CharacterManager.Instance.setCharacter(0, 10002);
+        CharacterManager.Instance.setCharacter(1, 10002);
+        CharacterManager.Instance.setCharacter(2, 10002);
 
-        CharacterManager.Instance.setCharacter(0, 10001);
-        CharacterManager.Instance.setCharacter(1, 10001);
-        CharacterManager.Instance.setCharacter(2, 10001);
+        for (int i=0;i<4;i++)
+        {
+            myCharacterObjUIAnim[i].Play("Idle");
+            enemyCharacterObjUIAnim[i].Play("Idle");
+        }
+        
 
 
         //battleTimer = skillDo();
@@ -1812,7 +1824,7 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             //적군
-            enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i);
+            enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
             if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
             {
                 enemyDice[i] = new Dice();
@@ -1823,7 +1835,7 @@ public class BattleManager : MonoBehaviour
             myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
-                myDice[i] = new Dice();
+                myDice[i] = new Dice(myCharacter[i].getDiceObj());
                 
             }
             else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
@@ -1842,7 +1854,7 @@ public class BattleManager : MonoBehaviour
             if (myCharacter[i] == null || myCharacter[i].getCurState() == 2)
             {
                 //추후 null로 바꿀것
-                myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/Yongsa/animator_Yongsa");
+                myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
             }
             else
             {
@@ -1853,7 +1865,7 @@ public class BattleManager : MonoBehaviour
             if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() == 2)
             {
                 //추후 null로 바꿀것
-                enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/Yongsa/animator_Yongsa");
+                enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
             }
             else
             {

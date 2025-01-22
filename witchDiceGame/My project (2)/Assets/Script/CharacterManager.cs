@@ -114,10 +114,19 @@ public class CharacterManager : MonoBehaviour
         }
         //¸ó½ºÅÍ
         if (characterIdx > 10000) {
-            characterIdx -= 10000;
-            if (characterIdx == 1) enemyCharacter[place] = new Slime(0, destinyList_monster[characterIdx]);
-            else if (characterIdx == 2) enemyCharacter[place] = new Goblin(0, destinyList_monster[characterIdx]);
+            characterIdx -= 10001;
+            if (characterIdx == 0) enemyCharacter[place] = new Slime(0, destinyList_monster[characterIdx]);
+            else if (characterIdx == 1) enemyCharacter[place] = new Goblin(0, destinyList_monster[characterIdx]);
         }
+
+    }
+    public void emptyEnemyCharacter(int place)
+    {
+        enemyCharacter[place] = null;
+    }
+    public void emptyMyCharacter(int place)
+    {
+        myCharacter[place] = null;
     }
     public Character getCharacter(int idx)
     {

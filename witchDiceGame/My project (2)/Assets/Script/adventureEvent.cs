@@ -48,7 +48,14 @@ public class adventureEvent_Packet{
     {
         return resultText;
     }
-
+    public int getSelectType()
+    {
+        return this.selectType;
+    }
+    public int getVal(int idx)
+    {
+        return this.val[idx];
+    }
 }
 
 public class adventureEvent

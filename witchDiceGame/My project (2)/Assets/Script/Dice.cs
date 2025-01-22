@@ -23,10 +23,8 @@ public class Dice
     {
         this.dir = dice.dir;
         this.curIdx = dice.curIdx;
-        int fullNum = dice.getDiceNum();
         for (int i=0;i<6;i++) {
-            this.diceNum[i] = fullNum % 6;
-            fullNum /= 6;
+            this.diceNum[i] = dice.getDiceNum(i);
         }
     }
 
@@ -38,16 +36,6 @@ public class Dice
     {
         //굴린 후 나온 눈과 회전 정도
         setCurDice(diceRollNum[curIdx,(4 + turnDir - dir) % 4], (diceRollDirAdd[turnDir] + diceRollDir[curIdx, (4 + turnDir - dir) % 4]) % 4);
-    }
-    public int getDiceNum()
-    {
-        int temp=0;
-        for (int i=5;i>=0;i--)
-        {
-            temp *= 6;
-            temp += this.diceNum[i];
-        }
-        return temp;
     }
 
     public int getDiceNum(int idx)

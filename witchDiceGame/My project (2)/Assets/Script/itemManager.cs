@@ -312,7 +312,6 @@ public class itemManager : MonoBehaviour
         Debug.Log("ItemReadList Count is : " + itemReaderList.Count);
         for (int i=0;i<itemReaderList.Count;i++)
         {
-            Debug.Log("type say : " + itemReaderList[i].type);
             itemList[itemReaderList[i].type].Add(new Item(itemReaderList[i]));
         }
 
