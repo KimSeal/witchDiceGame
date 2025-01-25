@@ -168,7 +168,7 @@ public class AdventureManager : MonoBehaviour
     {
         if (eventWatchNum < 6 && eventWatchNum >= 0)
         {
-            if (upEvent)
+            if (!upEvent)
             {
                 if (eventWatchNum == 5) eventWatchNum = 0;
                 else eventWatchNum++;
