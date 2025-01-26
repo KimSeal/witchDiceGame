@@ -165,7 +165,7 @@ public class AdventureManager : MonoBehaviour
     }
 
     public void changeSelectNum(bool upEvent)
-    {
+    { //현재 아래 방향이 상승
         if (eventWatchNum < 6 && eventWatchNum >= 0)
         {
             if (!upEvent)
