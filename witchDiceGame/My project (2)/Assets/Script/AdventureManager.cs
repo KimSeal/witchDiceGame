@@ -149,6 +149,7 @@ public class AdventureManager : MonoBehaviour
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(0, curDiceEventPacket.getVal(i));
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
                     }
+                    yield return new WaitForSeconds(1f); //잠시 대기
                     enterBattleCanvas();
                     yield return new WaitUntil(() => curCanvasIsAdventure); //돌아올때까지 대기
                     eventInfo.GetComponent<TextMeshPro>().text = "You Win! Go to Next Level";
@@ -182,15 +183,22 @@ public class AdventureManager : MonoBehaviour
             selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
             //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
         }
-        
     }
+
+    public void changeSelectNum(int inputNum)
+    { //현재 아래 방향이 상승
+        eventWatchNum = inputNum-1;
+        selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
+        //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+    }
+
 
     public void clickDice(int characterIdx)
     {
         if (selectDiceNum == 0 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
         {
             CharacterManager.Instance.throwDice(characterIdx);
-            selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
+            //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
             //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
             
             diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
