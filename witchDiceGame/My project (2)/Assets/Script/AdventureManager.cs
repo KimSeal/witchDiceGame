@@ -60,6 +60,7 @@ public class AdventureManager : MonoBehaviour
     private adventureEvent_Packet curDiceEventPacket;
 
     bool curCanvasIsAdventure = true;
+    bool battleEventTrigger = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -149,9 +150,8 @@ public class AdventureManager : MonoBehaviour
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(0, curDiceEventPacket.getVal(i));
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
                     }
-                    yield return new WaitForSeconds(1f); //잠시 대기
-                    enterBattleCanvas();
-                    yield return new WaitUntil(() => curCanvasIsAdventure); //돌아올때까지 대기
+                    battleEventTrigger = true;
+                    yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
                     eventInfo.GetComponent<TextMeshPro>().text = "You Win! Go to Next Level";
                 }
                 
@@ -221,9 +221,13 @@ public class AdventureManager : MonoBehaviour
     }
     public void enterBattleCanvas()
     {
-        curCanvasIsAdventure = false;
-        BattleManager.Instance.startBattle_fromAdventure();
-        mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+        if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
+        {
+            curCanvasIsAdventure = false;
+            BattleManager.Instance.startBattle_fromAdventure();
+            mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+        }
+        
     }
     public void exitBattleCanvas()
     {
