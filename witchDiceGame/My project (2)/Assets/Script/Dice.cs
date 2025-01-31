@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Dice
 {
+    //
     //현재 주사위가 가진 회전 정도, 보이는 면을 의미.
     public int dir=0, curIdx=0;
     //각 면이 가지고 있는 실제 눈의 값
