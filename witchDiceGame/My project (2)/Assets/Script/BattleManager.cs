@@ -846,6 +846,7 @@ public class BattleManager : MonoBehaviour
     // Character Skill Select Start (Phase 3 - Character Skill Select)///
 
     private GameObject[] skillSelectUI = new GameObject[9];
+    private GameObject[] skillSelectDescUI = new GameObject[6];
 
     private int curClickSkill = -1; //마지막으로 클릭한 스킬 정보를 저장한다. 저장형식은 characterIdx * 10 + skillIdx의 형태를 띈다. 선택된게 없으면 -1을 갖는다.
 
@@ -884,7 +885,7 @@ public class BattleManager : MonoBehaviour
         {
             int characterIdx = input / 10;
             int skillIdx = input % 10;
-            if (myCharacter[characterIdx] != null)
+            if (myCharacter[characterIdx] != null && myCharacter[characterIdx].getCurState() == 0)
             {
                 //현재 선택된게 없는 경우.
                 if (curClickSkill == -1)
@@ -905,17 +906,20 @@ public class BattleManager : MonoBehaviour
                         curClickSkill = -1;
                         StartCoroutine(makeBright(skillSelectUI[characterIdx * 2 + skillIdx], 0.0f));
                         mySkillUsed[characterIdx, skillIdx] = false;
+                        deleteSkillCommand();
                     }
                     else
                     {
                         curClickSkill = input;
                         StartCoroutine(makeDark(skillSelectUI[characterIdx * 2 + skillIdx], 0.7f));
+                        makeSkillCommand(characterIdx, skillIdx);
                     }
                     
                 }
                 else
                 {
                     StartCoroutine(makeBright(skillSelectUI[(curClickSkill / 10) * 2 + (curClickSkill % 10)], 0.0f));
+                    deleteSkillCommand();
                     if (mySkillUsed[characterIdx, skillIdx]) //할당이 된 스킬인 경우
                     {
                         curClickSkill = -1;
@@ -927,6 +931,7 @@ public class BattleManager : MonoBehaviour
                     {
                         StartCoroutine(makeDark(skillSelectUI[characterIdx * 2 + skillIdx], 0.7f));
                         curClickSkill = input;
+                        makeSkillCommand(characterIdx, skillIdx);
                     }
                 }
 
@@ -947,7 +952,7 @@ public class BattleManager : MonoBehaviour
     //스킬 선택 중 주사위 클릭에 대한 코드
     private void click_characterSkill_Dice(int diceIdx)
     {
-        if (curPhase == 3 && myCharacter[diceIdx] != null && currentLightUI == 0 && currentMoveUI == 0)
+        if (curPhase == 3 && myCharacter[diceIdx] != null && myCharacter[diceIdx].getCurState() == 0 && currentLightUI == 0 && currentMoveUI == 0)
         {
             
             if (myDiceTake[diceIdx] != -999)
@@ -966,6 +971,7 @@ public class BattleManager : MonoBehaviour
                 //해당 스킬에 대한 버튼 해제
                 StartCoroutine(makeBright(skillSelectUI[(deleteSkill / 10) * 2 + (deleteSkill % 10)], 0.0f));
                 mySkillUsed[(deleteSkill / 10), (deleteSkill % 10)] = false;
+                deleteSkillCommand();
             }
             else if (curClickSkill != -1) //스킬 선택을 했으며 해당 주사위가 비어있는 경우.
             {
@@ -982,6 +988,7 @@ public class BattleManager : MonoBehaviour
                 else //불가능한 경우
                 {
                     StartCoroutine(makeBright(skillSelectUI[characterIdx * 2 + skillIdx], 0.0f));
+                    makeSkillCommand(characterIdx, skillIdx);
                     Debug.Log("It can't! - wrong Dice Problem");
                 }
 
@@ -990,7 +997,35 @@ public class BattleManager : MonoBehaviour
             //주사위에 할당된 스킬도 클릭된 스킬도 없다면 아무것도 하지 않는다.
         }
     }
-    
+    //스킬이 눌려서 해당 skill에 대한 내용을 출력해야하는 경우
+    void makeSkillCommand(int characterIdx, int skillIdx)
+    {
+        Skill thisSkill = myCharacter[characterIdx].skillUse(skillIdx);
+        if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
+        {
+            skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
+        }
+        else {
+            skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+        }
+        skillSelectDescUI[1].GetComponent <TextMeshPro> ().text = thisSkill.getCommand();
+        for (int i=0;i<4;i++)
+        {
+            skillSelectDescUI[i+2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(i).ToString());
+        }
+    }
+    void deleteSkillCommand()
+    {
+        skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        skillSelectDescUI[1].GetComponent<TextMeshPro>().text = "";
+        for (int i = 0; i < 4; i++)
+        {
+            skillSelectDescUI[i + 2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
+        }
+    }
+
+
+
     //phase넘어가기
     public void moveToBattlePhase()
     {
@@ -1074,6 +1109,9 @@ public class BattleManager : MonoBehaviour
             curPhase = 5;
         }
     }
+
+    
+
     // Character Skill Select End (Phase 3 - Character Skill Select)//////
 
 
@@ -1346,6 +1384,10 @@ public class BattleManager : MonoBehaviour
         if (idx < 4)
         {
             int diceNumTemp = myDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
+
+            //해당 스킬 도트 비활성화
+            skillSelectUI[idx*2].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            skillSelectUI[idx * 2 + 1].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
 
 
             for (int i=0;i<4;i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
@@ -1680,13 +1722,19 @@ public class BattleManager : MonoBehaviour
         //초반 turn 화살표 지우기
         for (int i = 0;i<8;i++) {
             skillSelectUI[i] = GameObject.Find("obj_skillSelect_" + i.ToString());
+            
             diceArrowSet[i] = GameObject.Find("arrowSet_" + i.ToString());
             diceUIChk[i] = GameObject.Find("obj_skillChk_" + i.ToString());
             diceArrowSet[i].SetActive(false);
         }
+        //
 
+        skillSelectDescUI[0] = GameObject.Find("battle_skill_skillImage_selected"); //스킬 이미지
+        skillSelectDescUI[1] = GameObject.Find("battle_skill_selected_exp"); //텍스트
+        
         for (int i=0;i<4;i++)
         {
+            skillSelectDescUI[i+2] = GameObject.Find("battle_skill_needDice_selected_" + i.ToString()); //스킬에 필요한 주사위 종류
             myCharacterObjUI[i] = GameObject.Find("obj_myCharacter_" + i.ToString());
             enemyCharacterObjUI[i] = GameObject.Find("obj_enemyCharacter_" + i.ToString());
             myCharacterObjUIAnim[i] = myCharacterObjUI[i].GetComponent<Animator>();
@@ -1841,7 +1889,28 @@ public class BattleManager : MonoBehaviour
             else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             
         }
-        
+
+        //아군이 선택할 스킬들에 대하여 이미지 업데이트
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
+                {
+                    if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + myCharacter[i].getSkillName(j)) != null)
+                    {
+                        skillSelectUI[i * 2 + j].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + myCharacter[i].getSkillName(j));
+                    }
+                    else
+                    {
+                        skillSelectUI[i * 2 + j].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                    }
+                }
+                else { skillSelectUI[i * 2 + j].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); }
+            }
+        }
+
+
         //배틀시 타겟에 대한 UI 비활성
         for (int i=0;i<8;i++)
         {

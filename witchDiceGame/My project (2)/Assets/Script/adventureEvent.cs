@@ -15,6 +15,9 @@ public class adventureEvent_Packet{
     // 4 : 능력치 종류와 증가할 수치
     // 5 : 능력치 종류와 감소할 수치 + 능력치 종류와 감소할 수치
 
+    private string spriteIndex;
+
+
     public adventureEvent_Packet(AdventureEventPacketReader adventureEventPacketReader)
     {
         this.chooseText = adventureEventPacketReader.chooseText;
@@ -28,6 +31,7 @@ public class adventureEvent_Packet{
         this.val[5] = adventureEventPacketReader.selectVal5;    
         this.val[6] = adventureEventPacketReader.selectVal6;
         this.val[7] = adventureEventPacketReader.selectVal7;
+        this.spriteIndex = adventureEventPacketReader.spriteIndex;
     }
 
     public adventureEvent_Packet(adventureEvent_Packet adventureEventPacketReader)
@@ -39,6 +43,7 @@ public class adventureEvent_Packet{
         {
             this.val[i] = adventureEventPacketReader.val[i];
         }
+        this.spriteIndex = adventureEventPacketReader.spriteIndex;
     }
     public string getChooseText()
     {
@@ -56,11 +61,16 @@ public class adventureEvent_Packet{
     {
         return this.val[idx];
     }
+    public string getSpriteIndex()
+    {
+        return spriteIndex;
+    }
 }
 
 public class adventureEvent
 {
     private int eventIdx; // 해당 이벤트의 idx
+    private string eventName; //해당 이벤트의 이벤트 이름
     private int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
     private int levelIdxStart; //해당 이벤트가 나올 수 있는 스테이지의 단계 최소값
     private int levelIdxEnd; // 해당 이벤가 나올 수 있는 스테이지의 최대값
@@ -75,6 +85,7 @@ public class adventureEvent
         }
 
         this.stageIdx = adventureEventReader.stageIdx;
+        this.eventName = adventureEventReader.eventName;
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd ;
         this.eventIdx = adventureEventReader.eventIdx;
@@ -84,6 +95,7 @@ public class adventureEvent
     public adventureEvent(adventureEvent adventureEventReader)
     {
         this.stageIdx = adventureEventReader.stageIdx;
+        this.eventName = adventureEventReader.eventName;
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
@@ -102,6 +114,10 @@ public class adventureEvent
     public string getSelectText()
     {
         return this.selectText;
+    }
+    public string getEventName()
+    {
+        return this.eventName;
     }
     
 }

@@ -60,7 +60,8 @@ public class ItemReader
 
 public class AdventureEventReader
 {
-    public int eventIdx; 
+    public int eventIdx;
+    public string eventName;
     public int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
     public int levelIdxStart; //해당 이벤트가 나올 수 있는 스테이지의 단계 최소값
     public int levelIdxEnd; // 해당 이벤가 나올 수 있는 스테이지의 최대값
@@ -71,6 +72,7 @@ public class AdventureEventPacketReader
     public int eventIdx, diceNum, selectType,
         selectVal0, selectVal1, selectVal2, selectVal3, selectVal4, selectVal5, selectVal6, selectVal7;
     public string chooseText, resultText;
+    public string spriteIndex;
 }
 
 public class CSVReader

@@ -96,6 +96,10 @@ public abstract class Character
     {
         return destiny.findSkill(skillIdx[selNum]);
     }
+    public string getSkillName(int selNum)
+    {
+        return destiny.findSkill(skillIdx[selNum]).getSkillName();
+    }
 
     public int getSkillIdx(int num)
     {

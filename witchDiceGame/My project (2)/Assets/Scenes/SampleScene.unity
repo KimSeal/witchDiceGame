@@ -5060,7 +5060,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 743118160}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!58 &292504723
 CircleCollider2D:
@@ -6901,6 +6901,22 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 1
           m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: changeSelectNum
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 6
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
 --- !u!212 &378088987
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7066,6 +7082,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Delegates:
   - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: changeSelectNum
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:
@@ -9937,7 +9969,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -500, y: -300, z: -1}
+  m_LocalPosition: {x: -500, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10834,6 +10866,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Delegates:
   - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: changeSelectNum
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:
@@ -11831,9 +11879,10 @@ Transform:
   m_LocalPosition: {x: 0, y: -55.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1886504863}
   m_Father: {fileID: 743118160}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &581925536
 GameObject:
@@ -12603,7 +12652,7 @@ Transform:
   - {fileID: 1212735345}
   - {fileID: 917318497}
   m_Father: {fileID: 743118160}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &649093547
 BoxCollider2D:
@@ -13493,6 +13542,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Delegates:
   - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: changeSelectNum
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 5
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:
@@ -14417,7 +14482,6 @@ Transform:
   - {fileID: 2050254737}
   - {fileID: 1223453117}
   - {fileID: 1882066989}
-  - {fileID: 1886504863}
   - {fileID: 292504722}
   - {fileID: 1225508332}
   - {fileID: 913896905}
@@ -17812,7 +17876,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 743118160}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &913896906
 CircleCollider2D:
@@ -18103,7 +18167,7 @@ GameObject:
   - component: {fileID: 916985569}
   - component: {fileID: 916985568}
   m_Layer: 0
-  m_Name: spr_ui_adventureBack_0
+  m_Name: ui_adventureBack_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18175,7 +18239,7 @@ Transform:
   m_Children:
   - {fileID: 1193130899}
   m_Father: {fileID: 743118160}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &917318496
 GameObject:
@@ -22055,7 +22119,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1069752804
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -23748,7 +23812,7 @@ GameObject:
   - component: {fileID: 1193130899}
   - component: {fileID: 1193130900}
   m_Layer: 0
-  m_Name: spr_NPC_grandfather
+  m_Name: ui_adventureNPC_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23809,7 +23873,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -5
   m_Sprite: {fileID: 21300000, guid: 0ee6d34ade644c54589559107e31a9bb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -24469,7 +24533,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 743118160}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!58 &1225508333
 CircleCollider2D:
@@ -30115,6 +30179,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Delegates:
   - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: changeSelectNum
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:
@@ -36865,12 +36945,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 743118160}
-  m_RootOrder: 5
+  m_Father: {fileID: 571897200}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -23.9}
+  m_AnchoredPosition: {x: 0, y: 31.399996}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1886504864
@@ -41368,6 +41448,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Delegates:
   - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: changeSelectNum
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - eventID: 0
     callback:
       m_PersistentCalls:
         m_Calls:

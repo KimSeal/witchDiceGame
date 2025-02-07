@@ -59,8 +59,13 @@ public class AdventureManager : MonoBehaviour
     private adventureEvent curDiceEvent;
     private adventureEvent_Packet curDiceEventPacket;
 
+    private GameObject adventureBackground;
+    private GameObject adventureNPC;
+    private GameObject[] watchNumObject = new GameObject[6];
+
     bool curCanvasIsAdventure = true;
     bool battleEventTrigger = false;
+    bool eventWatchTrigger = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -72,7 +77,11 @@ public class AdventureManager : MonoBehaviour
         selectInfo = GameObject.Find("adventure_selectInfo");
         eventInfo = GameObject.Find("adventure_eventInfo");
         selectImage = GameObject.Find("adventure_selectDice");
-        
+
+        adventureBackground = GameObject.Find("ui_adventureBack_0");
+        adventureNPC = GameObject.Find("ui_adventureNPC_0");
+
+
         stageNum = 1;
         stageIdx = 1;
         stageInfo = GameObject.Find("adventure_stageInfo");
@@ -93,6 +102,10 @@ public class AdventureManager : MonoBehaviour
             adventureEventList.Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
 
+        for (int i=0;i<6;i++)
+        {
+            watchNumObject[i] = GameObject.Find("obj_adventureBtn_selectBtn_" + (i+1).ToString());
+        }
     }
 
     // Update is called once per frame
@@ -127,23 +140,34 @@ public class AdventureManager : MonoBehaviour
         {
             stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "\nLevel : " + stageIdx;
             if (adventureEventArr[stageIdx] == 1) { //주사위 이벤트 일경우 해당 이벤트 진행. 
-
+                
                 eventWatchNum = 0;
                 curDiceEvent = new adventureEvent(adventureEventList[eventIndexReturn()]); //랜덤한 이벤트를 받아온다.
-
+                eventWatchTrigger = true;
                 selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText(); //선택지 텍스트 변경
                 eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
+                adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_adventureBack_" + curDiceEvent.getEventName() + "_0");
+                adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_0");
                 selectImage.transform.rotation = Quaternion.Euler(0, 0, 0);
+
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
                 selectDiceNum = 0; //고를 수 있는 상태로 변경
                 
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
 
+                eventWatchTrigger = false;
+                for (int i = 0; i < 6; i++)
+                {
+                    watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                }
+                
                 eventWatchNum = selectDiceNum - 1;
                 curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
                 selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
                 eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
-                if(curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
+                
+                adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName()+ "_"+ curDiceEventPacket.getSpriteIndex());
+                if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
                     for (int i=0;i<4;i++)
                     {
@@ -167,29 +191,38 @@ public class AdventureManager : MonoBehaviour
 
     public void changeSelectNum(bool upEvent)
     { //현재 아래 방향이 상승
-        if (eventWatchNum < 6 && eventWatchNum >= 0)
-        {
-            if (!upEvent)
+        if (eventWatchTrigger) {
+            if (eventWatchNum < 6 && eventWatchNum >= 0)
             {
-                if (eventWatchNum == 5) eventWatchNum = 0;
-                else eventWatchNum++;
+                if (!upEvent)
+                {
+                    if (eventWatchNum == 5) eventWatchNum = 0;
+                    else eventWatchNum++;
+                }
+                else
+                {
+                    if (eventWatchNum == 0) eventWatchNum = 5;
+                    else eventWatchNum--;
+                }
+                //회전도 적용(나중에 마녀 능력을 위해서)
+                selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
+                                                                                                                    //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
             }
-            else
-            {
-                if (eventWatchNum == 0) eventWatchNum = 5;
-                else eventWatchNum--;
-            }
-            //회전도 적용(나중에 마녀 능력을 위해서)
-            selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
-            //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
         }
     }
 
     public void changeSelectNum(int inputNum)
     { //현재 아래 방향이 상승
-        eventWatchNum = inputNum-1;
-        selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
-        //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+        if (eventWatchTrigger)
+        {
+            for (int i=0;i<6;i++)
+            {
+                if(i+1 == inputNum) watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                else watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            }
+            eventWatchNum = inputNum - 1;
+            selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경                                                                                                       //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+        }
     }
 
 
