@@ -187,7 +187,6 @@ public class BattleManager : MonoBehaviour
         for (int skillIdx0=liveSkillList.Count-1; skillIdx0>=0;skillIdx0--)
         {
             int skillIdx = liveSkillList[skillIdx0];
-            Debug.Log(skillIdx);
             for (int diceIdx=0; diceIdx <= liveCharacterList.Count - enemySkillDiceNum[skillIdx]; diceIdx++)
             {   //필요 주사위가 1칸인 경우
                 
@@ -1203,7 +1202,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (clickAbleTeam == 2)
         {//적군 선택만 가능한 경우
-            Debug.Log("slime attack only 1 person!");
             for (int i = 0; i < 4; i++)
             {
                 if (myCharacter[i] != null && myCharacter[i].getCurState() == 0) {
@@ -1367,8 +1365,12 @@ public class BattleManager : MonoBehaviour
         //2 : dead (아직 미사용)
         if(characterIdx < 4)
         {
-            if (option == 1) myCharacterObjUIAnim[characterIdx].Play("Hit");
-            else if(option == 2) myCharacterObjUIAnim[characterIdx].Play("Dead");
+            if (option == 1)
+            {
+                myCharacterObjUIAnim[characterIdx].Play("Hit");
+                Debug.Log(characterIdx.ToString() + " is hit by monster!");
+            }
+            else if (option == 2) myCharacterObjUIAnim[characterIdx].Play("Dead");
         }
         else
         {
@@ -1611,7 +1613,7 @@ public class BattleManager : MonoBehaviour
 
                     //
                     nextSkill = 0;
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(1.0f);
                 }
                 nextDice++;
             }

@@ -31,8 +31,8 @@ public abstract class Character
             this.maxHp = destiny.maxHp;
             this.hp = maxHp;
 
-            skillIdx[0] = destiny.getSkillIdx(0); 
-            skillIdx[1] = destiny.getSkillIdx(1);
+            skillIdx[0] = 0;//destiny.getSkillIdx(0); 
+            skillIdx[1] = 1;//destiny.getSkillIdx(1);
 
             item[0] = new Item(itemManager.Instance.getItem(2, 0)); //빈 아이템을 넣어준다.
             item[1] = new Item(itemManager.Instance.getItem(2, 0));
@@ -103,6 +103,7 @@ public abstract class Character
 
     public int getSkillIdx(int num)
     {
+        //return destiny.getSkillIdx(skillIdx[num]);
         return skillIdx[num];
     }
 

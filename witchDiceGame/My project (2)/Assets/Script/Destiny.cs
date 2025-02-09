@@ -45,6 +45,8 @@ public class Destiny
     {
         return this.skillArr[curSel];
     }
+
+
     public string getName()
     {
         return this.Name;

@@ -72,7 +72,8 @@ public class CharacterManager : MonoBehaviour
 
         //캐릭터 테스트 0번에 용사 배치
         setCharacter(0, 0);
-        setCharacter(1, 0);
+        setCharacter(1, 2);
+        setCharacter(2, 1);
     }
 
     // Update is called once per frame
@@ -109,8 +110,16 @@ public class CharacterManager : MonoBehaviour
     {
         //아군
         if (characterIdx <= 10000) {
-            if (characterIdx == 0) myCharacter[place] = new Yongsa(0, destinyList[characterIdx]);
-            else if (characterIdx == 1) myCharacter[place] = new Elf(0, destinyList[characterIdx]);
+            switch (characterIdx)
+            {
+                case 0:
+                    myCharacter[place] = new Yongsa(0, destinyList[characterIdx]); break;
+                case 1:
+                    myCharacter[place] = new Neaco(0, destinyList[characterIdx]); break;
+                case 2:
+                    myCharacter[place] = new Druid(0, destinyList[characterIdx]); break;
+
+            }
         }
         //몬스터
         if (characterIdx > 10000) {
