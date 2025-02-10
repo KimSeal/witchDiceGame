@@ -845,7 +845,7 @@ public class BattleManager : MonoBehaviour
     // Character Skill Select Start (Phase 3 - Character Skill Select)///
 
     private GameObject[] skillSelectUI = new GameObject[9];
-    private GameObject[] skillSelectDescUI = new GameObject[6];
+    private GameObject[] skillSelectDescUI = new GameObject[7];
 
     private int curClickSkill = -1; //마지막으로 클릭한 스킬 정보를 저장한다. 저장형식은 characterIdx * 10 + skillIdx의 형태를 띈다. 선택된게 없으면 -1을 갖는다.
 
@@ -1008,10 +1008,12 @@ public class BattleManager : MonoBehaviour
             skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
         }
         skillSelectDescUI[1].GetComponent <TextMeshPro> ().text = thisSkill.getCommand();
+        skillSelectDescUI[6].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
         for (int i=0;i<4;i++)
         {
             skillSelectDescUI[i+2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(i).ToString());
         }
+        
     }
     void deleteSkillCommand()
     {
@@ -1021,6 +1023,7 @@ public class BattleManager : MonoBehaviour
         {
             skillSelectDescUI[i + 2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
         }
+        skillSelectDescUI[6].GetComponent<TextMeshPro>().text = "";
     }
 
 
@@ -1733,7 +1736,7 @@ public class BattleManager : MonoBehaviour
 
         skillSelectDescUI[0] = GameObject.Find("battle_skill_skillImage_selected"); //스킬 이미지
         skillSelectDescUI[1] = GameObject.Find("battle_skill_selected_exp"); //텍스트
-        
+        skillSelectDescUI[6] = GameObject.Find("battle_skill_selected_title"); //스킬 명
         for (int i=0;i<4;i++)
         {
             skillSelectDescUI[i+2] = GameObject.Find("battle_skill_needDice_selected_" + i.ToString()); //스킬에 필요한 주사위 종류
