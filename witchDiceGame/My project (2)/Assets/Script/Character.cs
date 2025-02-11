@@ -38,7 +38,10 @@ public abstract class Character
             item[1] = new Item(itemManager.Instance.getItem(2, 0));
         }
     }
-
+    public string getName()
+    {
+        return this.destiny.getName();
+    }
     public Dice getDiceObj()
     {
         return this.dice;

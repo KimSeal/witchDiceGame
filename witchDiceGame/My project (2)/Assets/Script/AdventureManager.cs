@@ -138,7 +138,20 @@ public class AdventureManager : MonoBehaviour
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (stageIdx<20)
         {
-            stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "\nLevel : " + stageIdx;
+            stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "\nLevel : " + stageIdx; //초기화
+            for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
+            {
+                diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
+                if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0) {
+                    diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+                    continue;
+                }
+                if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
+                {
+                    diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
+                }
+                else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
+            }
             if (adventureEventArr[stageIdx] == 1) { //주사위 이벤트 일경우 해당 이벤트 진행. 
                 
                 eventWatchNum = 0;
