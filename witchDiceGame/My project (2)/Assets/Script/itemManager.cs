@@ -157,11 +157,22 @@ public class itemManager : MonoBehaviour
     }
     private void characterBoard_update(int idx) //board 변경시 업데이트를 하기 위한 함수. character board 변경이나 character idx가 변경될 경우 사용하게 된다.
     {
+        Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
+        if (tempCharacter == null || tempCharacter.getCurState() != 0) {
+            return;
+        }
         if (idx == 0) //개인 정보
         {
-            Character temp = CharacterManager.Instance.getCharacter(characterSelectIdx);
-            infoBoardObj[3].GetComponent<TextMeshPro>().text = temp.getHp().ToString() + "/" + temp.getMaxHp().ToString();
-            infoBoardObj[4].GetComponent<TextMeshPro>().text = temp.getHp().ToString() + "/" + temp.getMaxHp().ToString(); //이후 Mp로 수정할것
+            
+
+            if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face") != null)
+            {
+                infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
+            }
+            else { infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
+            infoBoardObj[1].GetComponent<TextMeshPro>().text = tempCharacter.getName();
+            infoBoardObj[3].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
+            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString(); //이후 Mp로 수정할것
         }
         else if (idx == 1) // 주사위
         {
