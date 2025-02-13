@@ -304,6 +304,26 @@ public class itemManager : MonoBehaviour
         //mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
     
+    public void updateCharacterUIBtn()
+    {
+        //CharacterUIArr[i]
+        for (int characterSelectIdx = 0; characterSelectIdx < 4; characterSelectIdx++) {
+            Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
+            if (tempCharacter == null || tempCharacter.getCurState() != 0)
+            {
+                CharacterUIArr[characterSelectIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+            }
+            else
+            {
+                if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face") != null)
+                {
+                    CharacterUIArr[characterSelectIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
+                }
+                else { CharacterUIArr[characterSelectIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
+            }
+        }
+
+    }
 
     GameObject mainCamera;
     // Start is called before the first frame update

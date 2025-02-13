@@ -258,6 +258,7 @@ public class AdventureManager : MonoBehaviour
     {
         curCanvasIsAdventure = false;
         itemManager.Instance.click_upgradeCanvas_start();
+        itemManager.Instance.updateCharacterUIBtn();
         mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
     public void exitUpgradeCanvas()
