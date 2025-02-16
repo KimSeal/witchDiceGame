@@ -66,6 +66,15 @@ public class AdventureManager : MonoBehaviour
     bool curCanvasIsAdventure = true;
     bool battleEventTrigger = false;
     bool eventWatchTrigger = false;
+
+
+    //어드벤쳐 캐릭터 버튼 선택용
+    private int selectDiceCharacterIdx = 0; //지금은 가장 앞에 있는 놈으로 해놨는데 추후 수정가능하게 만들기
+    private GameObject nextBtnObj;
+    private GameObject standObj;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -81,6 +90,8 @@ public class AdventureManager : MonoBehaviour
         adventureBackground = GameObject.Find("ui_adventureBack_0");
         adventureNPC = GameObject.Find("ui_adventureNPC_0");
 
+        nextBtnObj = GameObject.Find("adventure_nextBtn_0");
+        standObj = GameObject.Find("spr_ui_character_stand");
 
         stageNum = 1;
         stageIdx = 1;
@@ -157,14 +168,17 @@ public class AdventureManager : MonoBehaviour
                 eventWatchNum = 0;
                 curDiceEvent = new adventureEvent(adventureEventList[eventIndexReturn()]); //랜덤한 이벤트를 받아온다.
                 eventWatchTrigger = true;
-                selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText(); //선택지 텍스트 변경
-                eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
+                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText(); //선택지 텍스트 변경
+                //eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
+
+                selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
+
                 adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_adventureBack_" + curDiceEvent.getEventName() + "_0");
                 adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_0");
                 selectImage.transform.rotation = Quaternion.Euler(0, 0, 0);
 
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
-                selectDiceNum = 0; //고를 수 있는 상태로 변경
+                selectDiceNum = -1; //고를 수 있는 상태로 변경
                 
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
 
@@ -176,9 +190,12 @@ public class AdventureManager : MonoBehaviour
                 
                 eventWatchNum = selectDiceNum - 1;
                 curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
-                selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
-                eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
-                
+                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
+                //eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
+
+                selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
+
+
                 adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName()+ "_"+ curDiceEventPacket.getSpriteIndex());
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
@@ -238,20 +255,41 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-
+    
     public void clickDice(int characterIdx)
     {
-        if (selectDiceNum == 0 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
-        {
+        if (selectDiceNum == -1 && characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
+            characterIdx = selectDiceCharacterIdx;
             CharacterManager.Instance.throwDice(characterIdx);
             //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
             //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
-            
-            diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
-            diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
+
+            nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
+            nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
             selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
         }
+        else if (selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
+        {
+            for (int i=0;i<4;i++)
+            {
+                diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            }
+            diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            selectDiceCharacterIdx = characterIdx;
+            standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/standImage/spr_"+ CharacterManager.Instance.getCharacter(characterIdx).getName() + "_stand" );
+        }
     } 
+    public void hoverInCharacterDice(int characterIdx)
+    {
+        diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+    }
+    public void hoverOutCharacterDice(int characterIdx)
+    {
+        if (selectDiceCharacterIdx != characterIdx)
+        {
+            diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+    }
 
     //가방, 전투 페이즈 입장을 위한 함수들
     public void enterUpgradeCanvas()
