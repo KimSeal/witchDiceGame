@@ -91,7 +91,7 @@ public class AdventureManager : MonoBehaviour
         adventureNPC = GameObject.Find("ui_adventureNPC_0");
 
         nextBtnObj = GameObject.Find("adventure_nextBtn_0");
-        standObj = GameObject.Find("spr_ui_character_stand");
+        standObj = GameObject.Find("ui_backImage_0");
 
         stageNum = 1;
         stageIdx = 1;
@@ -134,6 +134,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
+        mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
         //지금은 시작 버튼 누르면 바로 시작
         StartCoroutine(phase_Manage_Coroutine());
     }
@@ -276,7 +277,7 @@ public class AdventureManager : MonoBehaviour
             }
             diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
             selectDiceCharacterIdx = characterIdx;
-            standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/standImage/spr_"+ CharacterManager.Instance.getCharacter(characterIdx).getName() + "_stand" );
+            standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_"+ CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back" );
         }
     } 
     public void hoverInCharacterDice(int characterIdx)
