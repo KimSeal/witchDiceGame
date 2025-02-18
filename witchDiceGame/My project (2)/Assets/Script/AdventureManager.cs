@@ -96,8 +96,8 @@ public class AdventureManager : MonoBehaviour
         stageNum = 1;
         stageIdx = 1;
         stageInfo = GameObject.Find("adventure_stageInfo");
-        stageInfo.GetComponent<TextMeshPro>().text = "Stage : " +  stageNum + "\nLevel : "+ stageIdx;
-        selectInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "\nLevel : " + stageIdx;
+        stageInfo.GetComponent<TextMeshPro>().text = "Stage : " +  stageNum + "  Level : "+ stageIdx;
+        selectInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx;
 
         AdventureEventPacketReader[] tempList =  new AdventureEventPacketReader[6];
 
@@ -150,7 +150,7 @@ public class AdventureManager : MonoBehaviour
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (stageIdx<20)
         {
-            stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "\nLevel : " + stageIdx; //초기화
+            stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx; //초기화
             for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
             {
                 diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
