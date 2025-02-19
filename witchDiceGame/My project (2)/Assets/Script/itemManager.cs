@@ -418,6 +418,12 @@ public class itemManager : MonoBehaviour
         updateInventory();
     }
 
+    public void setItem(int type, int index)
+    {
+        ItemExistArr[type, index] = true;
+        ItemArr[type, index] = new Item(itemList[1][6]);
+    }
+
     // Update is called once per frame
     void Update()
     {

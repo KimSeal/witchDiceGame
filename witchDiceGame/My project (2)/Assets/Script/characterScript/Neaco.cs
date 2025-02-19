@@ -27,13 +27,13 @@ public class Neaco : Character
             packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
         }*/
         TakeSkillPacket takeSkillPacket;
-        if (this.destiny.getDestinyIdx() == 0)
-        {
-            if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        //if (this.destiny.getDestinyIdx() == 0)
+        //{
+            //if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
                 packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
             }
-        }
+        //}
         return packets;
     }
 }

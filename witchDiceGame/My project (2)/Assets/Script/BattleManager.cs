@@ -1672,6 +1672,8 @@ public class BattleManager : MonoBehaviour
         }
         return 0;
     }
+
+    bool bosang_click = false;
     private IEnumerator EndPhase_Coroutine()
     {
         int result = winningCheck();
@@ -1684,7 +1686,13 @@ public class BattleManager : MonoBehaviour
         //적군 전멸
         else if (result == 1)
         {
+            yield return new WaitForSeconds(0.5f);
+            GameObject temp = GameObject.Find("bosang_ui");
+            temp.transform.position = new Vector3(0f, -0f, temp.transform.position.z);
             Debug.Log("you win!");
+            bosang_click = true;
+            yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+
             AdventureManager.Instance.exitBattleCanvas();
         }
         //전투 지속 필요
@@ -1693,6 +1701,20 @@ public class BattleManager : MonoBehaviour
             curPhase = 1;
         }
         yield return new WaitForSeconds(0.2f);
+    }
+    
+    public void click_bosang()
+    {
+        GameObject temp0 = GameObject.Find("bosang_ui");
+        temp0.transform.position = new Vector3(0f, 300f, temp0.transform.position.z);
+        GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
+        temp.transform.position = new Vector3(171f, -37.5f, temp.transform.position.z);
+
+        itemManager.Instance.setItem(1, 7);
+    }
+    public void click_backToAdventure()
+    {
+        bosang_click = false;
     }
     // End Phase End (phase 6 - check game finish)//
 
