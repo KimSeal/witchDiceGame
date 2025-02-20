@@ -246,13 +246,20 @@ public class AdventureManager : MonoBehaviour
     { //현재 아래 방향이 상승
         if (eventWatchTrigger)
         {
-            for (int i=0;i<6;i++)
-            {
-                if(i+1 == inputNum) watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
-                else watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+
+            if (inputNum == 0) {
+                selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText();
             }
-            eventWatchNum = inputNum - 1;
-            selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경                                                                                                       //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+            else
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (i + 1 == inputNum) watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                    else watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                }
+                eventWatchNum = inputNum - 1;
+                selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경                                                                                                       //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+            }
         }
     }
 
