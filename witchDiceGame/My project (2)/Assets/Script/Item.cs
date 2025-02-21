@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public class Item 
 {
     private int idx;
     private int type; // 0. consumable  1. dice   2. equip   3. passive   4.destiny 
