@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 public class itemManager : MonoBehaviour
 {
@@ -62,6 +63,7 @@ public class itemManager : MonoBehaviour
     private GameObject[] itemBoardState = new GameObject[5]; //item 보드 선택버튼에 대한 object
 
     private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
+    private Animator[] CharacterStandArr = new Animator[4];// 중단부 캐릭터 스탠딩 애니메이션 오브젝트 모음
     private GameObject[] inventoryUIArr = new GameObject[11]; // 하단부 인벤토리에 대한 오브젝트 모음
 
     private GameObject[] infoBoardObj = new GameObject[5]; //이미지, 제목, 서브 설명, hp수치, mp 수치
@@ -257,6 +259,9 @@ public class itemManager : MonoBehaviour
         ItemArr[curSelectItemType, curSelectItemIndex] = null;
         ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
         curSelectItemIndex = -1;
+
+        setUpAnimator();
+
     }
 
     public Item getItem(int itemType, int itemIndex)
@@ -363,6 +368,16 @@ public class itemManager : MonoBehaviour
         CharacterUIArr[2] = GameObject.Find("obj_itemUI_characterBtn_2");
         CharacterUIArr[3] = GameObject.Find("obj_itemUI_characterBtn_3");
 
+        CharacterStandArr[0] = GameObject.Find("obj_itemUI_character_0").GetComponent<Animator>();
+        CharacterStandArr[1] = GameObject.Find("obj_itemUI_character_1").GetComponent<Animator>();
+        CharacterStandArr[2] = GameObject.Find("obj_itemUI_character_2").GetComponent<Animator>();
+        CharacterStandArr[3] = GameObject.Find("obj_itemUI_character_3").GetComponent<Animator>();
+
+        CharacterStandArr[0].Play("Idle");
+        CharacterStandArr[1].Play("Idle");
+        CharacterStandArr[2].Play("Idle");
+        CharacterStandArr[3].Play("Idle");
+
         for (int i = 0; i < 11; i++)
         {
             for(int j=0;j<5;j++) ItemExistArr[j, i] = false; //아이템 없다는 것을 초기화를 통해 배정
@@ -396,8 +411,7 @@ public class itemManager : MonoBehaviour
 
         }
 
-        
-        
+        setUpAnimator();
 
 
         //test Sample
@@ -422,6 +436,22 @@ public class itemManager : MonoBehaviour
     {
         ItemExistArr[type, index] = true;
         ItemArr[type, index] = new Item(itemList[1][6]);
+    }
+
+    public void setUpAnimator()
+    {
+        for (int i=0;i<4;i++)
+        {
+            
+            if (CharacterManager.Instance.getCharacterState(i) == 0) {
+                CharacterStandArr[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(i) + "/animator_" + CharacterManager.Instance.getName_itemManager(i));
+            }
+            else
+            {
+                CharacterStandArr[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+            }
+        }
+
     }
 
     // Update is called once per frame

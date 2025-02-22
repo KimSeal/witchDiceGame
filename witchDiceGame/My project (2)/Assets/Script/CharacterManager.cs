@@ -147,6 +147,13 @@ public class CharacterManager : MonoBehaviour
         if(myTeam) return myCharacter[idx];
         return enemyCharacter[idx];
     }
+
+    public string getName_itemManager(int idx)
+    {
+        return myCharacter[idx].getName();
+    }
+
+
     public void setcharacterHp(int idx, int hp)
     {
         myCharacter[idx].setHp(hp);
