@@ -1,4 +1,0 @@
-eventIdx,eventName,stageIdx,levelIdxStart,levelIdxEnd,selectText
-1,3goblin,1,1,20,You meet goblin! but they don't know us now.
-2,Event2,1,1,20,this is second text
-3,Event3,1,1,20,this is third text
