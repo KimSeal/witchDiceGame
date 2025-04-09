@@ -129,6 +129,12 @@ public class CharacterManager : MonoBehaviour
         }
 
     }
+
+    
+    public void setCharacter(int place, Character character) {
+        //¾Æ±º
+        myCharacter[place] = character; 
+    }
     public void emptyEnemyCharacter(int place)
     {
         enemyCharacter[place] = null;

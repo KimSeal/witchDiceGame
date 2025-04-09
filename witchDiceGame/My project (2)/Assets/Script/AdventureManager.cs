@@ -69,7 +69,7 @@ public class AdventureManager : MonoBehaviour
 
 
     //어드벤쳐 캐릭터 버튼 선택용
-    private int selectDiceCharacterIdx = 0; //지금은 가장 앞에 있는 놈으로 해놨는데 추후 수정가능하게 만들기
+    private int selectDiceCharacterIdx = -1; //지금은 가장 앞에 있는 놈으로 해놨는데 추후 수정가능하게 만들기
     private GameObject nextBtnObj;
     private GameObject standObj;
 
@@ -78,7 +78,7 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i=0;i<4;i++)
+        for (int i = 0; i < 4; i++)
         {
             diceObject[i] = GameObject.Find("adventure_dice_" + i.ToString());
         }
@@ -96,15 +96,15 @@ public class AdventureManager : MonoBehaviour
         stageNum = 1;
         stageIdx = 1;
         stageInfo = GameObject.Find("adventure_stageInfo");
-        stageInfo.GetComponent<TextMeshPro>().text = "Stage : " +  stageNum + "  Level : "+ stageIdx;
+        stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx;
         selectInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx;
 
-        AdventureEventPacketReader[] tempList =  new AdventureEventPacketReader[6];
+        AdventureEventPacketReader[] tempList = new AdventureEventPacketReader[6];
 
         adventureEventReaderList = CSVReader.Read<AdventureEventReader>("Event");
         adventureEventPacketReaderList = CSVReader.Read<AdventureEventPacketReader>("EventPacket");
-        
-        for (int eventIdx =0; eventIdx < adventureEventReaderList.Count; eventIdx++) //Reader 2개를 병합 시켜 하나의 event를 만들어 list에 추가
+
+        for (int eventIdx = 0; eventIdx < adventureEventReaderList.Count; eventIdx++) //Reader 2개를 병합 시켜 하나의 event를 만들어 list에 추가
         {
             for (int packetIdx = 0; packetIdx < 6; packetIdx++) //각 이벤트 당 6개의 packet을 받는다.
             {
@@ -113,21 +113,21 @@ public class AdventureManager : MonoBehaviour
             adventureEventList.Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
 
-        for (int i=0;i<6;i++)
+        for (int i = 0; i < 6; i++)
         {
-            watchNumObject[i] = GameObject.Find("obj_adventureBtn_selectBtn_" + (i+1).ToString());
+            watchNumObject[i] = GameObject.Find("obj_adventureBtn_selectBtn_" + (i + 1).ToString());
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void makeStageEventArr() //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
     {
-        for (int i=0;i<20;i++)
+        for (int i = 0; i < 20; i++)
         {
             adventureEventArr[i] = 1; //지금은 모두 주사위 이벤트가 나오도록 설정. 나중에는 전투, 주사위 이벤트 등 어떤게 나올지 랜덤하게(단 전투가 많이) 나오게 수정해야한다.
         }
@@ -148,7 +148,7 @@ public class AdventureManager : MonoBehaviour
         makeStageEventArr(); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         stageIdx = 1;
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
-        while (stageIdx<20)
+        while (stageIdx < 20)
         {
             stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx; //초기화
             for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
@@ -165,7 +165,7 @@ public class AdventureManager : MonoBehaviour
                 else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
             }
             if (adventureEventArr[stageIdx] == 1) { //주사위 이벤트 일경우 해당 이벤트 진행. 
-                
+
                 eventWatchNum = 0;
                 curDiceEvent = new adventureEvent(adventureEventList[eventIndexReturn()]); //랜덤한 이벤트를 받아온다.
                 eventWatchTrigger = true;
@@ -180,7 +180,7 @@ public class AdventureManager : MonoBehaviour
 
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
                 selectDiceNum = -1; //고를 수 있는 상태로 변경
-                
+
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
 
                 eventWatchTrigger = false;
@@ -188,7 +188,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                 }
-                
+
                 eventWatchNum = selectDiceNum - 1;
                 curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
                 //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
@@ -197,10 +197,10 @@ public class AdventureManager : MonoBehaviour
                 selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
 
 
-                adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName()+ "_"+ curDiceEventPacket.getSpriteIndex());
+                adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_" + curDiceEventPacket.getSpriteIndex());
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
-                    for (int i=0;i<4;i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(0, curDiceEventPacket.getVal(i));
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
@@ -209,7 +209,7 @@ public class AdventureManager : MonoBehaviour
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
                     selectInfo.GetComponent<TextMeshPro>().text = "You Win! Go to Next Level";
                 }
-                
+
                 yield return new WaitForSeconds(1f); //잠시 대기
                 selectDiceNum = -1; // 선택 못하게 변경
                 eventWatchNum = -1;
@@ -263,10 +263,37 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    
+    public void resetDice()
+    {
+        selectDiceCharacterIdx = -2; //의미 없는 캐릭터 idx로 변경
+        for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
+        {
+            diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
+            if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0)
+            {
+                diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+                continue;
+            }
+            if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
+            {
+                diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
+            }
+            else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+        standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
     public void clickDice(int characterIdx)
     {
+        
         if (selectDiceNum == -1 && characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
+            if (selectDiceCharacterIdx <0)
+            {
+                return;
+            }
             characterIdx = selectDiceCharacterIdx;
             CharacterManager.Instance.throwDice(characterIdx);
             //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
@@ -302,33 +329,76 @@ public class AdventureManager : MonoBehaviour
     //가방, 전투 페이즈 입장을 위한 함수들
     public void enterUpgradeCanvas()
     {
-        curCanvasIsAdventure = false;
-        itemManager.Instance.click_upgradeCanvas_start();
-        itemManager.Instance.updateCharacterUIBtn();
-        itemManager.Instance.setUpAnimator();
-        mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+        if (!itemManager.Instance.getItemBoxMove()) {
+            if (itemManager.Instance.getItemBoxOpen())
+            {
+                itemManager.Instance.flipItemBox(1, 1);
+            }
+            else
+            {
+                itemManager.Instance.flipItemBox(0, 0);
+                curCanvasIsAdventure = false;
+
+                itemManager.Instance.click_upgradeCanvas_start();
+                itemManager.Instance.updateCharacterUIBtn();
+                itemManager.Instance.setUpAnimator();
+                mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+            }
+        }
+        
     }
     public void exitUpgradeCanvas()
     {
-        curCanvasIsAdventure = true;
-        mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+        if (!itemManager.Instance.getItemBoxMove())
+        {
+                curCanvasIsAdventure = true;
+                mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                itemManager.Instance.flipItemBox(0, 1);
+        }
     }
     public void enterBattleCanvas()
     {
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
-            curCanvasIsAdventure = false;
-            BattleManager.Instance.startBattle_fromAdventure();
-            mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+            if (!itemManager.Instance.getItemBoxMove() ) //상자 동작중에는 넘어가기 불가능.
+            {
+                if (itemManager.Instance.getItemBoxOpen())
+                { //열려있는 경우 상자 끄기
+                    itemManager.Instance.flipItemBox(1, 1);
+                }
+                else
+                {
+                    curCanvasIsAdventure = false;
+                    BattleManager.Instance.startBattle_fromAdventure();
+                    mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                }
+            }
+            
         }
         
     }
     public void exitBattleCanvas()
     {
-        curCanvasIsAdventure = true;
-        battleEventTrigger = false;
-        mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+        if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
+        {
+            if (!itemManager.Instance.getItemBoxMove()) //상자 동작중에는 넘어가기 불가능.
+            {
+                if (itemManager.Instance.getItemBoxOpen())
+                {   //열려있는 경우 상자 끄기
+                    itemManager.Instance.flipItemBox(2, 1);
+                }
+                else
+                {
+                    curCanvasIsAdventure = true;
+                    battleEventTrigger = false;
+                    mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                }
+            }
+        }
     }
+
+    
+
 
     public int getWitchPower(int idx)
     {

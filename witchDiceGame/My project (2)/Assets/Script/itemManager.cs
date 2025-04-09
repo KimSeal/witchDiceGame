@@ -65,6 +65,7 @@ public class itemManager : MonoBehaviour
     private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
     private Animator[] CharacterStandArr = new Animator[4];// 중단부 캐릭터 스탠딩 애니메이션 오브젝트 모음
     private GameObject[] inventoryUIArr = new GameObject[11]; // 하단부 인벤토리에 대한 오브젝트 모음
+    private GameObject inventoryUI; //하단부 인벤토리 전체에 대한 오브젝트
 
     private GameObject[] infoBoardObj = new GameObject[5]; //이미지, 제목, 서브 설명, hp수치, mp 수치
     private GameObject[] diceBoardObj = new GameObject[7]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object
@@ -78,32 +79,231 @@ public class itemManager : MonoBehaviour
     private int characterSelectIdx = 0;//현재 선택된 캐릭터의 idx
     private int curSelectCharacterInfoType = 0; //현재 선택한 캐릭터 정보 창 종류
 
-    public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우
-    {
-        if(ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 
-        {
-            
-            if (curSelectItemIndex == idx) {// 이미 자신이 선택한 아이템인 경우 해제
-                changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-                curSelectItemIndex = -1;
+    private bool itemBoxMove = false;
+    private bool itemBoxOpen = false;
+    private int itemBoxOpenPoint = -1;
+ 
 
-            }
-            else //다른 경우 선택한 대상으로 변경
+    private int dragObjStartNum =-1;
+    private int dragObjEndNum = -1;
+
+
+    private int dragCharacterStartNum = -1;
+    private int dragCharacterEndNum = -1;
+
+
+    public void turnOffItemCollider_item()
+    {
+        for (int i=0;i<11;i++)
+        {
+            inventoryUIArr[i].GetComponent<BoxCollider2D>().enabled = false;
+        }
+    }
+    public void turnOnItemCollider_item()
+    {
+        for (int i = 0; i < 11; i++)
+        {
+            inventoryUIArr[i].GetComponent<BoxCollider2D>().enabled = true;
+        }
+    }
+    public void turnOffCharacterCollider_item()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            CharacterUIArr[i].GetComponent<BoxCollider2D>().enabled = false;
+        }
+    }
+    public void turnOnCharacterCollider_item()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            CharacterUIArr[i].GetComponent<BoxCollider2D>().enabled = true;
+        }
+    }
+
+
+    public void swapItem()
+    {
+        if(! (dragObjEndNum == -1 || dragObjStartNum == -1))
+        {
+            int a = dragObjStartNum;
+            int b = dragObjEndNum;
+            Item itemA = null;
+            Item itemB = null;
+            bool tempExistA = ItemExistArr[curSelectItemType, a];
+            bool tempExistB = ItemExistArr[curSelectItemType, b];
+            if (!tempExistA) itemA = null;
+            else itemA = new Item(ItemArr[curSelectItemType, a]);
+            if (!tempExistB) itemB = null;
+            else itemB = new Item(ItemArr[curSelectItemType, b]);
+
+            ItemExistArr[curSelectItemType, b] = tempExistA;
+            ItemExistArr[curSelectItemType, a] = tempExistB;
+            ItemArr[curSelectItemType, b] = itemA;
+            ItemArr[curSelectItemType, a] = itemB;
+            dragObjStartNum = -1;
+            dragObjEndNum = -1;
+            updateInventory();
+            click_item_bagButton(curSelectItemIndex);
+        }
+    }
+
+    public void swapCharacter()
+    {
+        if (!(dragCharacterStartNum == -1 || dragCharacterEndNum == -1)) {
+        Character playerA = CharacterManager.Instance.getCharacter(dragCharacterStartNum);
+        Character playerB = CharacterManager.Instance.getCharacter(dragCharacterEndNum);
+        CharacterManager.Instance.setCharacter(dragCharacterStartNum, playerB);
+        CharacterManager.Instance.setCharacter(dragCharacterEndNum, playerA);
+            AdventureManager.Instance.resetDice();
+            dragCharacterStartNum = -1;
+        dragCharacterEndNum = -1;
+        updateCharacterUIBtn();
+        setUpAnimator();
+        click_characterInfoType_selectButton(curSelectCharacterInfoType);
+        updateCharacterBar();
+        }
+    }
+    public int getDragObjStartNum()
+    {
+        return dragObjStartNum;
+    }
+    public int getDragObjEndNum()
+    {
+        return dragObjEndNum;
+    }
+
+    public void setDragObjStartNum(int input)
+    {
+        dragObjStartNum = input;
+    }
+    public void setDragObjEndNum(int input)
+    {
+        dragObjEndNum = input;
+    }
+
+    public int getDragCharacterStartNum()
+    {
+        return dragCharacterStartNum;
+    }
+    public int getDragCharacterEndNum()
+    {
+        return dragCharacterEndNum;
+    }
+
+    public void setDragCharacterStartNum(int input)
+    {
+        dragCharacterStartNum = input;
+    }
+    public void setDragCharacterEndNum(int input)
+    {
+        dragCharacterEndNum = input;
+    }
+
+
+    private IEnumerator ItemMoveUI(GameObject gameObjTemp, int opt, int onOff) // onoff : 위로 올라갈때 0 아래로 내려갈때 1
+    {
+        float[] tempPointX = { -1148f, -648f, -148f};
+        float[] tempPointY = { -200f, -88f };
+        
+        if (!itemBoxMove) { //혹시 모르니 한번더 이동중인지 확인
+            gameObjTemp.transform.position = new Vector3(tempPointX[opt], tempPointY[onOff], 0);
+
+            itemBoxMove = true;
+            float termY = 0.3f;
+            Vector3 destination = new Vector3(gameObjTemp.transform.position.x, tempPointY[(onOff+1)%2], 0);
+
+            
+            if (onOff == 0 && !itemBoxOpen) //상자가 잠겨있고 올라가는 경우
             {
-                if(curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
-                curSelectItemIndex = idx;
-                changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
+                itemBoxOpenPoint = opt; //현재 포인트 변경
+                termY *= -1;
+
+                while (gameObjTemp.transform.position.y < destination.y + termY )
+                {
+                    gameObjTemp.transform.position = Vector3.Lerp(gameObjTemp.transform.position, destination, 0.05f);
+                    yield return new WaitForSeconds(0.01f);
+                    
+                }
+                itemBoxOpen = true;
+                
+            }
+            else if(onOff == 1 && itemBoxOpen) // 상자가 열려있고 내려가는 경우
+            {
+                termY = 5.0f;
+                while (gameObjTemp.transform.position.y > destination.y + termY*10)//inputY + termY)
+                {
+                    gameObjTemp.transform.position = Vector3.Lerp(gameObjTemp.transform.position, destination, 0.05f);
+                    yield return new WaitForSeconds(0.01f);
+                }
+                itemBoxOpen =  false;
+                itemBoxOpenPoint = -1; //종료 후 포인트 변경
+            }
+            gameObjTemp.transform.position = destination;
+            Debug.Log("Arrive!");
+            
+            itemBoxMove = false;
+        }
+    }
+
+    public bool getItemBoxMove()
+    {
+        return itemBoxMove;
+    }
+    public bool getItemBoxOpen()
+    {
+        return itemBoxOpen;
+    }
+
+    public void flipItemBox(int placeIdx, int onOff)
+    {
+        if (!itemBoxMove) { //box가 움직이지 않을때
+            if (onOff == 0 && !itemBoxOpen) //열려있지 않으면 열수있게
+            {
+                StartCoroutine(ItemMoveUI(inventoryUI, placeIdx, 0));
+            }
+            else if (onOff == 1 && itemBoxOpen) // 열려있다면 닫을 수 있게.
+            {   //이미 열려있다면 닫을 수 있게 한다
+                StartCoroutine(ItemMoveUI(inventoryUI, placeIdx, 1));
             }
         }
-        else //아이템이 없는 경우 해제
+    }
+
+    public void flipItemBox_AdventureUI(bool onOff)
+    {
+        if (!itemBoxOpen) flipItemBox(1, 0);
+        else flipItemBox(1, 1);
+    }
+    
+    public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우
+    {
+        if (idx != -1)
         {
-            if (curSelectItemIndex != -1)
+            if (ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 
             {
-                changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+
+                if (curSelectItemIndex == idx)
+                {// 이미 자신이 선택한 아이템인 경우 해제
+                    changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+                    curSelectItemIndex = -1;
+
+                }
+                else //다른 경우 선택한 대상으로 변경
+                {
+                    if (curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
+                    curSelectItemIndex = idx;
+                    changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
+                }
             }
-            curSelectItemIndex = -1;
-        } 
-        
+            else //아이템이 없는 경우 해제
+            {
+                if (curSelectItemIndex != -1)
+                {
+                    changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+                }
+                curSelectItemIndex = -1;
+            }
+        }
     }
 
     public void click_item_trash()
@@ -143,7 +343,7 @@ public class itemManager : MonoBehaviour
             updateInventory();
         }
     }
-
+    
     public void click_characterInfoType_selectButton(int idx) // 캐릭터 정보 창에서 선택한 정보
     {
         curSelectCharacterInfoType = idx;
@@ -288,17 +488,15 @@ public class itemManager : MonoBehaviour
         }
     }
 
-    public void click_upgradeCanvas_start()
+    void updateCharacterBar()
     {
-        //초반 캐릭터는 살아있는 친구로 선택하는 코드 나중에 넘어올떄마다 실행시킬수 있도록 코드
-        
         for (int i = 0; i < 4; i++)
         {
             changeAlpha(CharacterUIArr[i], 0.7f);
         }
         for (int i = 0; i < 4; i++)
         {
-            if (CharacterManager.Instance.getCharacter(i).getCurState() == 0)
+            if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
             {
                 characterSelectIdx = i;
                 changeAlpha(CharacterUIArr[i], 0.0f);
@@ -306,9 +504,20 @@ public class itemManager : MonoBehaviour
             }
         }
         characterBoard_update(0);
+    }
+    public void click_upgradeCanvas_start()
+    {
+        //초반 캐릭터는 살아있는 친구로 선택하는 코드 나중에 넘어올떄마다 실행시킬수 있도록 코드
+
+        updateCharacterBar();
+    
+        StartCoroutine(ItemMoveUI(inventoryUI, 0, 0));
+
         //mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
+
     
+
     public void updateCharacterUIBtn()
     {
         //CharacterUIArr[i]
@@ -378,6 +587,7 @@ public class itemManager : MonoBehaviour
         CharacterStandArr[2].Play("Idle");
         CharacterStandArr[3].Play("Idle");
 
+        inventoryUI = GameObject.Find("obj_inventory");
         for (int i = 0; i < 11; i++)
         {
             for(int j=0;j<5;j++) ItemExistArr[j, i] = false; //아이템 없다는 것을 초기화를 통해 배정

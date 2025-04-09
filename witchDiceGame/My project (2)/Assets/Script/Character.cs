@@ -38,6 +38,30 @@ public abstract class Character
             item[1] = new Item(itemManager.Instance.getItem(2, 0));
         }
     }
+
+    public Character(Character character) { 
+        this.curState = character.curState;
+        this.level = character.level;
+        this.exp    =character.exp;
+        this.phyAtk=character.phyAtk;
+        this.magAtk=character.magAtk;  
+        this.phyDef =character.phyDef;
+        this.magDef =character.magDef;
+        this.hp=character.hp;
+        this.maxHp=character.maxHp;
+        this.armor = character.armor;
+        this.item[0] = new Item(character.getItem(0));
+        this.item[1] = new Item(character.getItem(1));
+        this.skillIdx[0] = character.skillIdx[0];
+        this.skillIdx[1] = character.skillIdx[1];
+        this.destiny = new Destiny(character.getDestiny());
+        this.dice = new Dice(character.getDiceTrue());
+    }
+
+    public Dice getDiceTrue()
+    {
+        return this.dice;
+    }
     public string getName()
     {
         return this.destiny.getName();

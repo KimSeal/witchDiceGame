@@ -14,6 +14,24 @@ public class Destiny
     //1-6 일반 값. 7 홀수 8 짝수 9 아무 값이나
     //private int[,] needDice = new int[10,4];
 
+    public Destiny(Destiny destiny)
+    {
+        this.DestinyIdx = destiny.DestinyIdx;
+        this.Enemy = destiny.Enemy; 
+        this.Name = destiny.Name;
+        this.Sex = destiny.Sex;
+        this.phyAtk = destiny.phyAtk;
+        this.magAtk = destiny.magAtk;
+        this.phyDef = destiny.phyDef;
+        this.magDef = destiny.magDef;
+        this.maxHp = destiny.maxHp;
+        for (int i=0;i<10;i++)
+        {
+            skillArr[i] = new Skill(destiny.getSkill(i));
+            skillIdx[i] = destiny.getSkillIdx(i);
+        }
+    }
+
     public Destiny(DestinyReader destinyReader,  Skill[] skillSet)
     {
         this.DestinyIdx = destinyReader.DestinyIdx;
@@ -54,5 +72,9 @@ public class Destiny
     public int getSkillIdx(int idx)
     {
         return this.skillIdx[idx];
+    }
+    public Skill getSkill(int idx)
+    {
+        return this.skillArr[idx];
     }
 }
