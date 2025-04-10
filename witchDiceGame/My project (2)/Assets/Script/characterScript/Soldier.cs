@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Druid : Character
+public class Soldier : Character
 {
-    public Druid(int curState, Destiny destiny) : base(curState, destiny)
+    public Soldier(int curState, Destiny destiny) : base(curState, destiny)
     {
 
     }
@@ -35,7 +35,7 @@ public class Druid : Character
             }
             if (sendSkillPacket.useSkillIdx == 1) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 10, 0));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5, 0));
             }
         //}
         return packets;

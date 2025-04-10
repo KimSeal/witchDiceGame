@@ -506,7 +506,7 @@ public class BattleManager : MonoBehaviour
         {
             diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_sub");
         }
-
+        /*
         if (characterIdx < 4)
         {
             mySkillUsed[characterIdx, skillIdx] = true;
@@ -514,7 +514,7 @@ public class BattleManager : MonoBehaviour
         else //적군이 사용할 경우 적군 주사위에 적용
         {
             enemySkillUsed[characterIdx, skillIdx] = true;
-        }
+        }*/
     }
     //주사위간 chain을 그리기 위한 함수
     void updateDiceUI_draw_chain(int characterIdx, int skillIdx, int diceStartIdx, int diceEndIdx)
@@ -825,17 +825,21 @@ public class BattleManager : MonoBehaviour
     // 주사위 선택(다양하게 수정할 수 있어야한다. 지금은 마녀만 해서 이름이 이런데 나중에 수정해야됨.) -> 아니면 주사위 클릭에서 분기 시도 -> 분기했음.(click_dice 함수)
     public void click_witchPower_Dice(int diceIdx)
     {
-        if (witchPowerClickState > 0 && myCharacter[diceIdx] != null  && myDice[diceIdx] != null && currentLightUI == 0 && currentMoveUI == 0)
+        if (witchPowerClickState > 0 &&  currentLightUI == 0 && currentMoveUI == 0)
         {
-            if (witchPowerClickState == 2)
+            if ((diceIdx >= 0 && diceIdx <= 3 && myCharacter[diceIdx] != null && myDice[diceIdx] != null)
+                || (diceIdx >= 4 && diceIdx <= 7 && enemyCharacter[diceIdx-4] != null && enemyDice[diceIdx-4] != null))
             {
-                clickedDice[1] = diceIdx;
+                if (witchPowerClickState == 2)
+                {
+                    clickedDice[1] = diceIdx;
+                }
+                else if (witchPowerClickState == 1)
+                {
+                    clickedDice[0] = diceIdx;
+                }
+                witchPowerClickState--;
             }
-            else if (witchPowerClickState == 1)
-            {
-                clickedDice[0] = diceIdx;
-            }
-            witchPowerClickState--;
         }
     }
     /// Witch Power End (Phase 2- witch Power Select)///
@@ -882,6 +886,7 @@ public class BattleManager : MonoBehaviour
         Debug.Log(curPhase);
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            Debug.Log("lets do this");
             int characterIdx = input / 10;
             int skillIdx = input % 10;
             if (myCharacter[characterIdx] != null && myCharacter[characterIdx].getCurState() == 0)
@@ -889,8 +894,9 @@ public class BattleManager : MonoBehaviour
                 //현재 선택된게 없는 경우.
                 if (curClickSkill == -1)
                 {
+                    Debug.Log("not select now, so we need to select");
                     //현재 주사위에 배치되어 있는 경우
-                    if(mySkillUsed[characterIdx, skillIdx])
+                    if (mySkillUsed[characterIdx, skillIdx])
                     {
                         //할당된 주사위를 찾아 제거하는 코드
                         for (int i=0;i<4;i++)
@@ -917,6 +923,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("select now, so we need to turn off");
                     StartCoroutine(makeBright(skillSelectUI[(curClickSkill / 10) * 2 + (curClickSkill % 10)], 0.0f));
                     deleteSkillCommand();
                     if (mySkillUsed[characterIdx, skillIdx]) //할당이 된 스킬인 경우
@@ -970,6 +977,7 @@ public class BattleManager : MonoBehaviour
                 //해당 스킬에 대한 버튼 해제
                 StartCoroutine(makeBright(skillSelectUI[(deleteSkill / 10) * 2 + (deleteSkill % 10)], 0.0f));
                 mySkillUsed[(deleteSkill / 10), (deleteSkill % 10)] = false;
+                
                 deleteSkillCommand();
             }
             else if (curClickSkill != -1) //스킬 선택을 했으며 해당 주사위가 비어있는 경우.
@@ -983,6 +991,7 @@ public class BattleManager : MonoBehaviour
                 if(MakeMyAttackSet(characterIdx, skillIdx, diceIdx))
                 {   //가능한 경우 주사위의 ui를 업데이트
                     updateMyDiceUI();
+                    mySkillUsed[characterIdx, skillIdx] = true;
                 }
                 else //불가능한 경우
                 {
@@ -1503,7 +1512,7 @@ public class BattleManager : MonoBehaviour
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
@@ -1516,7 +1525,7 @@ public class BattleManager : MonoBehaviour
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-                                if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
@@ -1881,9 +1890,9 @@ public class BattleManager : MonoBehaviour
         CharacterManager.Instance.setCharacter(3, 0);
         */
         
-        CharacterManager.Instance.setCharacter(0, 10002);
-        CharacterManager.Instance.setCharacter(1, 10002);
-        CharacterManager.Instance.setCharacter(2, 10002);
+        //CharacterManager.Instance.setCharacter(0, 10002);
+        //CharacterManager.Instance.setCharacter(1, 10002);
+        //CharacterManager.Instance.setCharacter(2, 10002);
 
         for (int i=0;i<4;i++)
         {

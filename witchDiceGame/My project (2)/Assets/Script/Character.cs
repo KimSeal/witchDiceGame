@@ -7,7 +7,7 @@ public abstract class Character
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
     protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0,
-        hp = 0, maxHp = 0, armor = 0;
+        hp = 0, maxHp = 0, armor = 0, mp = 0, maxMp = 0;
     protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] {0,1};
@@ -23,7 +23,8 @@ public abstract class Character
         {
             this.level = 1;
             this.exp = 0;
-
+            this.maxMp = destiny.maxMp;
+            this.mp = maxMp;
             this.phyAtk = destiny.phyAtk;
             this.magAtk = destiny.magAtk;
             this.phyDef = destiny.phyDef;
@@ -44,6 +45,8 @@ public abstract class Character
         this.level = character.level;
         this.exp    =character.exp;
         this.phyAtk=character.phyAtk;
+        this.maxMp =character.maxMp;
+        this.mp = character.mp;
         this.magAtk=character.magAtk;  
         this.phyDef =character.phyDef;
         this.magDef =character.magDef;
@@ -119,6 +122,8 @@ public abstract class Character
     public int getCurState(){ return curState; }
     public int getHp() {return hp; }
     public int getMaxHp() { return maxHp; }
+    public int getMp() { return mp; }
+    public int getMaxMp() { return maxMp; }
     public Skill skillUse(int selNum)
     {
         return destiny.findSkill(skillIdx[selNum]);
@@ -159,6 +164,7 @@ public abstract class Character
         if (this.hp <= 0)
         {
             this.curState = 2;
+            this.hp = 0;
             return 1;
         }
         return 0;
@@ -170,6 +176,86 @@ public abstract class Character
         {
             if(this.curState == 0) this.curState = 2;
         }
+    }
+    public int upGrade(int idx, int val)
+    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:경험치 / 
+        if (idx == 0){
+            this.hp += val;
+            if (hp > maxHp) hp = maxHp;
+        }
+        if (idx == 1){
+            maxHp += val;
+        }
+        if (idx == 2){
+            this.mp += val;
+            if (this.mp > maxMp) this.mp = maxMp;
+        }
+        if (idx == 3)
+        {
+            maxMp += val;
+        }
+        if (idx == 4)
+        {
+            this.armor += val;
+        }
+        if (idx == 5)
+        {
+            this.phyAtk += val;
+        }
+        if (idx == 6)
+        {
+            this.exp += val;
+        }
+        return 0;
+    }
+
+    public int downGrade(int idx, int val)
+    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:경험치 / 
+        if (idx == 0) //체력이 줄었고 
+        {
+            if(damage(val) == 1) return 1;
+        }
+        if (idx == 1)
+        {
+            this.maxHp -= val;
+            if (maxHp < hp) hp = maxHp;
+            if (maxHp <= 0)
+            {
+                this.curState = 2;
+                maxHp = 0;
+                hp = 0; return 1;
+            }
+        }
+        if (idx == 2)
+        {
+            this.mp -= val;
+            if(this.mp < 0 ) this.mp = 0;
+        }
+        if(idx == 3)
+        {
+            this.maxMp -= val;
+            if (maxMp < mp) mp = maxMp;
+            if (maxMp <= 0)
+            {
+                maxMp = 0;
+                mp = 0;
+            }
+        }
+        if (idx == 4) {
+            this.armor -= val; 
+            if (this.armor < 0) this.armor = 0;
+        }
+        if (idx == 5)
+        {
+            this.phyAtk -= val;
+            if (this.phyAtk < 0) this.phyAtk = 0;
+        }
+        if (idx == 6)
+        {
+            this.exp -= val;
+            if (this.exp < 0) this.exp = 0;
+        }
+        return 0;
     }
     
 }

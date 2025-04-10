@@ -374,7 +374,7 @@ public class itemManager : MonoBehaviour
             else { infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
             infoBoardObj[1].GetComponent<TextMeshPro>().text = tempCharacter.getName();
             infoBoardObj[3].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
-            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString(); //이후 Mp로 수정할것
+            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxMp().ToString(); //이후 Mp로 수정할것
         }
         else if (idx == 1) // 주사위
         {

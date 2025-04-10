@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Druid : Character
+public class Tom : Character
 {
-    public Druid(int curState, Destiny destiny) : base(curState, destiny)
+    public Tom(int curState, Destiny destiny) : base(curState, destiny)
     {
 
     }

@@ -6,7 +6,7 @@ public class Destiny
 { 
     public int DestinyIdx;
     public string Enemy, Name, Sex;
-    public int phyAtk, magAtk, phyDef, magDef, maxHp;
+    public int phyAtk, magAtk, phyDef, magDef, maxHp, maxMp;
     //int[] needDiceArr = new int[10];
 
     public Skill[] skillArr = new Skill[10];
@@ -16,6 +16,7 @@ public class Destiny
 
     public Destiny(Destiny destiny)
     {
+        this.maxMp = destiny.maxMp;
         this.DestinyIdx = destiny.DestinyIdx;
         this.Enemy = destiny.Enemy; 
         this.Name = destiny.Name;
@@ -43,7 +44,7 @@ public class Destiny
         this.phyDef = destinyReader.phyDef;
         this.magDef = destinyReader.magDef;
         this.maxHp = destinyReader.maxHp;
-
+        this.maxMp = destinyReader.maxMp;
         for (int i=0;i<10;i++)
         {
             this.skillArr[i] = new Skill(skillSet[i]);

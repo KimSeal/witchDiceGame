@@ -69,6 +69,12 @@ public class adventureEvent_Packet{
 
 public class adventureEvent
 {
+    private int eventType;
+    private string backgroundSprite;
+    private string NPCSprite;
+
+    private int level; // 해당 스테이지의 레벨
+    private int diceUse; // 주사위 굴리는 여부
     private int eventIdx; // 해당 이벤트의 idx
     private string eventName; //해당 이벤트의 이벤트 이름
     private int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
@@ -83,7 +89,8 @@ public class adventureEvent
         for (int i=0;i<6;i++){ //초기화
             this.packet[i] = new adventureEvent_Packet(adventureEventPacketReaders[i]);
         }
-
+        this.diceUse = adventureEventReader.diceUse;
+        this.level = adventureEventReader.level;
         this.stageIdx = adventureEventReader.stageIdx;
         this.eventName = adventureEventReader.eventName;
         this.levelIdxStart = adventureEventReader.levelIdxStart;
@@ -91,15 +98,25 @@ public class adventureEvent
         this.eventIdx = adventureEventReader.eventIdx;
         this.selectText = adventureEventReader.selectText;
 
+        this.eventType = adventureEventReader.eventType;
+        this.NPCSprite = adventureEventReader.NPCSprite;
+        this.backgroundSprite = adventureEventReader.backgroundSprite;
+
     }
     public adventureEvent(adventureEvent adventureEventReader)
     {
+        this.diceUse = adventureEventReader.diceUse;
+        this.level = adventureEventReader.level;
         this.stageIdx = adventureEventReader.stageIdx;
         this.eventName = adventureEventReader.eventName;
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
         this.selectText = adventureEventReader.selectText;
+
+        this.eventType = adventureEventReader.eventType;
+        this.backgroundSprite = adventureEventReader.backgroundSprite;
+        this.NPCSprite = adventureEventReader.NPCSprite;
 
         for (int i = 0; i < 6; i++)
         {
@@ -119,5 +136,26 @@ public class adventureEvent
     {
         return this.eventName;
     }
-    
+    public int getDiceUse()
+    {
+        return this.diceUse;
+    }
+    public int getLevel()
+    {
+        return this.level;
+    }
+
+    public int getEventType()
+    {
+        return this.eventType;
+    }
+    public string getBackgroundSprite()
+    {
+        return this.backgroundSprite;
+    }
+    public string getNPCSprite()
+    {
+        return this.NPCSprite;
+    }
+
 }

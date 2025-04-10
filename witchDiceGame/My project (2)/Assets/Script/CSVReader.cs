@@ -37,6 +37,7 @@ public class DestinyReader
     public int phyDef;
     public int magDef;
     public int maxHp;
+    public int maxMp;
     public int skill0;
     public int skill1;
     public int skill2;
@@ -60,6 +61,11 @@ public class ItemReader
 
 public class AdventureEventReader
 {
+    public int level;
+    public string NPCSprite;
+    public string backgroundSprite;
+    public int eventType;
+    public int diceUse;
     public int eventIdx;
     public string eventName;
     public int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
