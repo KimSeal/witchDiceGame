@@ -79,6 +79,8 @@ public class AdventureEventPacketReader
         selectVal0, selectVal1, selectVal2, selectVal3, selectVal4, selectVal5, selectVal6, selectVal7;
     public string chooseText, resultText;
     public string spriteIndex;
+    public int itemExist, itemType0, itemIdx0, itemType1, itemIdx1, itemType2, itemIdx2, itemType3, itemIdx3;
+    
 }
 
 public class CSVReader

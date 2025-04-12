@@ -74,6 +74,7 @@ public class CharacterManager : MonoBehaviour
         setCharacter(0, 0);
         setCharacter(1, 3);
         setCharacter(2, 4);
+        setCharacter(3, 4);
     }
 
     // Update is called once per frame
@@ -108,6 +109,7 @@ public class CharacterManager : MonoBehaviour
     //살아있는 캐릭터 배치
     public void setCharacter(int place, int characterIdx)
     {
+        if (place > 3) place = 3;
         if (characterIdx == -99999) return;
         //아군
         if (characterIdx <= 10000) {
@@ -139,6 +141,8 @@ public class CharacterManager : MonoBehaviour
                     enemyCharacter[place] = new RoyalSoldier(0, destinyList_monster[characterIdx]); break;
                 case 3:
                     enemyCharacter[place] = new Soldier(0, destinyList_monster[characterIdx]); break;
+                case 4:
+                    enemyCharacter[place] = new Chicken(0, destinyList_monster[characterIdx]); break;
             }
         }
 

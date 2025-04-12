@@ -601,7 +601,7 @@ public class BattleManager : MonoBehaviour
                 myDiceNum[i] = myDice[i].getNum();
                 //임시 주사위 UI 변경
                 myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].getDir() * -90);
-                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[i].curIdx];
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[i].getNum()-1];
             }
         }
 
@@ -614,7 +614,7 @@ public class BattleManager : MonoBehaviour
                 enemyDiceNum[i] = enemyDice[i].getNum();
 
                 enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
-                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].curIdx];
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].getNum()-1];
             }
         }
 
@@ -1719,7 +1719,6 @@ public class BattleManager : MonoBehaviour
         GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
         temp.transform.position = new Vector3(171f, -37.5f, temp.transform.position.z);
 
-        itemManager.Instance.setItem(1, 7);
     }
     public void click_backToAdventure()
     {
@@ -1913,17 +1912,24 @@ public class BattleManager : MonoBehaviour
             {
                 enemyDice[i] = new Dice();
             }
-            else enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            
+            else
+            {
+                myDice[i] = null;
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
             //어군
             myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
                 myDice[i] = new Dice(myCharacter[i].getDiceObj());
-                
+
             }
-            else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            
+            else
+            {
+                myDice[i] = null;
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+
         }
 
         //아군이 선택할 스킬들에 대하여 이미지 업데이트

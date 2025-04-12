@@ -49,6 +49,11 @@ public class AdventureManager : MonoBehaviour
     private GameObject[] textObject = new GameObject[2]; // 주사위 굴렸을때 결과를 처리하기 위해 사용한다. 
     private GameObject[] diceObject = new GameObject[4];
 
+    private GameObject resultObj;
+    private GameObject[] resultObjArr = new GameObject[4];
+    private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
+
+    
     public List<adventureEvent> adventureEventList = new List<adventureEvent>(); //
 
     public List<AdventureEventReader> adventureEventReaderList = new List<AdventureEventReader>(); // 
@@ -75,7 +80,13 @@ public class AdventureManager : MonoBehaviour
 
     private bool eventEndClick = false; //이벤트를 넘어갈 수 있는 경우, true가 된다.
 
-
+    void resetItemResult()
+    {
+        for (int i = 0; i < 4; i++) {
+            resultItemArr[i, 0] = -99999;
+            resultItemArr[i, 1] = -99999;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -93,6 +104,16 @@ public class AdventureManager : MonoBehaviour
 
         nextBtnObj = GameObject.Find("adventure_nextBtn_0");
         standObj = GameObject.Find("ui_backImage_0");
+        standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+        resultObj = GameObject.Find("obj_adventureResult");
+        for (int i = 0; i < 4; i++)
+        {
+            resultObjArr[i] = GameObject.Find("obj_adventureResult_Item_" + i.ToString());
+            resetItemResult();
+        }
+        resultObj.SetActive(false);
+
 
         stageNum = 1;
         stageIdx = 1;
@@ -166,11 +187,21 @@ public class AdventureManager : MonoBehaviour
                 else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
             }
 
-            if (adventureEventArr[stageIdx] == 1) { //주사위 이벤트 일경우 해당 이벤트 진행. 
+            resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
+            resultObj.SetActive(false);
+
+            if (adventureEventArr[stageIdx] == 1)
+            { //주사위 이벤트 일경우 해당 이벤트 진행. 
 
                 eventWatchNum = 0;
-                curDiceEvent = new adventureEvent(adventureEventList[stageIdx]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
-                eventWatchTrigger = true;
+                curDiceEvent = new adventureEvent(adventureEventList[ stageIdx]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
+                if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
+                    eventWatchTrigger = true;
+                }
+                else
+                {
+                    eventWatchTrigger = false;
+                }
                 //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText(); //선택지 텍스트 변경
                 //eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
 
@@ -186,6 +217,7 @@ public class AdventureManager : MonoBehaviour
 
 
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
+                
                 if (curDiceEvent.getDiceUse() == 0)//주사위 사용이 필요가 없다면, 맨 첫번째 결과가 나오게 하여 그냥 넘길수 있게 한다.
                 {
                     selectDiceNum = 1;
@@ -194,6 +226,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     selectDiceNum = -1; 
                 }
+                
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
 
 
@@ -204,15 +237,23 @@ public class AdventureManager : MonoBehaviour
                 }
 
                 eventWatchNum = selectDiceNum - 1;
-                curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
+
                 //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
                 //eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
+                
 
-                selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
 
                 if (curDiceEvent.getEventType() == 6) //주사위를 굴리는 이벤트일 경우, 주사위 결과 반영해 NPC 스프라이트 변경
                 {
+                    curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_" + curDiceEventPacket.getSpriteIndex());
+                    selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
+                }
+                else
+                {
+                    curDiceEventPacket = curDiceEvent.getPacket(0); // 주사위 결과가 의미 없는 경우 0번째 packet으로 변경
+                    adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEventPacket.getSpriteIndex()); //적힌 sprite받아오기
+                    selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
                 }
                 if (curDiceEventPacket.getSelectType() == 3) { //능력치 감소
                     for (int i=0;i<8;i++)
@@ -240,6 +281,8 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
+                    //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
+                    //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     for (int i = 0; i < 4; i++)
                     {
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(i, curDiceEventPacket.getVal(i));
@@ -256,7 +299,26 @@ public class AdventureManager : MonoBehaviour
                     selectInfo.GetComponent<TextMeshPro>().text = "Battle is over. Now, we need to move";
                 }
 
+                if (curDiceEventPacket.getItemExist() == 1) { //이벤트 결과로 정해진 아이템을 준다.
+                    resultObj.SetActive(true);
+                    for (int i=0;i<4;i++)   //각 칸에 대한 처리
+                    {
+                        resultItemArr[i, 0] = curDiceEventPacket.getItemType(i);
+                        resultItemArr[i, 1] = curDiceEventPacket.getItemIdx(i);
+                        //결과로 나오는 아이템에 대한 이미지 처리
+                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                        else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i,0], resultItemArr[i, 1]));
+                    }
+                    
+                }
+                if (curDiceEventPacket.getItemExist() == 2) // 랜덤한 아이템을 준다. 이부분은 추가 구현 필요.
+                {
+                    resultObj.SetActive(true);
+                }
+
                 eventEndClick = true;
+                //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
+                //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
 
                 yield return new WaitUntil(() => !eventEndClick);
                 selectDiceNum = -1; // 선택 못하게 변경
@@ -268,6 +330,25 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
+    public void clickResultItem(int idx)
+    {
+        //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때
+        if (eventEndClick && resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999)
+        {
+            int result = itemManager.Instance.getItemResult(resultItemArr[idx, 0], resultItemArr[idx, 1]);
+            if (result == 0)
+            {
+                resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
+                resultItemArr[idx, 0] = -99999;
+                resultItemArr[idx, 1] = -99999;
+            }
+            else if (result == 1) //꽉차서 못담는 경우.
+            {
+
+            }
+            else if (result == 2) Debug.Log("Error, this is not exist item");
+        }
+    }
     public void changeSelectNum(bool upEvent)
     { //현재 아래 방향이 상승
         if (eventWatchTrigger) {

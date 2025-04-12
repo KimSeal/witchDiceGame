@@ -8,6 +8,9 @@ public class adventureEvent_Packet{
     private int selectType; // 0 : 대화문  1 : 아이템 취득  2: 아이템 버리기  3 : 능력치 감소  4 : 능력치 획득 5 : 능력치 감소 및 획득
                      // 6 : 배틀
     private int[] val = new int[8];
+    public int itemExist; // 0 : 결과로 아이템을 주지 않음. 1: 정해진 아이템을 줌. 2: 해당 레벨 내 랜덤한 아이템을 줌.(추후 구현)
+    public int[] itemType = new int[4];
+    public int[] itemIdx = new int[4]; 
     // 0 : 적군 캐릭터 배치 index
     // 1 : 취득하는 아이템 idx 배열
     // 2 : 아직 미정
@@ -32,7 +35,18 @@ public class adventureEvent_Packet{
         this.val[6] = adventureEventPacketReader.selectVal6;
         this.val[7] = adventureEventPacketReader.selectVal7;
         this.spriteIndex = adventureEventPacketReader.spriteIndex;
-    }
+
+        this.itemExist = adventureEventPacketReader.itemExist;
+        this.itemIdx[1] = adventureEventPacketReader.itemIdx1;
+        this.itemIdx[2] = adventureEventPacketReader.itemIdx2;
+        this.itemIdx[3] = adventureEventPacketReader.itemIdx3;
+        this.itemIdx[0] = adventureEventPacketReader.itemIdx0;
+        this.itemType[0] = adventureEventPacketReader.itemType0;
+        this.itemType[1] = adventureEventPacketReader.itemType1;
+        this.itemType[2] = adventureEventPacketReader.itemType2;
+        this.itemType[3] = adventureEventPacketReader.itemType3;
+
+}
 
     public adventureEvent_Packet(adventureEvent_Packet adventureEventPacketReader)
     {
@@ -44,6 +58,17 @@ public class adventureEvent_Packet{
             this.val[i] = adventureEventPacketReader.val[i];
         }
         this.spriteIndex = adventureEventPacketReader.spriteIndex;
+
+        this.itemExist = adventureEventPacketReader.itemExist;
+        this.itemIdx[1] = adventureEventPacketReader.itemIdx[1];
+        this.itemIdx[2] = adventureEventPacketReader.itemIdx[2];
+        this.itemIdx[3] = adventureEventPacketReader.itemIdx[3];
+        this.itemIdx[0] = adventureEventPacketReader.itemIdx[0];
+        this.itemType[0] = adventureEventPacketReader.itemType[0];
+        this.itemType[1] = adventureEventPacketReader.itemType[1];
+        this.itemType[2] = adventureEventPacketReader.itemType[2];
+        this.itemType[3] = adventureEventPacketReader.itemType[3];
+
     }
     public string getChooseText()
     {
@@ -64,6 +89,18 @@ public class adventureEvent_Packet{
     public string getSpriteIndex()
     {
         return spriteIndex;
+    }
+    public int getItemType(int idx)
+    {
+        return this.itemType[idx];
+    }
+    public int getItemIdx(int idx)
+    {
+        return this.itemIdx[idx];
+    }
+    public int getItemExist()
+    {
+        return this.itemExist;
     }
 }
 
@@ -157,5 +194,13 @@ public class adventureEvent
     {
         return this.NPCSprite;
     }
-
+    
+    public int getItemType(int selectDiceNum, int itemIdx)
+    {
+        return this.packet[selectDiceNum].getItemType(itemIdx);
+    }
+    public int getItemIdx(int selectDiceNum, int itemIdx)
+    {
+        return this.packet[selectDiceNum].getItemIdx(itemIdx);
+    }
 }

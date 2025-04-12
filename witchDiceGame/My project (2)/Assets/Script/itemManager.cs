@@ -91,6 +91,34 @@ public class itemManager : MonoBehaviour
     private int dragCharacterStartNum = -1;
     private int dragCharacterEndNum = -1;
 
+    public string getItemSprite(int type, int idx)
+    {
+        if (type == -99999 || idx == -99999 || type > 4 || idx >= itemList[type].Count || itemList[type][idx] == null){
+            return "sprite/TestSprite/characterSkill/spr_skill_none";
+        }
+        return "sprite/TestSprite/itemSprite/" + typeArr[type] + "ItemSprite/spr_item_" + typeArr[type] + "_" + itemList[type][idx].getItemName();
+    }
+    public int findEmptyIdx(int type)
+    {
+        for (int i=0;i<11;i++)
+        {
+            if (!ItemExistArr[type, i]) return i;
+        }
+        return 999; // 공간 내 넣을 자리가 없음.
+    }
+    public int getItemResult(int type, int idx) //이벤트 결과로 부터 아이템을 받아왔을 경우, 가능한지 여부를 확인해 받아온다.
+    {
+        if (type == -99999 || idx == -99999 || type>4 || idx >= itemList[type].Count || itemList[type][idx] == null) {
+            return 2; //존재 하지 않는 아이템 호출
+        }
+        int emptyIdx = findEmptyIdx(type);
+        if (emptyIdx == 999) {
+            return 1; //빈 공간이 없는 경우.
+        }
+        setItem(type, emptyIdx, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
+        updateInventory();
+        return 0;
+    }
 
     public void turnOffItemCollider_item()
     {
@@ -374,7 +402,7 @@ public class itemManager : MonoBehaviour
             else { infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
             infoBoardObj[1].GetComponent<TextMeshPro>().text = tempCharacter.getName();
             infoBoardObj[3].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
-            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxMp().ToString(); //이후 Mp로 수정할것
+            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getMp().ToString() + "/" + tempCharacter.getMaxMp().ToString(); //이후 Mp로 수정할것
         }
         else if (idx == 1) // 주사위
         {
@@ -642,10 +670,10 @@ public class itemManager : MonoBehaviour
         updateInventory();
     }
 
-    public void setItem(int type, int index)
+    private void setItem(int type, int index, int ItemIndex) //실제로 아이템을 배치하는 코드
     {
         ItemExistArr[type, index] = true;
-        ItemArr[type, index] = new Item(itemList[1][6]);
+        ItemArr[type, index] = new Item(itemList[type][ItemIndex]);
     }
 
     public void setUpAnimator()
