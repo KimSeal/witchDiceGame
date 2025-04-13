@@ -194,7 +194,7 @@ public class AdventureManager : MonoBehaviour
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
 
                 eventWatchNum = 0;
-                curDiceEvent = new adventureEvent(adventureEventList[ stageIdx]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
+                curDiceEvent = new adventureEvent(adventureEventList[4]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
                 if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
                     eventWatchTrigger = true;
                 }
