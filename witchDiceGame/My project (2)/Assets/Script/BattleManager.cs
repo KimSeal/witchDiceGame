@@ -159,7 +159,7 @@ public class BattleManager : MonoBehaviour
     }
 
     //현재 주사위 값들을 기반으로 스킬을 할당한다.
-    private void MakeEnemyAttackSet()
+    private void MakeEnemyAttackSet() //주사위 건너뛰고 발동하는 에러가 있다. 수정 필요
     {
         List<int> liveCharacterList = new List<int>();
         List<int> liveSkillList = new List<int>();
