@@ -180,6 +180,7 @@ public class BattleManager : MonoBehaviour
             if (enemySkillDiceNum[i] != -999)
             {
                 liveSkillList.Add(i); ;
+                
             }
             
         }
@@ -188,11 +189,11 @@ public class BattleManager : MonoBehaviour
         {
             int skillIdx = liveSkillList[skillIdx0];
             for (int diceIdx=0; diceIdx <= liveCharacterList.Count - enemySkillDiceNum[skillIdx]; diceIdx++)
-            {   //필요 주사위가 1칸인 경우
-                
-                if(enemySkillDiceNum[skillIdx] == 1)
+            {   
+                //필요 주사위가 1칸인 경우
+                if (enemySkillDiceNum[skillIdx] == 1)
                 {
-                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]])){ // 첫번쨰주사위가 겹치는 경우
+                    if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]])){ // 첫번쨰주사위가 겹치는 경우
                         enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx /4;
                         liveCharacterList.RemoveAt(diceIdx);
                         break;
@@ -202,29 +203,29 @@ public class BattleManager : MonoBehaviour
                 //필요 주사위가 2칸인 경우
                 else if (enemySkillDiceNum[skillIdx] == 2)
                 {
-                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
-                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]))
+                    if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
+                        enemyDiceTake[liveCharacterList[diceIdx+1]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]))
                     { // 첫번쨰주사위가 겹치는 경우
                         enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
                         enemyDiceTake[liveCharacterList[diceIdx+1]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        liveCharacterList.RemoveAt(diceIdx);
-                        liveCharacterList.RemoveAt(diceIdx);
+                        //liveCharacterList.RemoveAt(diceIdx);
+                        //liveCharacterList.RemoveAt(diceIdx);
                         break;
                     }
 
                 }
                 else if (enemySkillDiceNum[skillIdx] == 3) //필요 주사위가 3칸인 경우
                 {
-                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
-                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
-                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]))
+                    if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
+                        enemyDiceTake[liveCharacterList[diceIdx+1]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
+                        enemyDiceTake[liveCharacterList[diceIdx+2]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]))
                     { 
                         enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
                         enemyDiceTake[liveCharacterList[diceIdx + 1]] = (skillIdx % 4) * 10 + skillIdx / 4;
                         enemyDiceTake[liveCharacterList[diceIdx + 2]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        /*liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);
-                        liveCharacterList.RemoveAt(diceIdx);
-                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);*/
                         break;
 
                     }
@@ -232,19 +233,19 @@ public class BattleManager : MonoBehaviour
                 }
                 else if (enemySkillDiceNum[skillIdx] == 4) //필요 주사위가 4칸인 경우
                 {
-                    if (condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
-                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
-                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]) &&
-                        condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 3], enemyDiceNum[liveCharacterList[diceIdx + 3]]))
+                    if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
+                        enemyDiceTake[liveCharacterList[diceIdx+1]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
+                        enemyDiceTake[liveCharacterList[diceIdx+2]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]) &&
+                        enemyDiceTake[liveCharacterList[diceIdx+3]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 3], enemyDiceNum[liveCharacterList[diceIdx + 3]]))
                     {
                         enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
                         enemyDiceTake[liveCharacterList[diceIdx + 1]] = (skillIdx % 4) * 10 + skillIdx / 4;
                         enemyDiceTake[liveCharacterList[diceIdx + 2]] = (skillIdx % 4) * 10 + skillIdx / 4;
                         enemyDiceTake[liveCharacterList[diceIdx + 3]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        /*liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);
-                        liveCharacterList.RemoveAt(diceIdx);
-                        liveCharacterList.RemoveAt(diceIdx);
+                        liveCharacterList.RemoveAt(diceIdx);*/
                         break;
                     }
 
@@ -258,7 +259,7 @@ public class BattleManager : MonoBehaviour
         List<int> liveCharacterList = new List<int>();
         for (int i = selDiceIdx; i < 4; i++)
         {
-            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0 && myDiceTake[i] == -999)
+            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
                 liveCharacterList.Add(i);
             }
@@ -271,7 +272,7 @@ public class BattleManager : MonoBehaviour
         //필요 주사위가 1칸인 경우
         if (skill.getNeedDiceNum() == 1)
         {
-            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]))
+            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]))
             { // 첫번쨰주사위가 겹치는 경우
                 myDiceTake[liveCharacterList[0]] = characterIdx  * 10 + skillSelIdx ;
                 return true;
@@ -280,8 +281,8 @@ public class BattleManager : MonoBehaviour
                 //필요 주사위가 2칸인 경우
         else if (skill.getNeedDiceNum() == 2)
         {
-            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
-                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]))
+            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]))
             { // 첫번쨰주사위가 겹치는 경우
                 myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
                 myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
@@ -291,9 +292,9 @@ public class BattleManager : MonoBehaviour
         }
         else if (skill.getNeedDiceNum() == 3)
         {
-            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
-                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
-                condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]))
+            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
+                myDiceTake[liveCharacterList[2]] == -999 && condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]))
             { // 첫번쨰주사위가 겹치는 경우
                 myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
                 myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
@@ -303,10 +304,10 @@ public class BattleManager : MonoBehaviour
         }
         else if (skill.getNeedDiceNum() == 4)
         {
-            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
-                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
-                condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]) &&
-                condition_diceSkillCheck(skill.getNeedDice(3), myDiceNum[liveCharacterList[3]]))
+            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
+                myDiceTake[liveCharacterList[2]] == -999 && condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]) &&
+                myDiceTake[liveCharacterList[3]] == -999 && condition_diceSkillCheck(skill.getNeedDice(3), myDiceNum[liveCharacterList[3]]))
             { // 첫번쨰주사위가 겹치는 경우
                 myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
                 myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
