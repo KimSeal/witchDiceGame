@@ -29,13 +29,14 @@ public class Pig : Character
   
         //if (this.destiny.getDestinyIdx() == 0)
         //{
-            if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
-            {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(0, 0), 0)); //한명에게 3데미지
-            }
+        if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, this.getSkillVal(0, 0), 0, 1)); //자신 1명에게 10만큼 회복
+        }
         if (sendSkillPacket.useSkillIdx == 1) 
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, this.getSkillVal(1,0), 0, 1)); //자신 1명에게 10만큼 회복
+            
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0)); //한명에게 3데미지
         }
         //}
         return packets;

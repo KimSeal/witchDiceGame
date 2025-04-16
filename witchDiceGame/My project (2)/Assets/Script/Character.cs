@@ -164,6 +164,7 @@ public abstract class Character
         }
         else if (takeSkillPacket.getSkillType() == 1) //회복인 경우
         {
+            Debug.Log("Heal is " + takeSkillPacket.getVal());
             this.hp += takeSkillPacket.getVal();
 
             if (this.hp >= this.maxHp)
