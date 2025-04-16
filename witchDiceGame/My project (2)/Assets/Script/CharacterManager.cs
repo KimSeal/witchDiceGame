@@ -72,7 +72,7 @@ public class CharacterManager : MonoBehaviour
 
         //캐릭터 테스트 0번에 용사 배치
         setCharacter(0, 0);
-        setCharacter(1, 3);
+        setCharacter(1, 0);
         setCharacter(2, 4);
         setCharacter(3, 4);
     }
@@ -143,6 +143,14 @@ public class CharacterManager : MonoBehaviour
                     enemyCharacter[place] = new Soldier(0, destinyList_monster[characterIdx]); break;
                 case 4:
                     enemyCharacter[place] = new Chicken(0, destinyList_monster[characterIdx]); break;
+                case 5:
+                    enemyCharacter[place] = new Duck(0, destinyList_monster[characterIdx]); break;
+                case 6:
+                    enemyCharacter[place] = new Sheep(0, destinyList_monster[characterIdx]); break;
+                case 7:
+                    enemyCharacter[place] = new Pig(0, destinyList_monster[characterIdx]); break;
+                case 8:
+                    enemyCharacter[place] = new Wolf(0, destinyList_monster[characterIdx]); break;
             }
         }
 

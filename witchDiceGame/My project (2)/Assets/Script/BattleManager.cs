@@ -953,11 +953,20 @@ public class BattleManager : MonoBehaviour
         if (condition == 7) return diceVal % 2 == 1;
         if (condition == 8) return diceVal % 2 == 0;
         if (condition == 9) return true;
+
+        if (condition > 10 && condition <= 16) {
+            return (diceVal <= condition % 10);
+        }
+
+        if (condition > 20 && condition <= 26)
+        {
+            return (diceVal >= condition % 10);
+        }
         return false;
     }
 
     //스킬 선택 중 주사위 클릭에 대한 코드
-    private void click_characterSkill_Dice(int diceIdx)
+    private void click_characterSkill_Dice(int diceIdx) 
     {
         if (curPhase == 3 && myCharacter[diceIdx] != null && myCharacter[diceIdx].getCurState() == 0 && currentLightUI == 0 && currentMoveUI == 0)
         {
@@ -1347,27 +1356,42 @@ public class BattleManager : MonoBehaviour
     List<TakeSkillPacket> takeSkillPacketArr = new List<TakeSkillPacket>();
 
     //공격 packet 생성 함수 호출시 사용되는 주사위 배열을 만들어내는 함수
-    private void makeMyDice_BattlePhase(int startIdx, int endIdx)
+    private void makeMyDice_BattlePhase(int startIdx, int needDiceNum)
     {
         for (int i=0;i<4;i++){ //초기화
             makeDiceArrToMakePacket[i] = -999;
         }
-
-        for (int i=0;i<= endIdx - startIdx;i++) { //유의미한 길이만큼 길이 생성
-            makeDiceArrToMakePacket[i] = myDiceNum[startIdx + i];
+        int curIdx = 0;
+        for (int i=0;i< 4;i++) { //유의미한 길이만큼 길이 생성
+            if(startIdx+i < 4 && myDiceNum[startIdx+i] != -999) //유의미한 주사위 값일 경우만
+            {
+                makeDiceArrToMakePacket[curIdx] = myDiceNum[startIdx + i]; //해당 주사위값 넣기
+                curIdx++;
+                if (curIdx == needDiceNum) i = 4;// 주사위 수 다채웠으면 종료
+            }
+            
         }
+
     }
-    private void makeEnemyDice_BattlePhase(int startIdx, int endIdx)
+    private void makeEnemyDice_BattlePhase(int startIdx, int needDiceNum)
     {
         for (int i = 0; i < 4; i++)
         { //초기화
             makeDiceArrToMakePacket[i] = -999;
         }
+        int curIdx = 0;
 
-        for (int i = 0; i <= endIdx - startIdx; i++)
+        for (int i = 0; i < 4; i++)
         { //유의미한 길이만큼 길이 생성
-            makeDiceArrToMakePacket[i] = enemyDiceNum[startIdx + i];
+            if (startIdx + i < 4 && enemyDiceNum[startIdx + i] != -999) //유의미한 주사위 값일 경우만
+            {
+                makeDiceArrToMakePacket[curIdx] = enemyDiceNum[startIdx + i]; //해당 주사위값 넣기
+                curIdx++;
+                if (curIdx == needDiceNum) i = 4;// 주사위 수 다채웠으면 종료
+            }
+
         }
+
     }
 
     private void battleAnimationControl(int characterIdx, int option)
@@ -1502,7 +1526,7 @@ public class BattleManager : MonoBehaviour
                         characterTargetIdx = -999;
 
                         //스킬에 대한 공격용 Packet 생성
-                        makeMyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
+                        makeMyDice_BattlePhase(nextDice, curSkill.getNeedDiceNum() );
                         SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
@@ -1519,7 +1543,7 @@ public class BattleManager : MonoBehaviour
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateMyDiceUI();
                                 }
-                                else
+                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                 {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                     battleAnimationControl(tempTargetIdx, 1);
                                 }
@@ -1532,7 +1556,7 @@ public class BattleManager : MonoBehaviour
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateEnemyDiceUI();
                                 }
-                                else
+                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                 { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                     battleAnimationControl(tempTargetIdx, 1);
                                 }
@@ -1604,7 +1628,7 @@ public class BattleManager : MonoBehaviour
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
-                                else { battleAnimationControl(tempTargetIdx, 1); }
+                                else if(takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0){ battleAnimationControl(tempTargetIdx, 1); }
                                 
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
@@ -1614,7 +1638,7 @@ public class BattleManager : MonoBehaviour
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
-                                else { battleAnimationControl(tempTargetIdx, 1); }
+                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) { battleAnimationControl(tempTargetIdx, 1); }
                                 
                             }
                             updateHp();

@@ -133,6 +133,11 @@ public abstract class Character
         return destiny.findSkill(skillIdx[selNum]).getSkillName();
     }
 
+    public int getSkillVal(int selNum, int idx) {
+        return skillUse(selNum).getVal(idx);
+    }
+
+
     public int getSkillIdx(int num)
     {
         //return destiny.getSkillIdx(skillIdx[num]);
@@ -143,15 +148,34 @@ public abstract class Character
 
     public bool TakeSkillPacket(TakeSkillPacket takeSkillPacket)
     {
-        this.hp -= takeSkillPacket.getDamage();
-        Debug.Log("this damage is : " + takeSkillPacket.getDamage());
-        Debug.Log("my remain Hp is : " + this.hp);
-
-        if (this.hp <= 0)
+        if (takeSkillPacket.getSkillType() == 0)
         {
-            this.hp = 0;
-            this.curState = 2;
-            return true;
+            this.hp -= takeSkillPacket.getVal();
+            Debug.Log("this damage is : " + takeSkillPacket.getVal());
+            Debug.Log("my remain Hp is : " + this.hp);
+
+            if (this.hp <= 0)
+            {
+                this.hp = 0;
+                this.curState = 2;
+                return true;
+            }
+            return false;
+        }
+        else if (takeSkillPacket.getSkillType() == 1) //회복인 경우
+        {
+            this.hp += takeSkillPacket.getVal();
+
+            if (this.hp >= this.maxHp)
+            {
+                this.hp = this.maxHp;
+            }
+            return false;
+        }
+        else if (takeSkillPacket.getSkillType() == 2) //공격력 업인 경우
+        {
+            this.phyAtk += takeSkillPacket.getVal();
+            return false;
         }
         return false;
     }

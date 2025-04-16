@@ -8,7 +8,7 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
     public int useSkillIdx; //사용된 스킬이 플레이어의 몇번째 스킬인지 Idx
     public int[] targetIdx = new int[8]; // 대상이 되는 캐릭터의 index
     public int[] diceNum = new int[4];  // 현재 사용되는 주사위들에 배치된 값
-    public SendSkillPacket(int useCharacterIdx, int useSkillIdx, int[] targetIdx,  int[] diceNum)
+    public SendSkillPacket(int useCharacterIdx, int useSkillIdx, int[] targetIdx,  int[] diceNum2)
     {
         this.useCharacterIdx = useCharacterIdx;
         this.useSkillIdx = useSkillIdx;
@@ -16,31 +16,58 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
         {
             this.targetIdx[i] = targetIdx[i];
         }
+        int curIdx=0;
+        for (int i = 0; i < 4; i++) 
+        {
+            this.diceNum[i] = -999;
+        }
         for (int i=0;i<4;i++)
         {
-            this.diceNum[i] = diceNum[i];
+            if(diceNum2[i] != -999)
+            {
+                this.diceNum[curIdx] = diceNum2[i];
+                curIdx++;
+            }
         }
     }
     
 }
 public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
 {
-    public TakeSkillPacket(int targetIdx, int damage, int stateChange)
+    public TakeSkillPacket(int targetIdx, int val, int stateChange)
     {
         this.targetIdx = targetIdx;
-        this.damage = damage;
+        this.val = val;
         this.stateChange = stateChange;
+        this.skillType = 0;
     }
+
+    public TakeSkillPacket(int targetIdx, int val, int stateChange, int skillType)
+    {
+        this.targetIdx = targetIdx;
+        this.val = val;
+        this.stateChange = stateChange;
+        this.skillType =skillType;
+    }
+
     private int targetIdx;
-    private int damage;
+    private int val;
     private int stateChange;
+
+    private int skillType;
+    // 0 : 데미지. 1: 회복
 
     public int getTargetIdx()
     {
         return targetIdx;
     }
-    public int getDamage() { return damage; }
+    public int getSkillType() { 
+        return this.skillType;
+    }
+
+    public int getVal () { return val; }
     public int getStateChange() { return stateChange; }
+
 }
 
 
@@ -148,6 +175,13 @@ public class Skill
     public string getCommand()
     {
         return this.Command;
+    }
+    public int getVal(int idx)
+    {
+        if (idx == 0) return Var0;
+        if (idx == 1) return Var1;
+        if (idx == 2) return Var2;
+        return -999;
     }
 }
 
