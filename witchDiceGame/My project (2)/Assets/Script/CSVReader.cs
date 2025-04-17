@@ -55,8 +55,8 @@ public class ItemReader
     public int idx;
     public int type;
     public string itemName;
-    public string content;
-    public int val1;
+    public string content0, content1, content2;
+    public int val0, val1, val2, val3, val4, val5, val6, val7;
 }
 
 public class AdventureEventReader

@@ -72,6 +72,7 @@ public class itemManager : MonoBehaviour
     private GameObject[,] skillBoardObj = new GameObject[2,7]; //스킬에 대한 이미지 처리를 위해 사용될 object 뒤줄은 메인이미지,제목,설명,필요주사위4개 순으로 index를 갖는다.
     private GameObject[] equipBoardObj = new GameObject[6]; //취득 아이템에 대한 이미지 처리를 위해 사용될 object
 
+    private GameObject bagBtnObj;
 
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
@@ -82,7 +83,7 @@ public class itemManager : MonoBehaviour
     private bool itemBoxMove = false;
     private bool itemBoxOpen = false;
     private int itemBoxOpenPoint = -1;
- 
+
 
     private int dragObjStartNum =-1;
     private int dragObjEndNum = -1;
@@ -302,7 +303,24 @@ public class itemManager : MonoBehaviour
         if (!itemBoxOpen) flipItemBox(1, 0);
         else flipItemBox(1, 1);
     }
-    
+
+    public void flipItemBox_BattleUI()
+    {
+        if (!itemBoxOpen) flipItemBox(2, 0);
+        else flipItemBox(2, 1);
+    }
+    public void enterBattlePhase()
+    {
+        click_itemType_selectButton(3);
+        bagBtnObj.SetActive(false);
+    }
+    public void endOfBattlePhase()
+    {
+        bagBtnObj.SetActive(true);
+    }
+
+
+
     public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우
     {
         if (idx != -1)
@@ -448,14 +466,25 @@ public class itemManager : MonoBehaviour
         }
     }
 
+    public void click_info_useItem()
+    {
+        if (curSelectItemType == 0 && curSelectItemIndex != -1 && characterSelectIdx >=0 && CharacterManager.Instance.getCharacter(characterSelectIdx) != null)
+        {
+            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            Debug.Log("click item! : " + characterSelectIdx + " : " + ItemArr[0, curSelectItemIndex].getVal(0) + " : " + ItemArr[0, curSelectItemIndex].getVal(1));
+            useItem();
+            click_characterInfoType_selectButton(0);
+        }
+       
+    }
 
     public void click_dice_changeNum(int idx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
         if (curSelectItemType == 1 && curSelectItemIndex != -1) {
-            CharacterManager.Instance.changeDice(characterSelectIdx, idx, ItemArr[1,curSelectItemIndex].getVal1());
+            CharacterManager.Instance.changeDice(characterSelectIdx, idx, ItemArr[1,curSelectItemIndex].getVal(0));
             Debug.Log(diceBoardObj[idx]);
 
-            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + ItemArr[1, curSelectItemIndex].getVal1().ToString());
+            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + ItemArr[1, curSelectItemIndex].getVal(0).ToString());
 
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             useItem();
@@ -593,6 +622,9 @@ public class itemManager : MonoBehaviour
         characterBoardState[2] = GameObject.Find("itemUI_board_skillBoard");
         characterBoardState[3] = GameObject.Find("itemUI_board_itemBoard");
 
+        //battle phase시 아이템 선택 제거
+        bagBtnObj = GameObject.Find("item_btn");
+
         //캐릭터 정보 칸을 위한 object 받기
         infoBoardObj[0] = GameObject.Find("board_info_characterImage");
         infoBoardObj[1] = GameObject.Find("board_info_characterName");
@@ -691,6 +723,83 @@ public class itemManager : MonoBehaviour
         }
 
     }
+
+    //passive Item use function start
+    public bool usePassiveItem(TakeSkillPacket takeSkillPacket, int idx, int[] diceArr)
+    {
+        if (!ItemExistArr[3, idx]) {return false;} // 아이템이 없으면 그냥 스킵
+        Item item = ItemArr[3, idx];
+        if (item.getVal(0) != takeSkillPacket.getSkillType()) return false; //스킬이 아이템 타입하고 안맞으면 종료 
+        if (!conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) return false; //조건이 안맞으면 return
+
+        switch (item.getIdx())
+        {
+            case 0:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+            case 1:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+            case 2:
+                takeSkillPacket.mulVal(item.getVal(3)); break;
+            case 3:
+                takeSkillPacket.mulVal(item.getVal(3)); break;
+            case 4:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+            case 5:
+                takeSkillPacket.mulVal(item.getVal(3)); break;
+            case 6:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+            case 7:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+        }
+
+
+        return true;
+    }
+
+    private bool conditionCheck_dice(int[] diceArr, int condition0, int condition1, int condition2, int condition3, int condition4)
+    {   //diceArr : 주사위에 대한 조건 확인
+        //condition0 : 조건,
+        //condition1, 2, 3, 4는 조건에 대한 값.
+        int[] arr = { 0,0, 0, 0, 0, 0, 0 }; //각 주사위의 가진 수
+        for (int i=0;i<4;i++)
+        {
+            if (diceArr[i] >=1 &&  diceArr[i] < 7)
+            {
+                arr[diceArr[i]]++;
+            }
+        }
+
+        //존재 개수를 기반하는 조건들의 계산
+        if(condition0 >=1 && condition0 <= 4){ return condition0 <= sumOfNumber(arr, condition1); } //한개일때 숫자
+        if ((condition0 >= 11 && condition0 <= 13) || condition0 == 22) return (condition0 / 10 <= sumOfNumber(arr, condition1)) && (condition0 % 10 <= sumOfNumber(arr, condition2));
+        if (condition0 >= 111 && condition0 <= 112) return (condition0 / 100 <= sumOfNumber(arr, condition1)) && ((condition0 % 100) / 10 <= sumOfNumber(arr, condition2)) && (condition0 % 10 <= sumOfNumber(arr, condition3));
+        if (condition0 == 1111) return (condition0 / 1000 <= sumOfNumber(arr, condition1)) && ((condition0 % 1000) / 100 <= sumOfNumber(arr, condition2)) && ((condition0 % 100) / 10 <= sumOfNumber(arr, condition3)) && (condition0 % 10 <= sumOfNumber(arr, condition4)) ;
+        if (condition0 == 5) return condition1 == sumOfNumber(arr, 0);
+        if (condition0 == 6) return condition1 <= sumOfNumber(arr, 0);
+        if (condition0 == 7) return condition1 >= sumOfNumber(arr, 0);
+        return false;
+    }
+    private int sumOfNumber(int[] arr, int opt) //각 option에 해당하는 주사위의 수 확인
+    {
+        int result = 0;
+        if (opt == 0) return arr[1] + arr[3] + arr[5] + arr[2] + arr[4] + arr[6];
+        if (opt > 0 && opt <= 6) return arr[opt];
+        if(opt == 7) return arr[1] + arr[3] + arr[5];
+        if (opt == 7) return arr[2] + arr[4] + arr[6];
+        if(opt >= 11 && opt <= 16) {    //이하
+            for (int i=1;i<=opt%10;i++) {result += arr[i];} //1부터 해당 값 도달할때 까지
+            return result;
+        }
+        if (opt >= 21 && opt <= 26)
+        {    //이상
+            for (int i = 6; i >= opt % 10; i--) { result += arr[i]; } //6부터 해당 값 도달할때 까지
+            return result;
+        }
+        return result;
+    }
+
+    // passive Item use function End
+
 
     // Update is called once per frame
     void Update()

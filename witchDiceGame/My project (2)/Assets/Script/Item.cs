@@ -8,23 +8,39 @@ public class Item
     private int type; // 0. consumable  1. dice   2. equip   3. passive   4.destiny 
     private string itemName;
     private string content;
-    private int val1;
+    private int[] val = new int[8];
 
-    public Item(int idx, int type, string itemName, string content, int val1)
+    public Item(int idx, int type, string itemName, string content, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7)
     {
         this.type = type;
         this.idx = idx;
         this.itemName = itemName;
         this.content = content;
-        this.val1 = val1;
+        this.val[0] = val0;
+        this.val[1] = val1;
+        this.val[2] = val2;
+        this.val[3] = val3;
+        this.val[4] = val4;
+        this.val[5] = val5;
+        this.val[6] = val6;
+        this.val[7] = val7;
     }
     public Item(ItemReader itemReader)
     {
         this.idx = itemReader.idx;
         this.type=itemReader.type;
         this.itemName = itemReader.itemName;
-        this.content=itemReader.content;
-        this.val1 = itemReader.val1;
+        this.content=itemReader.content0;
+        if (itemReader.content1.Length != 0) this.content += ("\n" + itemReader.content1);
+        if (itemReader.content2.Length != 0) this.content += ("\n" + itemReader.content2);
+        this.val[0] = itemReader.val0;
+        this.val[1] = itemReader.val1;
+        this.val[2] = itemReader.val2;
+        this.val[3] = itemReader.val3;
+        this.val[4] = itemReader.val4;
+        this.val[5] = itemReader.val5;
+        this.val[6] = itemReader.val6;
+        this.val[7] = itemReader.val7;
     }
 
     public Item(Item item)
@@ -33,7 +49,10 @@ public class Item
         this.type = item.type;
         this.itemName = item.itemName;
         this.content = item.content;
-        this.val1 = item.val1;
+        for (int i=0;i<8;i++)
+        {
+            this.val[i] = item.val[i];
+        }
     }
 
     public int getIdx()
@@ -52,9 +71,9 @@ public class Item
     {
         return content;
     }
-    public int getVal1()
+    public int getVal(int idx)
     {
-        return val1;
+        return this.val[idx];
     }
 
     // Start is called before the first frame update

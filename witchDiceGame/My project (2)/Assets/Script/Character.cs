@@ -209,7 +209,9 @@ public abstract class Character
             if (hp > maxHp) hp = maxHp;
         }
         if (idx == 1){
+            int tempMaxHp = maxHp;
             maxHp += val;
+            this.hp += maxHp - tempMaxHp; 
         }
         if (idx == 2){
             this.mp += val;
@@ -217,7 +219,9 @@ public abstract class Character
         }
         if (idx == 3)
         {
+            int tempMaxMp = maxHp;
             maxMp += val;
+            this.mp += maxMp - tempMaxMp;
         }
         if (idx == 4)
         {

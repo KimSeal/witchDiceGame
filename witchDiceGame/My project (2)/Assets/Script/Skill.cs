@@ -67,6 +67,8 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
 
     public int getVal () { return val; }
     public int getStateChange() { return stateChange; }
+    public void addVal(int val) { this.val += val; }
+    public void mulVal(int val) { this.val *= val; }
 
 }
 

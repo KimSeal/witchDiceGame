@@ -218,5 +218,9 @@ public class CharacterManager : MonoBehaviour
     {
         return myCharacter[characterIdx].skillUse(skillIdx);
     }
-
+    public void CharacterUpgrade(int idx, int type, int val)
+    {
+        myCharacter[idx].upGrade(type, val);
+        Debug.Log("heal did!" + idx + " : "+type + " : "+ val);
+    }
 }

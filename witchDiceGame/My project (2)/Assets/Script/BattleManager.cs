@@ -536,6 +536,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator phase_Manage_Coroutine()
     {
         Start_Battle_Phase();
+        itemManager.Instance.enterBattlePhase();
         Debug.Log("Start Phase Test! curPhase is " + curPhase.ToString());
         //curPhase = 2;
         while (true)
@@ -1045,6 +1046,13 @@ public class BattleManager : MonoBehaviour
         skillSelectDescUI[6].GetComponent<TextMeshPro>().text = "";
     }
 
+    public void flipBag_battle()    // 가방 키고 끄는 함수. 4페이즈, 5페이즈 일땐 끌수 없게 한다.
+    {
+        if (curPhase != 4 && curPhase != 5)
+        {
+            itemManager.Instance.flipItemBox_BattleUI();
+        }
+    }
 
 
     //phase넘어가기
@@ -1052,7 +1060,15 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            curPhase = 4;
+            if (!itemManager.Instance.getItemBoxOpen())
+            {
+                curPhase = 4;
+                itemManager.Instance.flipItemBox_BattleUI(); //넘어갈때 passive칸을 켜준다.
+            }
+            else
+            {
+                itemManager.Instance.flipItemBox_BattleUI();// 열려있다면 끄고 넘어간다.
+            }
         }
     }
 
@@ -1487,6 +1503,7 @@ public class BattleManager : MonoBehaviour
             updateEnemyDiceUI();
         }
     }
+    
     private IEnumerator BattlePhase_Coroutine()
     {
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
@@ -1503,10 +1520,21 @@ public class BattleManager : MonoBehaviour
                     nextSkill = myDiceTake[nextDice];
                     yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
                     Debug.Log("My Skill Use : " + clickDice_battlePhase.ToString());
+
+                    /*
+                    이후 passive 아이템 사용을 위해 사용된 주사위를 받아두기 위함.
+
+                    */
+                    int usedDiceIdx = 0;
+                    int[] usedDiceArr = { -99999, -99999, -99999, -99999 };
                     for (int i = 0; i < 4; i++)
                     {
                         if (myDiceTake[i] == nextSkill)
                         {
+
+                            usedDiceArr[usedDiceIdx] = myDiceNum[i];
+                            usedDiceIdx++;
+
                             myDiceTake[i] = -999;
                             myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_null");
                             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -1534,6 +1562,9 @@ public class BattleManager : MonoBehaviour
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
+                            for (int passiveItemIdx=0;passiveItemIdx<11;passiveItemIdx++) { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
+                                itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr);
+                            }
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
@@ -1689,6 +1720,7 @@ public class BattleManager : MonoBehaviour
 
     private int winningCheck()
     {
+        
         if ((myCharacter[0] == null || myCharacter[0].getCurState() == 2) &&
             (myCharacter[1] == null || myCharacter[1].getCurState() == 2) &&
             (myCharacter[2] == null || myCharacter[2].getCurState() == 2) &&
@@ -1710,16 +1742,19 @@ public class BattleManager : MonoBehaviour
     bool bosang_click = false;
     private IEnumerator EndPhase_Coroutine()
     {
+        itemManager.Instance.flipItemBox_BattleUI(); //켜진 item box 끄기
         int result = winningCheck();
         //아군 전멸
         if(result == 2)
         {
+            itemManager.Instance.endOfBattlePhase();
             Debug.Log("you lose!");
             AdventureManager.Instance.exitBattleCanvas();
         }
         //적군 전멸
         else if (result == 1)
         {
+            itemManager.Instance.endOfBattlePhase();
             yield return new WaitForSeconds(0.5f);
             GameObject temp = GameObject.Find("bosang_ui");
             temp.transform.position = new Vector3(0f, -0f, temp.transform.position.z);
