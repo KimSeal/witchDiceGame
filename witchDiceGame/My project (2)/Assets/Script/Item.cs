@@ -6,6 +6,7 @@ public class Item
 {
     private int idx;
     private int type; // 0. consumable  1. dice   2. equip   3. passive   4.destiny 
+    private int rare; // 0 : 일단 1 : 희귀 2 : 영웅 3 : 전설 4 : 그 이상(아직 못정함) 
     private string itemName;
     private string content;
     private int[] val = new int[8];
@@ -55,6 +56,10 @@ public class Item
         }
     }
 
+    public int getRare()
+    {
+        return this.rare;
+    }
     public int getIdx()
     {
         return this.idx;
