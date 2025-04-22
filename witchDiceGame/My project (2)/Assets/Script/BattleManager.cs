@@ -103,7 +103,7 @@ public class BattleManager : MonoBehaviour
     //¡÷ªÁ¿ß πÿø° HP UI
     private GameObject[] myHpUI = new GameObject[4];
     private GameObject[] enemyHpUI = new GameObject[4];
-
+  
     private void updateHp()
     {
         for (int i=0;i<4;i++)
@@ -1749,6 +1749,7 @@ public class BattleManager : MonoBehaviour
     private IEnumerator EndPhase_Coroutine()
     {
         itemManager.Instance.flipItemBox_BattleUI(); //ƒ—¡¯ item box ≤Ù±‚
+        yield return new WaitForSeconds(0.2f);
         int result = winningCheck();
         //æ∆±∫ ¿¸∏Í
         if(result == 2)
@@ -1762,6 +1763,11 @@ public class BattleManager : MonoBehaviour
         {
             itemManager.Instance.endOfBattlePhase();
             yield return new WaitForSeconds(0.5f);
+            for (int i=0;i<4;i++)
+            {
+                myHpUI[i].GetComponent<TextMeshPro>().text = "";
+                enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
+            }
             GameObject temp = GameObject.Find("bosang_ui");
             temp.transform.position = new Vector3(0f, -0f, temp.transform.position.z);
             Debug.Log("you win!");

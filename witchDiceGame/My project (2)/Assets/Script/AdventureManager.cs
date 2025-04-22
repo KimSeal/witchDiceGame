@@ -32,6 +32,7 @@ public class AdventureManager : MonoBehaviour
     }
 
     private GameObject balpanScreen;
+    private GameObject balpanArrow;
     private GameObject[] balpanObj = new GameObject[7];
 
     private int stageNum = 0; //몇번째 스테이지인지 받는다.
@@ -41,6 +42,7 @@ public class AdventureManager : MonoBehaviour
     private int eventWatchNum = 0; //이벤트 선택지 볼때 쓰는 숫자
     private int selectDiceNum = -1; //현재 선택된 주사위
     private int[] adventureEventArr = new int[21]; //앞으로 남은 이벤트들에 대한 정보
+    private int[] adventureEventArr_Y = new int[21]; // 이벤트 들이 위치할 곳에 대한 세로축 정보
     //전투 : 0  주사위 굴리기 이벤트 : 1 
 
 
@@ -148,6 +150,7 @@ public class AdventureManager : MonoBehaviour
         }
 
         balpanScreen = GameObject.Find("obj_balpan");
+        balpanArrow = GameObject.Find("obj_balpan_arrow");
         for (int i=0;i<7;i++){  //발판 오브젝트 담기
             balpanObj[i] = GameObject.Find("obj_balpan_" + i.ToString()); 
         }
@@ -167,7 +170,7 @@ public class AdventureManager : MonoBehaviour
         {
             adventureEventArr[i] = i;
         }
-        for (int i = adventureEventArr.Length - 1; i > 0; i--)
+        for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
             int j = Random.Range(0, i + 1);
 
@@ -177,26 +180,58 @@ public class AdventureManager : MonoBehaviour
         }
 
     }
+    private void makeStage_placeBalpan()
+    {
+        adventureEventArr_Y = new int[adventureEventList[stageNum].Count];
+        for (int i = 0; i < adventureEventArr_Y.Length; i++)
+        {
+            int j = Random.Range(0, 2);
+            if (i == 0) //처음은 이전거 탐지 못하므로 0 아니면 2로 나올 수 있게 한다.
+            {
+                if(j == 0) adventureEventArr_Y[0] = 0;
+                else adventureEventArr_Y[0] = 2;
+            }
+            else if (j == 0){
+                if (adventureEventArr_Y[i - 1] > 0) adventureEventArr_Y[i] = 0;
+                else adventureEventArr_Y[i] = 1;
+            }
+            else{
+                if (adventureEventArr_Y[i - 1] == 1) adventureEventArr_Y[i] = 2;
+                else adventureEventArr_Y[i] = 1;
+            }
+        }
+    }
     public void startAdventure()
     {
         mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
-        adventureEventArr = new int[adventureEventList[stageNum].Count];
-        adventureEventArr[0] = 0;
-        for (int i = 0; i < adventureEventList[stageNum].Count; i++)
-        {
-            int j = Random.Range(0, 1);
-            adventureEventArr[i] = i;
-        }
-        for (int i = adventureEventArr.Length - 1; i > 0; i--)
-        {
-            
+        
 
-            int temp = adventureEventArr[i];
-            adventureEventArr[i] = adventureEventArr[j];
-            adventureEventArr[j] = temp;
-        }
         //지금은 시작 버튼 누르면 바로 시작
         StartCoroutine(phase_Manage_Coroutine());
+    }
+    public void setBalpan(int stageIdx) //이벤트 끝나고 발판 나올수 있도록 하는거
+    {
+        for (int i=0;i<7;i++) {
+            if(stageIdx + i == -1) // 스테이지 시작지점인 경우
+            {
+                balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 300, balpanObj[i].transform.position.z);
+                balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_start");
+            } 
+            else if (stageIdx + i >= adventureEventArr.Length) //넘어가는 경우는 출력하지 않는다
+            {
+                balpanObj[i].transform.position = new Vector3(balpanObj[i].transform.position.x, -300, balpanObj[i].transform.position.z);
+            }
+            else
+            {
+                balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 290 + adventureEventArr_Y[stageIdx + i] * 10, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
+                balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
+            }
+        }
+        balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 0, balpanScreen.transform.position.z);
+    }
+    public void clearBalpan()// 발판 이벤트 끝나고 발판 화면 치우기
+    {
+        balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 300, balpanScreen.transform.position.z);
     }
 
     private int eventIndexReturn() //어떤 이벤트가 나올지 이후 지정할 필요가 있다. 현재는 0번째 이벤트밖에 나오지 않지만, 나중에는 해당 스테이지에 해당된 랜덤한 이벤트가 나오도록 해야함.
@@ -226,11 +261,44 @@ public class AdventureManager : MonoBehaviour
     {
         stageNum = 0;
         makeStageEventArr(0); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
-        stageIdx = 0;
+        makeStage_placeBalpan(); // 스테이지에 맞춰 발판 생성
+        stageIdx = -1;
+        updateCharacterFace();
+
+        resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
+        resultObj.SetActive(false);
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (stageIdx < 20)
         {
-            stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx; //초기화
+            eventWatchNum = -1;
+            selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
+            
+            //발판 이벤트를 위한 이펙트
+            setBalpan(stageIdx);
+            yield return new WaitUntil(() => selectDiceNum > 0);
+            
+            int moveCount = selectDiceNum;
+            if(stageIdx + selectDiceNum >= adventureEventList[stageNum].Count)  // 넘어간 경우 자제한다
+            {
+                moveCount = adventureEventList[stageNum].Count - 1 - stageIdx;
+                stageIdx = adventureEventList[stageNum].Count - 1;
+            }
+            else
+            {
+                stageIdx += selectDiceNum; //stage발판 이동
+            }
+
+            for (int i=0;i<moveCount;i++)
+            {
+                balpanArrow.transform.position = balpanObj[i+1].transform.position + new Vector3(0,-10,0);
+                yield return new WaitForSeconds(0.2f);
+            }
+            yield return new WaitForSeconds(1.2f);
+            clearBalpan();
+
+            //발판 이벤트 종료 
+
+            stageInfo.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + adventureEventList[stageNum].Count.ToString(); //초기화
             updateCharacterFace();
 
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
@@ -371,12 +439,15 @@ public class AdventureManager : MonoBehaviour
                 //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
 
                 yield return new WaitUntil(() => !eventEndClick);
-                selectDiceNum = -1; // 선택 못하게 변경
-                eventWatchNum = -1;
+
+                
+
+                
+
 
             }
 
-            stageIdx++;
+            
         }
     }
 
