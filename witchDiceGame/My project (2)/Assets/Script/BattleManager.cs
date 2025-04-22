@@ -531,6 +531,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public void updateBattleBackground(string backgroundStr)
+    {
+        backGroundObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/spr_field_" + backgroundStr);
+    }
+
     //phase관리를 위한 코루틴
     //(코루틴이 너무 중첩해서 생기는 거 방지를 위해 만들어둠)
     private IEnumerator phase_Manage_Coroutine()
@@ -1109,14 +1114,14 @@ public class BattleManager : MonoBehaviour
                 curDiceNum = myDiceTake[i];
                 if (curDiceNum == -999)
                 {
-                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 }
                 else
                 {
                     skillNameTake = myCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
                     if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake) == null)
                     {
-                        skillNameTake = "null";
+                        skillNameTake = "noImage";
                     }
                     myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake);
                 }
@@ -1129,14 +1134,14 @@ public class BattleManager : MonoBehaviour
                 curDiceNum = enemyDiceTake[i];
                 if (curDiceNum == -999)
                 {
-                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 }
                 else
                 {
                     skillNameTake = enemyCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
                     if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake) == null)
                     {
-                        skillNameTake = "null";
+                        skillNameTake = "noImage";
                     }
                     enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake);
                 }
@@ -1536,7 +1541,7 @@ public class BattleManager : MonoBehaviour
                             usedDiceIdx++;
 
                             myDiceTake[i] = -999;
-                            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_null");
+                            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                             if (i != 3)  diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         }
@@ -1619,7 +1624,7 @@ public class BattleManager : MonoBehaviour
                         if (enemyDiceTake[i] == nextSkill)
                         {
                             enemyDiceTake[i] = -999;
-                            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_null");
+                            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                             if (i != 3)
                             {
                                 diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -1673,6 +1678,7 @@ public class BattleManager : MonoBehaviour
                                 
                             }
                             updateHp();
+                            updateEnemyDiceUI();
 
                         }
 
@@ -1782,6 +1788,9 @@ public class BattleManager : MonoBehaviour
     }
     public void click_backToAdventure()
     {
+        GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
+        temp.transform.position = new Vector3(0f, 300f, temp.transform.position.z);
+        
         bosang_click = false;
     }
     // End Phase End (phase 6 - check game finish)//

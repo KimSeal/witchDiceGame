@@ -81,7 +81,7 @@ public class AdventureEventPacketReader
     public string chooseText, resultText;
     public string spriteIndex;
     public int itemExist, itemType0, itemIdx0, itemType1, itemIdx1, itemType2, itemIdx2, itemType3, itemIdx3;
-    
+    public string battleBackSprite;
 }
 
 public class CSVReader
@@ -112,6 +112,8 @@ public class CSVReader
         string[] header = lines[0].Split(",");
         for (int i = 1; i < lines.Length; i++)
         {
+            if(i == lines.Length - 1) { continue; }
+            Debug.Log(lines[i]);
             string[] values = lines[i].Split(",");
             //string[] values = Regex.Split(lines[i], SPLIT_RE);
             //if (values.Length == 0 || values[0] == "") continue;

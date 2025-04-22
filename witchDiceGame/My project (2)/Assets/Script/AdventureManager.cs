@@ -31,6 +31,8 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
+    private GameObject balpanScreen;
+    private GameObject[] balpanObj = new GameObject[7];
 
     private int stageNum = 0; //몇번째 스테이지인지 받는다.
     private int stageIdx = 0; //이번 스테이지에서 몇번째 맵인지(1-1 1-2의 개념) 
@@ -54,7 +56,7 @@ public class AdventureManager : MonoBehaviour
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
     
-    public List<adventureEvent> adventureEventList = new List<adventureEvent>(); //
+    public List<adventureEvent>[] adventureEventList = new List<adventureEvent>[5]; //
 
     public List<AdventureEventReader> adventureEventReaderList = new List<AdventureEventReader>(); // 
     public List<AdventureEventPacketReader> adventureEventPacketReaderList = new List<AdventureEventPacketReader>(); // 
@@ -126,18 +128,28 @@ public class AdventureManager : MonoBehaviour
         adventureEventReaderList = CSVReader.Read<AdventureEventReader>("Event");
         adventureEventPacketReaderList = CSVReader.Read<AdventureEventPacketReader>("EventPacket");
 
+        for (int Idx = 0; Idx < adventureEventList.Length; Idx++) //스테이지 갯수만큼 adventure 리스트 만들기
+        {
+            adventureEventList[Idx] = new List<adventureEvent>();
+        }
+
         for (int eventIdx = 0; eventIdx < adventureEventReaderList.Count; eventIdx++) //Reader 2개를 병합 시켜 하나의 event를 만들어 list에 추가
         {
             for (int packetIdx = 0; packetIdx < 6; packetIdx++) //각 이벤트 당 6개의 packet을 받는다.
             {
                 tempList[packetIdx] = adventureEventPacketReaderList[eventIdx * 6 + packetIdx];
             }
-            adventureEventList.Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
+            adventureEventList[adventureEventReaderList[eventIdx].stageIdx].Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
 
         for (int i = 0; i < 6; i++)
         {
             watchNumObject[i] = GameObject.Find("obj_adventureBtn_selectBtn_" + (i + 1).ToString());
+        }
+
+        balpanScreen = GameObject.Find("obj_balpan");
+        for (int i=0;i<7;i++){  //발판 오브젝트 담기
+            balpanObj[i] = GameObject.Find("obj_balpan_" + i.ToString()); 
         }
     }
 
@@ -147,16 +159,42 @@ public class AdventureManager : MonoBehaviour
 
     }
 
-    public void makeStageEventArr() //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
+    public void makeStageEventArr(int stageNum) //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
     {
-        for (int i = 0; i < 20; i++)
+        // stage 순서를 랜덤으로 만든다.
+        adventureEventArr = new int[adventureEventList[stageNum].Count];
+        for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 1; //지금은 모두 주사위 이벤트가 나오도록 설정. 나중에는 전투, 주사위 이벤트 등 어떤게 나올지 랜덤하게(단 전투가 많이) 나오게 수정해야한다.
+            adventureEventArr[i] = i;
         }
+        for (int i = adventureEventArr.Length - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+
+            int temp = adventureEventArr[i];
+            adventureEventArr[i] = adventureEventArr[j];
+            adventureEventArr[j] = temp; 
+        }
+
     }
     public void startAdventure()
     {
         mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
+        adventureEventArr = new int[adventureEventList[stageNum].Count];
+        adventureEventArr[0] = 0;
+        for (int i = 0; i < adventureEventList[stageNum].Count; i++)
+        {
+            int j = Random.Range(0, 1);
+            adventureEventArr[i] = i;
+        }
+        for (int i = adventureEventArr.Length - 1; i > 0; i--)
+        {
+            
+
+            int temp = adventureEventArr[i];
+            adventureEventArr[i] = adventureEventArr[j];
+            adventureEventArr[j] = temp;
+        }
         //지금은 시작 버튼 누르면 바로 시작
         StartCoroutine(phase_Manage_Coroutine());
     }
@@ -165,36 +203,45 @@ public class AdventureManager : MonoBehaviour
     {
         return 1;
     }
+
+    private void updateCharacterFace()
+    {
+        for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
+        {
+            diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
+            if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0)
+            {
+                diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+                continue;
+            }
+            if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
+            {
+                diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
+            }
+            else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
+        }
+    }
+
     private IEnumerator phase_Manage_Coroutine()
     {
-        makeStageEventArr(); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
+        stageNum = 0;
+        makeStageEventArr(0); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         stageIdx = 0;
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (stageIdx < 20)
         {
             stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx; //초기화
-            for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
-            {
-                diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
-                if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0) {
-                    diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
-                    continue;
-                }
-                if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
-                {
-                    diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
-                }
-                else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
-            }
+            updateCharacterFace();
 
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
             resultObj.SetActive(false);
 
-            if (adventureEventArr[stageIdx] == 1)
+            if (true)//adventureEventArr[stageIdx] == 1)
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
 
                 eventWatchNum = 0;
-                curDiceEvent = new adventureEvent(adventureEventList[stageIdx]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
+                Debug.Log("error find : " + stageIdx);
+                curDiceEvent = new adventureEvent(adventureEventList[stageNum][adventureEventArr[stageIdx]]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
                 if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
                     eventWatchTrigger = true;
                 }
@@ -283,6 +330,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    BattleManager.Instance.updateBattleBackground(curDiceEventPacket.getBattleBackSprite());
                     for (int i = 0; i < 4; i++)
                     {
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(i, curDiceEventPacket.getVal(i));
@@ -296,6 +344,7 @@ public class AdventureManager : MonoBehaviour
                     CharacterManager.Instance.setCharacter(3, curDiceEventPacket.getVal(3));
                     */
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
+                    updateCharacterFace();
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                     selectInfo.GetComponent<TextMeshPro>().text = "Battle is over. Now, we need to move";
                 }

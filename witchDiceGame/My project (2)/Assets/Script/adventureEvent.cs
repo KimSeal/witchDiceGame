@@ -19,7 +19,7 @@ public class adventureEvent_Packet{
     // 5 : 능력치 종류와 감소할 수치 + 능력치 종류와 감소할 수치
 
     private string spriteIndex;
-
+    private string battleBackSprite;
 
     public adventureEvent_Packet(AdventureEventPacketReader adventureEventPacketReader)
     {
@@ -45,7 +45,7 @@ public class adventureEvent_Packet{
         this.itemType[1] = adventureEventPacketReader.itemType1;
         this.itemType[2] = adventureEventPacketReader.itemType2;
         this.itemType[3] = adventureEventPacketReader.itemType3;
-
+        this.battleBackSprite = adventureEventPacketReader.battleBackSprite;
 }
 
     public adventureEvent_Packet(adventureEvent_Packet adventureEventPacketReader)
@@ -68,7 +68,12 @@ public class adventureEvent_Packet{
         this.itemType[1] = adventureEventPacketReader.itemType[1];
         this.itemType[2] = adventureEventPacketReader.itemType[2];
         this.itemType[3] = adventureEventPacketReader.itemType[3];
+        this.battleBackSprite = adventureEventPacketReader.battleBackSprite;
 
+    }
+    public string getBattleBackSprite()
+    {
+        return battleBackSprite;
     }
     public string getChooseText()
     {
