@@ -73,6 +73,9 @@ public class BattleManager : MonoBehaviour
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
 
+    private GameObject[,] resultObj = new GameObject[3,4];
+    private Item[] resultItem = new Item[3];
+
     //phase버튼 누를수 있는지
     private bool clickAble = true;
     public int curPhase = -1;
@@ -794,6 +797,8 @@ public class BattleManager : MonoBehaviour
                 color.a -= 0.2f;
                 yield return new WaitForSeconds(0.1f);
             }
+            for(int i=1;i<3;i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 300, witchPowerObj[i].transform.position.z);
+
             witchPowerObj[0].SetActive(false);
             witchPowerObj[1].SetActive(false);
             witchPowerObj[2].SetActive(false);
@@ -809,6 +814,8 @@ public class BattleManager : MonoBehaviour
             witchPowerObj[0].SetActive(true);
             witchPowerObj[1].SetActive(true);
             witchPowerObj[2].SetActive(true);
+            for (int i = 1; i < 3; i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 50, witchPowerObj[i].transform.position.z);
+
             Color color = witchPowerObj[1].GetComponent<SpriteRenderer>().color;
             color.a = 0.0f;
             //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
@@ -1745,6 +1752,29 @@ public class BattleManager : MonoBehaviour
         return 0;
     }
 
+    private void makeRandomResult()
+    {
+        
+        for (int i=0;i<3;i++)
+        {
+            int j = Random.Range(0, 4);
+            int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
+            resultItem[i] = itemManager.Instance.getItem(j, k);
+        }
+    }
+    string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
+    private void printRandomResult(int i, bool pointOn)
+    {
+        if(pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
+        else resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + resultItem[i].getRare());
+
+        resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
+            resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
+            resultObj[i, 3].GetComponent<TextMeshPro>().text = typeArr[resultItem[i].getType()] + "\n\n" + resultItem[i].getContent();
+    }
+    public void pointEnterRandomResult(int i){ printRandomResult(i, true);}
+    public void pointExitRandomResult(int i) { printRandomResult(i, false); }
+
     bool bosang_click = false;
     private IEnumerator EndPhase_Coroutine()
     {
@@ -1768,13 +1798,25 @@ public class BattleManager : MonoBehaviour
                 myHpUI[i].GetComponent<TextMeshPro>().text = "";
                 enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
             }
+
+            //랜덤 아이템 배정하고 출력
+            makeRandomResult();
+            for (int i = 0; i < 3; i++) printRandomResult(i, false);
+            
             GameObject temp = GameObject.Find("bosang_ui");
             temp.transform.position = new Vector3(0f, -0f, temp.transform.position.z);
+
             Debug.Log("you win!");
             bosang_click = true;
             yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+            while (!AdventureManager.Instance.exitBattleCanvas()){
+                yield return new WaitForSeconds(0.5f);
+            }
+            
 
-            AdventureManager.Instance.exitBattleCanvas();
+            temp = GameObject.Find("obj_itemUI_battleEndBtn");
+            temp.transform.position = new Vector3(0f, 300f, temp.transform.position.z);
+
         }
         //전투 지속 필요
         else
@@ -1784,20 +1826,26 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
     }
     
-    public void click_bosang()
+    public void click_bosang(int i) //보상 획득
     {
-        GameObject temp0 = GameObject.Find("bosang_ui");
-        temp0.transform.position = new Vector3(0f, 300f, temp0.transform.position.z);
-        GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
-        temp.transform.position = new Vector3(171f, -37.5f, temp.transform.position.z);
 
+        int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
+        if (result == 0)
+        {
+            GameObject temp0 = GameObject.Find("bosang_ui");
+            temp0.transform.position = new Vector3(0f, 300f, temp0.transform.position.z);
+
+            GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
+            temp.transform.position = new Vector3(171f, -37.5f, temp.transform.position.z);
+        }
     }
     public void click_backToAdventure()
     {
-        GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
-        temp.transform.position = new Vector3(0f, 300f, temp.transform.position.z);
-        
-        bosang_click = false;
+
+        if (bosang_click)
+        {
+            bosang_click = false;
+        }
     }
     // End Phase End (phase 6 - check game finish)//
 
@@ -1853,6 +1901,11 @@ public class BattleManager : MonoBehaviour
 
         for (int i=0;i<3;i++)
         {
+            resultObj[i, 0] = GameObject.Find("obj_resultUI_board_" + i.ToString());
+            resultObj[i, 1] = GameObject.Find("obj_resultUI_itemLogo_" + i.ToString());
+            resultObj[i, 2] = GameObject.Find("obj_resultUI_itemName_" + i.ToString());
+            resultObj[i, 3] = GameObject.Find("obj_resultUI_itemDesc_" + i.ToString());
+
             diceUIChain[i] = GameObject.Find("obj_myChain_" + i.ToString());
             diceUIChain[i+3] = GameObject.Find("obj_enemyChain_" + i.ToString());
         }

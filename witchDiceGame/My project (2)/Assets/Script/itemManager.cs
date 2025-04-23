@@ -92,6 +92,10 @@ public class itemManager : MonoBehaviour
     private int dragCharacterStartNum = -1;
     private int dragCharacterEndNum = -1;
 
+    public int getItemListCount(int idx)
+    {
+        return itemList[idx].Count;
+    }
     public string getItemSprite(int type, int idx)
     {
         if (type == -99999 || idx == -99999 || type > 4 || idx >= itemList[type].Count || itemList[type][idx] == null){
@@ -734,21 +738,21 @@ public class itemManager : MonoBehaviour
 
         switch (item.getIdx())
         {
-            case 0:
-                takeSkillPacket.addVal(item.getVal(3)); break;
             case 1:
                 takeSkillPacket.addVal(item.getVal(3)); break;
             case 2:
-                takeSkillPacket.mulVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); break;
             case 3:
                 takeSkillPacket.mulVal(item.getVal(3)); break;
             case 4:
-                takeSkillPacket.addVal(item.getVal(3)); break;
-            case 5:
                 takeSkillPacket.mulVal(item.getVal(3)); break;
-            case 6:
+            case 5:
                 takeSkillPacket.addVal(item.getVal(3)); break;
+            case 6:
+                takeSkillPacket.mulVal(item.getVal(3)); break;
             case 7:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+            case 8:
                 takeSkillPacket.addVal(item.getVal(3)); break;
         }
 

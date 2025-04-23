@@ -42,6 +42,7 @@ public class Item
         this.val[5] = itemReader.val5;
         this.val[6] = itemReader.val6;
         this.val[7] = itemReader.val7;
+        this.rare = itemReader.rare;
     }
 
     public Item(Item item)
@@ -54,6 +55,7 @@ public class Item
         {
             this.val[i] = item.val[i];
         }
+        this.rare = item.rare;
     }
 
     public int getRare()

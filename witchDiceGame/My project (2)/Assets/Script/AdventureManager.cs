@@ -57,6 +57,8 @@ public class AdventureManager : MonoBehaviour
     private GameObject[] resultObjArr = new GameObject[4];
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
+    private GameObject battleBtn;
+
     
     public List<adventureEvent>[] adventureEventList = new List<adventureEvent>[5]; //
 
@@ -154,6 +156,7 @@ public class AdventureManager : MonoBehaviour
         for (int i=0;i<7;i++){  //발판 오브젝트 담기
             balpanObj[i] = GameObject.Find("obj_balpan_" + i.ToString()); 
         }
+        battleBtn = GameObject.Find("obj_itemUI_battleBtn");
     }
 
     // Update is called once per frame
@@ -275,6 +278,7 @@ public class AdventureManager : MonoBehaviour
             
             //발판 이벤트를 위한 이펙트
             setBalpan(stageIdx);
+            balpanArrow.transform.position = balpanObj[0].transform.position + new Vector3(0, -10, 0);
             yield return new WaitUntil(() => selectDiceNum > 0);
             
             int moveCount = selectDiceNum;
@@ -370,6 +374,7 @@ public class AdventureManager : MonoBehaviour
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEventPacket.getSpriteIndex()); //적힌 sprite받아오기
                     selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
                 }
+
                 if (curDiceEventPacket.getSelectType() == 3) { //능력치 감소
                     for (int i=0;i<8;i++)
                     {
@@ -404,7 +409,7 @@ public class AdventureManager : MonoBehaviour
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(i, curDiceEventPacket.getVal(i));
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
                     }
-                    
+                    battleBtn.transform.position = nextBtnObj.transform.position;
                     battleEventTrigger = true;
                     /*CharacterManager.Instance.setCharacter(0, curDiceEventPacket.getVal(0));
                     CharacterManager.Instance.setCharacter(1, curDiceEventPacket.getVal(1));
@@ -412,6 +417,7 @@ public class AdventureManager : MonoBehaviour
                     CharacterManager.Instance.setCharacter(3, curDiceEventPacket.getVal(3));
                     */
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
+                    battleBtn.transform.position += new Vector3(0, 300, 0);
                     updateCharacterFace();
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                     selectInfo.GetComponent<TextMeshPro>().text = "Battle is over. Now, we need to move";
@@ -462,13 +468,18 @@ public class AdventureManager : MonoBehaviour
                 resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                 resultItemArr[idx, 0] = -99999;
                 resultItemArr[idx, 1] = -99999;
+
             }
             else if (result == 1) //꽉차서 못담는 경우.
             {
 
             }
-            else if (result == 2) Debug.Log("Error, this is not exist item");
+            else if (result == 2)
+            {
+                Debug.Log("Error, this is not exist item");
+            }
         }
+
     }
     public void changeSelectNum(bool upEvent)
     { //현재 아래 방향이 상승
@@ -631,7 +642,7 @@ public class AdventureManager : MonoBehaviour
         }
         
     }
-    public void exitBattleCanvas()
+    public bool exitBattleCanvas()
     {
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
@@ -646,9 +657,11 @@ public class AdventureManager : MonoBehaviour
                     curCanvasIsAdventure = true;
                     battleEventTrigger = false;
                     mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     
