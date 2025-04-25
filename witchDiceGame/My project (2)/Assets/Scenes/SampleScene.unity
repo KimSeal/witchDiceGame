@@ -7773,6 +7773,7 @@ MonoBehaviour:
   - {fileID: 1739939377}
   - {fileID: 1811403634}
   chooseDiceObj: {fileID: 552777230}
+  damageTextObj: {fileID: 1058357996364317459, guid: 92ab5ec91699f994181d0ee171015180, type: 3}
   chooseDiceIdx: 0
   firstAttackTeam: 1
   clickState: 0
@@ -17767,6 +17768,7 @@ MonoBehaviour:
   - {fileID: 1739939377}
   - {fileID: 1811403634}
   chooseDiceObj: {fileID: 552777230}
+  damageTextObj: {fileID: 0}
   chooseDiceIdx: 0
   firstAttackTeam: 1
   clickState: 0
@@ -51184,6 +51186,7 @@ GameObject:
   - component: {fileID: 2144923856}
   - component: {fileID: 2144923855}
   - component: {fileID: 2144923860}
+  - component: {fileID: 2144923861}
   m_Layer: 0
   m_Name: obj_adventureBtn_selectBtn_3
   m_TagString: Untagged
@@ -51392,3 +51395,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 9, y: 9}
   m_EdgeRadius: 0
+--- !u!114 &2144923861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144923853}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c7e49687df09040a0c861590d24e1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageText: {fileID: 1058357996364317459, guid: 92ab5ec91699f994181d0ee171015180, type: 3}

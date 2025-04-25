@@ -14,6 +14,8 @@ public class BattleManager : MonoBehaviour
     public GameObject[] enemyChkDice = new GameObject[4];
     [SerializeField]
     public GameObject chooseDiceObj;
+    [SerializeField]
+    public GameObject damageTextObj;
 
     public int chooseDiceIdx;
 
@@ -1574,12 +1576,25 @@ public class BattleManager : MonoBehaviour
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
-                            for (int passiveItemIdx=0;passiveItemIdx<11;passiveItemIdx++) { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
-                                itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr);
+                            for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
+                            { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
+                                if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr)) //만약 적용이 된 경우
+                                {
+                                    GameObject temp = Instantiate(damageTextObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    yield return new WaitForSeconds(0.2f);
+                                }
                             }
+                            
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
+                                if(myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
+                                {
+                                    GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position, new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                }
+                                
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
@@ -1593,6 +1608,13 @@ public class BattleManager : MonoBehaviour
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
+
+                                if (enemyCharacter[tempTargetIdx-4] != null && enemyCharacter[tempTargetIdx-4].getCurState() == 0) //대상 존재시 damage text 출력
+                                {
+                                    GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position, new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                }
+
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
@@ -1666,7 +1688,12 @@ public class BattleManager : MonoBehaviour
                             Debug.Log("target is...! : " + tempTargetIdx.ToString());
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
+                                {
+                                    GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position, new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                }
+                                if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
@@ -1676,7 +1703,12 @@ public class BattleManager : MonoBehaviour
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-                                if(enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
+                                {
+                                    GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position, new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                }
+                                if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);

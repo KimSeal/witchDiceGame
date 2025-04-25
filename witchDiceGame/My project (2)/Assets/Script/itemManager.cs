@@ -691,12 +691,14 @@ public class itemManager : MonoBehaviour
         //test Sample
         for (int i=0;i<7;i++) {
             ItemExistArr[1, i] = true;
-            ItemArr[1,i] = new Item(itemList[1][i]);
+            ItemArr[1,i] = new Item(itemList[1][i+1]);
+            ItemExistArr[3, i] = true;
+            ItemArr[3, i] = new Item(itemList[3][i+1]);
         }
         ItemExistArr[0, 0] = true;
-        ItemArr[0, 0] = new Item(itemList[0][0]);
+        ItemArr[0, 0] = new Item(itemList[0][1]);
         ItemExistArr[0, 1] = true;
-        ItemArr[0, 1] = new Item(itemList[0][1]);
+        ItemArr[0, 1] = new Item(itemList[0][2]);
 
         ItemExistArr[2, 0] = true;
         ItemArr[2, 0] = new Item(itemList[2][1]);
@@ -712,6 +714,10 @@ public class itemManager : MonoBehaviour
         ItemArr[type, index] = new Item(itemList[type][ItemIndex]);
     }
 
+    public Vector3 getItemInventoryPosition(int idx)
+    {
+        return inventoryUIArr[idx].transform.position;
+    }
     public void setUpAnimator()
     {
         for (int i=0;i<4;i++)
