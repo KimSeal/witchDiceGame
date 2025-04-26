@@ -108,7 +108,9 @@ public class BattleManager : MonoBehaviour
     //주사위 밑에 HP UI
     private GameObject[] myHpUI = new GameObject[4];
     private GameObject[] enemyHpUI = new GameObject[4];
-  
+
+    //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
+    private GameObject battleTextObj;
     private void updateHp()
     {
         for (int i=0;i<4;i++)
@@ -1580,8 +1582,9 @@ public class BattleManager : MonoBehaviour
                             { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
                                 if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr)) //만약 적용이 된 경우
                                 {
-                                    GameObject temp = Instantiate(damageTextObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    battleTextObj.GetComponent<TextMeshPro>().text = takeSkillPacketArr[takeSkillArrIdx].getVal().ToString(); //상단부에 적용될 text값 적기
+                                    //GameObject temp = Instantiate(damageTextObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     yield return new WaitForSeconds(0.2f);
                                 }
                             }
@@ -1962,6 +1965,9 @@ public class BattleManager : MonoBehaviour
             battleTargetUI[i] = GameObject.Find("obj_battleTarget_" + i.ToString());
             battleTargetUI[i + 4] = GameObject.Find("obj_battleTarget_" + (i + 4).ToString());
         }
+
+        battleTextObj = GameObject.Find("obj_battleText");
+        battleTextObj.GetComponent<TextMeshPro>().text = "";
 
         curPhase = 0;
 
