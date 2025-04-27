@@ -16,6 +16,8 @@ public class BattleManager : MonoBehaviour
     public GameObject chooseDiceObj;
     [SerializeField]
     public GameObject damageTextObj;
+    [SerializeField]
+    public GameObject passiveEffObj;
 
     public int chooseDiceIdx;
 
@@ -111,6 +113,9 @@ public class BattleManager : MonoBehaviour
 
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
     private GameObject battleTextObj;
+
+    
+
     private void updateHp()
     {
         for (int i=0;i<4;i++)
@@ -665,6 +670,7 @@ public class BattleManager : MonoBehaviour
         
     }
 
+    private int[] witchPowerIdx = new int[2]; //현재 선택된 마녀 파워 Idx
     //마녀 파워 선택 (좌우)
     public void witchPowerState_Change(int dir)
     {
@@ -687,9 +693,18 @@ public class BattleManager : MonoBehaviour
                     if (witchPowerState < 0) witchPowerState = 2;
                 }
                 //테스트를 위한 turn 능력이미지
-                if (witchPowerState == 0) { witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse"); }
-                else if (witchPowerState == 1) { witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn"); }
-                else if (witchPowerState == 2) { witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn_blue"); }
+                if (witchPowerState == 0) {
+                    witchPowerUI.GetComponent<Animator>().Play("0");
+                    //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse"); 
+                }
+                else if (witchPowerState == 1) {
+                    witchPowerUI.GetComponent<Animator>().Play(witchPowerIdx[0].ToString());
+                    //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn"); 
+                }
+                else if (witchPowerState == 2) {
+                    witchPowerUI.GetComponent<Animator>().Play(witchPowerIdx[1].ToString());
+                    //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn_blue"); 
+                }
             }
         }
     }
@@ -716,22 +731,37 @@ public class BattleManager : MonoBehaviour
             if (witchPowerMoveState == 1)
             {
                 witchPowerClickState = 6;
-                int witchPowerTemp = witchPowerState;
+                int witchPowerTemp = witchPowerIdx[witchPowerState-1];
                 int diceNum = 6;
                 if (witchPowerTemp == 0) diceNum = 0; //능력을 사용하지 않는 경우
-                if (witchPowerTemp == 1) diceNum = 1; // 능력이 turn이어서 주사위 하나만 쓰는 경우
+                if (witchPowerTemp >= 1 && witchPowerTemp <= 3) diceNum = 1; // 능력이 reroll이어서 주사위 하나만 쓰는 경우
+                if (witchPowerTemp >= 4 && witchPowerTemp <=6 ) diceNum = 1; // 능력이 turn이어서 주사위 하나만 쓰는 경우
+                if (witchPowerTemp >= 7 && witchPowerTemp <= 9) diceNum = 1; // 능력이 add1이어서 주사위 하나만 쓰는 경우
+                if (witchPowerTemp >= 10 && witchPowerTemp <= 12) diceNum = 1; // 능력이 sub1이어서 주사위 하나만 쓰는 경우
                 clickedDice[0] = -1;
                 clickedDice[1] = -1;
                 witchPowerClickState = diceNum;
 
                 yield return new WaitUntil(() => witchPowerClickState == 0); //요구되는 주사위 수를 모두 채웠을때.
 
-                if (witchPowerTemp == 1) //turn 스킬 사용시 
+                if (witchPowerTemp >= 1 && witchPowerTemp <= 3) //reroll 스킬 사용시 
+                {
+                    rerollDice(clickedDice[0]); 
+                }
+                if (witchPowerTemp >= 4 && witchPowerTemp <= 6) //turn 스킬 사용시 
                 {
                     Debug.Log("witchPowerClickState : " + witchPowerClickState.ToString());
                     diceArrowSet[clickedDice[0]].SetActive(true); //해당 주사위 화살표 활성화
                     yield return new WaitUntil(() => witchPowerClickState == -1);
                     diceArrowSet[clickedDice[0]].SetActive(false);
+                }
+                if (witchPowerTemp >= 7 && witchPowerTemp <= 9) //add 스킬 사용시 
+                {
+                    addDice(clickedDice[0], true);
+                }
+                if (witchPowerTemp >= 10 && witchPowerTemp <= 12) //add 스킬 사용시 
+                {
+                    addDice(clickedDice[0], false);
                 }
                 witchPowerMoveState = 2;
             }
@@ -754,6 +784,61 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void addDice(int idx, bool add)
+    {
+        int num;
+        if (idx < 4)
+        {
+            if (myDice[idx] != null)
+            {
+                num = myDice[idx].getNum();
+                if (add) num++; else num--;
+                if (num == 0) num = 6;
+                if (num == 7) num = 1;
+                myDiceNum[idx] = num;
+                myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, 0);
+                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[num - 1];
+            }
+        }
+        else
+        {
+            idx -= 4;
+            if (enemyDice[idx] != null)
+            {
+                num = enemyDice[idx].getNum();
+                if (add) num++; else num--;
+                if (num == 0) num = 6;
+                if (num == 7) num = 1;
+                enemyDiceNum[idx] = num;
+                enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, 0);
+                enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[num - 1];
+            }
+        }
+        witchPowerClickState = -1;
+    }
+    private void rerollDice(int idx)
+    {
+        if (idx < 4)
+        {
+            if (myDice[idx] != null)
+            {
+                myDiceNum[idx] = myDice[idx].throwDice();
+                myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
+                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
+            }
+        }
+        else
+        {
+            idx -= 4;
+            if (enemyDice[idx] != null)
+            {
+                enemyDiceNum[idx] = enemyDice[idx].throwDice();
+                enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[idx].dir * -90);
+                enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[idx].getNum() - 1];
+            }
+        }
+        witchPowerClickState = -1;
+    }
     public void turnDice(int input)
     {
         int idx = input / 10;
@@ -845,8 +930,21 @@ public class BattleManager : MonoBehaviour
     {
         if (witchPowerClickState > 0 &&  currentLightUI == 0 && currentMoveUI == 0)
         {
-            if ((diceIdx >= 0 && diceIdx <= 3 && myCharacter[diceIdx] != null && myDice[diceIdx] != null)
-                || (diceIdx >= 4 && diceIdx <= 7 && enemyCharacter[diceIdx-4] != null && enemyDice[diceIdx-4] != null))
+            //아군 캐릭터 중 유효한 주사위가 선택되었고, 능력이 적군 선택이 아닌 경우 
+            if ((diceIdx >= 0 && diceIdx <= 3 && myCharacter[diceIdx] != null && myDice[diceIdx] != null) && witchPowerIdx[witchPowerState - 1] % 3 != 2) 
+            {
+                if (witchPowerClickState == 2)
+                {
+                    clickedDice[1] = diceIdx;
+                }
+                else if (witchPowerClickState == 1)
+                {
+                    clickedDice[0] = diceIdx;
+                }
+                witchPowerClickState--;
+            }
+            //적군 캐릭터 중 유효한 주사위가 선택되었고, 능력이 아군 선택이 아닌 경우 
+            if ((diceIdx >= 4 && diceIdx <= 7 && enemyCharacter[diceIdx-4] != null && enemyDice[diceIdx-4] != null) && witchPowerIdx[witchPowerState - 1] % 3 != 1)
             {
                 if (witchPowerClickState == 2)
                 {
@@ -1520,6 +1618,16 @@ public class BattleManager : MonoBehaviour
         }
     }
     
+    
+    private string makeBattleFontSize(int input) //상단 텍스트 폰트 사이즈 생성을 담당. 1050뎀 이상일때 520을 최대로 둔다.
+    {
+        int result;
+        if (input < 50) result = 120;
+        else result = 120 + (input - 50) * 2 / 5;
+        return result.ToString();
+    }
+
+
     private IEnumerator BattlePhase_Coroutine()
     {
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
@@ -1578,13 +1686,28 @@ public class BattleManager : MonoBehaviour
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
+                            int itemUseIdx = 0;
                             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
                             { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
+                                
                                 if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr)) //만약 적용이 된 경우
                                 {
-                                    battleTextObj.GetComponent<TextMeshPro>().text = takeSkillPacketArr[takeSkillArrIdx].getVal().ToString(); //상단부에 적용될 text값 적기
-                                    //GameObject temp = Instantiate(damageTextObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
+                                    GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
+
+                                    for (int fontSizeIdx=0; fontSizeIdx < 10; fontSizeIdx++) {
+                                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx*2) + ">" +
+                                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                                        + "</size>";
+                                        yield return new WaitForSeconds(0.02f);
+                                    }
+                                    for (int fontSizeIdx = 10; fontSizeIdx > 00; fontSizeIdx--)
+                                    {
+                                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx*2) + ">" +
+                                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                                        + "</size>";
+                                        yield return new WaitForSeconds(0.02f);
+                                    }
                                     yield return new WaitForSeconds(0.2f);
                                 }
                             }
@@ -1632,6 +1755,7 @@ public class BattleManager : MonoBehaviour
                             updateHp();
                             updateMyDiceUI();
                         }
+                        battleTextObj.GetComponent<TextMeshPro>().text = "";
 
                     }
 
@@ -1970,7 +2094,8 @@ public class BattleManager : MonoBehaviour
         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
         curPhase = 0;
-
+        witchPowerIdx[0] = 2;
+        witchPowerIdx[1] = 7;
     }
 
     // Update is called once per frame
