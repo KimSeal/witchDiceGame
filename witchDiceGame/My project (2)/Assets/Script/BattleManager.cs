@@ -741,6 +741,21 @@ public class BattleManager : MonoBehaviour
                 clickedDice[0] = -1;
                 clickedDice[1] = -1;
                 witchPowerClickState = diceNum;
+                
+                if (witchPowerTemp %3 ==2) { //아군 대상으로 하는 능력이 아닐 경우
+                    for (int i = 0; i < 4; i++) { 
+                        Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                        material.SetFloat("_Transparency", 0.7f);
+                    }
+                }
+                if (witchPowerTemp % 3 == 1) //적군 대상으로 하는 능력이 아닐 경우
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Material material = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                        material.SetFloat("_Transparency", 0.7f);
+                    }
+                }
 
                 yield return new WaitUntil(() => witchPowerClickState == 0); //요구되는 주사위 수를 모두 채웠을때.
 
@@ -762,6 +777,14 @@ public class BattleManager : MonoBehaviour
                 if (witchPowerTemp >= 10 && witchPowerTemp <= 12) //add 스킬 사용시 
                 {
                     addDice(clickedDice[0], false);
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                    material.SetFloat("_Transparency", 0.0f);
+                    Material material2 = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                    material.SetFloat("_Transparency", 0.0f);
                 }
                 witchPowerMoveState = 2;
             }
