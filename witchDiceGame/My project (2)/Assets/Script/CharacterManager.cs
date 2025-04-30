@@ -72,9 +72,9 @@ public class CharacterManager : MonoBehaviour
 
         //캐릭터 테스트 0번에 용사 배치
         setCharacter(0, 0);
-        setCharacter(1, 0);
-        setCharacter(2, 4);
-        setCharacter(3, 4);
+        setCharacter(1, 1);
+        setCharacter(2, 2);
+        //setCharacter(3, 4);
     }
 
     // Update is called once per frame
