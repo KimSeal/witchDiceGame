@@ -567,6 +567,7 @@ public class BattleManager : MonoBehaviour
             Debug.Log("WitchPower Test! curPhase is " + curPhase.ToString());
             StartCoroutine(witchPowerPhase_Coroutine());
             yield return new WaitUntil(() => curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0);
+            
             StartCoroutine(skillSelectPhase_Coroutine());
             yield return new WaitUntil(() => curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0);
             StartCoroutine(moveToBattlePhase_Coroutine());
@@ -1007,6 +1008,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase_Coroutine()
     {
+        yield return new WaitForSeconds(1f);
         StartCoroutine(MoveUI(diceFullUI, 60.0f));
         StartCoroutine(MoveUI(backGroundObj[0], 0.0f)); // 78f : skillSelect  62f: battle
         StartCoroutine(makeBright(backGroundObj[0], 0.0f));
