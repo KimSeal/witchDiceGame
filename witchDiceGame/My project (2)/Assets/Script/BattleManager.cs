@@ -608,6 +608,8 @@ public class BattleManager : MonoBehaviour
         diceThrowChk = false;
         StartCoroutine(Dice_Throw_Phase());
         yield return new WaitUntil(() => diceThrowChk);
+
+
         yield return new WaitForSeconds(1f);
         Debug.Log("phase change to 2!");
         curPhase = 2;
@@ -773,33 +775,48 @@ public class BattleManager : MonoBehaviour
 
                 yield return new WaitUntil(() => witchPowerClickState == 0); //요구되는 주사위 수를 모두 채웠을때.
 
-                if (witchPowerTemp >= 1 && witchPowerTemp <= 3) //reroll 스킬 사용시 
-                {
-                    rerollDice(clickedDice[0]); 
+                if (clickedDice[0] >= 0 && clickedDice[0] <= 3){
+                    Instantiate(diceRollEff, myDiceUI[clickedDice[0]].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
                 }
-                if (witchPowerTemp >= 4 && witchPowerTemp <= 6) //turn 스킬 사용시 
+                if (clickedDice[0] >= 4 && clickedDice[0] <= 7)
                 {
-                    Debug.Log("witchPowerClickState : " + witchPowerClickState.ToString());
-                    diceArrowSet[clickedDice[0]].SetActive(true); //해당 주사위 화살표 활성화
-                    yield return new WaitUntil(() => witchPowerClickState == -1);
-                    diceArrowSet[clickedDice[0]].SetActive(false);
-                }
-                if (witchPowerTemp >= 7 && witchPowerTemp <= 9) //add 스킬 사용시 
-                {
-                    addDice(clickedDice[0], true);
-                }
-                if (witchPowerTemp >= 10 && witchPowerTemp <= 12) //add 스킬 사용시 
-                {
-                    addDice(clickedDice[0], false);
+                    Instantiate(diceRollEff, enemyDiceUI[clickedDice[0]-4].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
                 }
 
-                for (int i = 0; i < 4; i++)
+                
+
+                if (witchPowerTemp != 0) //능력 사용시만
                 {
-                    Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
-                    material.SetFloat("_Transparency", 0.0f);
-                    Material material2 = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
-                    material2.SetFloat("_Transparency", 0.0f);
+                    if (witchPowerTemp >= 1 && witchPowerTemp <= 3) //reroll 스킬 사용시 
+                    {
+                        rerollDice(clickedDice[0]);
+                    }
+                    if (witchPowerTemp >= 4 && witchPowerTemp <= 6) //turn 스킬 사용시 
+                    {
+                        Debug.Log("witchPowerClickState : " + witchPowerClickState.ToString());
+                        diceArrowSet[clickedDice[0]].SetActive(true); //해당 주사위 화살표 활성화
+                        yield return new WaitUntil(() => witchPowerClickState == -1);
+                        diceArrowSet[clickedDice[0]].SetActive(false);
+                    }
+                    if (witchPowerTemp >= 7 && witchPowerTemp <= 9) //add 스킬 사용시 
+                    {
+                        addDice(clickedDice[0], true);
+                    }
+                    if (witchPowerTemp >= 10 && witchPowerTemp <= 12) //add 스킬 사용시 
+                    {
+                        addDice(clickedDice[0], false);
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                        material.SetFloat("_Transparency", 0.0f);
+                        Material material2 = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                        material2.SetFloat("_Transparency", 0.0f);
+                    }
+                    yield return new WaitForSeconds(1f);
                 }
+                
                 witchPowerMoveState = 2;
             }
 
@@ -1008,7 +1025,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase_Coroutine()
     {
-        yield return new WaitForSeconds(1f);
+       
         StartCoroutine(MoveUI(diceFullUI, 60.0f));
         StartCoroutine(MoveUI(backGroundObj[0], 0.0f)); // 78f : skillSelect  62f: battle
         StartCoroutine(makeBright(backGroundObj[0], 0.0f));
