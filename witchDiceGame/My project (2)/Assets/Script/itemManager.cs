@@ -59,7 +59,7 @@ public class itemManager : MonoBehaviour
     private Item[,] ItemArr = new Item[5,11];
     private bool[,] ItemExistArr = new bool[5, 11];
 
-    private GameObject[] characterBoardState = new GameObject[4]; //캐릭터 보드의 선택버튼에 대한 object
+    private GameObject[] characterBoardState = new GameObject[5]; //캐릭터 보드의 선택버튼에 대한 object
     private GameObject[] itemBoardState = new GameObject[5]; //item 보드 선택버튼에 대한 object
 
     private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
@@ -397,7 +397,7 @@ public class itemManager : MonoBehaviour
     public void click_characterInfoType_selectButton(int idx) // 캐릭터 정보 창에서 선택한 정보
     {
         curSelectCharacterInfoType = idx;
-        for (int i=0;i<4;i++)
+        for (int i=0;i<5;i++)
         {
             if (i == idx)
             {
@@ -625,6 +625,7 @@ public class itemManager : MonoBehaviour
         characterBoardState[1] = GameObject.Find("itemUI_board_diceBoard");
         characterBoardState[2] = GameObject.Find("itemUI_board_skillBoard");
         characterBoardState[3] = GameObject.Find("itemUI_board_itemBoard");
+        characterBoardState[4] = GameObject.Find("itemUI_board_exitBoard");
 
         //battle phase시 아이템 선택 제거
         bagBtnObj = GameObject.Find("item_btn");
@@ -679,10 +680,9 @@ public class itemManager : MonoBehaviour
             equipBoardObj[2 + i * 3] = GameObject.Find("board_equip_equipInfo_" + i.ToString());
         }
 
-        for (int i = 1; i < 4; i++)
+        for (int i = 1; i < 5; i++)
         {
             characterBoardState[i].SetActive(false);
-
         }
 
         setUpAnimator();

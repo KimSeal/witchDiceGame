@@ -42,18 +42,18 @@ public class damageMove : MonoBehaviour
         //this.transform.position += new Vector3(xSpeed, ySpeed, 0);
         //ySpeed -= 0.01f;
 
-        for (int fontSizeIdx = 0; fontSizeIdx < 20; fontSizeIdx++)
+        for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
         {
             this.transform.position += new Vector3(0, 2f, 0);
-            textObj.text = "<size=" + (250 - (fontSizeIdx-10) * (fontSizeIdx - 10)/6f * 2).ToString() + ">" + textSave//상단부에 적용될 text값 적기
+            textObj.text = "<size=" + (150 - (fontSizeIdx-5) * (fontSizeIdx - 5)/6f * 2).ToString() + ">" + textSave//상단부에 적용될 text값 적기
             + "</size>";
             yield return new WaitForSeconds(0.02f);
         }
-        for (int i = 20; i >0; i--)
+        for (int i = 15; i >0; i--)
         {
             this.transform.position += new Vector3(0, 2f, 0);
 
-            float f = i / 20.0f;
+            float f = i / 15.0f;
             textObj.color = new Color(textObj.color.r, textObj.color.g, textObj.color.b, f);
             yield return new WaitForSeconds(0.02f);
         }
