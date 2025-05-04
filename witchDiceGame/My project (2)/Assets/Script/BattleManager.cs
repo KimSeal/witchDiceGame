@@ -809,14 +809,27 @@ public class BattleManager : MonoBehaviour
 
                     for (int i = 0; i < 4; i++)
                     {
-                        Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
-                        material.SetFloat("_Transparency", 0.0f);
-                        Material material2 = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
-                        material2.SetFloat("_Transparency", 0.0f);
+                        if (i != clickedDice[0] && i != clickedDice[1]){
+                            Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                            material.SetFloat("_Transparency", 0.7f);
+                        }
+                        if (i-4 != clickedDice[0] && i-4 != clickedDice[1]){
+                            Material material2 = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                            material2.SetFloat("_Transparency", 0.0f);
+                        }
                     }
+
                     yield return new WaitForSeconds(1f);
                 }
-                
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                    material.SetFloat("_Transparency", 0.0f);
+                    Material material2 = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                    material2.SetFloat("_Transparency", 0.0f);
+                }
+
                 witchPowerMoveState = 2;
             }
 
@@ -2020,6 +2033,17 @@ public class BattleManager : MonoBehaviour
             GameObject temp = GameObject.Find("bosang_ui");
             temp.transform.position = new Vector3(0f, -0f, temp.transform.position.z);
 
+            CharacterManager.Instance.character_reset();
+            for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
+            {
+                if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
+                if (myCharacter[i].getCharacter_battle().getOriginIdx() >= 0 && myCharacter[i].getCharacter_battle().getOriginIdx() <= 3)
+                {
+                    CharacterManager.Instance.character_battleEnd_deepCopy(myCharacter[i].getCharacter_battle().getOriginIdx(), myCharacter[i]);
+                }
+            }
+
+
             Debug.Log("you win!");
             bosang_click = true;
             yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
@@ -2031,6 +2055,8 @@ public class BattleManager : MonoBehaviour
             temp = GameObject.Find("obj_itemUI_battleEndBtn");
             temp.transform.position = new Vector3(0f, 300f, temp.transform.position.z);
 
+            
+            
         }
         //전투 지속 필요
         else
@@ -2223,40 +2249,27 @@ public class BattleManager : MonoBehaviour
     }
     */
     private GameObject[] battleTargetUI = new GameObject[8];
+
+
     public void Start_Battle_Phase()
     {
 
         //선택된 주사위 이미지 초기화
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
-        //플레이를 위한 장치
-        /*
-        CharacterManager.Instance.setCharacter(0, 0);
-        CharacterManager.Instance.setCharacter(1, 0);
-        CharacterManager.Instance.setCharacter(2, 0);
-        CharacterManager.Instance.setCharacter(3, 0);
-        */
-        
-        //CharacterManager.Instance.setCharacter(0, 10002);
-        //CharacterManager.Instance.setCharacter(1, 10002);
-        //CharacterManager.Instance.setCharacter(2, 10002);
-
-        for (int i=0;i<4;i++)
-        {
-            myCharacterObjUIAnim[i].Play("Idle");
-            enemyCharacterObjUIAnim[i].Play("Idle");
-        }
-        
-
-
-        //battleTimer = skillDo();
 
         //UI test
         for (int i = 0; i < 4; i++)
         {
             //적군
-            enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
+            //enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
+            if(!CharacterManager.Instance.character_deepCopy(ref enemyCharacter[i], CharacterManager.Instance.getCharacter(false, i)))
+            {
+                enemyCharacter[i] = null;
+            }
+
             if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
             {
+                
                 enemyDice[i] = new Dice();
             }
             else
@@ -2265,11 +2278,15 @@ public class BattleManager : MonoBehaviour
                 enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             //어군
-            myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
+            //myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
+            if(!CharacterManager.Instance.character_deepCopy(ref myCharacter[i], CharacterManager.Instance.getCharacter(true, i))){
+                myCharacter[i] = null;
+            }
+
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
+                myCharacter[i].getCharacter_battle().setOriginIdx(i); //돌아갈때 원래 위치 저장하기 위함
                 myDice[i] = new Dice(myCharacter[i].getDiceObj());
-
             }
             else
             {
@@ -2332,7 +2349,11 @@ public class BattleManager : MonoBehaviour
             }
             
         }
-
+        for (int i = 0; i < 4; i++)
+        {
+            myCharacterObjUIAnim[i].Play("Idle");
+            enemyCharacterObjUIAnim[i].Play("Idle");
+        }
 
         witchPowerObj[0].SetActive(false);
         witchPowerObj[1].SetActive(false);

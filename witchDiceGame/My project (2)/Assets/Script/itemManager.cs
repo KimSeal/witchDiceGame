@@ -197,6 +197,25 @@ public class itemManager : MonoBehaviour
         updateCharacterBar();
         }
     }
+
+    public void deleteCharacter()
+    {
+        bool deleteResult = false;
+        if (CharacterManager.Instance.getCharacterState(characterSelectIdx) == 0) {
+            deleteResult = CharacterManager.Instance.deleteCharacter(characterSelectIdx);
+        }
+        if (deleteResult) //캐릭터가 무사히 제거된 경우
+        {
+            AdventureManager.Instance.resetDice();
+            updateCharacterUIBtn();
+            setUpAnimator();
+            click_characterInfoType_selectButton(curSelectCharacterInfoType);
+            updateCharacterBar();
+        }
+    }
+
+    //drag 관련 함수 모음
+    #region
     public int getDragObjStartNum()
     {
         return dragObjStartNum;
@@ -232,7 +251,7 @@ public class itemManager : MonoBehaviour
     {
         dragCharacterEndNum = input;
     }
-
+    #endregion
 
     private IEnumerator ItemMoveUI(GameObject gameObjTemp, int opt, int onOff) // onoff : 위로 올라갈때 0 아래로 내려갈때 1
     {

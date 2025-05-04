@@ -458,6 +458,10 @@ public class AdventureManager : MonoBehaviour
  
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).downGrade(i, curDiceEventPacket.getVal(i)) == 1)
                         { //약화 효과로 인해 죽어버릴 경우
+                            balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+                            balpanArrow.GetComponent<Animator>().Play("arrowAnim");
+
+                            selectDiceCharacterIdx = -1;
                             resetDice();
                             break;
                         }
@@ -481,6 +485,10 @@ public class AdventureManager : MonoBehaviour
                     {
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(i, curDiceEventPacket.getVal(i));
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
+
+                        selectDiceCharacterIdx = -1;
+                        balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+                        balpanArrow.GetComponent<Animator>().Play("arrowAnim");
                     }
                     battleBtn.transform.position = nextBtnObj.transform.position;
                     battleEventTrigger = true;
@@ -490,6 +498,9 @@ public class AdventureManager : MonoBehaviour
                     CharacterManager.Instance.setCharacter(3, curDiceEventPacket.getVal(3));
                     */
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
+
+                    //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
+                    
                     battleBtn.transform.position += new Vector3(0, 300, 0);
                     updateCharacterFace();
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -518,12 +529,6 @@ public class AdventureManager : MonoBehaviour
                 //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
 
                 yield return new WaitUntil(() => !eventEndClick);
-
-                
-
-                
-
-
             }
 
             
@@ -535,21 +540,43 @@ public class AdventureManager : MonoBehaviour
         //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때
         if (eventEndClick && resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999)
         {
-            int result = itemManager.Instance.getItemResult(resultItemArr[idx, 0], resultItemArr[idx, 1]);
-            if (result == 0)
+            if (resultItemArr[idx, 0] == 4) //캐릭터 습득일 경우
             {
-                resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
-                resultItemArr[idx, 0] = -99999;
-                resultItemArr[idx, 1] = -99999;
-
+                int emptyPlaceExist = -1;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (CharacterManager.Instance.getCharacter(i) == null || CharacterManager.Instance.getCharacter(i).getCurState() != 0)
+                    {
+                        emptyPlaceExist = i;
+                        break;
+                    }
+                }
+                if (emptyPlaceExist == -1) Debug.Log("you need Place to add character!");
+                else {
+                    CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
+                    resultItemArr[idx, 0] = -99999;
+                    resultItemArr[idx, 1] = -99999;
+                    updateCharacterFace();
+                }
             }
-            else if (result == 1) //꽉차서 못담는 경우.
+            else
             {
+                int result = itemManager.Instance.getItemResult(resultItemArr[idx, 0], resultItemArr[idx, 1]);
+                if (result == 0)
+                {
+                    resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
+                    resultItemArr[idx, 0] = -99999;
+                    resultItemArr[idx, 1] = -99999;
 
-            }
-            else if (result == 2)
-            {
-                Debug.Log("Error, this is not exist item");
+                }
+                else if (result == 1) //꽉차서 못담는 경우.
+                {
+
+                }
+                else if (result == 2)
+                {
+                    Debug.Log("Error, this is not exist item");
+                }
             }
         }
 

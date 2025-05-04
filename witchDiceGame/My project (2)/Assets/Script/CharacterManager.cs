@@ -72,6 +72,7 @@ public class CharacterManager : MonoBehaviour
 
         //캐릭터 테스트 0번에 용사 배치
         setCharacter(0, 0);
+        myCharacter[0].setReviveUnit(true);
         setCharacter(1, 1);
         setCharacter(2, 2);
         //setCharacter(3, 4);
@@ -85,7 +86,8 @@ public class CharacterManager : MonoBehaviour
 
     public int getCharacterState(int idx)
     {
-        if (myCharacter[idx] == null) {
+        
+        if (idx<0 || idx>3 || myCharacter[idx] == null) {
             return 3; 
         }
         return myCharacter[idx].getCurState();
@@ -105,6 +107,98 @@ public class CharacterManager : MonoBehaviour
         myCharacter[characterIdx].changeEquip(itemNum, itemType, itemIdx);
     }
 
+    public void character_reset()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (myCharacter[i] != null && myCharacter[i].getReviveUnit()){ //부활해야 하는 유닛인 경우. 플레이어의 운명을 다시 배치하고 hp를 1로 만든다.
+                setCharacter(i, myCharacter[i].getDestiny().getDestinyIdx());
+                myCharacter[i].setHp(1);
+                myCharacter[i].setReviveUnit(true);
+            }
+            else{//부활 유닛이 아닌경우
+                myCharacter[i] = null;
+            }
+            enemyCharacter[i] = null;
+        }
+    }
+    public void character_battleEnd_deepCopy(int idx, Character character) //배틀 종료 후 다시 character manager로 가져온다.
+    {
+        character_deepCopy(ref myCharacter[idx], character);
+        if (myCharacter[idx].getCurState() != 0) { //죽은 경우에 대한 처리 필요.
+        }
+    }
+    public bool character_deepCopy(ref Character A, Character character) {
+        if (character == null) return false; //복사 불가시 false 리턴
+
+        setCharacter_destinyBase(ref A, character.getDestiny().getDestinyIdx());
+        A.characterDeepCopy(character);
+        
+        return true;
+    }
+
+    public bool deleteCharacter(int idx)
+    {
+        if (myCharacter[idx].getReviveUnit())
+        {
+            Debug.Log("no, this is main character!");
+            return false;
+        }
+        else
+        {
+            myCharacter[idx] = null;
+        }
+        return true;
+    }
+
+    public void setCharacter_destinyBase(ref Character character, int characterIdx) //캐릭터 각각에 대해 초기 new를 해주는 함수
+    {
+        if (characterIdx == -99999) return;
+        //아군
+        if (characterIdx <= 10000)
+        {
+            switch (characterIdx)
+            {
+                case 0:
+                    character = new Yongsa(0, destinyList[characterIdx]); break;
+                case 1:
+                    character = new Neaco(0, destinyList[characterIdx]); break;
+                case 2:
+                    character = new Druid(0, destinyList[characterIdx]); break;
+                case 3:
+                    character = new Tom(0, destinyList[characterIdx]); break;
+                case 4:
+                    character = new Bob(0, destinyList[characterIdx]); break;
+
+            }
+        }
+        //몬스터
+        if (characterIdx > 10000)
+        {
+            characterIdx -= 10001;
+            switch (characterIdx)
+            {
+                case 0:
+                    character = new Slime(0, destinyList_monster[characterIdx]); break;
+                case 1:
+                    character = new Goblin(0, destinyList_monster[characterIdx]); break;
+                case 2:
+                    character = new RoyalSoldier(0, destinyList_monster[characterIdx]); break;
+                case 3:
+                    character = new Soldier(0, destinyList_monster[characterIdx]); break;
+                case 4:
+                    character = new Chicken(0, destinyList_monster[characterIdx]); break;
+                case 5:
+                    character = new Duck(0, destinyList_monster[characterIdx]); break;
+                case 6:
+                    character = new Sheep(0, destinyList_monster[characterIdx]); break;
+                case 7:
+                    character = new Pig(0, destinyList_monster[characterIdx]); break;
+                case 8:
+                    character = new Wolf(0, destinyList_monster[characterIdx]); break;
+            }
+        }
+    }
 
     //살아있는 캐릭터 배치
     public void setCharacter(int place, int characterIdx)
@@ -113,47 +207,13 @@ public class CharacterManager : MonoBehaviour
         if (characterIdx == -99999) return;
         //아군
         if (characterIdx <= 10000) {
-            switch (characterIdx)
-            {
-                case 0:
-                    myCharacter[place] = new Yongsa(0, destinyList[characterIdx]); break;
-                case 1:
-                    myCharacter[place] = new Neaco(0, destinyList[characterIdx]); break;
-                case 2:
-                    myCharacter[place] = new Druid(0, destinyList[characterIdx]); break;
-                case 3:
-                    myCharacter[place] = new Tom(0, destinyList[characterIdx]); break;
-                case 4:
-                    myCharacter[place] = new Bob(0, destinyList[characterIdx]); break;
-
-            }
+            setCharacter_destinyBase(ref myCharacter[place], characterIdx);
         }
         //몬스터
         if (characterIdx > 10000) {
-            characterIdx -= 10001;
-            switch (characterIdx)
-            {
-                case 0:
-                    enemyCharacter[place] = new Slime(0, destinyList_monster[characterIdx]); break;
-                case 1:
-                    enemyCharacter[place] = new Goblin(0, destinyList_monster[characterIdx]); break;
-                case 2:
-                    enemyCharacter[place] = new RoyalSoldier(0, destinyList_monster[characterIdx]); break;
-                case 3:
-                    enemyCharacter[place] = new Soldier(0, destinyList_monster[characterIdx]); break;
-                case 4:
-                    enemyCharacter[place] = new Chicken(0, destinyList_monster[characterIdx]); break;
-                case 5:
-                    enemyCharacter[place] = new Duck(0, destinyList_monster[characterIdx]); break;
-                case 6:
-                    enemyCharacter[place] = new Sheep(0, destinyList_monster[characterIdx]); break;
-                case 7:
-                    enemyCharacter[place] = new Pig(0, destinyList_monster[characterIdx]); break;
-                case 8:
-                    enemyCharacter[place] = new Wolf(0, destinyList_monster[characterIdx]); break;
-            }
+            setCharacter_destinyBase(ref enemyCharacter[place], characterIdx);
         }
-
+        Debug.Log("character Set test");
     }
 
     
@@ -171,7 +231,6 @@ public class CharacterManager : MonoBehaviour
     }
     public Character getCharacter(int idx)
     {
- 
         return myCharacter[idx];
     }
 
@@ -180,6 +239,7 @@ public class CharacterManager : MonoBehaviour
         if(myTeam) return myCharacter[idx];
         return enemyCharacter[idx];
     }
+
 
     public string getName_itemManager(int idx)
     {

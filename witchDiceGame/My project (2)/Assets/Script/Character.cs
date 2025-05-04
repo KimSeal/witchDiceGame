@@ -2,6 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Character_battle{
+    private int originIdx;
+    private int atk;
+    public Character_battle()
+    {
+        originIdx = -999;
+        atk = 0;
+    }
+    public int getOriginIdx()
+    {
+        return originIdx;
+    }
+    public int getAtk()
+    {
+        return atk;
+    }
+    public void setOriginIdx(int originIdx)
+    {
+        this.originIdx = originIdx;
+    }
+}
 public abstract class Character
 {
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
@@ -13,7 +34,8 @@ public abstract class Character
     protected int[] skillIdx = new int[2] {0,1};
     protected Destiny destiny; //할당된 운명에 대한 클래스.
     protected Dice dice;
-    
+    protected Character_battle character_battle;
+    protected bool reviveUnit = false;
     public Character(int curState, Destiny destiny)
     {
         this.destiny = destiny;
@@ -38,6 +60,8 @@ public abstract class Character
             item[0] = new Item(itemManager.Instance.getItem(2, 0)); //빈 아이템을 넣어준다.
             item[1] = new Item(itemManager.Instance.getItem(2, 0));
         }
+        this.character_battle = new Character_battle();
+        reviveUnit = false;
     }
 
     public Character(Character character) { 
@@ -59,8 +83,47 @@ public abstract class Character
         this.skillIdx[1] = character.skillIdx[1];
         this.destiny = new Destiny(character.getDestiny());
         this.dice = new Dice(character.getDiceTrue());
+        this.character_battle = new Character_battle();
+        this.reviveUnit = character.reviveUnit;
+    }
+    
+    public void characterDeepCopy(Character character)
+    {
+        this.curState = character.curState;
+        this.level = character.level;
+        this.exp = character.exp;
+        this.phyAtk = character.phyAtk;
+        this.maxMp = character.maxMp;
+        this.mp = character.mp;
+        this.magAtk = character.magAtk;
+        this.phyDef = character.phyDef;
+        this.magDef = character.magDef;
+        this.hp = character.hp;
+        this.maxHp = character.maxHp;
+        this.armor = character.armor;
+        this.item[0] = new Item(character.getItem(0));
+        this.item[1] = new Item(character.getItem(1));
+        this.skillIdx[0] = character.skillIdx[0];
+        this.skillIdx[1] = character.skillIdx[1];
+        this.destiny = new Destiny(character.getDestiny());
+        this.dice = new Dice(character.getDiceTrue());
+        this.character_battle = new Character_battle();
+        this.reviveUnit = character.reviveUnit;
     }
 
+    public bool getReviveUnit()
+    {
+        return reviveUnit;
+    }
+    public void setReviveUnit(bool input)
+    {
+        this.reviveUnit = input;
+    }
+
+    public Character_battle getCharacter_battle()
+    {
+        return this.character_battle;
+    }
     public Dice getDiceTrue()
     {
         return this.dice;

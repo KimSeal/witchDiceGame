@@ -33,6 +33,7 @@ public class exitButton : MonoBehaviour
         if (animEndChk)
         {
             //캐릭터 방출 function
+            itemManager.Instance.deleteCharacter();
         }
         animator.Play("normal");
         animEndChk = false;
