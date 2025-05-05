@@ -178,7 +178,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i;
+            adventureEventArr[i] = 8;//i;
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
@@ -259,7 +259,7 @@ public class AdventureManager : MonoBehaviour
     {
         return 1;
     }
-
+  
     private void updateCharacterFace()
     {
         for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
@@ -515,9 +515,14 @@ public class AdventureManager : MonoBehaviour
                         resultItemArr[i, 1] = curDiceEventPacket.getItemIdx(i);
                         //결과로 나오는 아이템에 대한 이미지 처리
                         if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                        else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i,0], resultItemArr[i, 1]));
+                        else if (resultItemArr[i, 0] == 4) //캐릭터를 얻는 이벤트의 경우
+                        {
+                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                        }
+                        else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
                     }
                     
+                    Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
                 }
                 if (curDiceEventPacket.getItemExist() == 2) // 랜덤한 아이템을 준다. 이부분은 추가 구현 필요.
                 {
@@ -554,6 +559,7 @@ public class AdventureManager : MonoBehaviour
                 if (emptyPlaceExist == -1) Debug.Log("you need Place to add character!");
                 else {
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
+                    resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
                     updateCharacterFace();

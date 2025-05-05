@@ -84,6 +84,10 @@ public class CharacterManager : MonoBehaviour
 
     }
 
+    public Destiny getDestiny(int idx)
+    {
+        return destinyList[idx];
+    }
     public int getCharacterState(int idx)
     {
         
