@@ -178,7 +178,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 8;//i;
+            adventureEventArr[i] = 3;//i;
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
@@ -218,7 +218,8 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
-        mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
+        mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
+        //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
         
 
         //지금은 시작 버튼 누르면 바로 시작
@@ -657,6 +658,7 @@ public class AdventureManager : MonoBehaviour
     {
         if (characterIdx == -1 && eventEndClick)
         {
+            mainCamera.GetComponent<CameraShake>().VibrateForeTime(0.2f);
             eventEndClick = false;
             return;
         }
@@ -714,7 +716,8 @@ public class AdventureManager : MonoBehaviour
                 itemManager.Instance.click_upgradeCanvas_start();
                 itemManager.Instance.updateCharacterUIBtn();
                 itemManager.Instance.setUpAnimator();
-                mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                //mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
             }
         }
         
@@ -724,7 +727,8 @@ public class AdventureManager : MonoBehaviour
         if (!itemManager.Instance.getItemBoxMove())
         {
                 curCanvasIsAdventure = true;
-                mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                 itemManager.Instance.flipItemBox(0, 1);
         }
     }
@@ -742,7 +746,8 @@ public class AdventureManager : MonoBehaviour
                 {
                     curCanvasIsAdventure = false;
                     BattleManager.Instance.startBattle_fromAdventure();
-                    mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                    mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                   // mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                 }
             }
             
@@ -763,7 +768,8 @@ public class AdventureManager : MonoBehaviour
                 {
                     curCanvasIsAdventure = true;
                     battleEventTrigger = false;
-                    mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                    mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                    //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                     return true;
                 }
             }
@@ -792,7 +798,9 @@ public class AdventureManager : MonoBehaviour
     //test for movie maker
     public void MoveToTestCharacterSetCanvas()
     {
-        mainCamera.transform.position = new Vector3(-500f, -500f, mainCamera.transform.position.z);
+        mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
+
+        //mainCamera.transform.position = new Vector3(-500f, -500f, mainCamera.transform.position.z);
     
     }
 

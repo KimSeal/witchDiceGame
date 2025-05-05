@@ -116,8 +116,75 @@ public class BattleManager : MonoBehaviour
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
     private GameObject battleTextObj;
 
-    
+    //스킬 설명을 위해 준비된 칸
+    GameObject skillDescBox;
+    GameObject[] skillDescBox_title = new GameObject[2];
+    GameObject[] skillDescBox_info = new GameObject[2];
+    GameObject[] skillDescBox_image = new GameObject[2];
+    GameObject[,] skillDescBox_dice = new GameObject[2, 4];
 
+    private void drawSkill(Character character)
+    {
+        for (int skillIdx = 0; skillIdx < 2; skillIdx++)
+        {
+            Skill thisSkill = character.skillUse(skillIdx);
+            if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
+            {
+                skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
+            }
+            else
+            {
+                skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+            }
+            skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getCommand();
+            skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
+            for (int diceIdx = 0; diceIdx < 4; diceIdx++)
+            {
+                skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+            }
+        }
+    }
+    
+    public void hoverOutSkillDesc()
+    {
+        skillDescBox.transform.position = new Vector3(90, 335, skillDescBox.transform.position.z);
+    }
+    private bool characterInfoOpen = false;
+    public void clickCharacterInfoBox()
+    {
+        if (!characterInfoOpen)
+        {
+            characterInfoOpen = true;
+            skillDescBox.transform.position = new Vector3(0, 0, skillDescBox.transform.position.z);
+        }
+        else
+        {
+            characterInfoOpen = false;
+            skillDescBox.transform.position = new Vector3(0, 500, skillDescBox.transform.position.z);
+        }
+    }
+
+    public void hoverInSkillDesc(int i)
+    {
+        if (i >= 0 && i < 4)
+        {
+            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
+            {
+                Debug.Log("myCharacter Dice Hover");
+                drawSkill(myCharacter[i]);  
+            }
+        }
+        else if (i >= 4 && i < 8)
+        {
+            i -= 4;
+            if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
+            {
+                Debug.Log("enemyCharacter Dice Hover");
+                drawSkill(enemyCharacter[i]);
+            }
+        }
+
+    }
     private void updateHp()
     {
         for (int i=0;i<4;i++)
@@ -2174,7 +2241,23 @@ public class BattleManager : MonoBehaviour
         battleTextObj = GameObject.Find("obj_battleText");
         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
+        battleTextObj = GameObject.Find("obj_battleText");
+
+        
+        skillDescBox = GameObject.Find("board_skillDescBoard");
+        for (int i=0;i<2;i++)
+        { 
+            skillDescBox_title[i] = GameObject.Find("board_skillDesc_skillTitle_" + i.ToString());
+            skillDescBox_info[i] = GameObject.Find("board_skillDesc_skillInfo_" + i.ToString());
+            skillDescBox_image[i] = GameObject.Find("board_skillDesc_skillImage_" + i.ToString());
+            for (int j=0;j<4;j++) {
+                skillDescBox_dice[i, j] = GameObject.Find("board_skill_needDice_"+i.ToString() +"_"+j.ToString());
+            }
+        }
+        
+
         curPhase = 0;
+        //마녀 능력 임시 배치
         witchPowerIdx[0] = 0;
         witchPowerIdx[1] = 2;
         witchPowerIdx[2] = 7;

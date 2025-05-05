@@ -30,5 +30,11 @@ public class CameraShake : MonoBehaviour
             ShakeTime = 0.0f;
             transform.position = initialPosition;
         }
+
+
+    }
+    public void updateInitPosition(Vector3 vec )
+    {
+        initialPosition = vec;
     }
 }
