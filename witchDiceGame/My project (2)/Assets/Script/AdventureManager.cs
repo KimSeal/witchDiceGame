@@ -378,7 +378,7 @@ public class AdventureManager : MonoBehaviour
             if (true)//adventureEventArr[stageIdx] == 1)
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
 
-                adventureLoad.GetComponent<Animator>().Play("On");
+                adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
                 yield return new WaitUntil(() => loadEnd);
 
@@ -416,12 +416,13 @@ public class AdventureManager : MonoBehaviour
                 {
                     selectDiceNum = -1; 
                 }
-                
+                Debug.Log("selectDice Error check " + selectDiceNum);
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
-
-                adventureLoad.GetComponent<Animator>().Play("On");
+                
+                adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
                 yield return new WaitUntil(() => loadEnd);
+                Debug.Log("selectDice Error check2 " + selectDiceNum);
 
                 eventWatchTrigger = false;
                 for (int i = 0; i < 6; i++)
@@ -678,6 +679,7 @@ public class AdventureManager : MonoBehaviour
         }
         else if (selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
         {
+            Debug.Log("charactger click Dice");
             for (int i=0;i<4;i++)
             {
                 diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
