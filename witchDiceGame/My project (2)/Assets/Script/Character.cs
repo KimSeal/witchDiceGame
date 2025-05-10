@@ -5,10 +5,12 @@ using UnityEngine;
 public class Character_battle{
     private int originIdx;
     private int atk;
+    private int armor;
     public Character_battle()
     {
         originIdx = -999;
         atk = 0;
+        armor = 0;
     }
     public int getOriginIdx()
     {
@@ -22,13 +24,17 @@ public class Character_battle{
     {
         this.originIdx = originIdx;
     }
+    public int getArmor()
+    {
+        return armor;
+    }
 }
 public abstract class Character
 {
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
     protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0,
-        hp = 0, maxHp = 0, armor = 0, mp = 0, maxMp = 0;
+        hp = 0, maxHp = 0,  mp = 0, maxMp = 0;
     protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] {0,1};
@@ -76,7 +82,6 @@ public abstract class Character
         this.magDef =character.magDef;
         this.hp=character.hp;
         this.maxHp=character.maxHp;
-        this.armor = character.armor;
         this.item[0] = new Item(character.getItem(0));
         this.item[1] = new Item(character.getItem(1));
         this.skillIdx[0] = character.skillIdx[0];
@@ -100,7 +105,6 @@ public abstract class Character
         this.magDef = character.magDef;
         this.hp = character.hp;
         this.maxHp = character.maxHp;
-        this.armor = character.armor;
         this.item[0] = new Item(character.getItem(0));
         this.item[1] = new Item(character.getItem(1));
         this.skillIdx[0] = character.skillIdx[0];
@@ -288,7 +292,7 @@ public abstract class Character
         }
         if (idx == 4)
         {
-            this.armor += val;
+            //this.armor += val;
         }
         if (idx == 5)
         {
@@ -334,8 +338,8 @@ public abstract class Character
             }
         }
         if (idx == 4) {
-            this.armor -= val; 
-            if (this.armor < 0) this.armor = 0;
+          /*  this.armor -= val; 
+            if (this.armor < 0) this.armor = 0;*/
         }
         if (idx == 5)
         {

@@ -117,6 +117,7 @@ public class BattleManager : MonoBehaviour
     private GameObject battleTextObj;
 
     GameObject battleDescBox;
+    GameObject battleDescBoxInfo;
     GameObject[,] faceDesc = new GameObject[2, 4];
 
     GameObject diceDescBox;
@@ -187,14 +188,27 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-
-    public void hoverOutSkillDesc()
+    private int getTotalHp(Character character)
     {
-        
-        battleDescBox.transform.position = new Vector3(90, 335, battleDescBox.transform.position.z);
+        return character.getHp() + character.getCharacter_battle().getArmor();
     }
+    private int getTotalAtk(Character character)
+    {
+        return  character.getPhyAtk() + character.getCharacter_battle().getAtk();
+    }
+
+    //전투 ui 에 대한 함수들 모음 updateBattleUI()로 지속적으로 업데이트 해줄것 
+    #region
+    private void writeBattleInfo(Character character)
+    {
+        battleDescBoxInfo.GetComponent<TextMeshPro>().text = character.getName() + "\n" + 
+            (getTotalHp(character)).ToString() + "(" + character.getHp().ToString() + "/" + character.getCharacter_battle().getArmor().ToString() +  ")" + "\n" 
+            + (getTotalAtk(character)).ToString() + "(" + character.getPhyAtk().ToString() + "/" + character.getCharacter_battle().getAtk().ToString() + ")" + "\n";
+    }
+
     private bool characterInfoOpen = false;
-    public void clickCharacterInfoBox()
+
+    private void makeEmptyBattleInfoBox() //전투 정보 ui 초기화
     {
         curSelectInfo = -1;
         hoverCharacterIdx = -1;
@@ -202,6 +216,40 @@ public class BattleManager : MonoBehaviour
         skillDescBox.SetActive(false);
         equipDescBox.SetActive(false);
         darkFaceImage(0, 0, true);
+        battleDescBoxInfo.GetComponent<TextMeshPro>().text = "";
+    }
+    public void updateBattleUI() //현재 정보를 바탕으로 battle ui 업데이트
+    {
+        if (hoverCharacterIdx >= 0 && hoverCharacterIdx < 4) {
+            if(!(myCharacter[hoverCharacterIdx] == null && myCharacter[hoverCharacterIdx].getCurState() != 0))
+            {
+                hoverCharacterIdx = -1;
+            }
+        }
+        if (hoverCharacterIdx >= 4 && hoverCharacterIdx < 8)
+        {
+            if (!(enemyCharacter[hoverCharacterIdx-4] == null && enemyCharacter[hoverCharacterIdx-4].getCurState() != 0))
+            {
+                hoverCharacterIdx = -1;
+            }
+        }
+        if (hoverCharacterIdx == -1) //선택된 캐릭터가 없을 경우 비게 만들기
+        {
+            makeEmptyBattleInfoBox();
+        }
+        else if (curSelectInfo == -1) //선택된 캐릭터는 있으나 선택된 ui가 없는 경우
+        {
+            diceDescBox.SetActive(false);
+            skillDescBox.SetActive(false);
+            equipDescBox.SetActive(false);
+            if(hoverCharacterIdx < 4 && hoverCharacterIdx >=0 )writeBattleInfo(myCharacter[hoverCharacterIdx]);
+            if (hoverCharacterIdx < 8 && hoverCharacterIdx >= 4) writeBattleInfo(enemyCharacter[hoverCharacterIdx-4]);
+        }
+        else clickBattleUIInfo(curSelectInfo); //선택된 캐릭터도, 선택된 ui도 있는 경우
+    }
+    public void clickCharacterInfoBox()
+    {
+        makeEmptyBattleInfoBox();
         if (!characterInfoOpen)
         {
             characterInfoOpen = true;
@@ -214,7 +262,7 @@ public class BattleManager : MonoBehaviour
         }
         
     }
-    public void clickBattleUIInfo(int idx)
+    public void clickBattleUIInfo(int idx) //전투 ui에서 뭐볼지 선택하는 경우
     {
         if (hoverCharacterIdx != -1)
         {
@@ -237,10 +285,11 @@ public class BattleManager : MonoBehaviour
                 skillDescBox.SetActive(false);
                 equipDescBox.SetActive(true);
             }
-            hoverInSkillDesc(hoverCharacterIdx);
+            clickSkillDesc(hoverCharacterIdx);
         }
+
     }
-    private void darkFaceImage(int enemy, int idx, bool all)
+    private void darkFaceImage(int enemy, int idx, bool all) //전투 ui의 캐릭터 얼굴을 그리기 위한 함수
     {
         for (int i=0;i<4;i++)
         {
@@ -255,18 +304,20 @@ public class BattleManager : MonoBehaviour
             material3.SetFloat("_Transparency", 0.0f);
         }
     }
-    public void hoverInSkillDesc(int i)
+
+    public void clickSkillDesc(int i) //전투 ui에서 캐릭터 얼굴에 가져다댄 후 정보 출력
     {
         if (i >= 0 && i < 4)
         {
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
-                
-                if (curSelectInfo == 0) {
+                if (curSelectInfo == 0)
+                {
                     drawDice(myCharacter[i]);
-                    
+
                 }
-                else if (curSelectInfo == 1) {
+                else if (curSelectInfo == 1)
+                {
                     drawSkill(myCharacter[i]);
                 }
                 else if (curSelectInfo == 2)
@@ -274,7 +325,11 @@ public class BattleManager : MonoBehaviour
                     drawEquip(myCharacter[i]);
                 }
                 hoverCharacterIdx = i;
-                darkFaceImage(0, i, false);
+                darkFaceImage(0, i, false); //해당 캐릭터 얼굴 어둡게 바꾸고
+                writeBattleInfo(myCharacter[i]); //정보 출력
+            }
+            else {
+                makeEmptyBattleInfoBox();
             }
         }
         else if (i >= 4 && i < 8)
@@ -295,12 +350,22 @@ public class BattleManager : MonoBehaviour
                     drawEquip(enemyCharacter[i]);
                 }
                 darkFaceImage(1, i, false);
+                writeBattleInfo(enemyCharacter[i]);
                 hoverCharacterIdx = i + 4;
-
+            }
+            else
+            {
+                makeEmptyBattleInfoBox();
             }
         }
-
+        else
+        {
+            makeEmptyBattleInfoBox();
+        }
     }
+
+    #endregion  
+
     private void updateHp()
     {
         for (int i=0;i<4;i++)
@@ -1983,6 +2048,7 @@ public class BattleManager : MonoBehaviour
                                 {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                     battleAnimationControl(tempTargetIdx, 1);
                                 }
+                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
@@ -2006,6 +2072,7 @@ public class BattleManager : MonoBehaviour
                             }
                             updateHp();
                             updateMyDiceUI();
+                            updateBattleUI();
                         }
                         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
@@ -2097,7 +2164,7 @@ public class BattleManager : MonoBehaviour
                             }
                             updateHp();
                             updateEnemyDiceUI();
-
+                            updateBattleUI();
                         }
 
                     }
@@ -2363,6 +2430,7 @@ public class BattleManager : MonoBehaviour
 
         
         battleDescBox = GameObject.Find("board_descBoard");
+        battleDescBoxInfo = GameObject.Find("board_battle_Info_value");
         skillDescBox = GameObject.Find("ui_battle_board_skill");
         equipDescBox = GameObject.Find("ui_battle_board_equip");
         diceDescBox = GameObject.Find("ui_battle_board_dice");
