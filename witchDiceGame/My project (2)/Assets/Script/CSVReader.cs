@@ -38,6 +38,7 @@ public class DestinyReader
     public int magDef;
     public int maxHp;
     public int maxMp;
+    public int shadow;
     public int skill0;
     public int skill1;
     public int skill2;

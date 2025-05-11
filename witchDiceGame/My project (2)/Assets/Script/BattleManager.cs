@@ -73,8 +73,11 @@ public class BattleManager : MonoBehaviour
 
     private GameObject[] myCharacterObjUI = new GameObject[4];
     private Animator[] myCharacterObjUIAnim = new Animator[4];
+    private GameObject[] myCharacterShadowObjUI = new GameObject[4];
+
     private GameObject[] enemyCharacterObjUI = new GameObject[4];
     private Animator[] enemyCharacterObjUIAnim = new Animator[4];
+    private GameObject[] enemyCharacterShadowObjUI = new GameObject[4];
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
@@ -117,7 +120,9 @@ public class BattleManager : MonoBehaviour
     private GameObject battleTextObj;
 
     GameObject battleDescBox;
+    GameObject battleDescBoxName;
     GameObject battleDescBoxInfo;
+    GameObject battleDescBoxCharacter;
     GameObject[,] faceDesc = new GameObject[2, 4];
 
     GameObject diceDescBox;
@@ -201,8 +206,11 @@ public class BattleManager : MonoBehaviour
     #region
     private void writeBattleInfo(Character character)
     {
-        battleDescBoxInfo.GetComponent<TextMeshPro>().text = character.getName() + "\n" + 
-            (getTotalHp(character)).ToString() + "(" + character.getHp().ToString() + "/" + character.getCharacter_battle().getArmor().ToString() +  ")" + "\n" 
+        battleDescBoxCharacter.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + character.getName() + "/animator_" + character.getName());
+        battleDescBoxName.GetComponent<TextMeshPro>().text = character.getName();
+        battleDescBoxInfo.GetComponent<TextMeshPro>().text =
+            character.getHp() + "/" + character.getMaxHp() + "( +" + character.getCharacter_battle().getArmor() + " )\n"
+            //(getTotalHp(character)).ToString() + "(" + character.getHp().ToString() + "+" + character.getCharacter_battle().getArmor().ToString() +  ")" + "\n" 
             + (getTotalAtk(character)).ToString() + "(" + character.getPhyAtk().ToString() + "/" + character.getCharacter_battle().getAtk().ToString() + ")" + "\n";
     }
 
@@ -216,6 +224,9 @@ public class BattleManager : MonoBehaviour
         skillDescBox.SetActive(false);
         equipDescBox.SetActive(false);
         darkFaceImage(0, 0, true);
+        battleDescBoxCharacter.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+
+        battleDescBoxName.GetComponent<TextMeshPro>().text = "";
         battleDescBoxInfo.GetComponent<TextMeshPro>().text = "";
     }
     public void updateBattleUI() //현재 정보를 바탕으로 battle ui 업데이트
@@ -2389,6 +2400,11 @@ public class BattleManager : MonoBehaviour
             enemyCharacterObjUI[i] = GameObject.Find("obj_enemyCharacter_" + i.ToString());
             myCharacterObjUIAnim[i] = myCharacterObjUI[i].GetComponent<Animator>();
             enemyCharacterObjUIAnim[i] = enemyCharacterObjUI[i].GetComponent<Animator>();
+
+            myCharacterShadowObjUI[i] = GameObject.Find("obj_myBattleShadow_" + i.ToString());
+            enemyCharacterShadowObjUI[i] = GameObject.Find("obj_enemyBattleShadow_" + i.ToString());
+
+
         }
 
         for (int i=0;i<3;i++)
@@ -2430,6 +2446,8 @@ public class BattleManager : MonoBehaviour
 
         
         battleDescBox = GameObject.Find("board_descBoard");
+        battleDescBoxCharacter = GameObject.Find("board_battle_Info_character");
+        battleDescBoxName = GameObject.Find("board_battle_Info_name");
         battleDescBoxInfo = GameObject.Find("board_battle_Info_value");
         skillDescBox = GameObject.Find("ui_battle_board_skill");
         equipDescBox = GameObject.Find("ui_battle_board_equip");
@@ -2642,24 +2660,29 @@ public class BattleManager : MonoBehaviour
             {
                 //추후 null로 바꿀것
                 myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+                myCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
             }
             else
             {
                 string temp = myCharacter[i].getDestiny().getName();
                 myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+                myCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + myCharacter[i].getShadow().ToString());
             }
             
             if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() == 2)
             {
                 //추후 null로 바꿀것
                 enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+                enemyCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
             else
             {
                 string temp = enemyCharacter[i].getDestiny().getName();
                 enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+                enemyCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[i].getShadow().ToString());
             }
-            
+
         }
         for (int i = 0; i < 4; i++)
         {

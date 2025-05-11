@@ -28,6 +28,27 @@ public class Character_battle{
     {
         return armor;
     }
+
+    public void upgrade(int idx, int val)
+    {
+        if (idx == 2) {  //공격력업
+            this.atk += val;
+        } 
+    }
+    public int damage(int val)
+    {
+        if (val <= armor)
+        {
+            armor -= val;
+            return 0;
+        }
+        else
+        {
+            val -= armor;
+            armor = 0;
+            return val;
+        }
+    }
 }
 public abstract class Character
 {
@@ -42,6 +63,7 @@ public abstract class Character
     protected Dice dice;
     protected Character_battle character_battle;
     protected bool reviveUnit = false;
+    protected int shadow = 0;
     public Character(int curState, Destiny destiny)
     {
         this.destiny = destiny;
@@ -68,6 +90,7 @@ public abstract class Character
         }
         this.character_battle = new Character_battle();
         reviveUnit = false;
+        this.shadow = destiny.getShadow();
     }
 
     public Character(Character character) { 
@@ -90,6 +113,7 @@ public abstract class Character
         this.dice = new Dice(character.getDiceTrue());
         this.character_battle = new Character_battle();
         this.reviveUnit = character.reviveUnit;
+        this.shadow = character.shadow;
     }
     
     public void characterDeepCopy(Character character)
@@ -113,8 +137,13 @@ public abstract class Character
         this.dice = new Dice(character.getDiceTrue());
         this.character_battle = new Character_battle();
         this.reviveUnit = character.reviveUnit;
+        this.shadow = character.shadow;
     }
 
+    public int getShadow()
+    {
+        return this.shadow;
+    }
     public bool getReviveUnit()
     {
         return reviveUnit;
@@ -217,7 +246,7 @@ public abstract class Character
     {
         if (takeSkillPacket.getSkillType() == 0)
         {
-            this.hp -= takeSkillPacket.getVal();
+            this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
             Debug.Log("this damage is : " + takeSkillPacket.getVal());
             Debug.Log("my remain Hp is : " + this.hp);
 
@@ -242,7 +271,7 @@ public abstract class Character
         }
         else if (takeSkillPacket.getSkillType() == 2) //공격력 업인 경우
         {
-            this.phyAtk += takeSkillPacket.getVal();
+            this.character_battle.upgrade(2, takeSkillPacket.getVal());
             return false;
         }
         return false;
