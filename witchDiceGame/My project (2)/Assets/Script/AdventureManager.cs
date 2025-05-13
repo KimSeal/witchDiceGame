@@ -178,7 +178,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 3;//i;
+            adventureEventArr[i] = 3; // 이부분 조정해서 맵 테스트 진행
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
