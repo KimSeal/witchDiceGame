@@ -945,6 +945,16 @@ public class BattleManager : MonoBehaviour
         
     }
 
+    public int getWitchPower(int idx)
+    {
+        return witchPowerIdx[idx];
+    }
+    public void setWitchPower(int idx, int witchPower)
+    {
+        witchPowerIdx[idx] = witchPower;
+    }
+
+
     private int[] witchPowerIdx = new int[3]; //현재 선택된 마녀 파워 Idx
     //마녀 파워 선택 (좌우)
     public void witchPowerState_Change(int dir)
@@ -2480,8 +2490,8 @@ public class BattleManager : MonoBehaviour
         curPhase = 0;
         //마녀 능력 임시 배치
         witchPowerIdx[0] = 0;
-        witchPowerIdx[1] = 2;
-        witchPowerIdx[2] = 7;
+        witchPowerIdx[1] = 1;
+        witchPowerIdx[2] = 2;
     }
 
     // Update is called once per frame

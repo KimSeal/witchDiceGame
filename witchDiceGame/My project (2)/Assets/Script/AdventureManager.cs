@@ -797,46 +797,4 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    //test for movie maker
-    public void MoveToTestCharacterSetCanvas()
-    {
-        mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
-
-        //mainCamera.transform.position = new Vector3(-500f, -500f, mainCamera.transform.position.z);
-    
-    }
-
-    public void clickBtn(int a)
-    {
-        GameObject temp0 = GameObject.Find("testbtn_" + a.ToString());
-        temp0.GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
-        GameObject temp = GameObject.Find("testStand_one");
-        if (a == 0)
-        {
-            temp.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/standImage/spr_" + "Yongsa" + "_stand");
-        }
-        if (a == 1)
-        {
-            temp.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/standImage/spr_" + "Neaco" + "_stand");
-        }
-        if (a == 2)
-        {
-            
-            temp.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/standImage/spr_" + "Druid" + "_stand");
-        }
-    }
-    public void clickStand(int a) {
-        GameObject temp = GameObject.Find("testStand_" + a.ToString());
-        if (a == 0) { 
-            temp.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/Yongsa/spr_juingong_left_idle_0");
-        }
-        if (a == 1)
-        {
-            temp.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/Druid/spr_Druid_left_idle_0");
-        }
-        if (a == 2)
-        {
-            temp.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/Neaco/spr_Neaco_left_idle_0");
-        }
-    }
 }
