@@ -6333,7 +6333,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: ad9bf4b29007dce42948f4013db0e020, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -9991,7 +9991,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 07ff96007cd282143a8bc3e8ca241f39, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -29480,7 +29480,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 913896904}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -622, y: -89, z: 0.85594535}
+  m_LocalPosition: {x: -595.6, y: -89, z: 0.85594535}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -36094,7 +36094,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 2e3352bbddbd5e64288e82a90ce80bb8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -37184,7 +37184,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: e68d6e622dfa81f4db07223d0f00041b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -38691,7 +38691,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 69b12e1d6ba4acf4c938fb54d9426066, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -42846,9 +42846,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 158560130}
-          m_TargetAssemblyTypeName: TownManager, Assembly-CSharp
-          m_MethodName: backToTownUI
+        - m_Target: {fileID: 122300003}
+          m_TargetAssemblyTypeName: LibraryManager, Assembly-CSharp
+          m_MethodName: exitLibrary
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -45080,7 +45080,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 141935f540a434747b3042d6c6adcac9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -46365,7 +46365,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 1dc25fccc569ded4481d0a83cb665f15, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -46962,7 +46962,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: d32827dd640fcf647b32913df4c2bd4c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -50500,7 +50500,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 9ba4fd5714e8d504a8d1bc9b3336444f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -53496,7 +53496,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 795bae26cbc0c7f4db059b037c541260, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -54009,7 +54009,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 88c988746e9e6be40b300d0f46d39be1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -55797,7 +55797,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: c2b50dc3d0b1ecf4cbb56e5439d85612, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

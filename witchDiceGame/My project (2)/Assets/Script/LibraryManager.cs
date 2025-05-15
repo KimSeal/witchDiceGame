@@ -46,8 +46,10 @@ public class LibraryManager : MonoBehaviour
     private string[] powerType = { "reroll", "turn", "add", "sub"};
     private string[] targetType = { "my", "enemy", "any" };
 
-    private void drawSelectPower(int idx, int power)
+    private void drawSelectPower(int idx, int power) //
     {
+        Debug.Log("draw point, man");
+        Debug.Log(idx + "/" + power);
         if (idx == -1)
         {
             Debug.Log((power - 1) / 3);
@@ -104,18 +106,34 @@ public class LibraryManager : MonoBehaviour
     public void clickWitchPower(int input)
     {
         if (!checkLock(input)) {
+            Debug.Log("no it is locking now!");
             return;
+        }
+        for (int idx = 1; idx < curWitchPower.Length; idx++) {
+            if (curWitchPower[idx] == input)
+            {
+                //이미 사용중인 거 선택시 해제
+                Debug.Log("make empty about current box");
+                curWitchPower[idx] = -1;
+                makeBrightBtn(input);
+                drawSelectPower(idx - 1, 0);
+                return;
+            }
         }
         //배틀 매니져에 선택 세팅하기
         for (int idx = 1; idx < curWitchPower.Length; idx++)
         {
+            Debug.Log("check " + idx.ToString() + "th skill box");
             if (curWitchPower[idx] == -1) {
+                Debug.Log("we find empty box");
                 curWitchPower[idx] = input;
                 makeDarkBtn(input);
                 drawSelectPower(idx-1, input);
+                return;
             }
-            if (curWitchPower[idx] == input) {
+            else if (curWitchPower[idx] == input) {
                 //이미 사용중인 거 선택시 해제
+                Debug.Log("make empty about current box");
                 curWitchPower[idx] = -1;
                 makeBrightBtn(input);
                 drawSelectPower(idx-1, 0);
@@ -130,8 +148,10 @@ public class LibraryManager : MonoBehaviour
         //배틀 매니져에서 받아오기
         for (int i = 1; i < curWitchPower.Length; i++)
         {
+            Debug.Log("we draw at " + i.ToString() + "  about curWitch power " + curWitchPower[i]);
             curWitchPower[i] = BattleManager.Instance.getWitchPower(i);
-            drawSelectPower(i, curWitchPower[i]);
+            drawSelectPower(i-1, curWitchPower[i]);
+            makeDarkBtn(curWitchPower[i]);
         }
     }
     public void exitLibrary() {
