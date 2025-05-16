@@ -64,6 +64,24 @@ public class LibraryManager : MonoBehaviour
         }
     }
 
+    public void hoverInCurPower(int i)
+    {
+        if (curWitchPower[i] != -1)
+        {
+            Material material = curPowerArr[i - 1].GetComponent<SpriteRenderer>().material;
+            material.SetFloat("_Transparency", 0.7f);
+            drawSelectPower(-1, curWitchPower[i]);
+        }
+    }
+    public void hoverOutCurPower(int i)
+    {
+        if (curWitchPower[i] != -1) {
+            Material material = curPowerArr[i - 1].GetComponent<SpriteRenderer>().material;
+            material.SetFloat("_Transparency", 0.0f);
+            drawSelectPower(-1, 0);
+        }
+    }
+
     public void hoverInBtn(int i)
     {
         drawSelectPower(-1, i);
@@ -103,6 +121,15 @@ public class LibraryManager : MonoBehaviour
     private bool checkLock(int witchPowerIdx) {
         return true;
     }
+
+    public void clickCurWitchPower(int idx)
+    {
+        //이미 배치된 파워 해제용
+        if (curWitchPower[idx] != -1)
+        {
+            clickWitchPower(curWitchPower[idx]);
+        }
+    }
     public void clickWitchPower(int input)
     {
         if (!checkLock(input)) {
@@ -114,6 +141,7 @@ public class LibraryManager : MonoBehaviour
             {
                 //이미 사용중인 거 선택시 해제
                 Debug.Log("make empty about current box");
+                hoverOutCurPower(idx);
                 curWitchPower[idx] = -1;
                 makeBrightBtn(input);
                 drawSelectPower(idx - 1, 0);
@@ -129,14 +157,6 @@ public class LibraryManager : MonoBehaviour
                 curWitchPower[idx] = input;
                 makeDarkBtn(input);
                 drawSelectPower(idx-1, input);
-                return;
-            }
-            else if (curWitchPower[idx] == input) {
-                //이미 사용중인 거 선택시 해제
-                Debug.Log("make empty about current box");
-                curWitchPower[idx] = -1;
-                makeBrightBtn(input);
-                drawSelectPower(idx-1, 0);
                 return;
             }
         }
