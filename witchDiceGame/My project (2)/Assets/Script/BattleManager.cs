@@ -82,6 +82,8 @@ public class BattleManager : MonoBehaviour
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
 
+    private GameObject resultObj_all;
+    private GameObject resultExitBtn;
     private GameObject[,] resultObj = new GameObject[3,4];
     private Item[] resultItem = new Item[3];
 
@@ -966,7 +968,6 @@ public class BattleManager : MonoBehaviour
             if (witchPowerMoveState == 0) //마녀 파워 선택을 하는 경우.
             {
                 
-                GameObject witchPowerUI = GameObject.Find("obj_witchPower"); //==witchPowerObj[0];
                 if (dir == 1)
                 {
                     witchPowerState++;
@@ -979,15 +980,15 @@ public class BattleManager : MonoBehaviour
                 }
                 //테스트를 위한 turn 능력이미지
                 if (witchPowerState == 0) {
-                    witchPowerUI.GetComponent<Animator>().Play("0");
+                    witchPowerObj[0].GetComponent<Animator>().Play("0");
                     //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse"); 
                 }
                 else if (witchPowerState == 1) {
-                    witchPowerUI.GetComponent<Animator>().Play(witchPowerIdx[1].ToString());
+                    witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[1].ToString());
                     //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn"); 
                 }
                 else if (witchPowerState == 2) {
-                    witchPowerUI.GetComponent<Animator>().Play(witchPowerIdx[2].ToString());
+                    witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[2].ToString());
                     //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn_blue"); 
                 }
             }
@@ -2302,8 +2303,7 @@ public class BattleManager : MonoBehaviour
             makeRandomResult();
             for (int i = 0; i < 3; i++) printRandomResult(i, false);
             
-            GameObject temp = GameObject.Find("bosang_ui");
-            temp.transform.position = new Vector3(0f, -0f, temp.transform.position.z);
+            resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
 
             CharacterManager.Instance.character_reset();
             for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
@@ -2322,10 +2322,9 @@ public class BattleManager : MonoBehaviour
             while (!AdventureManager.Instance.exitBattleCanvas()){
                 yield return new WaitForSeconds(0.5f);
             }
-            
 
-            temp = GameObject.Find("obj_itemUI_battleEndBtn");
-            temp.transform.position = new Vector3(0f, 300f, temp.transform.position.z);
+
+            resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
 
             
             
@@ -2344,11 +2343,9 @@ public class BattleManager : MonoBehaviour
         int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
         if (result == 0)
         {
-            GameObject temp0 = GameObject.Find("bosang_ui");
-            temp0.transform.position = new Vector3(0f, 300f, temp0.transform.position.z);
+            resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
 
-            GameObject temp = GameObject.Find("obj_itemUI_battleEndBtn");
-            temp.transform.position = new Vector3(171f, -37.5f, temp.transform.position.z);
+            resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
         }
     }
     public void click_backToAdventure()
@@ -2417,6 +2414,8 @@ public class BattleManager : MonoBehaviour
 
         }
 
+        resultObj_all = GameObject.Find("bosang_ui");
+        resultExitBtn = GameObject.Find("obj_itemUI_battleEndBtn");
         for (int i=0;i<3;i++)
         {
             resultObj[i, 0] = GameObject.Find("obj_resultUI_board_" + i.ToString());
