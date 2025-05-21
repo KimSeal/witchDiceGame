@@ -16704,7 +16704,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4a79986f601c3a44a0f7b30fd755b2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShakeAmount: 10
+  ShakeAmount: 2
 --- !u!1 &520370546
 GameObject:
   m_ObjectHideFlags: 0

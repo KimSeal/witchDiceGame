@@ -218,7 +218,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
-        mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
+        CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
         
 
@@ -659,7 +659,7 @@ public class AdventureManager : MonoBehaviour
     {
         if (characterIdx == -1 && eventEndClick)
         {
-            mainCamera.GetComponent<CameraShake>().VibrateForeTime(0.2f);
+            CameraManager.Instance.VibrateForeTime(0.2f);
             eventEndClick = false;
             return;
         }
@@ -718,7 +718,7 @@ public class AdventureManager : MonoBehaviour
                 itemManager.Instance.click_upgradeCanvas_start();
                 itemManager.Instance.updateCharacterUIBtn();
                 itemManager.Instance.setUpAnimator();
-                mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                CameraManager.Instance.updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                 //mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
             }
         }
@@ -729,7 +729,7 @@ public class AdventureManager : MonoBehaviour
         if (!itemManager.Instance.getItemBoxMove())
         {
                 curCanvasIsAdventure = true;
-                mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                 //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                 itemManager.Instance.flipItemBox(0, 1);
         }
@@ -748,7 +748,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     curCanvasIsAdventure = false;
                     BattleManager.Instance.startBattle_fromAdventure();
-                    mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                    CameraManager.Instance.updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                    // mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                 }
             }
@@ -770,7 +770,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     curCanvasIsAdventure = true;
                     battleEventTrigger = false;
-                    mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                    CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                     //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                     return true;
                 }

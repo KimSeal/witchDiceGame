@@ -151,9 +151,11 @@ public class LibraryManager : MonoBehaviour
         //배틀 매니져에 선택 세팅하기
         for (int idx = 1; idx < curWitchPower.Length; idx++)
         {
-            Debug.Log("check " + idx.ToString() + "th skill box");
+            
+            //mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
             if (curWitchPower[idx] == -1) {
-                Debug.Log("we find empty box");
+                CameraManager.Instance.VibrateForeTime(2f);
+                
                 curWitchPower[idx] = input;
                 makeDarkBtn(input);
                 drawSelectPower(idx-1, input);

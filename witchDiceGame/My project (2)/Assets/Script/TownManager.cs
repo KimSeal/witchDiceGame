@@ -27,8 +27,6 @@ public class TownManager : MonoBehaviour
         }
     }
 
-
-    GameObject mainCamera;
     GameObject clickAndImageChange;
 
     public void clickTownUI(int i)
@@ -43,7 +41,7 @@ public class TownManager : MonoBehaviour
         if (i == 1) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
         if (i == 2)
         {
-            mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1500f, 0f, mainCamera.transform.position.z));
+            CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.camraPointZ()));
             LibraryManager.Instance.enterLibrary();
         }
         if (i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
@@ -62,12 +60,11 @@ public class TownManager : MonoBehaviour
     }
     public void backToTownUI()
     {
-        mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
+        CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
     }
     // Start is called before the first frame update
     void Start()
     {
-        mainCamera = GameObject.Find("Main Camera");
         clickAndImageChange = GameObject.Find("spr_town_home_click");
     }
 
