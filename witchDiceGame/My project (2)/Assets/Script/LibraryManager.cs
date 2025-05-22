@@ -154,7 +154,7 @@ public class LibraryManager : MonoBehaviour
             
             //mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
             if (curWitchPower[idx] == -1) {
-                CameraManager.Instance.VibrateForeTime(2f);
+                CameraManager.Instance.VibrateForeTime(0.1f);
                 
                 curWitchPower[idx] = input;
                 makeDarkBtn(input);
@@ -167,6 +167,7 @@ public class LibraryManager : MonoBehaviour
 
     public void enterLibrary()
     {
+        CameraManager.Instance.zoomEvent();
         //배틀 매니져에서 받아오기
         for (int i = 1; i < curWitchPower.Length; i++)
         {

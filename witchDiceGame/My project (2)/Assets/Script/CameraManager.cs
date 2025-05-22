@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class CameraManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class CameraManager : MonoBehaviour
 
 
     public float ShakeAmount;
+    float ZoomTime = -1f;
     float ShakeTime;
     Vector3 initialPosition;
 
@@ -37,32 +39,103 @@ public class CameraManager : MonoBehaviour
         Debug.Log("camera Shake");
         ShakeTime = time;
     }
-
-
+    public int pixelWidth = 384;  // 낮은 해상도 너비
+    public int pixelHeight = 216;  // 낮은 해상도 높이
+    private RenderTexture lowResRT;
+    private Camera cam;
     void Start()
     {
+        tempSize = gameObject.GetComponent<PixelPerfectCamera>().assetsPPU * timeDelay;
         initialPosition = transform.position;
+        ZoomTime = -1f;
+
+        //camera test
+        cam = GetComponent<Camera>();
+
+        // RenderTexture 생성
+        lowResRT = new RenderTexture(pixelWidth, pixelHeight, 16);
+        lowResRT.filterMode = FilterMode.Point; // 블러 없이 선명하게
+
+        cam.targetTexture = lowResRT;
+        cam.forceIntoRenderTexture = true;
+    }
+
+    int tempSize;
+    int direction = 0;
+    int timeDelay = 3;
+
+    void OnGUI()
+    {
+        // RenderTexture를 화면 전체에 확대 출력
+        GUI.DrawTexture(
+           new Rect(0, 0, Screen.width, Screen.height),
+           lowResRT,
+           ScaleMode.StretchToFill,
+           false
+       );
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (ShakeTime > 0)
+        if (ZoomTime > 0)
         {
-            Vector3 temp = Random.insideUnitSphere * ShakeAmount + initialPosition;
-            transform.position = new Vector3(temp.x, temp.y, transform.position.z);
-
-            ShakeTime -= Time.deltaTime;
-        }
-        else {
+            //int a =gameObject.main.GetComponent<PixelPerfectCamera>().zoom;
+            /*
+            if (direction == 0)
+            {
+                gameObject.GetComponent<PixelPerfectCamera>().assetsPPU = (++tempSize) / 3;
+                if (tempSize >= 130 * timeDelay)
+                {
+                    tempSize = 130 * timeDelay;
+                    direction = 1;
+                }
+            }
             
-            ShakeTime = 0.0f;
-            transform.position = initialPosition;
+            if (direction == 1)
+            {
+                gameObject.GetComponent<PixelPerfectCamera>().assetsPPU = (--tempSize) / 3;
+                if (tempSize <= 100 * timeDelay)
+                {
+                    tempSize = 100 * timeDelay;
+                    direction = 0;
+                    ZoomTime = -1;
+
+                }
+            }
+           */
+
         }
+        else
+        {
+            if (ShakeTime > 0)
+            {
+                Vector3 temp = Random.insideUnitSphere * ShakeAmount + initialPosition;
+                transform.position = new Vector3(temp.x, temp.y, transform.position.z);
+
+                ShakeTime -= Time.deltaTime;
+            }
+            else
+            {
+
+                ShakeTime = 0.0f;
+                transform.position = initialPosition;
+            }
+        }
+        
+        //gameObject.GetComponent<Camera>().orthographicSize = 4.3f;
+
+        //gameObject.GetComponent<Camera>().orthographicSize = Mathf.Lerp(GetComponent<Camera>().orthographicSize, cameraSize, Time.deltaTime / speed);
+
+
+
 
 
     }
-
+    public void zoomEvent()
+    {
+        ZoomTime = 1;
+    }
     public float camraPointX()
     {
         return this.transform.position.x;
@@ -78,5 +151,6 @@ public class CameraManager : MonoBehaviour
     public void updateInitPosition(Vector3 vec )
     {
         initialPosition = vec;
+        ShakeTime = 0.0f;
     }
 }
