@@ -2284,9 +2284,11 @@ public class BattleManager : MonoBehaviour
         //아군 전멸
         if(result == 2)
         {
-            itemManager.Instance.endOfBattlePhase();
+            //itemManager.Instance.endOfBattlePhase();
             Debug.Log("you lose!");
-            AdventureManager.Instance.exitBattleCanvas();
+
+            //AdventureManager.Instance.loseGame();
+            AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
         }
         //적군 전멸
         else if (result == 1)
@@ -2319,7 +2321,7 @@ public class BattleManager : MonoBehaviour
             Debug.Log("you win!");
             bosang_click = true;
             yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
-            while (!AdventureManager.Instance.exitBattleCanvas()){
+            while (!AdventureManager.Instance.exitBattleCanvas(true)){
                 yield return new WaitForSeconds(0.5f);
             }
 

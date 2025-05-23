@@ -143,11 +143,17 @@ public class AdventureManager : MonoBehaviour
             adventureEventList[Idx] = new List<adventureEvent>();
         }
 
+        int packetIdx=0; //전체 packet 배열을 위한 변수
+        int packetArrIdx = 0; //event내 packet 배열에 대응하는 변수
         for (int eventIdx = 0; eventIdx < adventureEventReaderList.Count; eventIdx++) //Reader 2개를 병합 시켜 하나의 event를 만들어 list에 추가
         {
-            for (int packetIdx = 0; packetIdx < 6; packetIdx++) //각 이벤트 당 6개의 packet을 받는다.
+            for (int i =0;i<6;i++) { // 배열 초기화
+                tempList[i] = null;
+            }
+            packetArrIdx = 0;
+            while (adventureEventReaderList[eventIdx].eventIdx == adventureEventPacketReaderList[packetIdx].eventIdx) //다른 event나올때까지 업
             {
-                tempList[packetIdx] = adventureEventPacketReaderList[eventIdx * 6 + packetIdx];
+                tempList[packetArrIdx++] = adventureEventPacketReaderList[packetIdx++]; 
             }
             adventureEventList[adventureEventReaderList[eventIdx].stageIdx].Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
@@ -178,7 +184,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 3; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; // 이부분 조정해서 맵 테스트 진행
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
@@ -281,6 +287,7 @@ public class AdventureManager : MonoBehaviour
 
     private IEnumerator phase_Manage_Coroutine()
     {
+        gameOverChk = true;
         stageNum = 0;
         makeStageEventArr(0); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         makeStage_placeBalpan(); // 스테이지에 맞춰 발판 생성
@@ -290,7 +297,7 @@ public class AdventureManager : MonoBehaviour
         resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
         resultObj.SetActive(false);
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
-        while (stageIdx < 20)
+        while (stageIdx < 20 || gameOverChk)
         {
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
@@ -402,23 +409,23 @@ public class AdventureManager : MonoBehaviour
 
                 adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEvent.getNPCSprite());
                 //adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_0");
-                
+
                 selectImage.transform.rotation = Quaternion.Euler(0, 0, 0);
 
 
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
-                
+
                 if (curDiceEvent.getDiceUse() == 0)//주사위 사용이 필요가 없다면, 맨 첫번째 결과가 나오게 하여 그냥 넘길수 있게 한다.
                 {
                     selectDiceNum = 1;
                 }
                 else if (curDiceEvent.getDiceUse() == 1)//고를 수 있는 상태로 변경
                 {
-                    selectDiceNum = -1; 
+                    selectDiceNum = -1;
                 }
                 Debug.Log("selectDice Error check " + selectDiceNum);
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
-                
+
                 adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
                 yield return new WaitUntil(() => loadEnd);
@@ -434,7 +441,7 @@ public class AdventureManager : MonoBehaviour
 
                 //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
                 //eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
-                
+
 
 
                 if (curDiceEvent.getEventType() == 6) //주사위를 굴리는 이벤트일 경우, 주사위 결과 반영해 NPC 스프라이트 변경
@@ -451,13 +458,13 @@ public class AdventureManager : MonoBehaviour
                 }
 
                 if (curDiceEventPacket.getSelectType() == 3) { //능력치 감소
-                    for (int i=0;i<8;i++)
+                    for (int i = 0; i < 8; i++)
                     {
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
                         {
                             break;
                         }
- 
+
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).downGrade(i, curDiceEventPacket.getVal(i)) == 1)
                         { //약화 효과로 인해 죽어버릴 경우
                             balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
@@ -468,7 +475,7 @@ public class AdventureManager : MonoBehaviour
                             break;
                         }
                     }
-                   
+
                 }
                 if (curDiceEventPacket.getSelectType() == 4)
                 { //능력치 증가
@@ -501,8 +508,9 @@ public class AdventureManager : MonoBehaviour
                     */
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
 
+
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
-                    
+
                     battleBtn.transform.position += new Vector3(0, 300, 0);
                     updateCharacterFace();
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -511,7 +519,7 @@ public class AdventureManager : MonoBehaviour
 
                 if (curDiceEventPacket.getItemExist() == 1) { //이벤트 결과로 정해진 아이템을 준다.
                     resultObj.SetActive(true);
-                    for (int i=0;i<4;i++)   //각 칸에 대한 처리
+                    for (int i = 0; i < 4; i++)   //각 칸에 대한 처리
                     {
                         resultItemArr[i, 0] = curDiceEventPacket.getItemType(i);
                         resultItemArr[i, 1] = curDiceEventPacket.getItemIdx(i);
@@ -523,22 +531,27 @@ public class AdventureManager : MonoBehaviour
                         }
                         else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
                     }
-                    
+
                     Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
                 }
                 if (curDiceEventPacket.getItemExist() == 2) // 랜덤한 아이템을 준다. 이부분은 추가 구현 필요.
                 {
                     resultObj.SetActive(true);
                 }
-
-                eventEndClick = true;
-                //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
-                //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
-
-                yield return new WaitUntil(() => !eventEndClick);
+                if (gameOverChk == false)
+                {
+                    eventEndClick = true;
+                    //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
+                    yield return new WaitUntil(() => !eventEndClick);
+                }
             }
 
-            
+            //gameOverChk가 true가 되면 끝
+            CharacterManager.Instance.resetCharacterManager();
+            itemManager.Instance.resetItemManager();
+
+            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
         }
     }
 
@@ -746,6 +759,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
+                    gameOverChk = false;
                     curCanvasIsAdventure = false;
                     BattleManager.Instance.startBattle_fromAdventure();
                     CameraManager.Instance.updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
@@ -756,7 +770,8 @@ public class AdventureManager : MonoBehaviour
         }
         
     }
-    public bool exitBattleCanvas()
+    private bool gameOverChk = false;
+    public bool exitBattleCanvas(bool win)
     {
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
@@ -770,6 +785,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     curCanvasIsAdventure = true;
                     battleEventTrigger = false;
+                    if (!win) gameOverChk = true;
                     CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                     //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                     return true;
@@ -779,7 +795,7 @@ public class AdventureManager : MonoBehaviour
         return false;
     }
 
-    
+
 
 
     public int getWitchPower(int idx)

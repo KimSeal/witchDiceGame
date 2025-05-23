@@ -341,7 +341,18 @@ public class itemManager : MonoBehaviour
     {
         bagBtnObj.SetActive(true);
     }
+    public void resetItemManager()
+    {
+        for (int i=0;i<5;i++)
+        {
+            for (int j = 0; j < 11; j++)
+            {
+                ItemArr[i, j] = null;
+                ItemExistArr[i, j] = false;
+            }
 
+        }
+    }
 
 
     public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우

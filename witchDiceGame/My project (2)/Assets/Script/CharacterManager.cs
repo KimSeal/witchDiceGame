@@ -84,6 +84,20 @@ public class CharacterManager : MonoBehaviour
 
     }
 
+    public void resetCharacterManager()
+    {
+        
+        for (int i=0;i<4;i++)
+        {
+            myCharacter[i] = null;
+        }
+    }
+
+    public void startGame(int characterIdx, int point)
+    {
+        setCharacter(point, characterIdx);
+    }
+
     public Destiny getDestiny(int idx)
     {
         return destinyList[idx];

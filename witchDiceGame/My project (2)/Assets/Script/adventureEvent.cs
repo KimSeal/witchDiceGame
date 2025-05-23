@@ -128,21 +128,33 @@ public class adventureEvent
 
     public adventureEvent(AdventureEventReader adventureEventReader, AdventureEventPacketReader[] adventureEventPacketReaders)
     {
-        for (int i=0;i<6;i++){ //초기화
-            this.packet[i] = new adventureEvent_Packet(adventureEventPacketReaders[i]);
-        }
+
         this.diceUse = adventureEventReader.diceUse;
         this.level = adventureEventReader.level;
         this.stageIdx = adventureEventReader.stageIdx;
         this.eventName = adventureEventReader.eventName;
         this.levelIdxStart = adventureEventReader.levelIdxStart;
-        this.levelIdxEnd = adventureEventReader.levelIdxEnd ;
+        this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
         this.selectText = adventureEventReader.selectText;
 
         this.eventType = adventureEventReader.eventType;
         this.NPCSprite = adventureEventReader.NPCSprite;
         this.backgroundSprite = adventureEventReader.backgroundSprite;
+
+        if (this.eventType == 6) {
+            for (int i = 0; i < 6; i++)
+            { //초기화
+                this.packet[i] = new adventureEvent_Packet(adventureEventPacketReaders[i]);
+            }
+        }
+        else{
+            for (int i = 1; i < 6; i++)
+            { //초기화
+                this.packet[i] = null;
+            }
+            this.packet[0] = new adventureEvent_Packet(adventureEventPacketReaders[0]);
+        }
 
     }
     public adventureEvent(adventureEvent adventureEventReader)
@@ -160,14 +172,19 @@ public class adventureEvent
         this.backgroundSprite = adventureEventReader.backgroundSprite;
         this.NPCSprite = adventureEventReader.NPCSprite;
 
-        for (int i = 0; i < 6; i++)
+        this.packet[0] = new adventureEvent_Packet(adventureEventReader.getPacket(0));
+        if (eventType == 6)
         {
-            this.packet[i] = new adventureEvent_Packet(adventureEventReader.getPacket(i));
+            for (int i = 1; i < 6; i++)
+            {
+                this.packet[i] = new adventureEvent_Packet(adventureEventReader.getPacket(i));
+            }
         }
     }
 
     public adventureEvent_Packet getPacket(int idx)
     {
+        if (this.eventType != 6) return this.packet[0];
         return this.packet[idx];
     }
     public string getSelectText()

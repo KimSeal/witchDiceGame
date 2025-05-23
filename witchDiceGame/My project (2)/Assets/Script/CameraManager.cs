@@ -41,50 +41,30 @@ public class CameraManager : MonoBehaviour
     }
     public int pixelWidth = 384;  // 낮은 해상도 너비
     public int pixelHeight = 216;  // 낮은 해상도 높이
-    private RenderTexture lowResRT;
-    private Camera cam;
+
     void Start()
     {
-        tempSize = gameObject.GetComponent<PixelPerfectCamera>().assetsPPU * timeDelay;
+        Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+        tempSize = gameObject.GetComponent<UnityEngine.U2D.PixelPerfectCamera>().assetsPPU * timeDelay;
+        Debug.Log("hey! " + tempSize);
         initialPosition = transform.position;
         ZoomTime = -1f;
 
-        //camera test
-        cam = GetComponent<Camera>();
-
-        // RenderTexture 생성
-        lowResRT = new RenderTexture(pixelWidth, pixelHeight, 16);
-        lowResRT.filterMode = FilterMode.Point; // 블러 없이 선명하게
-
-        cam.targetTexture = lowResRT;
-        cam.forceIntoRenderTexture = true;
     }
 
     int tempSize;
     int direction = 0;
     int timeDelay = 3;
 
-    void OnGUI()
-    {
-        // RenderTexture를 화면 전체에 확대 출력
-        GUI.DrawTexture(
-           new Rect(0, 0, Screen.width, Screen.height),
-           lowResRT,
-           ScaleMode.StretchToFill,
-           false
-       );
-    }
-
     // Update is called once per frame
     void Update()
     {
         if (ZoomTime > 0)
         {
-            //int a =gameObject.main.GetComponent<PixelPerfectCamera>().zoom;
-            /*
+            
             if (direction == 0)
             {
-                gameObject.GetComponent<PixelPerfectCamera>().assetsPPU = (++tempSize) / 3;
+                gameObject.GetComponent<UnityEngine.U2D.PixelPerfectCamera>().assetsPPU = (++tempSize) / 3;
                 if (tempSize >= 130 * timeDelay)
                 {
                     tempSize = 130 * timeDelay;
@@ -94,7 +74,7 @@ public class CameraManager : MonoBehaviour
             
             if (direction == 1)
             {
-                gameObject.GetComponent<PixelPerfectCamera>().assetsPPU = (--tempSize) / 3;
+                gameObject.GetComponent<UnityEngine.U2D.PixelPerfectCamera>().assetsPPU = (--tempSize) / 3;
                 if (tempSize <= 100 * timeDelay)
                 {
                     tempSize = 100 * timeDelay;
@@ -103,7 +83,7 @@ public class CameraManager : MonoBehaviour
 
                 }
             }
-           */
+           
 
         }
         else
@@ -122,11 +102,6 @@ public class CameraManager : MonoBehaviour
                 transform.position = initialPosition;
             }
         }
-        
-        //gameObject.GetComponent<Camera>().orthographicSize = 4.3f;
-
-        //gameObject.GetComponent<Camera>().orthographicSize = Mathf.Lerp(GetComponent<Camera>().orthographicSize, cameraSize, Time.deltaTime / speed);
-
 
 
 
