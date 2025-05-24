@@ -10,6 +10,7 @@ public class LibraryManager : MonoBehaviour
     private Sprite[] spriteArr = new Sprite[12];
 
     private GameObject curPowerDesc;
+    private GameObject curPowerDescInfo;
     private GameObject[] curPowerArr = new GameObject[2];
 
     private void Awake()
@@ -99,6 +100,7 @@ public class LibraryManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        curPowerDescInfo = GameObject.Find("obj_library_desc");
         for (int i = 1; i < BtnArr.Length; i++) {
             BtnArr[i] = GameObject.Find("obj_library_btn_" + i.ToString());
         }

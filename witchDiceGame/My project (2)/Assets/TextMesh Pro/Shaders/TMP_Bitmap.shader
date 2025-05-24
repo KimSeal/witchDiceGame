@@ -82,6 +82,7 @@ SubShader{
 		uniform float		_MaskSoftnessX;
 		uniform float		_MaskSoftnessY;
 
+
 		float2 UnpackUV(float uv)
 		{
 			float2 output;
@@ -121,8 +122,10 @@ SubShader{
 
 		fixed4 frag (v2f IN) : SV_Target
 		{
+
 			fixed4 color = tex2D(_MainTex, IN.texcoord0);
 			color = fixed4 (tex2D(_FaceTex, IN.texcoord1).rgb * IN.color.rgb, IN.color.a * color.a);
+
 
 			// Alternative implementation to UnityGet2DClipping with support for softness.
 			#if UNITY_UI_CLIP_RECT
