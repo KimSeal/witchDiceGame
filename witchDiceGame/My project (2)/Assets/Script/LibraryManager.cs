@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LibraryManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class LibraryManager : MonoBehaviour
     private GameObject curPowerDescInfo;
     private GameObject[] curPowerArr = new GameObject[2];
 
+    private List<WitchPowerReader> witchPowerInfoList = new List<WitchPowerReader>();
+    
     private void Awake()
     {
         if (null == instance)
@@ -55,13 +58,22 @@ public class LibraryManager : MonoBehaviour
         {
             Debug.Log((power - 1) / 3);
             Debug.Log((power - 1) % 3);
-            if (power == 0) curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
-            else curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
+            if (power == 0)
+            {
+                curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
+                
+            }
+            else
+            {
+                curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
+            }
+            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[power].PowerName + "\n" + witchPowerInfoList[power].KR;
         }
         else
         {
             if (power == 0) curPowerArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
             else curPowerArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
+            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[0].PowerName + "\n" + witchPowerInfoList[0].KR;
         }
     }
 
@@ -108,7 +120,8 @@ public class LibraryManager : MonoBehaviour
         curPowerDesc = GameObject.Find("obj_library_witchPower_curSelect");
         for (int i = 0; i < 2; i++) {
             curPowerArr[i] = GameObject.Find("obj_library_witchPower_Select_" + i.ToString());
-        }    
+        }
+        witchPowerInfoList = CSVReader.Read<WitchPowerReader>("witchPower");
     }
 
     // Update is called once per frame

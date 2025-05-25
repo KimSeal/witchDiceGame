@@ -5,6 +5,16 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 
+public class WitchPowerReader
+{
+    public string PowerIdx;
+    public string PowerName;
+    public string KR;
+    public string EN;
+    public string JP;
+    public string SC;
+}
+
 public class SkillReader
 {
     public int SkillIdx;
