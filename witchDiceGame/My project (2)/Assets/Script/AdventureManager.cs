@@ -287,7 +287,7 @@ public class AdventureManager : MonoBehaviour
 
     private IEnumerator phase_Manage_Coroutine()
     {
-        gameOverChk = true;
+        gameOverChk = false;
         stageNum = 0;
         makeStageEventArr(0); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         makeStage_placeBalpan(); // 스테이지에 맞춰 발판 생성
@@ -296,8 +296,11 @@ public class AdventureManager : MonoBehaviour
 
         resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
         resultObj.SetActive(false);
+
+        SoundManager_Main.Instance.playSound(2);
+
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
-        while (stageIdx < 20 || gameOverChk)
+        while (stageIdx < 20 || !gameOverChk)
         {
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
@@ -487,6 +490,8 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
+                    SoundManager_Main.Instance.PauseSound(2);
+                    SoundManager_Main.Instance.playSound(5);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     BattleManager.Instance.updateBattleBackground(curDiceEventPacket.getBattleBackSprite());
@@ -508,7 +513,8 @@ public class AdventureManager : MonoBehaviour
                     */
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
 
-
+                    SoundManager_Main.Instance.stopSound(5);
+                    SoundManager_Main.Instance.unPauseSound(2);
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
 
                     battleBtn.transform.position += new Vector3(0, 300, 0);
@@ -540,6 +546,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (gameOverChk == false)
                 {
+
                     eventEndClick = true;
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
@@ -547,12 +554,14 @@ public class AdventureManager : MonoBehaviour
                 }
             }
 
-            //gameOverChk가 true가 되면 끝
-            CharacterManager.Instance.resetCharacterManager();
-            itemManager.Instance.resetItemManager();
-
-            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
+            
+            //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
         }
+        SoundManager_Main.Instance.stopSound(2);
+        //gameOverChk가 true가 되면 끝
+        CharacterManager.Instance.resetCharacterManager();
+        itemManager.Instance.resetItemManager();
+        TownManager.Instance.backToTownUI();
     }
 
     public void clickResultItem(int idx)

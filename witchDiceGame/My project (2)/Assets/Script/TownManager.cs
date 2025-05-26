@@ -36,13 +36,18 @@ public class TownManager : MonoBehaviour
         if (i == 0)
         {
             AdventureManager.Instance.startAdventure();
-           // clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
+            SoundManager_Main.Instance.stopSound(0);
+            // clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
         }
-        if (i == 1) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
+        if (i == 1)
+        {
+            clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
+        }
         if (i == 2)
         {
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.camraPointZ()));
             LibraryManager.Instance.enterLibrary();
+            SoundManager_Main.Instance.stopSound(0);
         }
         if (i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
     }
@@ -61,6 +66,7 @@ public class TownManager : MonoBehaviour
     public void backToTownUI()
     {
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
+        SoundManager_Main.Instance.playSound(0);
     }
     // Start is called before the first frame update
     void Start()

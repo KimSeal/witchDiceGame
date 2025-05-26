@@ -2289,6 +2289,7 @@ public class BattleManager : MonoBehaviour
 
             //AdventureManager.Instance.loseGame();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
+
         }
         //적군 전멸
         else if (result == 1)
