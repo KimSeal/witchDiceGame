@@ -15,6 +15,9 @@ public class LibraryManager : MonoBehaviour
     private GameObject[] curPowerArr = new GameObject[2];
 
     private List<WitchPowerReader> witchPowerInfoList = new List<WitchPowerReader>();
+
+    private int savePreScreen = 0;
+    //어디서 왓는지 확인. 0 : 마을 지도창  1: 모험 시작 창
     
     private void Awake()
     {
@@ -180,9 +183,11 @@ public class LibraryManager : MonoBehaviour
 
     }
 
-    public void enterLibrary()
+    public void enterLibrary(int idx)
     {
+        savePreScreen = idx;
         //CameraManager.Instance.zoomEvent();
+        CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.camraPointZ()));
         SoundManager_Main.Instance.playSound(1);
         //배틀 매니져에서 받아오기
         for (int i = 1; i < curWitchPower.Length; i++)
@@ -200,7 +205,8 @@ public class LibraryManager : MonoBehaviour
             //배틀 메니져에 선택 세팅하기
             BattleManager.Instance.setWitchPower(1, curWitchPower[1]);
             BattleManager.Instance.setWitchPower(2, curWitchPower[2]);
-            TownManager.Instance.backToTownUI();
+            if(savePreScreen == 0) TownManager.Instance.backToTownUI();
+            if (savePreScreen == 1) AdventureReadyManager.Instance.enterAdventureReady();
             SoundManager_Main.Instance.stopSound(1);
         }
         else //지금은 못나가게 하는 게 다지만, 기존 마녀 능력 유지하는거 공지 화면과 함께 나갈껀지 물어보고, 그래도 나간다 그러면 이전 마녀능력으로 돌리기

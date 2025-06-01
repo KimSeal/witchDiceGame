@@ -50,9 +50,12 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
         this.skillType =skillType;
     }
 
+
+
     private int targetIdx;
     private int val;
     private int stateChange;
+    private int diceChange;
 
     private int skillType;
     // 0 : 데미지. 1: 회복

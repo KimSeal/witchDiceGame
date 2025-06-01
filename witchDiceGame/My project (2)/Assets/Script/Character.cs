@@ -6,12 +6,25 @@ public class Character_battle{
     private int originIdx;
     private int atk;
     private int armor;
+    private int diceState;
+    private int characterState;
     public Character_battle()
     {
         originIdx = -999;
         atk = 0;
         armor = 0;
+        diceState = 0;
     }
+
+    public int getDiceState()
+    {
+        return diceState;
+    }
+    public void setDiceState(int diceState)
+    {
+        this.diceState = diceState;
+    }
+
     public int getOriginIdx()
     {
         return originIdx;

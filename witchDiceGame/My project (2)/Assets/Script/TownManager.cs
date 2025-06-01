@@ -35,7 +35,8 @@ public class TownManager : MonoBehaviour
         //0 : 타워 1 : 집 2: 도서관 3: 마을
         if (i == 0)
         {
-            AdventureManager.Instance.startAdventure();
+
+            AdventureReadyManager.Instance.enterAdventureReady();
             SoundManager_Main.Instance.stopSound(0);
             // clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
         }
@@ -46,7 +47,7 @@ public class TownManager : MonoBehaviour
         if (i == 2)
         {
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.camraPointZ()));
-            LibraryManager.Instance.enterLibrary();
+            LibraryManager.Instance.enterLibrary(0);
             SoundManager_Main.Instance.stopSound(0);
         }
         if (i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
