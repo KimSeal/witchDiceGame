@@ -46,7 +46,7 @@ public class TownManager : MonoBehaviour
         }
         if (i == 2)
         {
-            CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.camraPointZ()));
+            CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
             LibraryManager.Instance.enterLibrary(0);
             SoundManager_Main.Instance.stopSound(0);
         }
@@ -66,7 +66,7 @@ public class TownManager : MonoBehaviour
     }
     public void backToTownUI()
     {
-        CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
+        CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
         SoundManager_Main.Instance.playSound(0);
     }
     // Start is called before the first frame update

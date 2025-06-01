@@ -74,10 +74,12 @@ public class BattleManager : MonoBehaviour
     private GameObject[] myCharacterObjUI = new GameObject[4];
     private Animator[] myCharacterObjUIAnim = new Animator[4];
     private GameObject[] myCharacterShadowObjUI = new GameObject[4];
+    private GameObject[] myCharacterObjEntityUI = new GameObject[4];
 
     private GameObject[] enemyCharacterObjUI = new GameObject[4];
     private Animator[] enemyCharacterObjUIAnim = new Animator[4];
     private GameObject[] enemyCharacterShadowObjUI = new GameObject[4];
+    private GameObject[] enemyCharacterObjEntityUI = new GameObject[4];
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
@@ -142,6 +144,7 @@ public class BattleManager : MonoBehaviour
     GameObject[] equipDescBox_info = new GameObject[2];
     GameObject[] equipDescBox_image = new GameObject[2];
 
+    
     
 
     int curSelectInfo = 0;
@@ -877,6 +880,8 @@ public class BattleManager : MonoBehaviour
         curPhase = 2;
     }
     private bool diceThrowChk = false;
+
+   
 
     public IEnumerator Dice_Throw_Phase()
     {
@@ -2062,12 +2067,14 @@ public class BattleManager : MonoBehaviour
                                 
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
+                                    characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateMyDiceUI();
                                 }
                                 else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                 {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 1);
                                 }
                                 
@@ -2077,18 +2084,21 @@ public class BattleManager : MonoBehaviour
 
                                 if (enemyCharacter[tempTargetIdx-4] != null && enemyCharacter[tempTargetIdx-4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
+                                    
                                     GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                 }
 
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
+                                    characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateEnemyDiceUI();
                                 }
                                 else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                 { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 1);
                                 }
                             }
@@ -2163,10 +2173,14 @@ public class BattleManager : MonoBehaviour
                                 }
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
+                                    characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
-                                else if(takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0){ battleAnimationControl(tempTargetIdx, 1); }
+                                else if(takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0){
+                                    characterDamageMove(tempTargetIdx, 1);
+                                    battleAnimationControl(tempTargetIdx, 1); 
+                                }
                                 
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
@@ -2178,10 +2192,14 @@ public class BattleManager : MonoBehaviour
                                 }
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
+                                    characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
-                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) { battleAnimationControl(tempTargetIdx, 1); }
+                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) { 
+                                    battleAnimationControl(tempTargetIdx, 1);
+                                    characterDamageMove(tempTargetIdx, 1);
+                                }
                                 
                             }
                             updateHp();
@@ -2288,6 +2306,12 @@ public class BattleManager : MonoBehaviour
             Debug.Log("you lose!");
 
             //AdventureManager.Instance.loseGame();
+            CameraManager.Instance.loseScreenActive();
+            yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
+
+
+            if (!characterInfoOpen) clickCharacterInfoBox();
+            //CameraManager.Instance.loseScreenUnActive();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
 
         }
@@ -2406,8 +2430,16 @@ public class BattleManager : MonoBehaviour
         for (int i=0;i<4;i++)
         {
             skillSelectDescUI[i+2] = GameObject.Find("battle_skill_needDice_selected_" + i.ToString()); //스킬에 필요한 주사위 종류
+
+            myCharacterObjEntityUI[i] = GameObject.Find("obj_myCharacter_entity_" + i.ToString());
+            enemyCharacterObjEntityUI[i] = GameObject.Find("obj_enemyCharacter_entity_" + i.ToString());
+
             myCharacterObjUI[i] = GameObject.Find("obj_myCharacter_" + i.ToString());
             enemyCharacterObjUI[i] = GameObject.Find("obj_enemyCharacter_" + i.ToString());
+
+            myCharacterPosition[i] = myCharacterObjEntityUI[i].transform.position;
+            enemyCharacterPosition[i] = enemyCharacterObjEntityUI[i].transform.position;
+
             myCharacterObjUIAnim[i] = myCharacterObjUI[i].GetComponent<Animator>();
             enemyCharacterObjUIAnim[i] = enemyCharacterObjUI[i].GetComponent<Animator>();
 
@@ -2496,10 +2528,48 @@ public class BattleManager : MonoBehaviour
         witchPowerIdx[2] = 2;
     }
 
+    private float[] myCharacterPunch = { 0, 0, 0, 0 };
+    private float[] myCharacterSwing = { 0, 0, 0, 0 };
+    private float[] enemyCharacterPunch = { 0, 0, 0, 0 };
+    private float[] enemyCharacterSwing = { 0, 0, 0, 0 };
+    private Vector3[] myCharacterPosition = new Vector3[4];
+    private Vector3[] enemyCharacterPosition = new Vector3[4];
     // Update is called once per frame
     void Update()
     {
-
+        for (int i=0;i<4;i++) {
+            myCharacterObjEntityUI[i].transform.position = new Vector3(
+                myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
+                myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
+            
+            myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0,  myCharacterSwing[i] * Mathf.Sin(Mathf.PI* myCharacterPunch[i]) * 90);
+            myCharacterPunch[i] += 0.005f;
+            if (myCharacterPunch[i] >= 2) myCharacterPunch[i] = 0.0f;
+            if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.001f;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            enemyCharacterObjEntityUI[i].transform.position = new Vector3(
+                enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
+                enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
+            
+            enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
+            enemyCharacterPunch[i] += 0.005f;
+            if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] = 0.0f;
+            if (enemyCharacterSwing[i] >= 0) enemyCharacterSwing[i] -= 0.001f;
+        }
+    }
+    private void characterDamageMove(int idx, int damage)
+    {
+        if (idx < 4)
+        {
+            myCharacterPunch[idx] = 0;
+            myCharacterSwing[idx] = damage;
+        }
+        else {
+            enemyCharacterPunch[idx-4] = 0;
+            enemyCharacterSwing[idx-4] = damage;
+        }
     }
 
     public void startBattle_fromAdventure()

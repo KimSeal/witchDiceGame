@@ -50,7 +50,7 @@ public class AdventureReadyManager : MonoBehaviour
     {
         drawSelectPower(0, BattleManager.Instance.getWitchPower(1));
         drawSelectPower(1, BattleManager.Instance.getWitchPower(2));
-        CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.camraPointZ()));
+        CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.cameraPointZ()));
         //SoundManager_Main.Instance.playSound(1);
     }
     public void exitAdventureReady() {

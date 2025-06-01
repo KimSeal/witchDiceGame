@@ -184,7 +184,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 3;//i; // 이부분 조정해서 맵 테스트 진행
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
@@ -300,7 +300,7 @@ public class AdventureManager : MonoBehaviour
         SoundManager_Main.Instance.playSound(2);
 
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
-        while (stageIdx < 20 || !gameOverChk)
+        while (stageIdx < 20 && !gameOverChk)
         {
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
@@ -562,6 +562,7 @@ public class AdventureManager : MonoBehaviour
         CharacterManager.Instance.resetCharacterManager();
         itemManager.Instance.resetItemManager();
         TownManager.Instance.backToTownUI();
+        Debug.Log("end of game!");
     }
 
     public void clickResultItem(int idx)
@@ -794,7 +795,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     curCanvasIsAdventure = true;
                     battleEventTrigger = false;
-                    if (!win) gameOverChk = true;
+                    if (!win) gameOverChk = true; //Adventure 반복문 탈출
                     CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                     //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                     return true;

@@ -33,6 +33,7 @@ public class CameraManager : MonoBehaviour
     float ZoomTime = -1f;
     float ShakeTime;
     Vector3 initialPosition;
+    GameObject loseUI;
 
     // Start is called before the first frame update
     public void VibrateForeTime(float time) {
@@ -49,7 +50,7 @@ public class CameraManager : MonoBehaviour
         Debug.Log("hey! " + tempSize);
         initialPosition = transform.position;
         ZoomTime = -1f;
-
+        loseUI = GameObject.Find("obj_ui_lose");
     }
 
     int tempSize;
@@ -111,15 +112,15 @@ public class CameraManager : MonoBehaviour
     {
         ZoomTime = 1;
     }
-    public float camraPointX()
+    public float cameraPointX()
     {
         return this.transform.position.x;
     }
-    public float camraPointY()
+    public float cameraPointY()
     {
         return this.transform.position.y;
     }
-    public float camraPointZ()
+    public float cameraPointZ()
     {
         return this.transform.position.z;
     }
@@ -127,5 +128,20 @@ public class CameraManager : MonoBehaviour
     {
         initialPosition = vec;
         ShakeTime = 0.0f;
+    }
+    bool loseChk = false;
+    public void loseScreenActive()
+    {
+        loseChk = true;
+        loseUI.transform.position = new Vector3(initialPosition.x, initialPosition.y, loseUI.transform.position.z);
+    }
+    public void loseScreenUnActive()
+    {
+        loseChk = false;
+        loseUI.transform.position = new Vector3(0,300, loseUI.transform.position.z);
+    }
+    public bool getLoseScreenActive()
+    {
+        return loseChk;
     }
 }

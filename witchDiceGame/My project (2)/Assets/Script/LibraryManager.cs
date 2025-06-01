@@ -187,7 +187,7 @@ public class LibraryManager : MonoBehaviour
     {
         savePreScreen = idx;
         //CameraManager.Instance.zoomEvent();
-        CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.camraPointZ()));
+        CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
         SoundManager_Main.Instance.playSound(1);
         //배틀 매니져에서 받아오기
         for (int i = 1; i < curWitchPower.Length; i++)
