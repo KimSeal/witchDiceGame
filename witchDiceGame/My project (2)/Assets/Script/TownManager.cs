@@ -72,7 +72,7 @@ public class TownManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        clickAndImageChange = GameObject.Find("spr_town_home_click");
+        clickAndImageChange = transform.Find("spr_town_home_click").gameObject;
     }
 
     // Update is called once per frame
