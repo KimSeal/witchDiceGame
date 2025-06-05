@@ -74,6 +74,8 @@ public class itemManager : MonoBehaviour
 
     private GameObject bagBtnObj;
 
+    private GameObject [] descObj = new GameObject[4];
+
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
 
@@ -92,6 +94,43 @@ public class itemManager : MonoBehaviour
     private int dragCharacterStartNum = -1;
     private int dragCharacterEndNum = -1;
 
+    //string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
+
+    public void hoverInItem(int idx)
+    {
+        Debug.Log("hover!");
+        if (idx == 11) {
+            if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
+            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            descObj[2].GetComponent<TextMeshPro>().text = "Delete Box";
+            descObj[3].GetComponent<TextMeshPro>().text = "이곳으로 아이템을 드래그하면 버릴 수 있습니다.";
+        }
+        else if (ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 해당 아이템으로 변경
+        {
+            if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
+            Item hoverItem = ItemArr[curSelectItemType, idx];
+            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[curSelectItemType] + "ItemSprite/spr_item_" + typeArr[curSelectItemType] + "_" + hoverItem.getItemName());
+            descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
+            descObj[3].GetComponent<TextMeshPro>().text = typeArr[curSelectItemType] + "\n" + hoverItem.getContent();
+
+        }
+        else
+        {
+            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            descObj[2].GetComponent<TextMeshPro>().text = "";
+            descObj[3].GetComponent<TextMeshPro>().text = "";
+            if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+
+        }
+    }
+    public void hoverOutItem(int idx)
+    {
+        Debug.Log("hover out!");
+        descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        descObj[2].GetComponent<TextMeshPro>().text = "";
+        descObj[3].GetComponent<TextMeshPro>().text = "";
+        if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+    }
     public int getItemListCount(int idx)
     {
         return itemList[idx].Count;
@@ -717,6 +756,11 @@ public class itemManager : MonoBehaviour
 
         setUpAnimator();
 
+        descObj[0] = GameObject.Find("obj_ui_item_Desc_board");
+        descObj[1] = GameObject.Find("obj_ui_item_Desc_logo");
+        descObj[2] = GameObject.Find("obj_ui_item_Desc_name");
+        descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
+        descObj[0].SetActive(false);
 
         //test Sample
         for (int i=0;i<7;i++) {

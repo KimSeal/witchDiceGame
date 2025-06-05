@@ -95,6 +95,18 @@ public class AdventureEventPacketReader
     public string battleBackSprite;
 }
 
+public class TalkReader{
+    public int talkIdx;
+    public int Idx;
+    public string characterLeft;
+    public string characterLeftFace;
+    public string characterRight;
+    public string characterRightFace;
+    public int brightCharacter;
+    public string Name;
+    public string Text;
+}
+
 public class CSVReader
 {
     //static string SPLIT_RE = @",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))";

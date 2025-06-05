@@ -34,6 +34,7 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     private GameObject diceRollEff;
 
+    private GameObject[] descObj = new GameObject[4];
     private GameObject balpanLoad;
     private GameObject balpanScreen;
     private GameObject balpanArrow;
@@ -98,9 +99,56 @@ public class AdventureManager : MonoBehaviour
             resultItemArr[i, 1] = -99999;
         }
     }
+    string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
+    public void hoverInItem(int idx)
+    {
+        if (resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
+        {
+            if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
+
+            if (resultItemArr[idx, 0] == 4)
+            {
+                Destiny hoverDestiny = CharacterManager.Instance.getDestiny(resultItemArr[idx, 1]);
+                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
+                descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
+                descObj[3].GetComponent<TextMeshPro>().text = "Lets be a friend!";
+            }
+            else
+            {
+                Item hoverItem = itemManager.Instance.getItem(resultItemArr[idx, 0], resultItemArr[idx, 1]);
+                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItemArr[idx, 0]] + "ItemSprite/spr_item_" + typeArr[resultItemArr[idx, 0]] + "_" + hoverItem.getItemName());
+                descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
+                descObj[3].GetComponent<TextMeshPro>().text = typeArr[resultItemArr[idx, 0]] + "\n\n" + hoverItem.getContent();
+            }
+        }
+        else
+        {
+            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            descObj[2].GetComponent<TextMeshPro>().text = "";
+            descObj[3].GetComponent<TextMeshPro>().text = "";
+            if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+
+        }
+    }
+    public void hoverOutItem()
+    {
+        Debug.Log("hover out!");
+        descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        descObj[2].GetComponent<TextMeshPro>().text = "";
+        descObj[3].GetComponent<TextMeshPro>().text = "";
+        if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+    }
     // Start is called before the first frame update
     void Start()
     {
+
+        descObj[0] = GameObject.Find("obj_ui_adventure_item_Desc_board");
+        descObj[1] = GameObject.Find("obj_ui_adventure_item_Desc_logo");
+        descObj[2] = GameObject.Find("obj_ui_adventure_item_Desc_name");
+        descObj[3] = GameObject.Find("obj_ui_adventure_item_Desc_desc");
+        descObj[0].SetActive(false);
+
+
         for (int i = 0; i < 4; i++)
         {
             diceObject[i] = GameObject.Find("adventure_dice_" + i.ToString());
@@ -184,7 +232,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 3;//i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 6;//i; // 이부분 조정해서 맵 테스트 진행
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
