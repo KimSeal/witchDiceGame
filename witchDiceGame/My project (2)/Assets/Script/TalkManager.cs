@@ -36,13 +36,31 @@ public class TalkManager : MonoBehaviour
     private List<TalkReader> talkList = new List<TalkReader>();
     private Material[] material = new Material[2];
     private int curIdx = 0;
-    private int curTalk = 0;
+    private int initIdx = -1;
+    private int curLight = 0;
     private bool talkingChk = false;
+
+    private List<int> listIdx = new List<int>();
+    private bool[] lightIngArr = new bool[2];
+    string [] tempCharacter = new string[2];
+
     // Start is called before the first frame update
     void Start()
     {
         talkList = CSVReader.Read<TalkReader>("Talk");
+        
+        initIdx = -1;
+        
+        for (int i = 0; i < talkList.Count; i++)
+        {
+            if(talkList[i].talkIdx != initIdx)
+            {
+                initIdx = talkList[i].talkIdx;
+                listIdx.Add(i);
+            }
+        }
 
+        for (int i=0;i<lightIngArr.Length;i++){ lightIngArr[i] = false; }
         entity = GameObject.Find("ui_communicate");
         characterImage[0] = GameObject.Find("ui_communicate_character_left");
         characterImage[1] = GameObject.Find("ui_communicate_character_right");
@@ -51,7 +69,7 @@ public class TalkManager : MonoBehaviour
 
         material[0] = characterImage[0].GetComponent<Image>().material;
         material[1] = characterImage[1].GetComponent<Image>().material;
-
+        
         entity.SetActive(false);
     }
 
@@ -59,16 +77,33 @@ public class TalkManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+        for (int i = 0; i < tempCharacter.Length; i++)
+        {
+            if (lightIngArr[i])
+            {
+                if (material[i].GetFloat("_Transparency") > 0.0)
+                {
+                    material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.01f);
+                }
+                else
+                {
+                    material[i].SetFloat("_Transparency", 0.0f);
+                }
+            }
+        }
     }
     public void startTalk(int a)
     {
         if (!talkingChk)
         {
             entity.SetActive(true);
-            curIdx = a;
-            curTalk = talkList[a].talkIdx;
+            Debug.Log("talk what!" + listIdx[a]);
+            curIdx = listIdx[a];
             talkingChk = true;
+            tempCharacter[0] = talkList[curIdx].characterLeft;
+            tempCharacter[1] = talkList[curIdx].characterRight;
+            curLight = talkList[curIdx].brightCharacter;
             printTalk(curIdx);
         }
     }
@@ -89,17 +124,47 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        for (int i = 0; i < lightIngArr.Length; i++) { lightIngArr[i] = false; }
+
         characterImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + talkList[a].characterLeft + "_" + talkList[a].characterLeftFace);
         characterImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + talkList[a].characterRight + "_" + talkList[a].characterRightFace);
 
         if (talkList[a].brightCharacter == 0 || talkList[a].brightCharacter == 2) material[0].SetFloat("_Transparency", 0.7f);
-        else material[0].SetFloat("_Transparency", 0.0f);
+        else
+        {
+            if (tempCharacter[0] != talkList[a].characterLeft
+                ||(tempCharacter[0] == talkList[a].characterLeft && (curLight == 0 || curLight == 2))) //다른 캐릭터이거나, 같은 캐릭터지만 이전까지 검정이었던 경우
+            {
+                material[0].SetFloat("_Transparency", 0.7f);
+                lightIngArr[0] = true;
+            }
+            else
+            {
+                material[0].SetFloat("_Transparency", 0.0f);
+            }
+        }
 
         if (talkList[a].brightCharacter == 0 || talkList[a].brightCharacter == 1) material[1].SetFloat("_Transparency", 0.7f);
-        else material[1].SetFloat("_Transparency", 0.0f);
+        else
+        {
+            if (tempCharacter[1] != talkList[a].characterRight
+                || (tempCharacter[1] == talkList[a].characterRight && (curLight == 0 || curLight == 1))) //다른 캐릭터이거나, 같은 캐릭터지만 이전까지 검정이었던 경우
+            {
+                material[1].SetFloat("_Transparency", 0.7f);
+                lightIngArr[1] = true;
+            }
+            else
+            {
+                material[1].SetFloat("_Transparency", 0.0f);
+            }
+        }
         Debug.Log(talkList[a].Name);
         characterName.GetComponent<TextMeshProUGUI>().text = talkList[a].Name;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].Text;
+
+        tempCharacter[0] = talkList[a].characterLeft;
+        tempCharacter[1] = talkList[a].characterRight;
+        curLight = talkList[a].brightCharacter;
     }
     private void stopTalk()
     {
