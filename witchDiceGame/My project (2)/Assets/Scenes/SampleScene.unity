@@ -48956,14 +48956,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Hello, Tester.
 
-    This is test sentence
-
-    so, read it
-
-    and find
-    bug
-
-    thnaks'
+    This is test sentence'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 68d1cb2a711a4024f988e199c680c503, type: 2}
   m_sharedMaterial: {fileID: 4559934404480502703, guid: 68d1cb2a711a4024f988e199c680c503, type: 2}
