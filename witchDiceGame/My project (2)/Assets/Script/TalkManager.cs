@@ -32,6 +32,7 @@ public class TalkManager : MonoBehaviour
     private GameObject[] characterImage = new GameObject[2];
     private GameObject characterName;
     private GameObject characterTalk;
+    private GameObject[] talkImage = new GameObject[2];
 
     private List<TalkReader> talkList = new List<TalkReader>();
     private Material[] material = new Material[2];
@@ -66,10 +67,15 @@ public class TalkManager : MonoBehaviour
         characterImage[1] = GameObject.Find("ui_communicate_character_right");
         characterName = GameObject.Find("ui_communicate_name");
         characterTalk = GameObject.Find("ui_communicate_talk");
+        talkImage[0] = GameObject.Find("ui_communicate_image_front");
+        talkImage[1] = GameObject.Find("ui_communicate_image_back");
+
 
         material[0] = characterImage[0].GetComponent<Image>().material;
         material[1] = characterImage[1].GetComponent<Image>().material;
-        
+
+        talkImage[0].SetActive(false);
+        talkImage[1].SetActive(false);
         entity.SetActive(false);
     }
 
@@ -124,6 +130,17 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        //이미지 사용시 체크
+        if (talkList[a].imagePlace == 0){ talkImage[0].SetActive(false); talkImage[1].SetActive(false);}
+        else if (talkList[a].imagePlace == 1){
+            talkImage[0].SetActive(true);
+            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
+        }
+        else if (talkList[a].imagePlace == 2){
+            talkImage[0].SetActive(false); talkImage[1].SetActive(true);
+            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
+        }
+
         for (int i = 0; i < lightIngArr.Length; i++) { lightIngArr[i] = false; }
 
         characterImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + talkList[a].characterLeft + "_" + talkList[a].characterLeftFace);

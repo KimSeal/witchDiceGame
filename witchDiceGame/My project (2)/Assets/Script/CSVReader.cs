@@ -103,6 +103,8 @@ public class TalkReader{
     public string characterRight;
     public string characterRightFace;
     public int brightCharacter;
+    public int imagePlace;
+    public int imageIdx;
     public string Name;
     public string Text;
 }
