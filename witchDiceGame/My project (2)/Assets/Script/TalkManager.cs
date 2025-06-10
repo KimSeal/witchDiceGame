@@ -45,9 +45,11 @@ public class TalkManager : MonoBehaviour
     private bool[] lightIngArr = new bool[2];
     string [] tempCharacter = new string[2];
 
+    private bool libraryEntry = false;
     // Start is called before the first frame update
     void Start()
     {
+        libraryEntry = false;
         talkList = CSVReader.Read<TalkReader>("Talk");
         
         initIdx = -1;
@@ -101,6 +103,10 @@ public class TalkManager : MonoBehaviour
     }
     public void startTalk(int a)
     {
+        if (a == 1) {
+            if (libraryEntry) return;
+            else libraryEntry = true;
+        }
         if (!talkingChk)
         {
             entity.SetActive(true);
