@@ -83,7 +83,7 @@ public class TalkManager : MonoBehaviour
 
     
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
         for (int i = 0; i < tempCharacter.Length; i++)
@@ -92,7 +92,7 @@ public class TalkManager : MonoBehaviour
             {
                 if (material[i].GetFloat("_Transparency") > 0.0)
                 {
-                    material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.01f);
+                    material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
                 }
                 else
                 {

@@ -2535,7 +2535,7 @@ public class BattleManager : MonoBehaviour
     private Vector3[] myCharacterPosition = new Vector3[4];
     private Vector3[] enemyCharacterPosition = new Vector3[4];
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         for (int i=0;i<4;i++) {
             myCharacterObjEntityUI[i].transform.position = new Vector3(
@@ -2543,9 +2543,9 @@ public class BattleManager : MonoBehaviour
                 myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
             
             myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0,  myCharacterSwing[i] * Mathf.Sin(Mathf.PI* myCharacterPunch[i]) * 90);
-            myCharacterPunch[i] += 0.005f;
-            if (myCharacterPunch[i] >= 2) myCharacterPunch[i] = 0.0f;
-            if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.001f;
+            myCharacterPunch[i] += 0.01f;
+            if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
+            if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.05f;
         }
         for (int i = 0; i < 4; i++)
         {
@@ -2554,9 +2554,9 @@ public class BattleManager : MonoBehaviour
                 enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
             
             enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
-            enemyCharacterPunch[i] += 0.005f;
-            if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] = 0.0f;
-            if (enemyCharacterSwing[i] >= 0) enemyCharacterSwing[i] -= 0.001f;
+            enemyCharacterPunch[i] += 0.01f;
+            if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
+            if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= 0.05f;
         }
     }
     private void characterDamageMove(int idx, int damage)
@@ -2568,7 +2568,7 @@ public class BattleManager : MonoBehaviour
         }
         else {
             enemyCharacterPunch[idx-4] = 0;
-            enemyCharacterSwing[idx-4] = damage;
+            enemyCharacterSwing[idx - 4] = damage;
         }
     }
 
