@@ -2543,9 +2543,9 @@ public class BattleManager : MonoBehaviour
                 myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
             
             myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0,  myCharacterSwing[i] * Mathf.Sin(Mathf.PI* myCharacterPunch[i]) * 90);
-            myCharacterPunch[i] += 0.01f;
+            myCharacterPunch[i] += 0.05f;
             if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
-            if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.05f;
+            if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.005f;
         }
         for (int i = 0; i < 4; i++)
         {
@@ -2554,9 +2554,9 @@ public class BattleManager : MonoBehaviour
                 enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
             
             enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
-            enemyCharacterPunch[i] += 0.01f;
+            enemyCharacterPunch[i] += 0.05f;
             if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
-            if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= 0.05f;
+            if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= 0.005f;
         }
     }
     private void characterDamageMove(int idx, int damage)

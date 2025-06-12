@@ -29,28 +29,59 @@ public class TalkManager : MonoBehaviour
         }
     }
     private GameObject entity;
-    private GameObject[] characterImage = new GameObject[2];
+    private GameObject[] characterImage = new GameObject[4];
     private GameObject characterName;
     private GameObject characterTalk;
     private GameObject[] talkImage = new GameObject[2];
 
     private List<TalkReader> talkList = new List<TalkReader>();
-    private Material[] material = new Material[2];
+    private Material[] material = new Material[4];
     private int curIdx = 0;
     private int initIdx = -1;
     private int curLight = 0;
     private bool talkingChk = false;
 
     private List<int> listIdx = new List<int>();
-    private bool[] lightIngArr = new bool[2];
-    string [] tempCharacter = new string[2];
+    private int[] lightingArr = new int[4];
+    private int[] preLightingArr = new int[4];
+    string [] tempCharacter = new string[4];
+
+    float characterMoveVal = 0.0f;
+    private Vector3[] pointArr = new Vector3[4];
+    private string[] preNameArr = { "", "", "", "" };
+    private string[] nameArr = { "", "", "", "" };
+    private string[] faceArr = {"","","",""};
 
     private bool libraryEntry = false;
+    private void setPoint(TalkReader talkReader){
+        pointArr[0] = new Vector3(talkReader.characterLeftestX, 0, 0);
+        pointArr[1] = new Vector3(talkReader.characterLeftX, 0, 0);
+        pointArr[2] = new Vector3(talkReader.characterRightX, 0, 0);
+        pointArr[3] = new Vector3(talkReader.characterRightestX, 0, 0);
+    }
+    private void setCharacterName(TalkReader talkReader) {
+        nameArr[0] = talkReader.characterLeftest;
+        nameArr[1] = talkReader.characterLeft;
+        nameArr[2] = talkReader.characterRight;
+        nameArr[3] = talkReader.characterRightest;
+    }
+    private void setPreCharacterName()
+    {
+        for(int i=0;i<4; i++) preNameArr[i] = nameArr[i];
+    }
+    private void setCharacterFace(TalkReader talkReader)
+    {
+        faceArr[0] = talkReader.characterLeftestFace;
+        faceArr[1] = talkReader.characterLeftFace;
+        faceArr[2] = talkReader.characterRightFace;
+        faceArr[3] = talkReader.characterRightestFace;
+    }
     // Start is called before the first frame update
     void Start()
     {
+        characterMoveVal = 0.0f;
         libraryEntry = false;
-        talkList = CSVReader.Read<TalkReader>("Talk");
+        talkList = CSVReader.Read<TalkReader>("Talk_2");
         
         initIdx = -1;
         
@@ -63,18 +94,18 @@ public class TalkManager : MonoBehaviour
             }
         }
 
-        for (int i=0;i<lightIngArr.Length;i++){ lightIngArr[i] = false; }
+        for (int i=0;i<lightingArr.Length;i++){ lightingArr[i] = 0; preLightingArr[i] = 0; }
         entity = GameObject.Find("ui_communicate");
-        characterImage[0] = GameObject.Find("ui_communicate_character_left");
-        characterImage[1] = GameObject.Find("ui_communicate_character_right");
+
+        for (int i = 0; i < 4; i++)
+        {
+            characterImage[i] = GameObject.Find("ui_communicate_character_" + i.ToString());
+            material[i] = characterImage[i].GetComponent<Image>().material;
+        }
         characterName = GameObject.Find("ui_communicate_name");
         characterTalk = GameObject.Find("ui_communicate_talk");
         talkImage[0] = GameObject.Find("ui_communicate_image_front");
         talkImage[1] = GameObject.Find("ui_communicate_image_back");
-
-
-        material[0] = characterImage[0].GetComponent<Image>().material;
-        material[1] = characterImage[1].GetComponent<Image>().material;
 
         talkImage[0].SetActive(false);
         talkImage[1].SetActive(false);
@@ -85,18 +116,33 @@ public class TalkManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-
-        for (int i = 0; i < tempCharacter.Length; i++)
+        if (entity.activeSelf)
         {
-            if (lightIngArr[i])
+            //투명도 조정
+            for (int i = 0; i < characterImage.Length; i++)
             {
-                if (material[i].GetFloat("_Transparency") > 0.0)
+                if (lightingArr[i] == '1')
                 {
-                    material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
+                    if (material[i].GetFloat("_Transparency") > 0.0f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
+                    else material[i].SetFloat("_Transparency", 0.0f);
                 }
                 else
                 {
-                    material[i].SetFloat("_Transparency", 0.0f);
+                    if (material[i].GetFloat("_Transparency") < 0.7f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") + 0.1f);
+                    else material[i].SetFloat("_Transparency", 0.7f);
+                }
+            }
+
+            //움직임 조정
+            if (characterMoveVal > 0.0f)
+            {
+                characterMoveVal -= 0.1f;
+                if (characterMoveVal > 0.0f){
+                    for (int i = 0; i < 4; i++) characterImage[i].GetComponent<RectTransform>().localPosition = Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f);
+                }
+                else for (int i = 0; i < 4; i++) {
+                        characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
+                        characterMoveVal = 0.0f;
                 }
             }
         }
@@ -109,13 +155,19 @@ public class TalkManager : MonoBehaviour
         }
         if (!talkingChk)
         {
+            characterMoveVal = 0.0f;
             entity.SetActive(true);
-            Debug.Log("talk what!" + listIdx[a]);
+
             curIdx = listIdx[a];
+            setCharacterName(talkList[a]);
+            setPreCharacterName();
+
             talkingChk = true;
-            tempCharacter[0] = talkList[curIdx].characterLeft;
-            tempCharacter[1] = talkList[curIdx].characterRight;
-            curLight = talkList[curIdx].brightCharacter;
+            for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; }
+
+            setPoint(talkList[curIdx]);
+            for(int i=0;i<4;i++) characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
+
             printTalk(curIdx);
         }
     }
@@ -136,68 +188,47 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        setCharacterName(talkList[a]);
+        setCharacterFace(talkList[a]);
+        setPoint(talkList[a]);
+        characterMoveVal = 10.0f;
+
         //이미지 사용시 체크
-        if (talkList[a].imagePlace == 0){ talkImage[0].SetActive(false); talkImage[1].SetActive(false);}
-        else if (talkList[a].imagePlace == 1){
+        if (talkList[a].imagePlace == 0) { talkImage[0].SetActive(false); talkImage[1].SetActive(false); }
+        else if (talkList[a].imagePlace == 1) {
             talkImage[0].SetActive(true);
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
         }
-        else if (talkList[a].imagePlace == 2){
+        else if (talkList[a].imagePlace == 2) {
             talkImage[0].SetActive(false); talkImage[1].SetActive(true);
             talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
         }
 
-        for (int i = 0; i < lightIngArr.Length; i++) { lightIngArr[i] = false; }
-
-        characterImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + talkList[a].characterLeft + "_" + talkList[a].characterLeftFace);
-        characterImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + talkList[a].characterRight + "_" + talkList[a].characterRightFace);
-
-        if (talkList[a].brightCharacter == 0 || talkList[a].brightCharacter == 2) material[0].SetFloat("_Transparency", 0.7f);
-        else
-        {
-            if (tempCharacter[0] != talkList[a].characterLeft
-                ||(tempCharacter[0] == talkList[a].characterLeft && (curLight == 0 || curLight == 2))) //다른 캐릭터이거나, 같은 캐릭터지만 이전까지 검정이었던 경우
-            {
-                material[0].SetFloat("_Transparency", 0.7f);
-                lightIngArr[0] = true;
-            }
-            else
-            {
-                material[0].SetFloat("_Transparency", 0.0f);
-            }
+        //캐릭터 밝기 조정
+        for (int i = 0; i < lightingArr.Length; i++) {
+            preLightingArr[i] = lightingArr[i];
+            if (nameArr[i] != preNameArr[i]) material[i].SetFloat("_Transparency", 0.7f);
+            lightingArr[i] = talkList[a].brightCharacter[i + 1];
         }
 
-        if (talkList[a].brightCharacter == 0 || talkList[a].brightCharacter == 1) material[1].SetFloat("_Transparency", 0.7f);
-        else
+        //캐릭터 스프라이트 업데이트
+        for (int i = 0; i < lightingArr.Length; i++)
         {
-            if (tempCharacter[1] != talkList[a].characterRight
-                || (tempCharacter[1] == talkList[a].characterRight && (curLight == 0 || curLight == 1))) //다른 캐릭터이거나, 같은 캐릭터지만 이전까지 검정이었던 경우
-            {
-                material[1].SetFloat("_Transparency", 0.7f);
-                lightIngArr[1] = true;
-            }
-            else
-            {
-                material[1].SetFloat("_Transparency", 0.0f);
-            }
+            Debug.Log(("sprite/TestSprite/CharacterTalkStand/spr_stand_" + nameArr[i] + "_" + faceArr[i]));
+            characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
         }
-        Debug.Log(talkList[a].Name);
         characterName.GetComponent<TextMeshProUGUI>().text = talkList[a].Name;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].Text;
-
-        tempCharacter[0] = talkList[a].characterLeft;
-        tempCharacter[1] = talkList[a].characterRight;
-        curLight = talkList[a].brightCharacter;
+        setPreCharacterName();
     }
     private void stopTalk()
     {
         if (talkingChk)
         {
-            characterImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_characterEmpty");
-            characterImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_characterEmpty");
-
-            material[0].SetFloat("_Transparency", 0.7f);
-            material[1].SetFloat("_Transparency", 0.7f);
+            for (int i = 0; i < characterImage.Length; i++) {
+                characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_characterEmpty");
+                material[i].SetFloat("_Transparency", 0.7f);
+            }
 
             characterName.GetComponent<TextMeshProUGUI>().text = "";
             characterTalk.GetComponent<TextMeshProUGUI>().text = "";
