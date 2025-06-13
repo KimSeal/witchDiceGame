@@ -46,7 +46,7 @@ public class TalkManager : MonoBehaviour
     private int[] preLightingArr = new int[4];
     string [] tempCharacter = new string[4];
 
-    float characterMoveVal = 0.0f;
+    private float[] characterMoveVal = { 0.0f , 0.0f,0.0f,0.0f};
     private Vector3[] pointArr = new Vector3[4];
     private string[] preNameArr = { "", "", "", "" };
     private string[] nameArr = { "", "", "", "" };
@@ -79,7 +79,7 @@ public class TalkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        characterMoveVal = 0.0f;
+        
         libraryEntry = false;
         talkList = CSVReader.Read<TalkReader>("Talk_2");
         
@@ -94,7 +94,7 @@ public class TalkManager : MonoBehaviour
             }
         }
 
-        for (int i=0;i<lightingArr.Length;i++){ lightingArr[i] = 0; preLightingArr[i] = 0; }
+        for (int i=0;i<lightingArr.Length;i++){ lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
         entity = GameObject.Find("ui_communicate");
 
         for (int i = 0; i < 4; i++)
@@ -132,17 +132,15 @@ public class TalkManager : MonoBehaviour
                     else material[i].SetFloat("_Transparency", 0.7f);
                 }
             }
-
             //움직임 조정
-            if (characterMoveVal > 0.0f)
+            for (int i = 0; i < 4; i++)
             {
-                characterMoveVal -= 0.1f;
-                if (characterMoveVal > 0.0f){
-                    for (int i = 0; i < 4; i++) characterImage[i].GetComponent<RectTransform>().localPosition = Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f);
-                }
-                else for (int i = 0; i < 4; i++) {
-                        characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
-                        characterMoveVal = 0.0f;
+                if (characterImage[i].activeSelf && characterMoveVal[i] > 0.1f) {
+                    characterMoveVal[i] -= 0.1f;
+                    if (characterMoveVal[i] > 0.0f)
+                    {
+                        characterImage[i].GetComponent<RectTransform>().localPosition = Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f);
+                    }
                 }
             }
         }
@@ -155,7 +153,7 @@ public class TalkManager : MonoBehaviour
         }
         if (!talkingChk)
         {
-            characterMoveVal = 0.0f;
+            
             entity.SetActive(true);
 
             curIdx = listIdx[a];
@@ -166,8 +164,11 @@ public class TalkManager : MonoBehaviour
             for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; }
 
             setPoint(talkList[curIdx]);
-            for(int i=0;i<4;i++) characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
-
+            for (int i = 0; i < 4; i++)
+            {
+                characterMoveVal[i] = 0.0f;
+                if (characterImage[i].activeSelf) characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
+            }
             printTalk(curIdx);
         }
     }
@@ -191,8 +192,15 @@ public class TalkManager : MonoBehaviour
         setCharacterName(talkList[a]);
         setCharacterFace(talkList[a]);
         setPoint(talkList[a]);
-        characterMoveVal = 10.0f;
-
+        for (int i = 0; i < 4; i++)
+        {
+            if (nameArr[i] == preNameArr[i]) characterMoveVal[i] = 10.0f;
+            else
+            {
+                characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
+                characterMoveVal[i] = 0.0f;
+            }
+        }
         //이미지 사용시 체크
         if (talkList[a].imagePlace == 0) { talkImage[0].SetActive(false); talkImage[1].SetActive(false); }
         else if (talkList[a].imagePlace == 1) {

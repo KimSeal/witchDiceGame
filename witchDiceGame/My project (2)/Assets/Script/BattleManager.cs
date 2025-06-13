@@ -132,6 +132,9 @@ public class BattleManager : MonoBehaviour
     GameObject diceDescBox;
     GameObject[] diceDesc = new GameObject[6];
 
+    private int[] myDiceState = { 0, 0, 0, 0 };
+    private int[] enemyDiceState = { 0, 0, 0, 0 };
+
     //스킬 설명을 위해 준비된 칸
     GameObject skillDescBox;
     GameObject[] skillDescBox_title = new GameObject[2];

@@ -46,7 +46,8 @@ public class TownManager : MonoBehaviour
         }
         if (i == 2)
         {
-            TalkManager.Instance.startTalk(3);
+            TalkManager.Instance.startTalk(1);
+            Debug.Log("libraryEnter");
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
             LibraryManager.Instance.enterLibrary(0);
             SoundManager_Main.Instance.stopSound(0);
