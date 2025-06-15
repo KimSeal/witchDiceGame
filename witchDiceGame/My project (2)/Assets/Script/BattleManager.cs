@@ -67,6 +67,9 @@ public class BattleManager : MonoBehaviour
     public GameObject[] diceUIChk = new GameObject[8];
     private GameObject[] diceUIChain = new GameObject[6];
 
+    private Animator[] myDiceStateAnim = new Animator[4];
+    private Animator[] enemyDiceStateAnim = new Animator[4];
+
     private GameObject characterUI;
     public GameObject diceFullUI;
     private GameObject[] diceArrowSet = new GameObject[8];
@@ -919,10 +922,38 @@ public class BattleManager : MonoBehaviour
                     enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].getNum() - 1];
                 }
             }
+            if (myDiceState[0] != 0 || myDiceState[1] != 0 || myDiceState[2] != 0 || myDiceState[3] != 0 ||
+                enemyDiceState[0] != 0 || enemyDiceState[1] != 0 || enemyDiceState[2] != 0 || enemyDiceState[3] != 0 ) {
+                yield return new WaitForSeconds(1.0f);
+
+                //주사위 상태 배치
+                for (int i = 0; i < 4; i++)
+                {
+                    if (myDiceState[i] != 0) {
+                        yield return new WaitForSeconds(0.25f);
+                        myDiceNum[i] = myDiceState[i];
+                        //임시 주사위 UI 변경
+                        myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].getDir() * -90);
+                        myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDiceNum[i] - 1];
+                        changeDiceState(i, -999);
+
+                    }
+                }
+                for (int i = 0; i < 4; i++)
+                {
+                    if (enemyDiceState[i] != 0)
+                    {
+                        enemyDiceNum[i] = enemyDiceState[i];
+                        //임시 주사위 UI 변경
+                        enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
+                        enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDiceNum[i] - 1];
+                        changeDiceState(i + 4, -999);
+                        yield return new WaitForSeconds(0.25f);
+                    }
+                }
+            }
 
             //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
-
-
             MakeEnemyAttackSet();
             Debug.Log("Dice Throw Make enemy Array : " + enemyDiceTake[0].ToString() + " " + enemyDiceTake[1].ToString() + " " + enemyDiceTake[2].ToString() + " " + enemyDiceTake[3].ToString() + " ");
             updateEnemyDiceUI();
@@ -1897,6 +1928,7 @@ public class BattleManager : MonoBehaviour
     private void DeadCharacterUpdate(int idx) //캐릭터가 죽을 경우(getcurstate가 2를 반환시) 작동한다. 
         //플레이어 죽음으로 맛있는데! 가 아니라 플레이어 받게 되면 애니메이션은 밖에서 해줌.
     {
+        changeDiceState(idx, -999);
         if (idx < 4)
         {
             int diceNumTemp = myDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
@@ -1974,6 +2006,21 @@ public class BattleManager : MonoBehaviour
         return result.ToString();
     }
 
+    private void changeDiceState(int characterIdx, int stateChange)
+    {
+        if (stateChange == 0) return;
+        if (stateChange == -999) stateChange = 0;
+        if (characterIdx < 4)
+        {
+            myDiceState[characterIdx] = stateChange;
+            myDiceStateAnim[characterIdx].Play(stateChange.ToString());
+        }
+        else
+        {
+            enemyDiceState[characterIdx - 4] = stateChange;
+            enemyDiceStateAnim[characterIdx - 4].Play(stateChange.ToString());
+        }
+    }
 
     private IEnumerator BattlePhase_Coroutine()
     {
@@ -2064,6 +2111,7 @@ public class BattleManager : MonoBehaviour
                             {
                                 if(myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
+                                    
                                     GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0,45,0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                 }
@@ -2075,12 +2123,18 @@ public class BattleManager : MonoBehaviour
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateMyDiceUI();
                                 }
-                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
-                                {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                    characterDamageMove(tempTargetIdx, 1);
-                                    battleAnimationControl(tempTargetIdx, 1);
+                                else
+                                {
+                                    //주사위 상태 변화 실행
+                                    
+                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                    
+                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                    {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                        characterDamageMove(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 1);
+                                    }
                                 }
-                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
@@ -2099,10 +2153,14 @@ public class BattleManager : MonoBehaviour
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateEnemyDiceUI();
                                 }
-                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
-                                { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                    characterDamageMove(tempTargetIdx, 1);
-                                    battleAnimationControl(tempTargetIdx, 1);
+                                else
+                                {
+                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                    { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                        characterDamageMove(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 1);
+                                    }
                                 }
                             }
                             updateHp();
@@ -2180,11 +2238,15 @@ public class BattleManager : MonoBehaviour
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
-                                else if(takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0){
-                                    characterDamageMove(tempTargetIdx, 1);
-                                    battleAnimationControl(tempTargetIdx, 1); 
+                                else
+                                {
+                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                    { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                        characterDamageMove(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 1);
+                                    }
                                 }
-                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
@@ -2193,17 +2255,23 @@ public class BattleManager : MonoBehaviour
                                     GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                 }
+
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
                                     characterDamageMove(tempTargetIdx, 1);
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
-                                else if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) { 
-                                    battleAnimationControl(tempTargetIdx, 1);
-                                    characterDamageMove(tempTargetIdx, 1);
+                                else
+                                {
+                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                    { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                        characterDamageMove(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 1);
+                                    }
                                 }
-                                
+
                             }
                             updateHp();
                             updateEnemyDiceUI();
@@ -2316,6 +2384,7 @@ public class BattleManager : MonoBehaviour
             if (!characterInfoOpen) clickCharacterInfoBox();
             //CameraManager.Instance.loseScreenUnActive();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
+            adventureStartChk = false;
 
         }
         //적군 전멸
@@ -2416,7 +2485,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        
+       
         //초반 turn 화살표 지우기
         for (int i = 0;i<8;i++) {
             skillSelectUI[i] = GameObject.Find("obj_skillSelect_" + i.ToString());
@@ -2427,11 +2496,15 @@ public class BattleManager : MonoBehaviour
         }
         //
 
+        
         skillSelectDescUI[0] = GameObject.Find("battle_skill_skillImage_selected"); //스킬 이미지
         skillSelectDescUI[1] = GameObject.Find("battle_skill_selected_exp"); //텍스트
         skillSelectDescUI[6] = GameObject.Find("battle_skill_selected_title"); //스킬 명
         for (int i=0;i<4;i++)
         {
+            myDiceStateAnim[i] = GameObject.Find("obj_myDiceState_" + i.ToString()).GetComponent<Animator>();
+            enemyDiceStateAnim[i] = GameObject.Find("obj_enemyDiceState_" + (i+4).ToString()).GetComponent<Animator>();
+
             skillSelectDescUI[i+2] = GameObject.Find("battle_skill_needDice_selected_" + i.ToString()); //스킬에 필요한 주사위 종류
 
             myCharacterObjEntityUI[i] = GameObject.Find("obj_myCharacter_entity_" + i.ToString());
@@ -2537,29 +2610,35 @@ public class BattleManager : MonoBehaviour
     private float[] enemyCharacterSwing = { 0, 0, 0, 0 };
     private Vector3[] myCharacterPosition = new Vector3[4];
     private Vector3[] enemyCharacterPosition = new Vector3[4];
+
+    private bool adventureStartChk = false;
     // Update is called once per frame
     void FixedUpdate()
     {
-        for (int i=0;i<4;i++) {
-            myCharacterObjEntityUI[i].transform.position = new Vector3(
-                myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
-                myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
-            
-            myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0,  myCharacterSwing[i] * Mathf.Sin(Mathf.PI* myCharacterPunch[i]) * 90);
-            myCharacterPunch[i] += 0.05f;
-            if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
-            if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.005f;
-        }
-        for (int i = 0; i < 4; i++)
+        if (adventureStartChk)
         {
-            enemyCharacterObjEntityUI[i].transform.position = new Vector3(
-                enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
-                enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
-            
-            enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
-            enemyCharacterPunch[i] += 0.05f;
-            if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
-            if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= 0.005f;
+            for (int i = 0; i < 4; i++)
+            {
+                myCharacterObjEntityUI[i].transform.position = new Vector3(
+                    myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
+                    myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
+
+                myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i]) * 90);
+                myCharacterPunch[i] += 0.05f;
+                if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
+                if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.005f;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                enemyCharacterObjEntityUI[i].transform.position = new Vector3(
+                    enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
+                    enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
+
+                enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
+                enemyCharacterPunch[i] += 0.05f;
+                if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
+                if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= 0.005f;
+            }
         }
     }
     private void characterDamageMove(int idx, int damage)
@@ -2577,6 +2656,7 @@ public class BattleManager : MonoBehaviour
 
     public void startBattle_fromAdventure()
     {
+        adventureStartChk = true;
         StartCoroutine(phase_Manage_Coroutine());
     }
 

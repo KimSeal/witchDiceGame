@@ -729,6 +729,8 @@ public class AdventureManager : MonoBehaviour
     }
     public void clickDice(int characterIdx)
     {
+        if (descObj[0].activeSelf == true) hoverOutItem();
+
         if (characterIdx == -1 && eventEndClick)
         {
             CameraManager.Instance.VibrateForeTime(0.2f);
