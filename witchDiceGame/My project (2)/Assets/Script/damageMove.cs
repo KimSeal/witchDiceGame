@@ -27,7 +27,8 @@ public class damageMove : MonoBehaviour
 
     public void textChange(int damage)
     {
-        textSave = damage.ToString();
+        if (damage == 0) textSave = "";
+        else textSave = damage.ToString();
     }
     // Update is called once per frame
     void Update()

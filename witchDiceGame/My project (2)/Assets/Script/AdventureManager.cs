@@ -199,9 +199,12 @@ public class AdventureManager : MonoBehaviour
                 tempList[i] = null;
             }
             packetArrIdx = 0;
-            while (adventureEventReaderList[eventIdx].eventIdx == adventureEventPacketReaderList[packetIdx].eventIdx) //다른 event나올때까지 업
+            while (eventIdx < adventureEventReaderList.Count && packetIdx < adventureEventPacketReaderList.Count
+                && adventureEventReaderList[eventIdx].eventIdx == adventureEventPacketReaderList[packetIdx].eventIdx) //다른 event나올때까지 업
             {
-                tempList[packetArrIdx++] = adventureEventPacketReaderList[packetIdx++]; 
+                tempList[packetArrIdx++] = adventureEventPacketReaderList[packetIdx++];
+                Debug.Log(eventIdx);
+                Debug.Log(packetIdx);
             }
             adventureEventList[adventureEventReaderList[eventIdx].stageIdx].Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
@@ -232,7 +235,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 20;// i; // 이부분 조정해서 맵 테스트 진행
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {

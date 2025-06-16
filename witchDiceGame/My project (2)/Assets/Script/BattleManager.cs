@@ -2009,7 +2009,10 @@ public class BattleManager : MonoBehaviour
     private void changeDiceState(int characterIdx, int stateChange)
     {
         if (stateChange == 0) return;
-        if (stateChange == -999) stateChange = 0;
+        if (stateChange == -999)
+        {
+            stateChange = 0;
+        }
         if (characterIdx < 4)
         {
             myDiceState[characterIdx] = stateChange;
@@ -2086,6 +2089,7 @@ public class BattleManager : MonoBehaviour
                                 
                                 if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr)) //만약 적용이 된 경우
                                 {
+
                                     SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                                     GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
 
@@ -2218,7 +2222,7 @@ public class BattleManager : MonoBehaviour
                         
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-
+                        Debug.Log("enemy who use skill" + skillUseCharacter);
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
@@ -2227,6 +2231,7 @@ public class BattleManager : MonoBehaviour
                             Debug.Log("target is...! : " + tempTargetIdx.ToString());
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
+                                
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
                                     GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성

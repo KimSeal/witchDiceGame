@@ -82,8 +82,8 @@ public class CharacterManager : MonoBehaviour
     {
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 1);
-        setCharacter(2, 2);
+        setCharacter(1, 5);
+        setCharacter(2, 6);
     }
     // Update is called once per frame
     void Update()
@@ -194,6 +194,10 @@ public class CharacterManager : MonoBehaviour
                     character = new Tom(0, destinyList[characterIdx]); break;
                 case 4:
                     character = new Bob(0, destinyList[characterIdx]); break;
+                case 5:
+                    character = new Border(0, destinyList[characterIdx]); break;
+                case 6:
+                    character = new Wawa(0, destinyList[characterIdx]); break;
 
             }
         }
@@ -221,6 +225,10 @@ public class CharacterManager : MonoBehaviour
                     character = new Pig(0, destinyList_monster[characterIdx]); break;
                 case 8:
                     character = new Wolf(0, destinyList_monster[characterIdx]); break;
+                //case 9:
+                //    character = new WolfQueen(0, destinyList_monster[characterIdx]); break;
+                case 10:
+                    character = new Chihuahua(0, destinyList_monster[characterIdx]); break;
             }
         }
     }
