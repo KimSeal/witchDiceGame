@@ -160,20 +160,32 @@ public class BattleManager : MonoBehaviour
     {
         for (int skillIdx = 0; skillIdx < 2; skillIdx++)
         {
-            Skill thisSkill = character.skillUse(skillIdx);
-            if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
+            if (jsonDataManager.Instance.getMonsterSkill(character.getDestiny().DestinyIdx, skillIdx)) // 만난적있는 지 확인
             {
-                skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
+                Skill thisSkill = character.skillUse(skillIdx);
+                if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
+                {
+                    skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
+                }
+                else
+                {
+                    skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                }
+                skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getCommand();
+                skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
+                for (int diceIdx = 0; diceIdx < 4; diceIdx++)
+                {
+                    skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+                }
             }
-            else
-            {
+            else {
                 skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
-            }
-            skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getCommand();
-            skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
-            for (int diceIdx = 0; diceIdx < 4; diceIdx++)
-            {
-                skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+                skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = "아직 몬스터의 스킬을 본적이 없습니다.";
+                skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = "Not Found";
+                for (int diceIdx = 0; diceIdx < 4; diceIdx++)
+                {
+                    skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
+                }
             }
         }
     }
@@ -359,6 +371,7 @@ public class BattleManager : MonoBehaviour
             i -= 4;
             if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
             {
+                
                 if (curSelectInfo == 0)
                 {
                     drawDice(enemyCharacter[i]);
@@ -2209,6 +2222,8 @@ public class BattleManager : MonoBehaviour
                     int skillUseIdx = nextSkill % 10;
                     Skill curSkill = enemyCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
 
+                    jsonDataManager.Instance.meetMonsterSkill(enemyCharacter[skillUseCharacter].getDestiny().DestinyIdx, skillUseIdx);
+                    
                     for (int i = 0; i < curSkill.getTargetChance(); i++)
                     { // 해당 스킬이 공격하는 숫자
 

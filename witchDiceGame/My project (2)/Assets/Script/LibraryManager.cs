@@ -133,13 +133,6 @@ public class LibraryManager : MonoBehaviour
         
     }
 
- 
-
-    //나중에 여기다가 능력유효여부 확인
-    private bool checkLock(int witchPowerIdx) {
-        return true;
-    }
-
     public void clickCurWitchPower(int idx)
     {
         //이미 배치된 파워 해제용
@@ -150,37 +143,48 @@ public class LibraryManager : MonoBehaviour
     }
     public void clickWitchPower(int input)
     {
-        if (!checkLock(input)) {
-            Debug.Log("no it is locking now!");
-            return;
-        }
-        for (int idx = 1; idx < curWitchPower.Length; idx++) {
-            if (curWitchPower[idx] == input)
-            {
-                //이미 사용중인 거 선택시 해제
-                Debug.Log("make empty about current box");
-                hoverOutCurPower(idx);
-                curWitchPower[idx] = -1;
-                makeBrightBtn(input);
-                drawSelectPower(idx - 1, 0);
-                return;
-            }
-        }
-        //배틀 매니져에 선택 세팅하기
-        for (int idx = 1; idx < curWitchPower.Length; idx++)
+        int chk = jsonDataManager.Instance.checkWitchPower(input);
+        if (chk == 0) //가지고 있는 경우
         {
-            
-            //mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-            if (curWitchPower[idx] == -1) {
-                CameraManager.Instance.VibrateForeTime(0.1f);
-                
-                curWitchPower[idx] = input;
-                makeDarkBtn(input);
-                drawSelectPower(idx-1, input);
-                return;
+            for (int idx = 1; idx < curWitchPower.Length; idx++)
+            {
+                if (curWitchPower[idx] == input)
+                {
+                    //이미 사용중인 거 선택시 해제
+                    Debug.Log("make empty about current box");
+                    hoverOutCurPower(idx);
+                    curWitchPower[idx] = -1;
+                    makeBrightBtn(input);
+                    drawSelectPower(idx - 1, 0);
+                    return;
+                }
+            }
+            //배틀 매니져에 선택 세팅하기
+            for (int idx = 1; idx < curWitchPower.Length; idx++)
+            {
+
+                //mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                if (curWitchPower[idx] == -1)
+                {
+                    CameraManager.Instance.VibrateForeTime(0.1f);
+
+                    curWitchPower[idx] = input;
+                    makeDarkBtn(input);
+                    drawSelectPower(idx - 1, input);
+                    return;
+                }
             }
         }
+        else
+        {
+            if (chk == 1)
+            { //미소유지만 구매 가능한 경우
+            }
+            if(chk == 2) //미소유고 구매도 불가능한 경우
+            {
 
+            }
+        }
     }
 
     public void enterLibrary(int idx)

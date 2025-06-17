@@ -1,0 +1,162 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
+public class jsonDataManager : MonoBehaviour
+{
+
+    private static jsonDataManager instance = null;
+    private void Awake()
+    {
+        if (null == instance)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    public static jsonDataManager Instance
+    {
+        get
+        {
+            if (null == instance) { return null; }
+            return instance;
+        }
+    }
+    // Start is called before the first frame update
+    private PlayerPlayData playerPlayData;
+    private int[] witchPowerMoney = { 0, 0, 15000, 1000, 1000, 15000, 1000, 1000, 15000, 1000, 1000, 15000 };
+    void Start()
+    {
+        string fileName = Path.Combine(Application.dataPath, "playerData.json");
+
+        if (File.Exists(fileName)) {
+            LoadPlayerFromJson();
+        }
+        else { 
+            playerPlayData = new PlayerPlayData();
+            SavePlayerDataToJson(); 
+        }
+
+    }
+
+    public void SavePlayerDataToJson()
+    {
+        string jsonData = JsonUtility.ToJson(playerPlayData);
+        string path = Path.Combine(Application.dataPath, "playerData.json");
+        File.WriteAllText(path, jsonData);
+    }
+    public void LoadPlayerFromJson()
+    {
+        string fileName = Path.Combine(Application.dataPath, "playerData.json");
+        if (File.Exists(fileName)) {
+            string jsonFromFile = File.ReadAllText(fileName);
+            PlayerPlayData temp = JsonUtility.FromJson<PlayerPlayData>(jsonFromFile);
+            playerPlayData = new PlayerPlayData(temp);
+        }
+    }
+    public int getMoney() { return playerPlayData.money; }
+    public void addMoney(int addMoney) {
+        playerPlayData.money += addMoney;
+        Debug.Log("buy third power! extra money :" + getMoney().ToString());
+        SavePlayerDataToJson();
+    }
+    public int getPlayerCharacterToken(int destinyIdx)
+    {
+        return playerPlayData.playCharacterToken[destinyIdx];
+    }
+    public bool getPlayerCharacterAble(int destinyIdx)
+    {
+        return playerPlayData.playCharacterAble[destinyIdx];
+    }
+    //마녀 능력 구매 관련
+    public int checkWitchPower(int powerIdx)
+    {
+        if (this.playerPlayData.witchPower[powerIdx]) return 0; //이미 가지고 있으면 변경
+
+        if (this.playerPlayData.money >= witchPowerMoney[powerIdx]) {//비소유지만 구매 가능한 경우
+            return 1;
+        }
+        return 2; // 비소유면서 구매도 불가능한 경우
+    }
+    public bool buyWitchPower(int powerIdx) {
+        if (!this.playerPlayData.witchPower[powerIdx] && this.playerPlayData.money >= witchPowerMoney[powerIdx]) //아직 구매안했고 돈이 있을 경우 구매
+        {
+            this.playerPlayData.witchPower[powerIdx] = true;
+            this.playerPlayData.money -= witchPowerMoney[powerIdx];
+            SavePlayerDataToJson();
+            return true;
+        }
+        return false; //이미 있거나 돈 부족한 경우 구매 X
+    }
+    public void buyTest()
+    {
+        if (this.buyWitchPower(3)) {
+            Debug.Log("buy third power! extra money :" + getMoney().ToString());
+        }
+        else
+        {
+            Debug.Log("no you cant buy  extra money :" + getMoney().ToString());
+        }
+    }
+    public bool getMonsterSkill(int destinyIdx, int skillIdx)
+    {
+        if(skillIdx == 0) return this.playerPlayData.monsterSkill0Meet[destinyIdx - 10001];
+        if (skillIdx == 1) return this.playerPlayData.monsterSkill1Meet[destinyIdx - 10001];
+        return false;
+    }
+    public void meetMonsterSkill(int destinyIdx, int skillIdx)
+    {
+        if (getMonsterSkill(destinyIdx, skillIdx)) return;
+        else {
+            if(skillIdx == 0) this.playerPlayData.monsterSkill0Meet[destinyIdx - 10001] = true;
+            if (skillIdx == 1) this.playerPlayData.monsterSkill1Meet[destinyIdx - 10001] = true;
+            SavePlayerDataToJson();
+        } 
+    }
+}
+
+public class PlayerPlayData{
+
+    public int money;
+    public bool[] witchPower = new bool[12];
+    public bool[] playCharacterAble = new bool[10000];
+    public int[] playCharacterToken = new int[10000];
+    public bool[] monsterSkill0Meet = new bool[10000];
+    public bool[] monsterSkill1Meet = new bool[10000];
+    public PlayerPlayData()
+    {
+        this.money = 0;
+        for (int i = 0; i < witchPower.Length; i++) this.witchPower[i] = false;
+        for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+        {
+            playCharacterAble[i] = false;
+            playCharacterToken[i] = 0;
+        }
+        for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++)
+        {
+            monsterSkill0Meet[i] = false;
+            monsterSkill1Meet[i] = false;
+        }
+    }
+    public PlayerPlayData(PlayerPlayData playerPlayerData)
+    {
+        this.money = playerPlayerData.money;
+        for(int i=0;i<witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];
+        for (int i = 0; i < 10000; i++)
+        {
+            playCharacterAble[i] = playerPlayerData.playCharacterAble[i];
+            playCharacterToken[i] = playerPlayerData.playCharacterToken[i];
+        }
+        for (int i = 0; i < 10000; i++)
+        {
+            monsterSkill0Meet[i] = playerPlayerData.monsterSkill0Meet[i];
+            monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];
+        }
+    }
+    
+}
