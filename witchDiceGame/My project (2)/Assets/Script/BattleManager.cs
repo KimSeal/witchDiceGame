@@ -2135,7 +2135,7 @@ public class BattleManager : MonoBehaviour
                                 
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
-                                    characterDamageMove(tempTargetIdx, 1);
+                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateMyDiceUI();
@@ -2148,7 +2148,7 @@ public class BattleManager : MonoBehaviour
                                     
                                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                     {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                        characterDamageMove(tempTargetIdx, 1);
+                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         battleAnimationControl(tempTargetIdx, 1);
                                     }
                                 }
@@ -2165,7 +2165,7 @@ public class BattleManager : MonoBehaviour
 
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
-                                    characterDamageMove(tempTargetIdx, 1);
+                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                     updateEnemyDiceUI();
@@ -2175,7 +2175,7 @@ public class BattleManager : MonoBehaviour
                                     changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                     { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                        characterDamageMove(tempTargetIdx, 1);
+                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         battleAnimationControl(tempTargetIdx, 1);
                                     }
                                 }
@@ -2254,7 +2254,7 @@ public class BattleManager : MonoBehaviour
                                 }
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
-                                    characterDamageMove(tempTargetIdx, 1);
+                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
@@ -2263,7 +2263,7 @@ public class BattleManager : MonoBehaviour
                                     changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                     { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                        characterDamageMove(tempTargetIdx, 1);
+                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         battleAnimationControl(tempTargetIdx, 1);
                                     }
                                 }
@@ -2278,7 +2278,7 @@ public class BattleManager : MonoBehaviour
 
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                 {
-                                    characterDamageMove(tempTargetIdx, 1);
+                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
                                 }
@@ -2287,7 +2287,7 @@ public class BattleManager : MonoBehaviour
                                     changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                     { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                        characterDamageMove(tempTargetIdx, 1);
+                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         battleAnimationControl(tempTargetIdx, 1);
                                     }
                                 }
@@ -2620,8 +2620,8 @@ public class BattleManager : MonoBehaviour
         curPhase = 0;
         //마녀 능력 임시 배치
         witchPowerIdx[0] = 0;
-        witchPowerIdx[1] = 1;
-        witchPowerIdx[2] = 2;
+        //witchPowerIdx[1] = 1;
+        //witchPowerIdx[2] = 2;
     }
 
     private float[] myCharacterPunch = { 0, 0, 0, 0 };
@@ -2632,7 +2632,21 @@ public class BattleManager : MonoBehaviour
     private Vector3[] enemyCharacterPosition = new Vector3[4];
 
     private bool adventureStartChk = false;
+
+    public void takeJsonWitchPower() //json에서 받은 파일 받아오기
+    {
+        witchPowerIdx[1] = jsonDataManager.Instance.getCurWitchPower(0);
+        witchPowerIdx[2] = jsonDataManager.Instance.getCurWitchPower(1);
+    }
     // Update is called once per frame
+    private float swingDescVal(float a)
+    {
+        if (a / 200.0f > 0.0005f)
+        {
+            return a / 200.0f;
+        }
+        return 0.0005f;
+    }
     void FixedUpdate()
     {
         if (adventureStartChk)
@@ -2646,7 +2660,7 @@ public class BattleManager : MonoBehaviour
                 myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i]) * 90);
                 myCharacterPunch[i] += 0.05f;
                 if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
-                if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= 0.005f;
+                if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= swingDescVal(myCharacterSwing[i]);//0.005f;
             }
             for (int i = 0; i < 4; i++)
             {
@@ -2657,20 +2671,21 @@ public class BattleManager : MonoBehaviour
                 enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
                 enemyCharacterPunch[i] += 0.05f;
                 if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
-                if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= 0.005f;
+                if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= swingDescVal(enemyCharacterSwing[i]);//0.005f;
             }
         }
     }
     private void characterDamageMove(int idx, int damage)
     {
+        float temp = Mathf.Sqrt(damage / 1000.0f);
         if (idx < 4)
         {
             myCharacterPunch[idx] = 0;
-            myCharacterSwing[idx] = damage;
+            myCharacterSwing[idx] = temp;
         }
         else {
             enemyCharacterPunch[idx-4] = 0;
-            enemyCharacterSwing[idx - 4] = damage;
+            enemyCharacterSwing[idx - 4] = temp;
         }
     }
 

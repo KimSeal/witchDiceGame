@@ -41,7 +41,7 @@ public class jsonDataManager : MonoBehaviour
             playerPlayData = new PlayerPlayData();
             SavePlayerDataToJson(); 
         }
-
+        BattleManager.Instance.takeJsonWitchPower();
     }
 
     public void SavePlayerDataToJson()
@@ -119,10 +119,21 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         } 
     }
+    public int getCurWitchPower(int idx)
+    {
+        return playerPlayData.curWitchPower[idx];
+    }
+    public void changeWitchPower(int idx1, int idx2)
+    {
+        playerPlayData.curWitchPower[0] = idx1;
+        playerPlayData.curWitchPower[1] = idx2;
+        SavePlayerDataToJson();
+    }
 }
 
 public class PlayerPlayData{
 
+    public int[] curWitchPower = new int[2];
     public int money;
     public bool[] witchPower = new bool[100];
     public bool[] playCharacterAble = new bool[10000];
@@ -132,9 +143,11 @@ public class PlayerPlayData{
     public PlayerPlayData()
     {
         this.money = 0;
+        curWitchPower[0] = 1;
+        curWitchPower[1] = 2;
         this.witchPower[1] = true;
         this.witchPower[2] = true;
-        for (int i = 2; i < witchPower.Length; i++) this.witchPower[i] = false;
+        for (int i = 3; i < witchPower.Length; i++) this.witchPower[i] = false;
 
         for (int i = 0; i < playCharacterAble.GetLength(0); i++)
         {
@@ -151,6 +164,8 @@ public class PlayerPlayData{
     public PlayerPlayData(PlayerPlayData playerPlayerData)
     {
         this.money = playerPlayerData.money;
+        curWitchPower[0] = playerPlayerData.curWitchPower[0];
+        curWitchPower[1] = playerPlayerData.curWitchPower[1];
         for(int i=0;i<witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];
         for (int i = 0; i < playCharacterAble.GetLength(0); i++)
         {

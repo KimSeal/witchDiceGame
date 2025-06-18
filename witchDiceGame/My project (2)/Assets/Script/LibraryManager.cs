@@ -57,12 +57,13 @@ public class LibraryManager : MonoBehaviour
 
     private int buyPowerVal = 0;
 
-    private void buyPower()
+    public void buyPower()
     {
         int buyChk = jsonDataManager.Instance.checkWitchPower(buyPowerVal);
         if (buyChk == 1)
         {
             jsonDataManager.Instance.buyWitchPower(buyPowerVal);
+            drawPowerByLock(buyPowerVal);
             buyUI[0].SetActive(false);
         }
         else if (buyChk == 0)
@@ -73,11 +74,11 @@ public class LibraryManager : MonoBehaviour
             buyUI[2].GetComponent<TextMeshPro>().text = "You need To more money!";
         }
     }
-    private void noBuyPower()
+    public void noBuyPower()
     {
         buyUI[0].SetActive(false);
     }
-    private void tryBuyPower(int idx)
+    public void tryBuyPower(int idx)
     {
         if (jsonDataManager.Instance.checkWitchPower(idx) != 0) {
             buyPowerVal = idx;
@@ -224,13 +225,7 @@ public class LibraryManager : MonoBehaviour
         }
         else
         {
-            if (chk == 1)
-            { //미소유지만 구매 가능한 경우
-            }
-            if(chk == 2) //미소유고 구매도 불가능한 경우
-            {
-
-            }
+            tryBuyPower(input);
         }
     }
 
@@ -252,6 +247,7 @@ public class LibraryManager : MonoBehaviour
         {
             drawPowerByLock(i);
         }
+        buyUI[0].SetActive(false);
     }
     public void exitLibrary() {
         //둘다 선택이 되었을 경우에만 나갈 수 있도록
@@ -263,6 +259,8 @@ public class LibraryManager : MonoBehaviour
             if(savePreScreen == 0) TownManager.Instance.backToTownUI();
             if (savePreScreen == 1) AdventureReadyManager.Instance.enterAdventureReady();
             SoundManager_Main.Instance.stopSound(1);
+            jsonDataManager.Instance.changeWitchPower(curWitchPower[1], curWitchPower[2]);
+            buyUI[0].SetActive(false);
         }
         else //지금은 못나가게 하는 게 다지만, 기존 마녀 능력 유지하는거 공지 화면과 함께 나갈껀지 물어보고, 그래도 나간다 그러면 이전 마녀능력으로 돌리기
         {
