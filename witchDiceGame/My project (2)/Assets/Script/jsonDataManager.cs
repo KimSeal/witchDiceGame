@@ -29,7 +29,7 @@ public class jsonDataManager : MonoBehaviour
     }
     // Start is called before the first frame update
     private PlayerPlayData playerPlayData;
-    private int[] witchPowerMoney = { 0, 0, 15000, 1000, 1000, 15000, 1000, 1000, 15000, 1000, 1000, 15000 };
+    private int[] witchPowerMoney = {0, 0, 0, 15000, 1000, 1000, 15000, 1000, 1000, 15000, 1000, 1000, 15000 };
     void Start()
     {
         string fileName = Path.Combine(Application.dataPath, "playerData.json");
@@ -60,6 +60,7 @@ public class jsonDataManager : MonoBehaviour
         }
     }
     public int getMoney() { return playerPlayData.money; }
+    public int getPowerPrice(int idx) { return witchPowerMoney[idx]; }
     public void addMoney(int addMoney) {
         playerPlayData.money += addMoney;
         Debug.Log("buy third power! extra money :" + getMoney().ToString());
@@ -123,7 +124,7 @@ public class jsonDataManager : MonoBehaviour
 public class PlayerPlayData{
 
     public int money;
-    public bool[] witchPower = new bool[12];
+    public bool[] witchPower = new bool[100];
     public bool[] playCharacterAble = new bool[10000];
     public int[] playCharacterToken = new int[10000];
     public bool[] monsterSkill0Meet = new bool[10000];
@@ -131,12 +132,16 @@ public class PlayerPlayData{
     public PlayerPlayData()
     {
         this.money = 0;
-        for (int i = 0; i < witchPower.Length; i++) this.witchPower[i] = false;
+        this.witchPower[1] = true;
+        this.witchPower[2] = true;
+        for (int i = 2; i < witchPower.Length; i++) this.witchPower[i] = false;
+
         for (int i = 0; i < playCharacterAble.GetLength(0); i++)
         {
             playCharacterAble[i] = false;
             playCharacterToken[i] = 0;
         }
+
         for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++)
         {
             monsterSkill0Meet[i] = false;
@@ -147,12 +152,12 @@ public class PlayerPlayData{
     {
         this.money = playerPlayerData.money;
         for(int i=0;i<witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < playCharacterAble.GetLength(0); i++)
         {
             playCharacterAble[i] = playerPlayerData.playCharacterAble[i];
             playCharacterToken[i] = playerPlayerData.playCharacterToken[i];
         }
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < playCharacterAble.GetLength(0); i++)
         {
             monsterSkill0Meet[i] = playerPlayerData.monsterSkill0Meet[i];
             monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];

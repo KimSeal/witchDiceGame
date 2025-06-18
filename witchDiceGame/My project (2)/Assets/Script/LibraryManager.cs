@@ -16,6 +16,8 @@ public class LibraryManager : MonoBehaviour
 
     private List<WitchPowerReader> witchPowerInfoList = new List<WitchPowerReader>();
 
+    private GameObject[] buyUI = new GameObject[3]; //순서대로 전체, 스프라이트, text를 받을 예정
+
     private int savePreScreen = 0;
     //어디서 왓는지 확인. 0 : 마을 지도창  1: 모험 시작 창
     
@@ -53,18 +55,59 @@ public class LibraryManager : MonoBehaviour
     private string[] powerType = { "reroll", "turn", "add", "sub"};
     private string[] targetType = { "my", "enemy", "any" };
 
+    private int buyPowerVal = 0;
+
+    private void buyPower()
+    {
+        int buyChk = jsonDataManager.Instance.checkWitchPower(buyPowerVal);
+        if (buyChk == 1)
+        {
+            jsonDataManager.Instance.buyWitchPower(buyPowerVal);
+            buyUI[0].SetActive(false);
+        }
+        else if (buyChk == 0)
+        {
+            buyUI[2].GetComponent<TextMeshPro>().text = "You have this!";
+        }
+        else if (buyChk == 2) {
+            buyUI[2].GetComponent<TextMeshPro>().text = "You need To more money!";
+        }
+    }
+    private void noBuyPower()
+    {
+        buyUI[0].SetActive(false);
+    }
+    private void tryBuyPower(int idx)
+    {
+        if (jsonDataManager.Instance.checkWitchPower(idx) != 0) {
+            buyPowerVal = idx;
+            buyUI[0].SetActive(true);
+            buyUI[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(idx - 1) / 3] + "_" + targetType[(idx - 1) % 3]);
+            buyUI[2].GetComponent<TextMeshPro>().text = "능력 가격 : " + jsonDataManager.Instance.getPowerPrice(idx).ToString() +
+                "\n현재 금액" + jsonDataManager.Instance.getMoney().ToString() + " -> " + (jsonDataManager.Instance.getMoney() - jsonDataManager.Instance.getPowerPrice(idx)).ToString();
+        } 
+    }
+    //보유 여부 확인후 Lock인지 아닌지 바꾸기
+    private void drawPowerByLock(int power)
+    {
+        if (jsonDataManager.Instance.checkWitchPower(power) == 0)
+        {
+            BtnArr[power].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
+        }
+        else {
+            BtnArr[power].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_lock");
+        }
+    }
+    //현재 선택한 능력 반영 함수
     private void drawSelectPower(int idx, int power) //
     {
         Debug.Log("draw point, man");
         Debug.Log(idx + "/" + power);
         if (idx == -1)
         {
-            Debug.Log((power - 1) / 3);
-            Debug.Log((power - 1) % 3);
             if (power == 0)
             {
                 curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
-                
             }
             else
             {
@@ -125,6 +168,10 @@ public class LibraryManager : MonoBehaviour
             curPowerArr[i] = GameObject.Find("obj_library_witchPower_Select_" + i.ToString());
         }
         witchPowerInfoList = CSVReader.Read<WitchPowerReader>("witchPower");
+
+        buyUI[0] = GameObject.Find("obj_ui_library_buy");
+        buyUI[1] = GameObject.Find("obj_ui_library_buy_sprite");
+        buyUI[2] = GameObject.Find("obj_ui_library_buy_text");
     }
 
     // Update is called once per frame
@@ -200,6 +247,10 @@ public class LibraryManager : MonoBehaviour
             curWitchPower[i] = BattleManager.Instance.getWitchPower(i);
             drawSelectPower(i-1, curWitchPower[i]);
             makeDarkBtn(curWitchPower[i]);
+        }
+        for (int i=1;i<BtnArr.Length;i++)
+        {
+            drawPowerByLock(i);
         }
     }
     public void exitLibrary() {
