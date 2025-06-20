@@ -56862,7 +56862,7 @@ GameObject:
   - component: {fileID: 653797582}
   - component: {fileID: 653797581}
   m_Layer: 0
-  m_Name: obj_myCharacter_fire_20
+  m_Name: obj_myCharacter_fire_30
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97408,7 +97408,7 @@ GameObject:
   - component: {fileID: 1276642818}
   - component: {fileID: 1276642817}
   m_Layer: 0
-  m_Name: obj_myCharacter_fire_21
+  m_Name: obj_myCharacter_fire_31
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

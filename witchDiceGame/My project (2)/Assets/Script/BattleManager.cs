@@ -78,11 +78,14 @@ public class BattleManager : MonoBehaviour
     private Animator[] myCharacterObjUIAnim = new Animator[4];
     private GameObject[] myCharacterShadowObjUI = new GameObject[4];
     private GameObject[] myCharacterObjEntityUI = new GameObject[4];
+    private ParticleSystem[,] myFireObj = new ParticleSystem[4, 2];
 
     private GameObject[] enemyCharacterObjUI = new GameObject[4];
     private Animator[] enemyCharacterObjUIAnim = new Animator[4];
     private GameObject[] enemyCharacterShadowObjUI = new GameObject[4];
     private GameObject[] enemyCharacterObjEntityUI = new GameObject[4];
+    private ParticleSystem[,] enemyFireObj = new ParticleSystem[4, 2];
+
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
@@ -156,13 +159,48 @@ public class BattleManager : MonoBehaviour
     int curSelectInfo = 0;
     int hoverCharacterIdx = -1;
 
+    private void myDiceChange(int idx, int characterIdx, int skillIdx)
+    {
+        if (skillIdx == -999)
+        {
+            if (myDiceTake[idx] != -999)
+            { //제거인 경우, 해당 주사위를 사용하던 스킬 불 꺼트리기
+                myFireObj[myDiceTake[idx] / 10, myDiceTake[idx] % 10].Stop(true);
+            }
+        
+            myDiceTake[idx] = -999;
+            return;
+        }
+        else
+        {
+            myDiceTake[idx] = characterIdx * 10 + skillIdx; //캐릭터하고 사용하는 스킬에 대해 값 생성
+            myFireObj[characterIdx, skillIdx].Play(true);
+        }
+    }
+    private void enemyDiceChange(int idx, int skillIdx) {        
+
+        if (skillIdx == -999)
+        { 
+            if (enemyDiceTake[idx] != -999) { //제거인 경우, 해당 주사위를 사용하던 스킬 불 꺼트리기
+                enemyFireObj[enemyDiceTake[idx] / 10, enemyDiceTake[idx] % 10].Stop(true);
+            }
+            enemyDiceTake[idx] = -999;
+            return;
+        }
+        else
+        {
+            enemyDiceTake[idx] = (skillIdx % 4) * 10 + skillIdx / 4; //캐릭터하고 사용하는 스킬에 대해 값 생성
+            enemyFireObj[(skillIdx % 4), (skillIdx / 4)].Play(true);
+        }
+    }
     private void drawSkill(Character character)
     {
         for (int skillIdx = 0; skillIdx < 2; skillIdx++)
         {
+            Skill thisSkill = character.skillUse(skillIdx);
             if (jsonDataManager.Instance.getMonsterSkill(character.getDestiny().DestinyIdx, skillIdx)) // 만난적있는 지 확인
             {
-                Skill thisSkill = character.skillUse(skillIdx);
+                
                 if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
                 {
                     skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
@@ -184,7 +222,8 @@ public class BattleManager : MonoBehaviour
                 skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = "Not Found";
                 for (int diceIdx = 0; diceIdx < 4; diceIdx++)
                 {
-                    skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
+                    //만난적 없더라도 스킬 대처는 할 수 있도록
+                    skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
                 }
             }
         }
@@ -463,7 +502,9 @@ public class BattleManager : MonoBehaviour
         List<int> liveSkillList = new List<int>();
         for (int i = 0; i < 4; i++)
         {
-            enemyDiceTake[i] = -999;
+            enemyFireObj[i, 0].Stop();
+            enemyFireObj[i, 1].Stop();
+            enemyDiceChange(i, -999);
         }
         for (int i=0;i<4;i++)
         {
@@ -492,7 +533,7 @@ public class BattleManager : MonoBehaviour
                 if (enemySkillDiceNum[skillIdx] == 1)
                 {
                     if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]])){ // 첫번쨰주사위가 겹치는 경우
-                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx /4;
+                        enemyDiceChange(liveCharacterList[diceIdx], skillIdx);
                         liveCharacterList.RemoveAt(diceIdx);
                         break;
                     }
@@ -504,8 +545,8 @@ public class BattleManager : MonoBehaviour
                     if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
                         enemyDiceTake[liveCharacterList[diceIdx+1]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]))
                     { // 첫번쨰주사위가 겹치는 경우
-                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        enemyDiceTake[liveCharacterList[diceIdx+1]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceChange(liveCharacterList[diceIdx], skillIdx);
+                        enemyDiceChange(liveCharacterList[diceIdx+1], skillIdx);
                         //liveCharacterList.RemoveAt(diceIdx);
                         //liveCharacterList.RemoveAt(diceIdx);
                         break;
@@ -517,10 +558,10 @@ public class BattleManager : MonoBehaviour
                     if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]]) &&
                         enemyDiceTake[liveCharacterList[diceIdx+1]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 1], enemyDiceNum[liveCharacterList[diceIdx + 1]]) &&
                         enemyDiceTake[liveCharacterList[diceIdx+2]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]))
-                    { 
-                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        enemyDiceTake[liveCharacterList[diceIdx + 1]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        enemyDiceTake[liveCharacterList[diceIdx + 2]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                    {
+                        enemyDiceChange(liveCharacterList[diceIdx], skillIdx);
+                        enemyDiceChange(liveCharacterList[diceIdx + 1], skillIdx);
+                        enemyDiceChange(liveCharacterList[diceIdx + 2], skillIdx);
                         /*liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);*/
@@ -536,10 +577,10 @@ public class BattleManager : MonoBehaviour
                         enemyDiceTake[liveCharacterList[diceIdx+2]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 2], enemyDiceNum[liveCharacterList[diceIdx + 2]]) &&
                         enemyDiceTake[liveCharacterList[diceIdx+3]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 3], enemyDiceNum[liveCharacterList[diceIdx + 3]]))
                     {
-                        enemyDiceTake[liveCharacterList[diceIdx]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        enemyDiceTake[liveCharacterList[diceIdx + 1]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        enemyDiceTake[liveCharacterList[diceIdx + 2]] = (skillIdx % 4) * 10 + skillIdx / 4;
-                        enemyDiceTake[liveCharacterList[diceIdx + 3]] = (skillIdx % 4) * 10 + skillIdx / 4;
+                        enemyDiceChange(liveCharacterList[diceIdx], skillIdx);
+                        enemyDiceChange(liveCharacterList[diceIdx + 1], skillIdx);
+                        enemyDiceChange(liveCharacterList[diceIdx + 2], skillIdx);
+                        enemyDiceChange(liveCharacterList[diceIdx + 3], skillIdx);
                         /*liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);
                         liveCharacterList.RemoveAt(diceIdx);
@@ -572,7 +613,7 @@ public class BattleManager : MonoBehaviour
         {
             if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]))
             { // 첫번쨰주사위가 겹치는 경우
-                myDiceTake[liveCharacterList[0]] = characterIdx  * 10 + skillSelIdx ;
+                myDiceChange(liveCharacterList[0], characterIdx ,skillSelIdx);
                 return true;
             }
         }
@@ -582,8 +623,8 @@ public class BattleManager : MonoBehaviour
             if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
                 myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]))
             { // 첫번쨰주사위가 겹치는 경우
-                myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
-                myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
+                myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
                 return true;
             }
 
@@ -594,9 +635,9 @@ public class BattleManager : MonoBehaviour
                 myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
                 myDiceTake[liveCharacterList[2]] == -999 && condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]))
             { // 첫번쨰주사위가 겹치는 경우
-                myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
-                myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
-                myDiceTake[liveCharacterList[2]] = characterIdx * 10 + skillSelIdx;
+                myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
+                myDiceChange(liveCharacterList[2], characterIdx, skillSelIdx);
                 return true;
             }
         }
@@ -607,10 +648,10 @@ public class BattleManager : MonoBehaviour
                 myDiceTake[liveCharacterList[2]] == -999 && condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]) &&
                 myDiceTake[liveCharacterList[3]] == -999 && condition_diceSkillCheck(skill.getNeedDice(3), myDiceNum[liveCharacterList[3]]))
             { // 첫번쨰주사위가 겹치는 경우
-                myDiceTake[liveCharacterList[0]] = characterIdx * 10 + skillSelIdx;
-                myDiceTake[liveCharacterList[1]] = characterIdx * 10 + skillSelIdx;
-                myDiceTake[liveCharacterList[2]] = characterIdx * 10 + skillSelIdx;
-                myDiceTake[liveCharacterList[3]] = characterIdx * 10 + skillSelIdx;
+                myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
+                myDiceChange(liveCharacterList[2], characterIdx, skillSelIdx);
+                myDiceChange(liveCharacterList[3], characterIdx, skillSelIdx);
                 return true;
             }
         }
@@ -1412,7 +1453,8 @@ public class BattleManager : MonoBehaviour
                             {
                                 diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                                 if (i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");//연결 체인도 제거
-                                myDiceTake[i] = -999;
+                                //myDiceTake[i] = -999;
+                                myDiceChange(i, 0, -999);
                             }
                         }
                         curClickSkill = -1;
@@ -1486,8 +1528,10 @@ public class BattleManager : MonoBehaviour
                     {
                         //diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         //if(i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");//연결 체인도 제거
-                        myDiceTake[i] = -999;
+                        //myDiceTake[i] = -999;
+                        myDiceChange(i, 0, -999);
                     }
+
                 }
                 updateMyDiceUI();
                 //해당 스킬에 대한 버튼 해제
@@ -1956,7 +2000,7 @@ public class BattleManager : MonoBehaviour
                 if(myDiceTake[i] / 10 == idx)
                 {
                     mySkillUsed[myDiceTake[i] / 10, myDiceTake[i] % 10] = false;
-                    myDiceTake[i] = -999;
+                    myDiceChange(i, 0, -999);
                     myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 } 
             }
@@ -1965,7 +2009,7 @@ public class BattleManager : MonoBehaviour
             {
                 if (myDiceTake[i] == diceNumTemp) {
                     myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                    myDiceTake[i] = -999; 
+                    myDiceChange(i, 0, -999);
                 }
             }
             
@@ -1984,7 +2028,7 @@ public class BattleManager : MonoBehaviour
                 if (enemyDiceTake[i] / 10 == idx )
                 {
                     enemySkillUsed[enemyDiceTake[i] / 10, enemyDiceTake[i] % 10] = false;
-                    enemyDiceTake[i] = -999;
+                    enemyDiceChange(i, -999);
                     enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 }
             }
@@ -1994,7 +2038,7 @@ public class BattleManager : MonoBehaviour
             {
                 if (enemyDiceTake[i] == diceNumTemp)
                 {
-                    enemyDiceTake[i] = -999;
+                    enemyDiceChange(i, -999);
                     enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 }
             }
@@ -2069,7 +2113,7 @@ public class BattleManager : MonoBehaviour
                             usedDiceArr[usedDiceIdx] = myDiceNum[i];
                             usedDiceIdx++;
 
-                            myDiceTake[i] = -999;
+                            myDiceChange(i, 0, -999);
                             myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                             if (i != 3)  diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -2208,7 +2252,7 @@ public class BattleManager : MonoBehaviour
                     {
                         if (enemyDiceTake[i] == nextSkill)
                         {
-                            enemyDiceTake[i] = -999;
+                            enemyDiceChange(i, -999);
                             enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                             if (i != 3)
                             {
@@ -2522,6 +2566,14 @@ public class BattleManager : MonoBehaviour
         skillSelectDescUI[6] = GameObject.Find("battle_skill_selected_title"); //스킬 명
         for (int i=0;i<4;i++)
         {
+            for (int j = 0; j < 2; j++)
+            {
+                Debug.Log("obj_myCharacter_fire_" + i.ToString() + j.ToString());
+                myFireObj[i, j] = GameObject.Find("obj_myCharacter_fire_" + i.ToString() + j.ToString()).GetComponent<ParticleSystem>();
+                myFireObj[i, j].Stop();
+                enemyFireObj[i, j] = GameObject.Find("obj_enemyCharacter_fire_" + i.ToString() + j.ToString()).GetComponent<ParticleSystem>();
+                enemyFireObj[i, j].Stop();
+            }
             myDiceStateAnim[i] = GameObject.Find("obj_myDiceState_" + i.ToString()).GetComponent<Animator>();
             enemyDiceStateAnim[i] = GameObject.Find("obj_enemyDiceState_" + (i+4).ToString()).GetComponent<Animator>();
 
