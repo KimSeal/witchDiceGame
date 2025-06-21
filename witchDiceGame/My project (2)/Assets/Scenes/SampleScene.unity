@@ -14904,7 +14904,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-          m_MethodName: click_witchPower_Dice
+          m_MethodName: click_dice
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -75315,7 +75315,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-          m_MethodName: click_witchPower_Dice
+          m_MethodName: click_dice
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -141845,7 +141845,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-          m_MethodName: click_witchPower_Dice
+          m_MethodName: click_dice
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -147889,7 +147889,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
-          m_MethodName: click_witchPower_Dice
+          m_MethodName: click_dice
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

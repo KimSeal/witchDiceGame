@@ -92,6 +92,7 @@ public class AdventureManager : MonoBehaviour
 
     private bool eventEndClick = false; //이벤트를 넘어갈 수 있는 경우, true가 된다.
 
+    private bool clickAble = false;
     void resetItemResult()
     {
         for (int i = 0; i < 4; i++) {
@@ -360,6 +361,7 @@ public class AdventureManager : MonoBehaviour
             balpanLoad.transform.position = new Vector3(balpanLoad.transform.position.x, 18, balpanLoad.transform.position.z);
             balpanLoad.GetComponent<Animator>().Play("On");
             loadEnd = false;
+            clickAble = false; // 주사위 클릭 못하게
             yield return new WaitUntil(() => loadEnd);
             balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 18, balpanScreen.transform.position.z);
             
@@ -395,7 +397,7 @@ public class AdventureManager : MonoBehaviour
                 balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx));
             }
             balpanArrow.transform.position = balpanObj[0].transform.position + new Vector3(0, 8, 0);
-
+            clickAble = true;
             yield return new WaitUntil(() => selectDiceNum > 0);
 
             Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
@@ -732,6 +734,8 @@ public class AdventureManager : MonoBehaviour
     }
     public void clickDice(int characterIdx)
     {
+        if (!clickAble) return;
+
         if (descObj[0].activeSelf == true) hoverOutItem();
 
         if (characterIdx == -1 && eventEndClick)

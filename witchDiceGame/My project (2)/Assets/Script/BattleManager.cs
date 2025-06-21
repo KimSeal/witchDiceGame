@@ -665,8 +665,14 @@ public class BattleManager : MonoBehaviour
         if (currentLightUI == 0 && currentMoveUI == 0)
         {
             if (curPhase == 2) click_witchPower_Dice(diceIdx);
-            else if (curPhase == 3) click_characterSkill_Dice(diceIdx);
-            else if (curPhase == 5) click_BattleSkill_dice(diceIdx);
+            else if (curPhase == 3)
+            {
+                if (diceIdx >= 0 && diceIdx < 4) click_characterSkill_Dice(diceIdx); //아군 스킬 배정용
+                else if (diceIdx >= 4 && diceIdx < 8) click_enemySkill_Dice(diceIdx);
+            }
+            else if (curPhase == 5) {
+                if (diceIdx >= 0 && diceIdx < 4)  click_BattleSkill_dice(diceIdx); //아군 스킬 사용
+            }
         }
     }
 
@@ -1139,13 +1145,7 @@ public class BattleManager : MonoBehaviour
 
                 yield return new WaitUntil(() => witchPowerClickState == 0); //요구되는 주사위 수를 모두 채웠을때.
 
-                if (clickedDice[0] >= 0 && clickedDice[0] <= 3){
-                    Instantiate(diceRollEff, myDiceUI[clickedDice[0]].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
-                }
-                if (clickedDice[0] >= 4 && clickedDice[0] <= 7)
-                {
-                    Instantiate(diceRollEff, enemyDiceUI[clickedDice[0]-4].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
-                }
+                
 
                 
 
@@ -1183,6 +1183,18 @@ public class BattleManager : MonoBehaviour
                         }
                     }
 
+                    //스킬 사용되었으니 변경 값에 대하여 이펙트 생성
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (clickedDice[i] >= 0 && clickedDice[i] <= 3)
+                        {
+                            Instantiate(diceRollEff, myDiceUI[clickedDice[i]].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                        }
+                        if (clickedDice[i] >= 4 && clickedDice[i] <= 7)
+                        {
+                            Instantiate(diceRollEff, enemyDiceUI[clickedDice[i] - 4].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                        }
+                    }
                     yield return new WaitForSeconds(1f);
                 }
 
@@ -1359,7 +1371,7 @@ public class BattleManager : MonoBehaviour
     // 주사위 선택(다양하게 수정할 수 있어야한다. 지금은 마녀만 해서 이름이 이런데 나중에 수정해야됨.) -> 아니면 주사위 클릭에서 분기 시도 -> 분기했음.(click_dice 함수)
     public void click_witchPower_Dice(int diceIdx)
     {
-        if (witchPowerClickState > 0 &&  currentLightUI == 0 && currentMoveUI == 0)
+        if (curPhase == 2 && witchPowerClickState > 0 &&  currentLightUI == 0 && currentMoveUI == 0)
         {
             //아군 캐릭터 중 유효한 주사위가 선택되었고, 능력이 적군 선택이 아닌 경우 
             if ((diceIdx >= 0 && diceIdx <= 3 && myCharacter[diceIdx] != null && myDice[diceIdx] != null) && witchPowerIdx[witchPowerState] % 3 != 2) 
@@ -1565,19 +1577,58 @@ public class BattleManager : MonoBehaviour
             //주사위에 할당된 스킬도 클릭된 스킬도 없다면 아무것도 하지 않는다.
         }
     }
+
+    private void click_enemySkill_Dice(int diceIdx)
+    {
+        diceIdx -= 4;
+        if (curPhase == 3 && enemyCharacter[diceIdx] != null && enemyCharacter[diceIdx].getCurState() == 0 && currentLightUI == 0 && currentMoveUI == 0)
+        {
+            if (enemyDiceTake[diceIdx] != -999) //해당 주사위가 비어있지 않은 경우
+            {
+                if (curClickSkill != -1) { //현재 선택한 스킬이 있는 경우
+                    int characterIdx = curClickSkill / 10;
+                    int skillIdx = curClickSkill % 10;
+                    StartCoroutine(makeBright(skillSelectUI[characterIdx * 2 + skillIdx], 0.0f));
+                    makeSkillCommand(characterIdx, skillIdx);
+                    curClickSkill = -1;
+                }
+                
+                int enemyCharacterIdx = enemyDiceTake[diceIdx] / 10;
+                int enemySkillIdx = enemyDiceTake[diceIdx] % 10;
+                makeSkillCommand(enemyCharacterIdx + 4, enemySkillIdx);
+                //Skill useSkill = enemyCharacter[enemyCharacterIdx].skillUse(enemySkillIdx);
+                //int needDiceNum = useSkill.getNeedDiceNum();
+            }
+            //주사위에 할당된 스킬도 클릭된 스킬도 없다면 아무것도 하지 않는다.
+        }
+    }
     //스킬이 눌려서 해당 skill에 대한 내용을 출력해야하는 경우
     void makeSkillCommand(int characterIdx, int skillIdx)
     {
-        Skill thisSkill = myCharacter[characterIdx].skillUse(skillIdx);
-        if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
+        Skill thisSkill = null;
+        if (characterIdx >= 0 && characterIdx < 4) { thisSkill = myCharacter[characterIdx].skillUse(skillIdx); }
+        else if (characterIdx >= 4 && characterIdx < 8) {thisSkill = enemyCharacter[characterIdx-4].skillUse(skillIdx);}
+
+        //적군 스킬이면서 본적 없는 스킬인 경우
+        if (characterIdx >= 4 && characterIdx < 8 && !jsonDataManager.Instance.getMonsterSkill(enemyCharacter[characterIdx - 4].getDestiny().DestinyIdx, skillIdx))
         {
-            skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
-        }
-        else {
             skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+            skillSelectDescUI[1].GetComponent<TextMeshPro>().text = "아직 몬스터의 스킬을 본적이 없습니다.";
+            skillSelectDescUI[6].GetComponent<TextMeshPro>().text = "Not Found";
         }
-        skillSelectDescUI[1].GetComponent <TextMeshPro> ().text = thisSkill.getCommand();
-        skillSelectDescUI[6].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
+        else
+        {
+            if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
+            {
+                skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
+            }
+            else
+            {
+                skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+            }
+            skillSelectDescUI[1].GetComponent<TextMeshPro>().text = thisSkill.getCommand();
+            skillSelectDescUI[6].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
+        }
         for (int i=0;i<4;i++)
         {
             skillSelectDescUI[i+2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(i).ToString());
