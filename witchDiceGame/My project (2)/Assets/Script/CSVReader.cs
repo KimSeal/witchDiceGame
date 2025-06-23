@@ -118,6 +118,7 @@ public class TalkReader{
     public int imageIdx;
     public string Name;
     public string Text;
+    public string backGround;
 }
 
 public class CSVReader

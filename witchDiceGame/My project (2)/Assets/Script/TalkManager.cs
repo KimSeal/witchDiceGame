@@ -33,7 +33,7 @@ public class TalkManager : MonoBehaviour
     private GameObject characterName;
     private GameObject characterTalk;
     private GameObject[] talkImage = new GameObject[2];
-
+    private GameObject background;
     private List<TalkReader> talkList = new List<TalkReader>();
     private Material[] material = new Material[4];
     private int curIdx = 0;
@@ -51,6 +51,7 @@ public class TalkManager : MonoBehaviour
     private string[] preNameArr = { "", "", "", "" };
     private string[] nameArr = { "", "", "", "" };
     private string[] faceArr = {"","","",""};
+    private string preBackground = "";
 
     private bool libraryEntry = false;
     private void setPoint(TalkReader talkReader){
@@ -109,6 +110,8 @@ public class TalkManager : MonoBehaviour
 
         talkImage[0].SetActive(false);
         talkImage[1].SetActive(false);
+
+        background = GameObject.Find("ui_communicate_background");
         entity.SetActive(false);
     }
 
@@ -169,6 +172,8 @@ public class TalkManager : MonoBehaviour
                 characterMoveVal[i] = 0.0f;
                 if (characterImage[i].activeSelf) characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
             }
+
+            preBackground = talkList[a].backGround;
             printTalk(curIdx);
         }
     }
@@ -225,8 +230,14 @@ public class TalkManager : MonoBehaviour
             Debug.Log(("sprite/TestSprite/CharacterTalkStand/spr_stand_" + nameArr[i] + "_" + faceArr[i]));
             characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
         }
+
+        //배경 이미지 업데이트
+        background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + talkList[a].backGround);
+
         characterName.GetComponent<TextMeshProUGUI>().text = talkList[a].Name;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].Text;
+        
+        preBackground = talkList[a].backGround;
         setPreCharacterName();
     }
     private void stopTalk()
@@ -237,7 +248,7 @@ public class TalkManager : MonoBehaviour
                 characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_characterEmpty");
                 material[i].SetFloat("_Transparency", 0.7f);
             }
-
+            background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + "empty");
             characterName.GetComponent<TextMeshProUGUI>().text = "";
             characterTalk.GetComponent<TextMeshProUGUI>().text = "";
             entity.SetActive(false);
