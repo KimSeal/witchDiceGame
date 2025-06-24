@@ -551,14 +551,24 @@ public class itemManager : MonoBehaviour
        
     }
 
+    private void changeDice(int idx, int number)
+    {
+        CharacterManager.Instance.changeDice(characterSelectIdx, idx, number);
+        diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
+        Debug.Log("change Dice "+ idx.ToString() + " to number " + number.ToString());
+    }
     public void click_dice_changeNum(int idx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
         if (curSelectItemType == 1 && curSelectItemIndex != -1) {
-            CharacterManager.Instance.changeDice(characterSelectIdx, idx, ItemArr[1,curSelectItemIndex].getVal(0));
-            Debug.Log(diceBoardObj[idx]);
-
-            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + ItemArr[1, curSelectItemIndex].getVal(0).ToString());
-
+            int itemIdx = ItemArr[1, curSelectItemIndex].getIdx();
+            
+            if (itemIdx == 1) { //랜덤한 숫자로 변경 
+                changeDice(idx, Random.Range(1,7));
+            }
+            else if (itemIdx >= 2 && itemIdx <= 7) //해당 숫자로 변경
+            {
+                changeDice(idx, ItemArr[1, curSelectItemIndex].getVal(0));
+            }
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             useItem();
 
@@ -762,7 +772,7 @@ public class itemManager : MonoBehaviour
         descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
 
-        /*
+        
         //test Sample
         for (int i=0;i<7;i++) {
             ItemExistArr[1, i] = true;
@@ -779,7 +789,7 @@ public class itemManager : MonoBehaviour
         ItemArr[2, 0] = new Item(itemList[2][1]);
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
-        */
+        
         updateInventory();
     }
 
