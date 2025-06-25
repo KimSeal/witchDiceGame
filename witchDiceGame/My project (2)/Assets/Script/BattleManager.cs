@@ -2033,6 +2033,46 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    //공격시 애니메이션은 ready_start(공격전 - 수치 검색전)-ready_end(수치 계산 && 타겟팅 대기)
+    //                    -atk_ start(타겟후 공격 애니메이션)- -atk_end(다음 공격 대기)
+    //                    -return_start(귀환 시작 애니메이션) - return_end(귀환 끝) ->끝나고 idle로 넘어간다.
+    //각각은 0부터 5로 지정.
+    private Vector3[] myCharacterInitPosition = new Vector3[4];
+    private Vector3[] enemyCharacterInitPosition = new Vector3[4];
+
+   
+    private void skillAnimationControl(bool team, int timing, int curIdx, Skill skill, int characterIdx, int enemyIdx, int skillIdx) 
+        //아군인지 아닌지, 현재 누른 수, 스킬, 사용 캐릭터 idx값, 피격 캐릭터 idx값, 스킬 사용번째(1번 공격인지 2번 공격인지)  
+    {
+        
+        if (curIdx < skill.Anim)//애니메이션 성립 조건(스킬 내 타격 횟수보다 애니메이션이 아직 많이 남은 경우)
+        {
+            if (team)
+            { //아군이 스킬을 사용한 경우.
+              //회전 멈추기
+                myCharacterPunch[characterIdx] = 0f;
+                myCharacterSwing[characterIdx] = 0f;
+                if (skill.AnimMove == 1) { // 근딜 등의 이유로 움직여야 하면 움직인다.
+                    //각각 공격 시, 귀환시 타이밍
+                    if(timing == 2) myCharacterObjEntityUI[characterIdx].transform.position = enemyCharacterInitPosition[enemyIdx];
+                    if (timing == 5) myCharacterObjEntityUI[characterIdx].transform.position = myCharacterInitPosition[characterIdx];
+                }
+
+                int skillIdxTemp = myCharacter[characterIdx].getSkillIdx(skillIdx); //몇번째 스킬인지 확인(skill 자체의 idx가 아니라, 해당 캐릭터의 몇번째 스킬인지 ex - 용사의 2번째 스킬은 idx가 6이지만 1번째 스킬이라 1로 출력된다.)
+                myCharacterObjUIAnim[characterIdx].Play("Skill_" + skillIdxTemp.ToString() + "_" + timing.ToString()); //Skill_(사용하는 스킬의 idx)_(몇번째 애니메이션);
+            }
+            else
+            { //적군이 스킬을 사용한 경우
+
+            }
+        }
+        else //스킬 애니메이션이 필요 없는 경우
+        {
+            if (timing == 0) { 
+            }
+        }
+    }
+
     private void DeadCharacterUpdate(int idx) //캐릭터가 죽을 경우(getcurstate가 2를 반환시) 작동한다. 
         //플레이어 죽음으로 맛있는데! 가 아니라 플레이어 받게 되면 애니메이션은 밖에서 해줌.
     {
@@ -2176,8 +2216,12 @@ public class BattleManager : MonoBehaviour
                     Skill curSkill = myCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
                     
                     characterTargetIdx = 0;
+                    
                     for (int i=0;i<curSkill.getTargetChance();i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
+
+                        //skillAnimationControl(true, i, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+
                         StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
                         yield return new WaitUntil(() => characterTargetIdx == curSkill.getTargetNum()); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
                         characterTargetIdx = -999;
@@ -2645,6 +2689,8 @@ public class BattleManager : MonoBehaviour
             myCharacterShadowObjUI[i] = GameObject.Find("obj_myBattleShadow_" + i.ToString());
             enemyCharacterShadowObjUI[i] = GameObject.Find("obj_enemyBattleShadow_" + i.ToString());
 
+            myCharacterInitPosition[i] = myCharacterObjEntityUI[i].transform.position;
+            enemyCharacterInitPosition[i] = enemyCharacterObjEntityUI[i].transform.position;
 
         }
 

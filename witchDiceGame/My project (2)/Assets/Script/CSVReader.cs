@@ -34,6 +34,8 @@ public class SkillReader
     public int Var1;
     public int Var2;
     public string Command;
+    public int Anim;
+    public int AnimMove;
 }
 
 public class DestinyReader
@@ -69,6 +71,7 @@ public class ItemReader
     public string itemName;
     public string content0, content1, content2;
     public int val0, val1, val2, val3, val4, val5, val6, val7;
+    public int activeTiming;
 }
 
 public class AdventureEventReader

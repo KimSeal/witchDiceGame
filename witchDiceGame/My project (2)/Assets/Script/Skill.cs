@@ -93,7 +93,8 @@ public class Skill
     public int Var1;
     public int Var2;
     public string Command;
-
+    public int Anim;
+    public int AnimMove;
 
     public int skillType=0, damage=5;
     public int atkCh=-1, defCh=-1;
@@ -117,6 +118,9 @@ public class Skill
         this.Var1 = skillReader.Var1;
         this.Var2 = skillReader.Var2;
         this.Command = skillReader.Command;
+
+        this.Anim = skillReader.Anim;
+        this.AnimMove = skillReader.AnimMove;
     }
     public Skill(Skill skillReader)
     {
@@ -137,6 +141,9 @@ public class Skill
         this.Var1 = skillReader.Var1;
         this.Var2 = skillReader.Var2;
         this.Command = skillReader.Command;
+
+        this.Anim = skillReader.Anim;
+        this.AnimMove = skillReader.AnimMove;
     }
 
     //예전 전투 시스템에 사용된것
