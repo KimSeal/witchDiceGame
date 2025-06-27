@@ -333,7 +333,8 @@ public class AdventureManager : MonoBehaviour
             if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
             {
                 diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
-                diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                if(selectDiceCharacterIdx == characterIdx){diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);}
+                else { diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f); };
                 //검정으로 바꾸는 뷰분
             }
             else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }

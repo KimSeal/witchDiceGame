@@ -820,12 +820,17 @@ public class itemManager : MonoBehaviour
     }
 
     //passive Item use function start
-    public bool usePassiveItem(TakeSkillPacket takeSkillPacket, int idx, int[] diceArr)
+    public bool usePassiveItem(TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTiming)
     {
         if (!ItemExistArr[3, idx]) {return false;} // 아이템이 없으면 그냥 스킵
         Item item = ItemArr[3, idx];
         if (item.getVal(0) != takeSkillPacket.getSkillType()) return false; //스킬이 아이템 타입하고 안맞으면 종료 
-        if (!conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) return false; //조건이 안맞으면 return
+        
+        //클릭 이전 타이밍 이면서 주사위 조건이 안맞으면 return
+        if (activeTiming == 0 && !conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) return false;
+        
+        //클릭 이후 대상. 이건 몬스터 정보 같은거도 받아야해서 조건 추가될 예정
+        if (activeTiming == 1 && false) return false;
 
         switch (item.getIdx())
         {
@@ -844,6 +849,8 @@ public class itemManager : MonoBehaviour
             case 7:
                 takeSkillPacket.addVal(item.getVal(3)); break;
             case 8:
+                takeSkillPacket.addVal(item.getVal(3)); break;
+            case 9:
                 takeSkillPacket.addVal(item.getVal(3)); break;
         }
 

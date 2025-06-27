@@ -2039,7 +2039,7 @@ public class BattleManager : MonoBehaviour
     //공격시 애니메이션은 ready_start(공격전 - 수치 검색전)-ready_end(수치 계산 && 타겟팅 대기)
     //                    -atk_ start(타겟후 공격 애니메이션)- -atk_end(다음 공격 대기)
     //                    -return_start(귀환 시작 애니메이션) - return_end(귀환 끝) ->끝나고 idle로 넘어간다.
-    //각각은 0부터 5로 지정.
+    //각각은 1부터 6로 지정.
     private Vector3[] myCharacterInitPosition = new Vector3[4];
     private Vector3[] enemyCharacterInitPosition = new Vector3[4];
 
@@ -2071,14 +2071,17 @@ public class BattleManager : MonoBehaviour
         }
         else //스킬 애니메이션이 필요 없는 경우
         {*/
-            if (timing == 0) //땡기기
+        if ((team && myCharacterAtkReady[characterIdx] == timing - 1) || (!team && enemyCharacterAtkReady[characterIdx] == timing - 1))//실행하려는 애니메이션이 현재 필요한 타이밍이 맞는지 확인
+        {
+            if (timing == 1) //땡기기
             {
                 setCharacterAtkReady(team, characterIdx, 1);
             }
-            if (timing == 2) //놓기
+            if (timing == 3) //놓기
             {
-                setCharacterAtkReady(team, characterIdx, 2);
+                setCharacterAtkReady(team, characterIdx, 3);
             }
+        }
         //}
     }
 
@@ -2182,6 +2185,41 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    bool passiveItemChk = false;
+    private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArr, int [] usedDiceArr, bool updateLook, int itemType) 
+    {
+        passiveItemChk = true;
+        for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
+        {
+            for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
+            { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
+
+                if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 0) & updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
+                {
+                    
+                    //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
+                    GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
+
+                    for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
+                    {
+                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                        + "</size>";
+                        yield return new WaitForSeconds(0.02f);
+                    }
+                    for (int fontSizeIdx = 10; fontSizeIdx > 00; fontSizeIdx--)
+                    {
+                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                        + "</size>";
+                        yield return new WaitForSeconds(0.02f);
+                    }
+                    yield return new WaitForSeconds(0.2f);
+                }
+            }
+        }
+        passiveItemChk = false;
+    }
     private IEnumerator BattlePhase_Coroutine()
     {
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
@@ -2225,52 +2263,48 @@ public class BattleManager : MonoBehaviour
                     Skill curSkill = myCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
                     
                     characterTargetIdx = 0;
+
+                    skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                    yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
                     
+
+                    //타겟이 정해지지 않은 takeSkillPacket 생성.
+                    makeMyDice_BattlePhase(nextDice, curSkill.getNeedDiceNum());
+                    for (int i = 0; i < clickCharacter.Length; i++) clickCharacter[i] = -999;
+                    SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                    takeSkillPacketArr.Clear();
+                    takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                    
+                    //skill기반의 takeSkillPacket의 값 얻고 이벤트 보여주기
+                    // 활성화 보여주고, 클릭 전 패시브 대상으로 하며
+                    
+                    StartCoroutine( passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true, 0));
+                    yield return new WaitUntil(() => !passiveItemChk);
+
                     for (int i=0;i<curSkill.getTargetChance();i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
 
-                        skillAnimationControl(true, 0, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+
+
+                        //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
 
                         StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
                         yield return new WaitUntil(() => characterTargetIdx == curSkill.getTargetNum()); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
                         characterTargetIdx = -999;
 
                         //스킬에 대한 공격용 Packet 생성
-                        makeMyDice_BattlePhase(nextDice, curSkill.getNeedDiceNum() );
-                        SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                        //makeMyDice_BattlePhase(nextDice, curSkill.getNeedDiceNum() );
+                        sendSkillPacketTemp.addClickCharacter(clickCharacter);
+                        //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+
+                        StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false, 0));
+                        yield return new WaitUntil(() => !passiveItemChk);
 
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
-                            int itemUseIdx = 0;
-                            for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
-                            { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
-                                
-                                if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr)) //만약 적용이 된 경우
-                                {
-
-                                    SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
-                                    GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
-
-                                    for (int fontSizeIdx=0; fontSizeIdx < 10; fontSizeIdx++) {
-                                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx*2) + ">" +
-                                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                                        + "</size>";
-                                        yield return new WaitForSeconds(0.02f);
-                                    }
-                                    for (int fontSizeIdx = 10; fontSizeIdx > 00; fontSizeIdx--)
-                                    {
-                                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx*2) + ">" +
-                                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                                        + "</size>";
-                                        yield return new WaitForSeconds(0.02f);
-                                    }
-                                    yield return new WaitForSeconds(0.2f);
-                                }
-                            }
-
 
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
@@ -2333,7 +2367,9 @@ public class BattleManager : MonoBehaviour
                             updateMyDiceUI();
                             updateBattleUI();
                         }
-                        skillAnimationControl(true, 2, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                        skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                        yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
+
 
                         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
@@ -2815,7 +2851,7 @@ public class BattleManager : MonoBehaviour
             myCharacterAtkReady[idx] = changeVal;
         }
         else { 
-            enemyCharacterAtkReady[idx] = changeVal;;
+            enemyCharacterAtkReady[idx] = changeVal;
         }
     }
 
@@ -2838,16 +2874,18 @@ public class BattleManager : MonoBehaviour
                     if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
                     if (myCharacterSwing[i] > 0) myCharacterSwing[i] -= swingDescVal(myCharacterSwing[i]);//0.005f;
                 }
-                else if (myCharacterAtkReady[i] == 1){ //공격 준비 상태인경우
+                else if (myCharacterAtkReady[i] == 1 || myCharacterAtkReady[i] == 2){ //공격 준비 상태인경우
                     //각도따라 수구리 다르게
                     if (myCharacterPunch[i] <= 0.4f) myCharacterPunch[i] += 0.1f;
                     else if (myCharacterPunch[i] >= 1.5f) myCharacterPunch[i] += 0.1f;
                     else if (myCharacterPunch[i] >= 0.6f) myCharacterPunch[i] -= 0.1f;
                     if (myCharacterPunch[i] >= 2) myCharacterPunch[i] -= 2.0f;
 
+                    if (myCharacterPunch[i] > 0.4f && myCharacterPunch[i] < 0.6f) myCharacterAtkReady[i] = 2; // 당기기 끝난다는 거 체크
+
                     if (myCharacterSwing[i] < 0.75f) myCharacterSwing[i] += 0.05f; //당기는 정도
                 }
-                else if (myCharacterAtkReady[i] == 2)
+                else if (myCharacterAtkReady[i] == 3)
                 { //공격 준비 상태인경우
                     //각도따라 수구리 다르게
                     if (myCharacterPunch[i] <= 1.2f) myCharacterPunch[i] += 0.3f;

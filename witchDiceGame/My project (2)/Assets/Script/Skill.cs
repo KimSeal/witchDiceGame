@@ -30,6 +30,12 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
             }
         }
     }
+    public void addClickCharacter(int[] characterArr)
+    {
+        for (int i = 0; i < targetIdx.Length; i++) { 
+            targetIdx[i] = characterArr[i];
+        }
+    }
     
 }
 public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
