@@ -563,11 +563,7 @@ public class AdventureManager : MonoBehaviour
                     }
                     battleBtn.transform.position = nextBtnObj.transform.position;
                     battleEventTrigger = true;
-                    /*CharacterManager.Instance.setCharacter(0, curDiceEventPacket.getVal(0));
-                    CharacterManager.Instance.setCharacter(1, curDiceEventPacket.getVal(1));
-                    CharacterManager.Instance.setCharacter(2, curDiceEventPacket.getVal(2));
-                    CharacterManager.Instance.setCharacter(3, curDiceEventPacket.getVal(3));
-                    */
+
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
 
                     if (selectDiceCharacterIdx == -1 || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)

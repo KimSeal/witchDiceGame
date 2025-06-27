@@ -2284,8 +2284,6 @@ public class BattleManager : MonoBehaviour
                     for (int i=0;i<curSkill.getTargetChance();i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
 
-
-
                         //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
 
                         StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
@@ -2370,6 +2368,10 @@ public class BattleManager : MonoBehaviour
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
 
+                        if (i + 1 < curSkill.getTargetChance()) { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
+                            skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                            yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
+                        }
 
                         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
@@ -2408,6 +2410,10 @@ public class BattleManager : MonoBehaviour
                     int skillUseCharacter = nextSkill / 10;
                     int skillUseIdx = nextSkill % 10;
                     Skill curSkill = enemyCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
+
+                    skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                    yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
+                    yield return new WaitForSeconds(0.2f);
 
                     jsonDataManager.Instance.meetMonsterSkill(enemyCharacter[skillUseCharacter].getDestiny().DestinyIdx, skillUseIdx);
                     
@@ -2483,6 +2489,15 @@ public class BattleManager : MonoBehaviour
                             updateHp();
                             updateEnemyDiceUI();
                             updateBattleUI();
+                        }
+                        skillAnimationControl(false, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                        yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 0);
+
+                        if (i + 1 < curSkill.getTargetChance())
+                        { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
+                            yield return new WaitForSeconds(0.2f);
+                            skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                            yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
                         }
 
                     }
@@ -2861,7 +2876,6 @@ public class BattleManager : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-
                 myCharacterObjEntityUI[i].transform.position = new Vector3(
                         myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
                         myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
@@ -2896,34 +2910,49 @@ public class BattleManager : MonoBehaviour
                         myCharacterAtkReady[i] = 0;
                     }
                 }
-
-
-
             }
+            
             for (int i = 0; i < 4; i++)
             {
+
                 enemyCharacterObjEntityUI[i].transform.position = new Vector3(
-                    enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
-                    enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
+                        enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
+                        enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
 
                 enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
-                if (enemyCharacterAtkReady[i] ==0) //공격 준비 상태가 아닌경우 
+
+                if (enemyCharacterAtkReady[i] == 0) //공격 준비 상태가 아닌경우 
                 {
-                    
                     enemyCharacterPunch[i] += 0.05f;
                     if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
                     if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= swingDescVal(enemyCharacterSwing[i]);//0.005f;
                 }
-                else if (enemyCharacterAtkReady[i] == 1)
+                else if (enemyCharacterAtkReady[i] == 1 || enemyCharacterAtkReady[i] == 2)
                 { //공격 준비 상태인경우
                     //각도따라 수구리 다르게
                     if (enemyCharacterPunch[i] <= 0.4f) enemyCharacterPunch[i] += 0.1f;
                     else if (enemyCharacterPunch[i] >= 1.5f) enemyCharacterPunch[i] += 0.1f;
-                    else if (enemyCharacterPunch[i] >= 0.6f) enemyCharacterPunch[i] -= 0.5f;
+                    else if (enemyCharacterPunch[i] >= 0.6f) enemyCharacterPunch[i] -= 0.1f;
                     if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
 
-                    if (enemyCharacterSwing[i] < 0.75f) enemyCharacterSwing[i] += 0.005f; //당기는 정도
+                    if (enemyCharacterPunch[i] > 0.4f && enemyCharacterPunch[i] < 0.6f) enemyCharacterAtkReady[i] = 2; // 당기기 끝난다는 거 체크
+
+                    if (enemyCharacterSwing[i] < 0.75f) enemyCharacterSwing[i] += 0.05f; //당기는 정도
                 }
+                else if (enemyCharacterAtkReady[i] == 3)
+                { //공격 준비 상태인경우
+                    //각도따라 수구리 다르게
+                    if (enemyCharacterPunch[i] <= 1.2f) enemyCharacterPunch[i] += 0.3f;
+                    else if (enemyCharacterPunch[i] >= 1.8f) enemyCharacterPunch[i] -= 0.3f;
+                    else
+                    {
+                        enemyCharacterPunch[i] = 1.5f;
+                        enemyCharacterAtkReady[i] = 0;
+                    }
+                }
+
+
+
             }
         }
     }
@@ -2948,6 +2977,8 @@ public class BattleManager : MonoBehaviour
         {
             changeDiceState(i, 0);
             changeDiceState(i+4, 0);
+            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }
         adventureStartChk = true;
         StartCoroutine(phase_Manage_Coroutine());
