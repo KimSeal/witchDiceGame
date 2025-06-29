@@ -2312,27 +2312,28 @@ public class BattleManager : MonoBehaviour
                                     
                                     GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0,45,0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                }
-                                
-                                if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
-                                {
-                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    battleAnimationControl(tempTargetIdx, 2);
-                                    DeadCharacterUpdate(tempTargetIdx);
-                                    updateMyDiceUI();
-                                }
-                                else
-                                {
-                                    //주사위 상태 변화 실행
-                                    
-                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                    
-                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
-                                    {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                    {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        battleAnimationControl(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 2);
+                                        DeadCharacterUpdate(tempTargetIdx);
+                                        updateMyDiceUI();
+                                    }
+                                    else
+                                    {
+                                        //주사위 상태 변화 실행
+
+                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+
+                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            battleAnimationControl(tempTargetIdx, 1);
+                                        }
                                     }
                                 }
+                                
+                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
@@ -2342,24 +2343,25 @@ public class BattleManager : MonoBehaviour
                                     
                                     GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                }
-
-                                if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
-                                {
-                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    battleAnimationControl(tempTargetIdx, 2);
-                                    DeadCharacterUpdate(tempTargetIdx);
-                                    updateEnemyDiceUI();
-                                }
-                                else
-                                {
-                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
-                                    { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                    {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        battleAnimationControl(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 2);
+                                        DeadCharacterUpdate(tempTargetIdx);
+                                        updateEnemyDiceUI();
+                                    }
+                                    else
+                                    {
+                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            battleAnimationControl(tempTargetIdx, 1);
+                                        }
                                     }
                                 }
+
+                                
                             }
                             updateHp();
                             updateMyDiceUI();
@@ -2444,22 +2446,24 @@ public class BattleManager : MonoBehaviour
                                 {
                                     GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                }
-                                if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
-                                {
-                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    battleAnimationControl(tempTargetIdx, 2);
-                                    DeadCharacterUpdate(tempTargetIdx);
-                                }
-                                else
-                                {
-                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
-                                    { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    //사망 아닐시
+                                    if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                    {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        battleAnimationControl(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 2);
+                                        DeadCharacterUpdate(tempTargetIdx);
+                                    }
+                                    else // 사망일시
+                                    {
+                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            battleAnimationControl(tempTargetIdx, 1);
+                                        }
                                     }
                                 }
+                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
@@ -2467,23 +2471,25 @@ public class BattleManager : MonoBehaviour
                                 {
                                     GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                }
-
-                                if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
-                                {
-                                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    battleAnimationControl(tempTargetIdx, 2);
-                                    DeadCharacterUpdate(tempTargetIdx);
-                                }
-                                else
-                                {
-                                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
-                                    { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                    //사망한경우
+                                    if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                    {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        battleAnimationControl(tempTargetIdx, 1);
+                                        battleAnimationControl(tempTargetIdx, 2);
+                                        DeadCharacterUpdate(tempTargetIdx);
+                                    }
+                                    else //사망 하지 않은 경우
+                                    {
+                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            battleAnimationControl(tempTargetIdx, 1);
+                                        }
                                     }
                                 }
+
+                                
 
                             }
                             updateHp();
