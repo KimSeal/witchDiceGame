@@ -46,8 +46,8 @@ public class AdventureManager : MonoBehaviour
 
     private int eventWatchNum = 0; //이벤트 선택지 볼때 쓰는 숫자
     private int selectDiceNum = -1; //현재 선택된 주사위
-    private int[] adventureEventArr = new int[21]; //앞으로 남은 이벤트들에 대한 정보
-    private int[] adventureEventArr_Y = new int[21]; // 이벤트 들이 위치할 곳에 대한 세로축 정보
+    private int[] adventureEventArr = new int[10001]; //앞으로 남은 이벤트들에 대한 정보
+    private int[] adventureEventArr_Y = new int[10001]; // 이벤트 들이 위치할 곳에 대한 세로축 정보
     //전투 : 0  주사위 굴리기 이벤트 : 1 
 
 
@@ -236,7 +236,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 20;//i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 23;//i; // 이부분 조정해서 맵 테스트 진행
         }
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
@@ -299,6 +299,7 @@ public class AdventureManager : MonoBehaviour
             else
             {
                 balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 290 + adventureEventArr_Y[stageIdx + i] * 10, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
+                Debug.Log(adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());
                 balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
             }
         }
@@ -356,7 +357,8 @@ public class AdventureManager : MonoBehaviour
         SoundManager_Main.Instance.playSound(2);
 
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
-        while (stageIdx < 20 && !gameOverChk)
+        while (//stageIdx < 20 &&
+               !gameOverChk)
         {
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
@@ -387,6 +389,10 @@ public class AdventureManager : MonoBehaviour
                 else
                 {
                     balpanObj[i].transform.position = new Vector3(-620 + (i * 40), -1 * 10 + adventureEventArr_Y[stageIdx + i] * 10, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
+                    Debug.Log(stageNum);
+                    Debug.Log(adventureEventArr[stageIdx + i]);
+                    Debug.Log(adventureEventList[stageNum].Count);
+                    Debug.Log(adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
 
                     GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect

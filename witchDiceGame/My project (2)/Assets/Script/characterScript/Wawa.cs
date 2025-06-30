@@ -31,7 +31,7 @@ public class Wawa : Character
 
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 0) //와와 기본 스킬
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 6, 2)); //스킬을 사용한 대상에게 / 0변화 / 상태변화를 현재 주사위 값으로 / 스킬은 버프류
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 6, 2)); //스킬을 사용한 대상에게 / 0변화 / 상태변화를 6으로 / 스킬은 버프류
         }
 
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1) //와와 특수 스킬(스킬기억)

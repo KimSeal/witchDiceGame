@@ -19,6 +19,9 @@ public class SkillReader
 {
     public int SkillIdx;
     public string SkillName;
+
+    public int SpecialVal;
+
     public int NeedDiceNum;
     public int NeedDice0;
     public int NeedDice1;
@@ -36,6 +39,8 @@ public class SkillReader
     public string Command;
     public int Anim;
     public int AnimMove;
+
+    
 }
 
 public class DestinyReader

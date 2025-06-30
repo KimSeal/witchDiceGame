@@ -104,7 +104,7 @@ public class Skill
 
     public int skillType=0, damage=5;
     public int atkCh=-1, defCh=-1;
-
+    public int SpecialVal;
     public Skill(SkillReader skillReader)
     {
        this.SkillIdx = skillReader.SkillIdx;
@@ -127,6 +127,7 @@ public class Skill
 
         this.Anim = skillReader.Anim;
         this.AnimMove = skillReader.AnimMove;
+        this.SpecialVal = skillReader.SpecialVal;
     }
     public Skill(Skill skillReader)
     {
@@ -150,6 +151,7 @@ public class Skill
 
         this.Anim = skillReader.Anim;
         this.AnimMove = skillReader.AnimMove;
+        this.SpecialVal = skillReader.SpecialVal;
     }
 
     //예전 전투 시스템에 사용된것
@@ -181,7 +183,7 @@ public class Skill
     {
         return ((int)this.TargetChance);
     }
-
+    public int getSpecialVal() { return this.SpecialVal; }
     public int getTargetTeam()
     {
         return this.TargetTeam;

@@ -29,11 +29,15 @@ public class WolfQueen : Character
   
         //if (this.destiny.getDestinyIdx() == 0)
         //{
-            if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
-            {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getSkillVal(1, 0), 6, 2)); //자신에게 공격력 추가    
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.phyAtk, 0)); //한명에게 주사위 * 공격력 데미지
-            }
+        if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        {
+                //packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getSkillVal(1, 0), 6, 2)); //자신에게 공격력 추가    
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.phyAtk, 0)); //한명에게 주사위 * 공격력 데미지
+            if(Random.Range(0,2) == 0) packets.Add(new TakeSkillPacket(4, 0, Random.Range(0, 3) * 2 + 1, 2));
+            if (Random.Range(0, 2) == 0) packets.Add(new TakeSkillPacket(5, 0, Random.Range(0, 3) * 2 + 1, 2));
+            if (Random.Range(0, 2) == 0) packets.Add(new TakeSkillPacket(6, 0, Random.Range(0, 3) * 2 + 1, 2));
+            if (Random.Range(0, 2) == 0) packets.Add(new TakeSkillPacket(7, 0, Random.Range(0, 3) * 2 + 1, 2));
+        }
         if (sendSkillPacket.useSkillIdx == 1) //전체 공격력 상승
         {
             packets.Add(new TakeSkillPacket(4, this.getSkillVal(1,0), 0, 2)); //자신에게 공격력 추가

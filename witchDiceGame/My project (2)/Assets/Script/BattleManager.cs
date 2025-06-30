@@ -156,8 +156,18 @@ public class BattleManager : MonoBehaviour
     GameObject[] equipDescBox_info = new GameObject[2];
     GameObject[] equipDescBox_image = new GameObject[2];
 
-    
-    
+
+    public Character getCharacter(int a) {
+        if(a<4) return myCharacter[a];
+        a -= 4;
+        return enemyCharacter[a];
+    }
+    public int getDiceNum(int a)
+    {
+        if (a < 4) return myDiceNum[a];
+        a -= 4;
+        return enemyDiceNum[a];
+    }
 
     int curSelectInfo = 0;
     int hoverCharacterIdx = -1;
@@ -516,22 +526,34 @@ public class BattleManager : MonoBehaviour
                 liveCharacterList.Add(i);
             }
         }
-
+        Debug.Log("add skill List");
         for (int i=0;i<8;i++)
         {
             if (enemySkillDiceNum[i] != -999)
             {
-                liveSkillList.Add(i); ;
                 
+                Debug.Log(i);
+                liveSkillList.Add(i); ;
             }
-            
         }
 
         for (int skillIdx0=liveSkillList.Count-1; skillIdx0>=0;skillIdx0--)
         {
+            //특수 변수 확인
+            int characterIdxTemp = liveSkillList[skillIdx0] % 4;
+            int skillIdxTemp = liveSkillList[skillIdx0] / 4;
+            Debug.Log("skill Special Chk");
+            Debug.Log(characterIdxTemp + " / " + skillIdxTemp);
+            //만약 special한 공격이고(스택사용)
+            if (enemyCharacter[characterIdxTemp].getCharacter_battle().getSpecialVal() != enemyCharacter[characterIdxTemp].skillUse(skillIdxTemp).getSpecialVal()) //만약 조건하고 다른경우 건너뛴다.
+            {
+                continue;
+            }
+
             int skillIdx = liveSkillList[skillIdx0];
             for (int diceIdx=0; diceIdx <= liveCharacterList.Count - enemySkillDiceNum[skillIdx]; diceIdx++)
-            {   
+            {
+                
                 //필요 주사위가 1칸인 경우
                 if (enemySkillDiceNum[skillIdx] == 1)
                 {
@@ -1680,7 +1702,9 @@ public class BattleManager : MonoBehaviour
         if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
             curPhase = -999;
-            StartCoroutine(MoveUI(diceFullUI, 33.0f));
+            //StartCoroutine(MoveUI(diceFullUI, 33.0f));
+            StartCoroutine(MoveUI(diceFullUI, 50.0f));
+
             StartCoroutine(MoveUI(backGroundObj[0], -16.0f)); // 78f : skillSelect  62f: battle
             StartCoroutine(makeBright(backGroundObj[0], 0.0f));
             //StartCoroutine(MoveUI(backGroundObj[1], 10.0f));
@@ -2725,11 +2749,17 @@ public class BattleManager : MonoBehaviour
         //
 
         
+
+
         skillSelectDescUI[0] = GameObject.Find("battle_skill_skillImage_selected"); //스킬 이미지
         skillSelectDescUI[1] = GameObject.Find("battle_skill_selected_exp"); //텍스트
         skillSelectDescUI[6] = GameObject.Find("battle_skill_selected_title"); //스킬 명
         for (int i=0;i<4;i++)
         {
+            myCharacterSwing[i] = 0;
+            enemyCharacterSwing[i] = 0;
+            myCharacterPunch[i] = 0;
+            enemyCharacterPunch[i] = 0;
             for (int j = 0; j < 2; j++)
             {
                 Debug.Log("obj_myCharacter_fire_" + i.ToString() + j.ToString());
@@ -2882,6 +2912,12 @@ public class BattleManager : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
+                Debug.Log("bug test");
+                Debug.Log(myCharacterPosition[i].x);
+                Debug.Log(myCharacterSwing[i]);
+                Debug.Log(myCharacterPunch[i]);
+                if (myCharacterSwing[i] < 0.0) myCharacterSwing[i] = 0.0f;
+                Debug.Log(myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i]));
                 myCharacterObjEntityUI[i].transform.position = new Vector3(
                         myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
                         myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
@@ -2920,7 +2956,7 @@ public class BattleManager : MonoBehaviour
             
             for (int i = 0; i < 4; i++)
             {
-
+                if (enemyCharacterSwing[i] < 0.0) enemyCharacterSwing[i] = 0.0f;
                 enemyCharacterObjEntityUI[i].transform.position = new Vector3(
                         enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
                         enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
@@ -2966,6 +3002,7 @@ public class BattleManager : MonoBehaviour
     {
         if (damage > 1000) damage = 1000;
         float temp = Mathf.Sqrt(damage / 1000.0f);
+        if(damage == 0) temp = 0; 
         if (idx < 4)
         {
             myCharacterPunch[idx] = 0;

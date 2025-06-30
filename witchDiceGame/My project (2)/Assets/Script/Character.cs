@@ -8,12 +8,14 @@ public class Character_battle{
     private int armor;
     private int diceState;
     private int characterState;
+    private int specialVal = 0;
     public Character_battle()
     {
         originIdx = -999;
         atk = 0;
         armor = 0;
         diceState = 0;
+        specialVal = 0;
     }
 
     public int getDiceState()
@@ -40,6 +42,14 @@ public class Character_battle{
     public int getArmor()
     {
         return armor;
+    }
+    public int getSpecialVal()
+    {
+        return specialVal;
+    }
+    public void setSpecialVal(int a)
+    {
+        specialVal = a;
     }
 
     public void upgrade(int idx, int val)
@@ -286,6 +296,10 @@ public abstract class Character
         {
             this.character_battle.upgrade(2, takeSkillPacket.getVal());
             return false;
+        }
+        else if (takeSkillPacket.getSkillType() == 3) //특수 변수 변화인경우
+        {
+            this.character_battle.setSpecialVal(takeSkillPacket.getVal()); // 변수를 해당 값으로 변화시킨다.
         }
         return false;
     }
