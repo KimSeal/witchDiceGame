@@ -20,6 +20,8 @@ public class BattleManager : MonoBehaviour
     public GameObject passiveEffObj;
     [SerializeField]
     public GameObject diceRollEff;
+    [SerializeField]
+    public GameObject hitEff;
 
     public int chooseDiceIdx;
 
@@ -2244,6 +2246,10 @@ public class BattleManager : MonoBehaviour
         }
         passiveItemChk = false;
     }
+    private void makeHitEffect(int tempTargetIdx)
+    {
+        Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+    }
     private IEnumerator BattlePhase_Coroutine()
     {
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
@@ -2260,6 +2266,7 @@ public class BattleManager : MonoBehaviour
                     nextSkill = myDiceTake[nextDice];
                     yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
                     Debug.Log("My Skill Use : " + clickDice_battlePhase.ToString());
+
 
                     /*
                     이후 passive 아이템 사용을 위해 사용된 주사위를 받아두기 위함.
@@ -2339,6 +2346,7 @@ public class BattleManager : MonoBehaviour
                                     if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                        makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                         updateMyDiceUI();
@@ -2352,6 +2360,7 @@ public class BattleManager : MonoBehaviour
                                         if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                         {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            makeHitEffect(tempTargetIdx);
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -2370,6 +2379,7 @@ public class BattleManager : MonoBehaviour
                                     if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                        makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                         updateEnemyDiceUI();
@@ -2380,6 +2390,7 @@ public class BattleManager : MonoBehaviour
                                         if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            makeHitEffect(tempTargetIdx);
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -2387,6 +2398,9 @@ public class BattleManager : MonoBehaviour
 
                                 
                             }
+                            
+
+
                             updateHp();
                             updateMyDiceUI();
                             updateBattleUI();
@@ -2474,6 +2488,7 @@ public class BattleManager : MonoBehaviour
                                     if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                        makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                     }
@@ -2483,6 +2498,7 @@ public class BattleManager : MonoBehaviour
                                         if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            makeHitEffect(tempTargetIdx);
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -2499,6 +2515,7 @@ public class BattleManager : MonoBehaviour
                                     if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                        makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                     }
@@ -2508,6 +2525,7 @@ public class BattleManager : MonoBehaviour
                                         if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                            makeHitEffect(tempTargetIdx);
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -2642,42 +2660,54 @@ public class BattleManager : MonoBehaviour
         //적군 전멸
         else if (result == 1)
         {
-            itemManager.Instance.endOfBattlePhase();
-            yield return new WaitForSeconds(0.5f);
-            for (int i=0;i<4;i++)
+
+            if (false)
             {
-                myHpUI[i].GetComponent<TextMeshPro>().text = "";
-                enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
-            }
-
-            //랜덤 아이템 배정하고 출력
-            makeRandomResult();
-            for (int i = 0; i < 3; i++) printRandomResult(i, false);
-            
-            resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
-
-            CharacterManager.Instance.character_reset();
-            for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
-            {
-                if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
-                if (myCharacter[i].getCharacter_battle().getOriginIdx() >= 0 && myCharacter[i].getCharacter_battle().getOriginIdx() <= 3)
-                {
-                    CharacterManager.Instance.character_battleEnd_deepCopy(myCharacter[i].getCharacter_battle().getOriginIdx(), myCharacter[i]);
-                }
-            }
-
-
-            Debug.Log("you win!");
-            bosang_click = true;
-            yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
-            while (!AdventureManager.Instance.exitBattleCanvas(true)){
+                itemManager.Instance.endOfBattlePhase();
                 yield return new WaitForSeconds(0.5f);
+                for (int i = 0; i < 4; i++)
+                {
+                    myHpUI[i].GetComponent<TextMeshPro>().text = "";
+                    enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
+                }
+
+                //랜덤 아이템 배정하고 출력
+                makeRandomResult();
+                for (int i = 0; i < 3; i++) printRandomResult(i, false);
+
+                resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
+
+                CharacterManager.Instance.character_reset();
+                for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
+                {
+                    if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
+                    if (myCharacter[i].getCharacter_battle().getOriginIdx() >= 0 && myCharacter[i].getCharacter_battle().getOriginIdx() <= 3)
+                    {
+                        CharacterManager.Instance.character_battleEnd_deepCopy(myCharacter[i].getCharacter_battle().getOriginIdx(), myCharacter[i]);
+                    }
+                }
+
+
+                Debug.Log("you win!");
+                bosang_click = true;
+                yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                while (!AdventureManager.Instance.exitBattleCanvas(true))
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+
+
+                resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
             }
+            else {
+                curPhase = 1;
+                setEnemyCharacter(1, 10013);
 
-
-            resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
-
-            
+                /*CharacterManager.Instance.emptyEnemyCharacter(1);
+                CharacterManager.Instance.setCharacter(1, 10013);
+                Start_Battle_Phase();
+                */
+            }
             
         }
         //전투 지속 필요
@@ -3136,7 +3166,7 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                myDice[i] = null;
+                enemyDice[i] = null;
                 enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             //어군
@@ -3233,6 +3263,26 @@ public class BattleManager : MonoBehaviour
         curPhase = 1;
         
     }
+    public void setEnemyCharacter(int placeIdx, int characterIdx)
+    {
+        CharacterManager.Instance.emptyEnemyCharacter(placeIdx);
 
+        CharacterManager.Instance.setCharacter(placeIdx, characterIdx); //캐릭터 세팅
+        CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
+
+        enemyDice[placeIdx] = new Dice();
+        enemyDiceUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+
+        //캐릭터 세팅을 반영
+        string temp = enemyCharacter[placeIdx].getDestiny().getName();
+        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+        enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[placeIdx].getShadow().ToString());
+
+        enemyCharacterObjUIAnim[placeIdx].Play("Create");
+
+        updateHp();
+        InitSetOfEnemySkill();
+        updateInfoUIFaceUpdate();
+    }
    
 }

@@ -230,23 +230,49 @@ public class AdventureManager : MonoBehaviour
 
     }
 
+    public void randomMake(int start, int end) //이 중간에 있는 stage를 섞는다
+    {
+        for (int i = end; i > start; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
+        {
+            int j = Random.Range(start, i + 1);
+
+            int temp = adventureEventArr[i];
+            adventureEventArr[i] = adventureEventArr[j];
+            adventureEventArr[j] = temp;
+        }
+    }
     public void makeStageEventArr(int stageNum) //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
     {
         // stage 순서를 랜덤으로 만든다.
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 23;//i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 30;//i; // 이부분 조정해서 맵 테스트 진행
         }
+        int EndPoint = adventureEventArr.Length - 1;
+
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
+            //레벨이 달리지는경우 혹은 
+            if (i == 1 || adventureEventList[stageNum][i].getLevel() != adventureEventList[stageNum][i - 1].getLevel())
+            {
+                randomMake(i, EndPoint);
+                EndPoint = i - 1;
+            }
+            /*
             int j = Random.Range(0, i + 1);
 
             int temp = adventureEventArr[i];
             adventureEventArr[i] = adventureEventArr[j];
             adventureEventArr[j] = temp; 
+            */
         }
-
+        Debug.Log("randomTest!");
+        for (int i = 0; i < adventureEventArr.Length; i++) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
+        {
+            Debug.Log(adventureEventArr[i]);
+        }
+        Debug.Log("randomTest Over!");
     }
     private void makeStage_placeBalpan()
     {

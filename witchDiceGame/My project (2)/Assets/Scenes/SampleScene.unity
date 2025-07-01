@@ -36101,6 +36101,7 @@ MonoBehaviour:
   damageTextObj: {fileID: 1058357996364317459, guid: 92ab5ec91699f994181d0ee171015180, type: 3}
   passiveEffObj: {fileID: 2081603705384473503, guid: 3b94cc63ead36f1419cdd668bddfc75d, type: 3}
   diceRollEff: {fileID: 587083212400032754, guid: cb2c4f34418ad9c43871fc0ece915558, type: 3}
+  hitEff: {fileID: 2081603705384473503, guid: 3ad585fb8168f9848aa6200c1be26f2f, type: 3}
   chooseDiceIdx: 0
   firstAttackTeam: 1
   clickState: 0
@@ -63497,6 +63498,7 @@ MonoBehaviour:
   damageTextObj: {fileID: 0}
   passiveEffObj: {fileID: 0}
   diceRollEff: {fileID: 0}
+  hitEff: {fileID: 0}
   chooseDiceIdx: 0
   firstAttackTeam: 1
   clickState: 0

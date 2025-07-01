@@ -886,8 +886,8 @@ public class itemManager : MonoBehaviour
         int result = 0;
         if (opt == 0) return arr[1] + arr[3] + arr[5] + arr[2] + arr[4] + arr[6];
         if (opt > 0 && opt <= 6) return arr[opt];
-        if(opt == 7) return arr[1] + arr[3] + arr[5];
-        if (opt == 8) return arr[2] + arr[4] + arr[6];
+        if(opt == 7) return arr[1] + arr[3] + arr[5]; //홀수
+        if (opt == 8) return arr[2] + arr[4] + arr[6]; //짝수
         if(opt >= 11 && opt <= 16) {    //이하
             for (int i=1;i<=opt%10;i++) {result += arr[i];} //1부터 해당 값 도달할때 까지
             return result;
