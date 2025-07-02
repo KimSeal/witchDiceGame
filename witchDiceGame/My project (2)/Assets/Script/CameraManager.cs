@@ -39,6 +39,13 @@ public class CameraManager : MonoBehaviour
     public void VibrateForeTime(float time) {
         Debug.Log("camera Shake");
         ShakeTime = time;
+        ShakeAmount = 0.0f;
+    }
+    public void VibrateForeTime(float time, float power)
+    {
+        Debug.Log("camera Shake");
+        ShakeTime = time;
+        ShakeAmount = power * 2;
     }
     public int pixelWidth = 384;  // 낮은 해상도 너비
     public int pixelHeight = 216;  // 낮은 해상도 높이
@@ -51,6 +58,7 @@ public class CameraManager : MonoBehaviour
         initialPosition = transform.position;
         ZoomTime = -1f;
         loseUI = GameObject.Find("obj_ui_lose");
+        
     }
 
     int tempSize;
