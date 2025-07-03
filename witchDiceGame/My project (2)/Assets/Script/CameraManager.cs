@@ -39,7 +39,7 @@ public class CameraManager : MonoBehaviour
     public void VibrateForeTime(float time) {
         Debug.Log("camera Shake");
         ShakeTime = time;
-        ShakeAmount = 0.0f;
+        ShakeAmount = 0.1f;
     }
     public void VibrateForeTime(float time, float power)
     {

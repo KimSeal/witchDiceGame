@@ -90,6 +90,8 @@ public class AdventureManager : MonoBehaviour
     private GameObject nextBtnObj;
     private GameObject standObj;
 
+    private ParticleSystem diceBtnFire;
+
     private bool eventEndClick = false; //이벤트를 넘어갈 수 있는 경우, true가 된다.
 
     private bool clickAble = false;
@@ -149,7 +151,8 @@ public class AdventureManager : MonoBehaviour
         descObj[3] = GameObject.Find("obj_ui_adventure_item_Desc_desc");
         descObj[0].SetActive(false);
 
-
+        diceBtnFire = GameObject.Find("adventure_nextBtn_0_fire").GetComponent<ParticleSystem>();
+        diceBtnFire.Stop();
         for (int i = 0; i < 4; i++)
         {
             diceObject[i] = GameObject.Find("adventure_dice_" + i.ToString());
@@ -381,7 +384,7 @@ public class AdventureManager : MonoBehaviour
         resultObj.SetActive(false);
 
         SoundManager_Main.Instance.playSound(2);
-
+        diceBtnFire.Stop();
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (//stageIdx < 20 &&
                !gameOverChk)
@@ -433,7 +436,9 @@ public class AdventureManager : MonoBehaviour
             }
             balpanArrow.transform.position = balpanObj[0].transform.position + new Vector3(0, 8, 0);
             clickAble = true;
+            diceBtnFire.Play();
             yield return new WaitUntil(() => selectDiceNum > 0);
+            diceBtnFire.Stop();
 
             Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
             loadEnd = false;
@@ -513,15 +518,15 @@ public class AdventureManager : MonoBehaviour
                 }
                 else if (curDiceEvent.getDiceUse() == 1)//고를 수 있는 상태로 변경
                 {
+                    diceBtnFire.Play();
                     selectDiceNum = -1;
                 }
-                Debug.Log("selectDice Error check " + selectDiceNum);
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
+                diceBtnFire.Stop();
 
                 adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
                 yield return new WaitUntil(() => loadEnd);
-                Debug.Log("selectDice Error check2 " + selectDiceNum);
 
                 eventWatchTrigger = false;
                 for (int i = 0; i < 6; i++)
@@ -780,11 +785,12 @@ public class AdventureManager : MonoBehaviour
             eventEndClick = false;
             return;
         }
+        //클릭 부분 확인
+        diceBtnFire.Play(true);
         if (selectDiceNum == -1 && characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
             if (selectDiceCharacterIdx >=0)
             {
 
-                
                 characterIdx = selectDiceCharacterIdx;
                 Debug.Log("test ! : " + characterIdx);
                 CharacterManager.Instance.throwDice(characterIdx);
