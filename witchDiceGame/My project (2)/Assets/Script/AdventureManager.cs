@@ -91,6 +91,7 @@ public class AdventureManager : MonoBehaviour
     private GameObject standObj;
 
     private ParticleSystem diceBtnFire;
+    private GameObject lifeObj, lifeObj_back;
 
     private bool eventEndClick = false; //이벤트를 넘어갈 수 있는 경우, true가 된다.
 
@@ -144,6 +145,13 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        lifeObj = GameObject.Find("obj_life");
+        lifeObj_back = GameObject.Find("obj_life_back");
+
+        lifeObj.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 0f);
+        lifeObj_back.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 0f);
+
+        lifeObj.SetActive(false);
 
         descObj[0] = GameObject.Find("obj_ui_adventure_item_Desc_board");
         descObj[1] = GameObject.Find("obj_ui_adventure_item_Desc_logo");
@@ -250,7 +258,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 30;//i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 4;//i; // 이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -375,7 +383,9 @@ public class AdventureManager : MonoBehaviour
     {
         gameOverChk = false;
         stageNum = 0;
-        makeStageEventArr(0); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
+        
+        
+        makeStageEventArr(stageNum); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         makeStage_placeBalpan(); // 스테이지에 맞춰 발판 생성
         stageIdx = -1;
         updateCharacterFace();
@@ -384,6 +394,31 @@ public class AdventureManager : MonoBehaviour
         resultObj.SetActive(false);
 
         SoundManager_Main.Instance.playSound(2);
+        //스테이지 시작시 나오는 인생 이미지 종료
+        lifeObj.SetActive(true);
+        lifeObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/lifeImage/spr_life_" + stageNum.ToString());
+        float lifeAlpha = 0.0f;
+
+        while (lifeAlpha < 1.0f)
+        {
+            lifeAlpha += 0.1f;
+            lifeObj.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, lifeAlpha);
+            lifeObj_back.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, lifeAlpha);
+            yield return new WaitForSeconds(0.05f);
+        }
+        TalkManager.Instance.startTalk(1);
+        yield return new WaitForSeconds(2.0f);
+        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+        while (lifeAlpha > 0.0f)
+        {
+            lifeAlpha -= 0.1f;
+            lifeObj.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, lifeAlpha);
+            lifeObj_back.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, lifeAlpha);
+            yield return new WaitForSeconds(0.05f);
+        }
+        lifeObj.SetActive(false);
+        // 스테이지 시작시 나오는 인생 이미지 종료
         diceBtnFire.Stop();
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (//stageIdx < 20 &&
@@ -418,10 +453,7 @@ public class AdventureManager : MonoBehaviour
                 else
                 {
                     balpanObj[i].transform.position = new Vector3(-620 + (i * 40), -1 * 10 + adventureEventArr_Y[stageIdx + i] * 10, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
-                    Debug.Log(stageNum);
-                    Debug.Log(adventureEventArr[stageIdx + i]);
-                    Debug.Log(adventureEventList[stageNum].Count);
-                    Debug.Log(adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());
+
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
 
                     GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect

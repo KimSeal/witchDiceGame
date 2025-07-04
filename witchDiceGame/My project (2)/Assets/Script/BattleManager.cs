@@ -2661,8 +2661,8 @@ public class BattleManager : MonoBehaviour
         else if (result == 1)
         {
 
-            if (false)
-            {
+            //if (false)
+            //{
                 itemManager.Instance.endOfBattlePhase();
                 yield return new WaitForSeconds(0.5f);
                 for (int i = 0; i < 4; i++)
@@ -2698,16 +2698,11 @@ public class BattleManager : MonoBehaviour
 
 
                 resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
-            }
-            else {
+
+            /*
                 curPhase = 1;
                 setEnemyCharacter(1, 10013);
-
-                /*CharacterManager.Instance.emptyEnemyCharacter(1);
-                CharacterManager.Instance.setCharacter(1, 10013);
-                Start_Battle_Phase();
-                */
-            }
+            */
             
         }
         //전투 지속 필요

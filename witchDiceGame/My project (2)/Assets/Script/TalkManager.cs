@@ -255,4 +255,8 @@ public class TalkManager : MonoBehaviour
             talkingChk = false;
         }
     }
+    public bool getTalkChk()
+    {
+        return talkingChk;
+    }
 }
