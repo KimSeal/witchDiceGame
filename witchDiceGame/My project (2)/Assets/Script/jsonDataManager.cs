@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TMPro;
 public class jsonDataManager : MonoBehaviour
 {
 
     private static jsonDataManager instance = null;
+    private GameObject libraryMoneyDesc;
     private void Awake()
     {
         if (null == instance)
@@ -42,6 +44,12 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson(); 
         }
         BattleManager.Instance.takeJsonWitchPower();
+
+        libraryMoneyDesc = GameObject.Find("obj_library_money");
+    }
+    public void changeMoney(int a)
+    {
+        libraryMoneyDesc.GetComponent<TextMeshPro>().text = a.ToString();
     }
 
     public void SavePlayerDataToJson()
@@ -59,10 +67,11 @@ public class jsonDataManager : MonoBehaviour
             playerPlayData = new PlayerPlayData(temp);
         }
     }
-    public int getMoney() { return playerPlayData.money; }
+    public int getMoney() { return playerPlayData.getMoney(); }
     public int getPowerPrice(int idx) { return witchPowerMoney[idx]; }
     public void addMoney(int addMoney) {
-        playerPlayData.money += addMoney;
+
+        playerPlayData.addMoney(addMoney);
         Debug.Log("buy third power! extra money :" + getMoney().ToString());
         SavePlayerDataToJson();
     }
@@ -79,16 +88,16 @@ public class jsonDataManager : MonoBehaviour
     {
         if (this.playerPlayData.witchPower[powerIdx]) return 0; //이미 가지고 있으면 변경
 
-        if (this.playerPlayData.money >= witchPowerMoney[powerIdx]) {//비소유지만 구매 가능한 경우
+        if (this.playerPlayData.getMoney() >= witchPowerMoney[powerIdx]) {//비소유지만 구매 가능한 경우
             return 1;
         }
         return 2; // 비소유면서 구매도 불가능한 경우
     }
     public bool buyWitchPower(int powerIdx) {
-        if (!this.playerPlayData.witchPower[powerIdx] && this.playerPlayData.money >= witchPowerMoney[powerIdx]) //아직 구매안했고 돈이 있을 경우 구매
+        if (!this.playerPlayData.witchPower[powerIdx] && this.playerPlayData.getMoney() >= witchPowerMoney[powerIdx]) //아직 구매안했고 돈이 있을 경우 구매
         {
             this.playerPlayData.witchPower[powerIdx] = true;
-            this.playerPlayData.money -= witchPowerMoney[powerIdx];
+            this.playerPlayData.minusMoney(witchPowerMoney[powerIdx]);
             SavePlayerDataToJson();
             return true;
         }
@@ -134,7 +143,7 @@ public class jsonDataManager : MonoBehaviour
 public class PlayerPlayData{
 
     public int[] curWitchPower = new int[2];
-    public int money;
+    public int money = 0;
     public bool[] witchPower = new bool[100];
     public bool[] playCharacterAble = new bool[10000];
     public int[] playCharacterToken = new int[10000];
@@ -178,5 +187,18 @@ public class PlayerPlayData{
             monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];
         }
     }
-    
+    public int getMoney()
+    {
+        return money;
+    }
+    public void addMoney(int a)
+    {
+        money += a;
+        jsonDataManager.Instance.changeMoney(this.money);
+    }
+    public void minusMoney(int a) {
+        money -= a;
+        jsonDataManager.Instance.changeMoney(this.money);
+    }
+
 }

@@ -22,6 +22,8 @@ public class BattleManager : MonoBehaviour
     public GameObject diceRollEff;
     [SerializeField]
     public GameObject hitEff;
+    [SerializeField]
+    public GameObject coinEff;
 
     public int chooseDiceIdx;
 
@@ -2144,7 +2146,7 @@ public class BattleManager : MonoBehaviour
             
             myDiceNum[idx] = -999;
             myDice[idx] = null;
-
+            
             updateMyDiceUI();
         }
         else
@@ -2179,6 +2181,15 @@ public class BattleManager : MonoBehaviour
             enemySkill[idx + 4] = null;
             enemySkillDiceNum[idx] = -999;
             enemySkillDiceNum[idx + 4] = -999;
+
+            int moneyTemp = enemyCharacter[idx].getMoney();
+            moneyTemp = Random.Range(moneyTemp - (moneyTemp * 2 / 5), moneyTemp + (moneyTemp * 2 / 5));
+            AdventureManager.Instance.addAdventureMoney(moneyTemp);
+            for (int i = 0; i < moneyTemp; i++)
+            {
+                Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+            }
+
             updateEnemyDiceUI();
         }
     }

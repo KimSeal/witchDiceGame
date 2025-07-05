@@ -66,6 +66,7 @@ public class DestinyReader
     public int skill7;
     public int skill8;
     public int skill9;
+    public int money;
 }
 
 public class ItemReader

@@ -96,13 +96,137 @@ public class AdventureManager : MonoBehaviour
     private bool eventEndClick = false; //이벤트를 넘어갈 수 있는 경우, true가 된다.
 
     private bool clickAble = false;
+
+    //상점에 대한 데이터
+    private int adventureMoney = 0;
+    private TextMeshPro moneyText;
+    private int[,] storeItemArr = new int[4, 3]; //4개의 아이템이 배치, 각각 type, index(아이템 고유번호), 가격이 저장될 예정 
+    private GameObject storeEntityObj;
+    private SpriteRenderer storeImageObj;
+    private TextMeshPro storePriceObj;
+
+    private GameObject storeCheckEntityObj;
+    private SpriteRenderer storeCheckImageObj;
+    private TextMeshPro storeCheckPriceObj;
+
+    private int storeIdx = 0;
     void resetItemResult()
     {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++)
+        {
             resultItemArr[i, 0] = -99999;
             resultItemArr[i, 1] = -99999;
+            storeItemArr[i, 0] = -99999;
+            storeItemArr[i, 1] = -99999;
+            storeItemArr[i, 2] = -99999;
+        }
+
+    }
+    #region
+    public void addAdventureMoney(int money) {
+        adventureMoney += money;
+        moneyText.text = adventureMoney.ToString();
+    }
+    public void buyItem()
+    {
+        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) return; //비어있을 경우 아예 아무것도 없게
+        if (adventureMoney >= storeItemArr[storeIdx, 2]) {
+            int buyResult = itemManager.Instance.getItemResult(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
+            if (buyResult == 0) //정상작동의 경우
+            {
+                addAdventureMoney(storeItemArr[storeIdx, 2] * -1);
+                storeItemArr[storeIdx, 0] = -99999;
+                storeItemArr[storeIdx, 1] = -99999;
+                storeItemArr[storeIdx, 2] = -99999;
+
+                closeTryBuyItem();
+                updateStore();
+            }
+            else if (buyResult == 1) //인벤토리가 가득 찬 경우
+            {
+                storeCheckPriceObj.text = "더 넣을 공간이 없어요!";
+            }
+        }
+        else
+        {
+            storeCheckPriceObj.text = "돈이 부족해요!";
         }
     }
+    public void updateStore() //가게 이미지 업데이트
+    {
+        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) { 
+            storeImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            storePriceObj.text = "";//"No Item Here!";
+        }
+        else
+        {
+            Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
+            storeImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
+            storePriceObj.text = storeItemArr[storeIdx, 2].ToString();
+        }
+    }
+    public void storeArrow(int dir)
+    {
+        if (dir == 1){
+            storeIdx++;
+            if (storeIdx > 3) storeIdx = 0;
+        }
+        else if (dir == -1){
+            storeIdx--;
+            if (storeIdx < 0) storeIdx = 3;
+        }
+        updateStore();
+    }
+    public void tryBuyItem()
+    {
+        //아이템이 비어있는 경우 불가능하도록
+        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) return;
+        else
+        {
+            storeCheckEntityObj.SetActive(true);
+            Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
+            storeCheckImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
+            storeCheckPriceObj.text = "가격 : " + storeItemArr[storeIdx, 2].ToString() +
+                    "\n현재 금액" + adventureMoney.ToString() + " -> " + (adventureMoney - storeItemArr[storeIdx, 2]).ToString();
+        }
+    }
+    public void closeTryBuyItem()
+    {
+        storeCheckEntityObj.SetActive(false);
+    }
+    
+    public void hoverInItem_store()
+    {
+        if (storeItemArr[storeIdx, 0] != -99999 && storeItemArr[storeIdx, 1] != -99999 && storeItemArr[storeIdx, 2] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
+        {
+            if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
+
+            if (storeItemArr[storeIdx, 0] == 4)
+            {
+                Destiny hoverDestiny = CharacterManager.Instance.getDestiny(storeItemArr[storeIdx, 1]);
+                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
+                descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
+                descObj[3].GetComponent<TextMeshPro>().text = "Lets be a friend!";
+            }
+            else
+            {
+                Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
+                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
+                descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
+                descObj[3].GetComponent<TextMeshPro>().text = typeArr[storeItemArr[storeIdx, 0]] + "\n\n" + hoverItem.getContent();
+            }
+        }
+        else
+        {
+            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            descObj[2].GetComponent<TextMeshPro>().text = "";
+            descObj[3].GetComponent<TextMeshPro>().text = "";
+            if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+
+        }
+    }
+    #endregion
+
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     public void hoverInItem(int idx)
     {
@@ -233,6 +357,17 @@ public class AdventureManager : MonoBehaviour
             balpanObj[i] = GameObject.Find("obj_balpan_" + i.ToString()); 
         }
         battleBtn = GameObject.Find("obj_itemUI_battleBtn");
+
+        //상점 관련
+        moneyText = GameObject.Find("obj_adventure_money").GetComponent<TextMeshPro>();
+        storeEntityObj = GameObject.Find("obj_adventureStore");
+        storeImageObj = GameObject.Find("obj_adventureStore_Item_image").GetComponent<SpriteRenderer>();
+        storePriceObj = GameObject.Find("obj_adventureStore_Item_price").GetComponent<TextMeshPro>();
+        storeEntityObj.SetActive(false);
+        storeCheckEntityObj = GameObject.Find("obj_ui_adventureStore_buy");
+        storeCheckImageObj = GameObject.Find("obj_ui_adventureStore_buy_sprite").GetComponent<SpriteRenderer>();
+        storeCheckPriceObj = GameObject.Find("obj_ui_adventureStore_buy_text").GetComponent<TextMeshPro>();
+        storeCheckEntityObj.SetActive(false);
     }
 
     // Update is called once per frame
@@ -258,7 +393,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 4;//i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 10;//i; // 이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -313,6 +448,8 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
+        adventureMoney = 0;
+        addAdventureMoney(0);
         CharacterManager.Instance.setTestCharacterSet();
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
@@ -383,8 +520,8 @@ public class AdventureManager : MonoBehaviour
     {
         gameOverChk = false;
         stageNum = 0;
-        
-        
+        addAdventureMoney(0);
+
         makeStageEventArr(stageNum); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         makeStage_placeBalpan(); // 스테이지에 맞춰 발판 생성
         stageIdx = -1;
@@ -510,6 +647,7 @@ public class AdventureManager : MonoBehaviour
 
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
             resultObj.SetActive(false);
+            storeEntityObj.SetActive(false);
 
             if (true)//adventureEventArr[stageIdx] == 1)
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
@@ -606,6 +744,26 @@ public class AdventureManager : MonoBehaviour
                     }
 
                 }
+                if (curDiceEventPacket.getSelectType() == 8) { //상점 시스템
+                    
+                    storeEntityObj.SetActive(true);
+                    for (int tempIdx=0;tempIdx<4;tempIdx++)
+                    {
+                        storeItemArr[tempIdx, 0] = Random.Range(0,4);
+
+                        if (storeItemArr[tempIdx, 0] == 2) { // 장비인경우 일단 데모에서는 제거.
+                            storeItemArr[tempIdx, 0] = Random.Range(0, 3);
+                            if (storeItemArr[tempIdx, 0] == 2) storeItemArr[tempIdx, 0]++;
+                        }
+                        
+                        
+                        storeItemArr[tempIdx, 1] = Random.Range(1,itemManager.Instance.getItemListCount(storeItemArr[tempIdx, 0]));
+                        
+                        storeItemArr[tempIdx, 2] = itemManager.Instance.getItem(storeItemArr[tempIdx, 0], storeItemArr[tempIdx, 1]).getRare() * 10 + 5;
+                    }
+                    storeIdx = 0;
+                    updateStore();
+                }
                 if (curDiceEventPacket.getSelectType() == 4)
                 { //능력치 증가
                     for (int i = 0; i < 8; i++)
@@ -689,6 +847,8 @@ public class AdventureManager : MonoBehaviour
         CharacterManager.Instance.resetCharacterManager();
         itemManager.Instance.resetItemManager();
         TownManager.Instance.backToTownUI();
+        adventureMoney = 0;
+        addAdventureMoney(0);
         Debug.Log("end of game!");
     }
 

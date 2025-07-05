@@ -78,15 +78,16 @@ public abstract class Character
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
     protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0,
-        hp = 0, maxHp = 0,  mp = 0, maxMp = 0;
+        hp = 0, maxHp = 0, mp = 0, maxMp = 0;
     protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
-    protected int[] skillIdx = new int[2] {0,1};
+    protected int[] skillIdx = new int[2] { 0, 1 };
     protected Destiny destiny; //할당된 운명에 대한 클래스.
     protected Dice dice;
     protected Character_battle character_battle;
     protected bool reviveUnit = false;
     protected int shadow = 0;
+    protected int money = 0;
     public Character(int curState, Destiny destiny)
     {
         this.destiny = destiny;
@@ -114,20 +115,21 @@ public abstract class Character
         this.character_battle = new Character_battle();
         reviveUnit = false;
         this.shadow = destiny.getShadow();
+        this.money = destiny.getMoney();
     }
 
-    public Character(Character character) { 
+    public Character(Character character) {
         this.curState = character.curState;
         this.level = character.level;
-        this.exp    =character.exp;
-        this.phyAtk=character.phyAtk;
-        this.maxMp =character.maxMp;
+        this.exp = character.exp;
+        this.phyAtk = character.phyAtk;
+        this.maxMp = character.maxMp;
         this.mp = character.mp;
-        this.magAtk=character.magAtk;  
-        this.phyDef =character.phyDef;
-        this.magDef =character.magDef;
-        this.hp=character.hp;
-        this.maxHp=character.maxHp;
+        this.magAtk = character.magAtk;
+        this.phyDef = character.phyDef;
+        this.magDef = character.magDef;
+        this.hp = character.hp;
+        this.maxHp = character.maxHp;
         this.item[0] = new Item(character.getItem(0));
         this.item[1] = new Item(character.getItem(1));
         this.skillIdx[0] = character.skillIdx[0];
@@ -137,8 +139,9 @@ public abstract class Character
         this.character_battle = new Character_battle();
         this.reviveUnit = character.reviveUnit;
         this.shadow = character.shadow;
+        this.money = character.getMoney();
     }
-    
+
     public void characterDeepCopy(Character character)
     {
         this.curState = character.curState;
@@ -161,8 +164,11 @@ public abstract class Character
         this.character_battle = new Character_battle();
         this.reviveUnit = character.reviveUnit;
         this.shadow = character.shadow;
+        this.money = character.getMoney();
     }
-
+    public int getMoney() {
+        return this.money;
+    }
     public int getShadow()
     {
         return this.shadow;

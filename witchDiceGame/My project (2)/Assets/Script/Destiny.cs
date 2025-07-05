@@ -6,7 +6,7 @@ public class Destiny
 { 
     public int DestinyIdx;
     public string Enemy, Name, Sex;
-    public int phyAtk, magAtk, phyDef, magDef, maxHp, maxMp, shadow;
+    public int phyAtk, magAtk, phyDef, magDef, maxHp, maxMp, shadow, money;
     //int[] needDiceArr = new int[10];
 
     public Skill[] skillArr = new Skill[10];
@@ -32,6 +32,7 @@ public class Destiny
             skillArr[i] = new Skill(destiny.getSkill(i));
             skillIdx[i] = destiny.getSkillIdx(i);
         }
+        this.money = destiny.money;
     }
 
     public Destiny(DestinyReader destinyReader,  Skill[] skillSet)
@@ -52,7 +53,11 @@ public class Destiny
             this.skillArr[i] = new Skill(skillSet[i]);
             this.skillIdx[i] = this.skillArr[i].getSkillIdx();
         }
+        this.money = destinyReader.money;
         //diceToArr();
+    }
+    public int getMoney() {
+        return this.money;
     }
     public int getShadow()
     {
