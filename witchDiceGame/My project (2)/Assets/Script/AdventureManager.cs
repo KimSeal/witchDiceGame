@@ -110,6 +110,12 @@ public class AdventureManager : MonoBehaviour
     private TextMeshPro storeCheckPriceObj;
 
     private int storeIdx = 0;
+
+    private int[] lastCharacter = new int[4];
+
+    public int getLastCharacter(int idx) {
+        return lastCharacter[idx];
+    }
     void resetItemResult()
     {
         for (int i = 0; i < 4; i++)
@@ -123,6 +129,10 @@ public class AdventureManager : MonoBehaviour
 
     }
     #region
+    public int getAdventureMoney()
+    {
+        return this.adventureMoney;
+    }
     public void addAdventureMoney(int money) {
         adventureMoney += money;
         moneyText.text = adventureMoney.ToString();
@@ -269,6 +279,11 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        lastCharacter[0] = -99999;
+        lastCharacter[1] = -99999;
+        lastCharacter[2] = -99999;
+        lastCharacter[3] = -99999;
+
         lifeObj = GameObject.Find("obj_life");
         lifeObj_back = GameObject.Find("obj_life_back");
 
@@ -393,7 +408,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 10;//i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 32; //i; // 이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -495,6 +510,7 @@ public class AdventureManager : MonoBehaviour
         return 1;
     }
   
+    
     private void updateCharacterFace()
     {
         for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
@@ -617,11 +633,11 @@ public class AdventureManager : MonoBehaviour
             if(stageIdx + selectDiceNum >= adventureEventList[stageNum].Count)  // 넘어간 경우 자제한다
             {
                 moveCount = adventureEventList[stageNum].Count - 1 - stageIdx;
-                stageIdx = adventureEventList[stageNum].Count - 1;
+                //stageIdx = adventureEventList[stageNum].Count - 1;
             }
             else
             {
-                stageIdx += selectDiceNum; //stage발판 이동
+                //stageIdx += selectDiceNum; //stage발판 이동
             }
 
             for (int i=0;i<moveCount;i++)
@@ -629,7 +645,14 @@ public class AdventureManager : MonoBehaviour
                 GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i + 1].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp_0.GetComponent<Animator>().Play("balpanTouch");
                 balpanArrow.transform.position = balpanObj[i+1].transform.position + new Vector3(0,8,0);
+                stageIdx++;
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
+                {
+                    balpanArrow.GetComponent<Animator>().Play("Hit");
+                    break;
+                }
                 yield return new WaitForSeconds(0.2f);
+                
             }
             yield return new WaitForSeconds(1.2f);
 
@@ -774,13 +797,21 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
+
+                    
                     SoundManager_Main.Instance.PauseSound(2);
                     SoundManager_Main.Instance.playSound(5);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     BattleManager.Instance.updateBattleBackground(curDiceEventPacket.getBattleBackSprite());
+
+                    BattleManager.Instance.changeBossPhase(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType());
                     for (int i = 0; i < 4; i++)
                     {
+                        //마지막 전투에서의 캐릭터 정보를 확인
+                        if (CharacterManager.Instance.getCharacter(i) == null) lastCharacter[i] = -99999;
+                        else lastCharacter[i] = CharacterManager.Instance.getCharacter(i).getDestiny().DestinyIdx;
+
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(i, curDiceEventPacket.getVal(i));
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
 
@@ -829,6 +860,13 @@ public class AdventureManager : MonoBehaviour
                 {
                     resultObj.SetActive(true);
                 }
+
+                //데모 보스 클리어 확인
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk) {
+                    demoEndChk = 1;
+                    gameOverChk = true;
+                }
+
                 if (gameOverChk == false)
                 {
 
@@ -838,20 +876,28 @@ public class AdventureManager : MonoBehaviour
                     yield return new WaitUntil(() => !eventEndClick);
                 }
             }
-
-            
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
         }
-        SoundManager_Main.Instance.stopSound(2);
-        //gameOverChk가 true가 되면 끝
-        CharacterManager.Instance.resetCharacterManager();
-        itemManager.Instance.resetItemManager();
-        TownManager.Instance.backToTownUI();
-        adventureMoney = 0;
-        addAdventureMoney(0);
-        Debug.Log("end of game!");
+        if (gameOverChk) //게임오버로 왔을 경우.
+        {
+            if (demoEndChk == 1) { //데모 보스 잡은 경우 게임오버 띄우기
+                CameraManager.Instance.loseScreenActive();
+                yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
+                demoEndChk = 0;
+            }
+            SoundManager_Main.Instance.stopSound(2);
+            //gameOverChk가 true가 되면 끝
+            CharacterManager.Instance.resetCharacterManager();
+            itemManager.Instance.resetItemManager();
+            TownManager.Instance.backToTownUI();
+            adventureMoney = 0;
+            addAdventureMoney(0);
+            Debug.Log("end of game!");
+        }
+        
     }
 
+    private int demoEndChk = 0;
     public void clickResultItem(int idx)
     {
         //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때

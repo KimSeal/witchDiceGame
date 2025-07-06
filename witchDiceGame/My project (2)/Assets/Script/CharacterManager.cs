@@ -233,6 +233,10 @@ public class CharacterManager : MonoBehaviour
                     character = new TinyWitch(0, destinyList_monster[characterIdx]); break;
                 case 12:
                     character = new Harfy(0, destinyList_monster[characterIdx]); break;
+                case 13:
+                    character = new Schnauzer(0, destinyList_monster[characterIdx]); break;
+                case 14:
+                    character = new WolfSheep(0, destinyList_monster[characterIdx]); break;
             }
         }
     }

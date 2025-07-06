@@ -119,7 +119,7 @@ public class BattleManager : MonoBehaviour
     private int currentLightUI = 0;
 
     private GameObject[] witchPowerObj = new GameObject[3];
-    private GameObject[] backGroundObj = new GameObject[4];
+    private GameObject[] backGroundObj = new GameObject[5];
     
     private int[] clickedDice = new int[2];
     
@@ -176,6 +176,11 @@ public class BattleManager : MonoBehaviour
     int curSelectInfo = 0;
     int hoverCharacterIdx = -1;
 
+    int bossPhase = 0;
+    public void changeBossPhase(int a)
+    {
+        if(a == 100) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
+    }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
     {
         if (skillIdx == -999)
@@ -962,6 +967,7 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(makeDark(backGroundObj[0], 0.7f));
         StartCoroutine(makeDark(backGroundObj[1], 0.7f));
         StartCoroutine(makeDark(backGroundObj[3], 0.7f));
+        StartCoroutine(makeDark(backGroundObj[4], 0.7f));
 
         yield return new WaitUntil(() => currentLightUI == 0 && currentMoveUI == 0); //주사위 굴리는 애니메이션 추가 예정
 
@@ -1452,8 +1458,9 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(makeDark(backGroundObj[1], 0.7f));
 
         //정면 보는 마녀
-        StartCoroutine(makeBright(backGroundObj[3], 0.0f));
-        StartCoroutine(MoveUI(backGroundObj[3], 59f, 0.5f));
+        StartCoroutine(makeDark(backGroundObj[3], 0.7f));
+        StartCoroutine(makeDark(backGroundObj[4], 0.7f));
+        StartCoroutine(MoveUI(backGroundObj[3], 140f, 0.5f)); //59f
 
         StartCoroutine(MoveUI(characterUI, 0.0f)); //
         StartCoroutine(MoveUI(skillSelectUI[8], -50.0f)); //
@@ -1713,7 +1720,12 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(makeBright(backGroundObj[0], 0.0f));
             //StartCoroutine(MoveUI(backGroundObj[1], 10.0f));
             StartCoroutine(MoveUI(backGroundObj[1], -475f));
-            StartCoroutine(makeDark(backGroundObj[3], 0.7f));
+
+            StartCoroutine(MoveUI(backGroundObj[3], 59f));
+
+            StartCoroutine(makeBright(backGroundObj[3], 0.3f));
+            StartCoroutine(makeBright(backGroundObj[4], 0.3f));
+
             StartCoroutine(MoveUI(characterUI, -18.0f)); //
 
             StartCoroutine(MoveUI(skillSelectUI[8], -138.0f)); //
@@ -2662,7 +2674,7 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
 
 
-            if (!characterInfoOpen) clickCharacterInfoBox();
+            if (characterInfoOpen) clickCharacterInfoBox();
             //CameraManager.Instance.loseScreenUnActive();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
             adventureStartChk = false;
@@ -2672,8 +2684,8 @@ public class BattleManager : MonoBehaviour
         else if (result == 1)
         {
 
-            //if (false)
-            //{
+            if (bossPhase == 0)
+            {
                 itemManager.Instance.endOfBattlePhase();
                 yield return new WaitForSeconds(0.5f);
                 for (int i = 0; i < 4; i++)
@@ -2709,11 +2721,13 @@ public class BattleManager : MonoBehaviour
 
 
                 resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
-
-            /*
+            }
+            else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
+            {
+                bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
                 setEnemyCharacter(1, 10013);
-            */
+            }
             
         }
         //전투 지속 필요
@@ -2852,7 +2866,8 @@ public class BattleManager : MonoBehaviour
         backGroundObj[0] = GameObject.Find("obj_backGround_field");
         backGroundObj[1] = GameObject.Find("obj_backGround_witch_witchPowerSelect");
         backGroundObj[2] = GameObject.Find("obj_backGround_backGround");
-        backGroundObj[3] = GameObject.Find("obj_backGround_witch_skillSelect");
+        backGroundObj[3] = GameObject.Find("obj_backGround_witch_skillSelect_body");
+        backGroundObj[4] = GameObject.Find("obj_backGround_witch_skillSelect_face");
 
         // Hp 관련 UI, targeting을 위한 object find 
         for (int i = 0; i < 4; i++)
@@ -3085,7 +3100,7 @@ public class BattleManager : MonoBehaviour
     }
     private IEnumerator makeBright(GameObject gameobj, float alphaVal)
     {
-        if (alphaVal == 0.0f)
+        if (true)//alphaVal == 0.0f)
         {
             currentLightUI++;
             Material material = gameobj.GetComponent<SpriteRenderer>().material;
@@ -3160,9 +3175,18 @@ public class BattleManager : MonoBehaviour
         //UI test
         for (int i = 0; i < 4; i++)
         {
-            //적군
-            //enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
-            if(!CharacterManager.Instance.character_deepCopy(ref enemyCharacter[i], CharacterManager.Instance.getCharacter(false, i)))
+            myDiceTake[i] = -999;
+            enemyDiceTake[i] = -999;
+            mySkillUsed[i, 0] = false;
+            mySkillUsed[i, 1] = false;
+            enemySkillUsed[i, 0] = false;
+            enemySkillUsed[i, 1] = false;
+            StartCoroutine(makeBright(skillSelectUI[i * 2 + 0], 0.0f));
+            StartCoroutine(makeBright(skillSelectUI[i * 2 + 1], 0.0f));
+
+        //적군
+        //enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
+        if (!CharacterManager.Instance.character_deepCopy(ref enemyCharacter[i], CharacterManager.Instance.getCharacter(false, i)))
             {
                 enemyCharacter[i] = null;
             }

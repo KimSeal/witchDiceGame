@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
+using TMPro;
 
 public class CameraManager : MonoBehaviour
 {
@@ -34,6 +35,9 @@ public class CameraManager : MonoBehaviour
     float ShakeTime;
     Vector3 initialPosition;
     GameObject loseUI;
+    GameObject[] characterPart = new GameObject[4];
+    TextMeshPro money;
+    TextMeshPro partGet;
 
     // Start is called before the first frame update
     public void VibrateForeTime(float time) {
@@ -58,7 +62,12 @@ public class CameraManager : MonoBehaviour
         initialPosition = transform.position;
         ZoomTime = -1f;
         loseUI = GameObject.Find("obj_ui_lose");
-        
+        for (int i=0;i<4;i++)
+        {
+            characterPart[i] = GameObject.Find("obj_ui_lose_character_" + i.ToString());
+        }
+        money = GameObject.Find("obj_ui_lose_money").GetComponent<TextMeshPro>();
+        partGet = GameObject.Find("obj_ui_lose_characterPart").GetComponent<TextMeshPro>();
     }
 
     int tempSize;
@@ -140,6 +149,22 @@ public class CameraManager : MonoBehaviour
     bool loseChk = false;
     public void loseScreenActive()
     {
+        money.text = AdventureManager.Instance.getAdventureMoney().ToString(); //돈 관련 텍스트 업데이트;
+        jsonDataManager.Instance.addMoney(AdventureManager.Instance.getAdventureMoney()); //남은 돈은 다 수익으로 돌아간다.
+
+        for (int i = 0; i < 4; i++) {
+            int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
+            if (destinyIdx != -99999) {
+                jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
+                characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
+            }
+            else
+            {
+                characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+            }
+        }
+
+
         loseChk = true;
         loseUI.transform.position = new Vector3(initialPosition.x, initialPosition.y, loseUI.transform.position.z);
     }

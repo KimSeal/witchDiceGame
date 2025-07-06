@@ -31,7 +31,7 @@ public class jsonDataManager : MonoBehaviour
     }
     // Start is called before the first frame update
     private PlayerPlayData playerPlayData;
-    private int[] witchPowerMoney = {0, 0, 0, 15000, 1000, 1000, 15000, 1000, 1000, 15000, 1000, 1000, 15000 };
+    private int[] witchPowerMoney = {0, 0, 0, 5000, 1000, 2000, 5000, 1000, 2000, 5000, 1000, 2000, 5000 };
     void Start()
     {
         string fileName = Path.Combine(Application.dataPath, "playerData.json");
@@ -138,6 +138,11 @@ public class jsonDataManager : MonoBehaviour
         playerPlayData.curWitchPower[1] = idx2;
         SavePlayerDataToJson();
     }
+
+    public void addCharacterToken(int idx, int addVal) {
+        playerPlayData.addCharacterToken(idx, addVal);
+        jsonDataManager.Instance.SavePlayerDataToJson();
+    }
 }
 
 public class PlayerPlayData{
@@ -199,6 +204,10 @@ public class PlayerPlayData{
     public void minusMoney(int a) {
         money -= a;
         jsonDataManager.Instance.changeMoney(this.money);
+    }
+
+    public void addCharacterToken(int idx, int addVal) { //캐릭터 토큰 얻은 경우
+        playCharacterToken[idx] += addVal;
     }
 
 }
