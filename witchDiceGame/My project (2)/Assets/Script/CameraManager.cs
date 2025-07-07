@@ -147,15 +147,29 @@ public class CameraManager : MonoBehaviour
         ShakeTime = 0.0f;
     }
     bool loseChk = false;
-    public void loseScreenActive()
+    public void resultScreenActive(int caseVal)
     {
-        money.text = AdventureManager.Instance.getAdventureMoney().ToString(); //돈 관련 텍스트 업데이트;
-        jsonDataManager.Instance.addMoney(AdventureManager.Instance.getAdventureMoney()); //남은 돈은 다 수익으로 돌아간다.
+        int updateMoney = AdventureManager.Instance.getAdventureMoney();
+        money.text = updateMoney.ToString(); //돈 관련 텍스트 업데이트;
+        if (caseVal == 2) updateMoney *= 5;
+        if (caseVal == 2) money.text += " X 5";
+
+        jsonDataManager.Instance.addMoney(updateMoney); //남은 돈은 다 수익으로 돌아간다.
 
         for (int i = 0; i < 4; i++) {
             int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
             if (destinyIdx != -99999) {
-                jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
+                
+                if (caseVal == 0)
+                {
+                    jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
+                    partGet.text = " X 1";
+                }
+                if (caseVal == 2) //데모 클리어시 5배로 준다.
+                {
+                    jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
+                    partGet.text = " X 5\n( special stage clear bonus! )";
+                }
                 characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
             }
             else
@@ -168,6 +182,8 @@ public class CameraManager : MonoBehaviour
         loseChk = true;
         loseUI.transform.position = new Vector3(initialPosition.x, initialPosition.y, loseUI.transform.position.z);
     }
+
+
     public void loseScreenUnActive()
     {
         loseChk = false;

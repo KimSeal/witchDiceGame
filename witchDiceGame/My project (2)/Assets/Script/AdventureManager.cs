@@ -408,7 +408,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 32; //i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; // 이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -537,6 +537,13 @@ public class AdventureManager : MonoBehaviour
         gameOverChk = false;
         stageNum = 0;
         addAdventureMoney(0);
+
+        //시작시 이미지 없애기
+        selectDiceCharacterIdx = -1;
+        adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/adventureBoard_2");
+        adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        selectInfo.GetComponent<TextMeshPro>().text = "";
 
         makeStageEventArr(stageNum); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
         makeStage_placeBalpan(); // 스테이지에 맞춰 발판 생성
@@ -881,14 +888,22 @@ public class AdventureManager : MonoBehaviour
         if (gameOverChk) //게임오버로 왔을 경우.
         {
             if (demoEndChk == 1) { //데모 보스 잡은 경우 게임오버 띄우기
-                CameraManager.Instance.loseScreenActive();
+                CameraManager.Instance.resultScreenActive(2);
                 yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
                 demoEndChk = 0;
             }
             SoundManager_Main.Instance.stopSound(2);
             //gameOverChk가 true가 되면 끝
             CharacterManager.Instance.resetCharacterManager();
+            selectDiceCharacterIdx = -1;
+            updateCharacterFace();
             itemManager.Instance.resetItemManager();
+            //시작시 이상하지 않도록
+            selectDiceCharacterIdx = -1;
+            adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/adventureBoard_2");
+            adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
             TownManager.Instance.backToTownUI();
             adventureMoney = 0;
             addAdventureMoney(0);

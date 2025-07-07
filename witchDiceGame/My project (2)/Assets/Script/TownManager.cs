@@ -42,6 +42,7 @@ public class TownManager : MonoBehaviour
         }
         if (i == 1)
         {
+            Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
         }
         if (i == 2)
@@ -52,7 +53,11 @@ public class TownManager : MonoBehaviour
             LibraryManager.Instance.enterLibrary(0);
             SoundManager_Main.Instance.stopSound(0);
         }
-        if (i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
+        if (i == 3)
+        {
+            Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+            clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
+        }
     }
     public void hoverInUIBtn(int i)
     {

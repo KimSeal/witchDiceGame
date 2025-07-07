@@ -2670,14 +2670,25 @@ public class BattleManager : MonoBehaviour
             Debug.Log("you lose!");
 
             //AdventureManager.Instance.loseGame();
-            CameraManager.Instance.loseScreenActive();
+            CameraManager.Instance.resultScreenActive(0);
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
 
 
             if (characterInfoOpen) clickCharacterInfoBox();
             //CameraManager.Instance.loseScreenUnActive();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
+
+            for(int i=0;i<4;i++)
+            {
+                enemyDiceState[i] = 0;
+                enemyDiceStateAnim[i].Play("0");
+                myDiceState[i] = 0;
+                myDiceStateAnim[i].Play("0");
+            }
+
+
             adventureStartChk = false;
+            curPhase = 0;
 
         }
         //적군 전멸
@@ -2721,6 +2732,13 @@ public class BattleManager : MonoBehaviour
 
 
                 resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
+                for (int i = 0; i < 4; i++)
+                {
+                    enemyDiceState[i] = 0;
+                    enemyDiceStateAnim[i].Play("0");
+                    myDiceState[i] = 0;
+                    myDiceStateAnim[i].Play("0");
+                }
             }
             else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
             {
