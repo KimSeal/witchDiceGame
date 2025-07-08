@@ -465,6 +465,7 @@ public class itemManager : MonoBehaviour
     
     public void click_characterInfoType_selectButton(int idx) // 캐릭터 정보 창에서 선택한 정보
     {
+        //TalkManager.Instance.startTalk(11);
         curSelectCharacterInfoType = idx;
         for (int i=0;i<5;i++)
         {

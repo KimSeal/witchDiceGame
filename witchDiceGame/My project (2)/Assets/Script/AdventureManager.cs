@@ -628,6 +628,10 @@ public class AdventureManager : MonoBehaviour
             }
             balpanArrow.transform.position = balpanObj[0].transform.position + new Vector3(0, 8, 0);
             clickAble = true;
+            //나아갈수 있다는 것을 주사위에 표시
+            nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
+            nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
+
             diceBtnFire.Play();
             yield return new WaitUntil(() => selectDiceNum > 0);
             diceBtnFire.Stop();

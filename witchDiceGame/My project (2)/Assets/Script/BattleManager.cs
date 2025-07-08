@@ -1470,7 +1470,7 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(makeBright(myCharacterObjUI[i], 0.0f));
             StartCoroutine(makeBright(enemyCharacterObjUI[i], 0.0f));
         }
-
+        TalkManager.Instance.startTalk(6);
         yield return new WaitUntil(() => currentMoveUI == 0 && currentLightUI == 0); //
     }
 
