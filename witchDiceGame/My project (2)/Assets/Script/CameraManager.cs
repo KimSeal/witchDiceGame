@@ -162,11 +162,13 @@ public class CameraManager : MonoBehaviour
                 
                 if (caseVal == 0)
                 {
+                    loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_lose");
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
                     partGet.text = " X 1";
                 }
                 if (caseVal == 2) //데모 클리어시 5배로 준다.
                 {
+                    loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
                     partGet.text = " X 5\n( special stage clear bonus! )";
                 }

@@ -77,7 +77,15 @@ public class CharacterManager : MonoBehaviour
         setCharacter(2, 2);
         //setCharacter(3, 4);
     }
-
+    public void setTurotialCharacterSet()
+    {
+        emptyMyCharacter(0);
+        emptyMyCharacter(1);
+        emptyMyCharacter(2);
+        emptyMyCharacter(3);
+        setCharacter(0, 0);
+        myCharacter[0].setReviveUnit(true);
+    }
     public void setTestCharacterSet()
     {
         setCharacter(0, 0);

@@ -113,9 +113,39 @@ public class AdventureManager : MonoBehaviour
 
     private int[] lastCharacter = new int[4];
 
+    private int tutorialVal = 0;
+
+    public int getTutorial()
+    {
+        return tutorialVal;
+    }
+    public void setTutorial(int val)
+    {
+        tutorialVal = val;
+    }
+
+    public IEnumerator tutorial_Coroutine()
+    {
+        TalkManager.Instance.startTalk(2);
+        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        //튜토리얼이 시작되었음을 알림.
+        tutorialVal = 1;
+        CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
+        StartCoroutine(phase_Manage_Coroutine(0));
+    }
+    public void tutorialStart()
+    {
+        adventureMoney = 0;
+        addAdventureMoney(0);
+        CharacterManager.Instance.setTurotialCharacterSet(); //캐릭터는 주인공 혼자만
+        itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
+
+        StartCoroutine(tutorial_Coroutine());
+    }
     public int getLastCharacter(int idx) {
         return lastCharacter[idx];
     }
+
     void resetItemResult()
     {
         for (int i = 0; i < 4; i++)
@@ -471,7 +501,7 @@ public class AdventureManager : MonoBehaviour
         
 
         //지금은 시작 버튼 누르면 바로 시작
-        StartCoroutine(phase_Manage_Coroutine());
+        StartCoroutine(phase_Manage_Coroutine(1));
     }
     public void setBalpan(int stageIdx) //이벤트 끝나고 발판 나올수 있도록 하는거
     {
@@ -532,10 +562,10 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    private IEnumerator phase_Manage_Coroutine()
+    private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
         gameOverChk = false;
-        stageNum = 1;
+        stageNum = stageNumTemp;
         addAdventureMoney(0);
 
         //시작시 이미지 없애기
@@ -554,7 +584,9 @@ public class AdventureManager : MonoBehaviour
         resultObj.SetActive(false);
 
         SoundManager_Main.Instance.playSound(2);
+
         //스테이지 시작시 나오는 인생 이미지 종료
+        #region
         lifeObj.SetActive(true);
         lifeObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/lifeImage/spr_life_" + stageNum.ToString());
         float lifeAlpha = 0.0f;
@@ -566,10 +598,11 @@ public class AdventureManager : MonoBehaviour
             lifeObj_back.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, lifeAlpha);
             yield return new WaitForSeconds(0.05f);
         }
-        TalkManager.Instance.startTalk(1);
         yield return new WaitForSeconds(2.0f);
-        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
+        if (TalkManager.Instance.stageStart(stageNum))
+        {
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        }
         while (lifeAlpha > 0.0f)
         {
             lifeAlpha -= 0.1f;
@@ -578,7 +611,9 @@ public class AdventureManager : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
         lifeObj.SetActive(false);
+        #endregion
         // 스테이지 시작시 나오는 인생 이미지 종료
+
         diceBtnFire.Stop();
         // 스테이지 끝 혹은 주사위 이벤트가 끝날때까지 유지되도록 (StartCoroutine이랑 하나 계속 돌아가게 하는 것중 뭐가 더 비용 비싼지 확인할것) 살려두는게 쌀것 같긴함.
         while (//stageIdx < 20 &&
@@ -633,6 +668,10 @@ public class AdventureManager : MonoBehaviour
             nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
             diceBtnFire.Play();
+            if (tutorialVal == 1) { 
+                TalkManager.Instance.startTalk(4);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
             yield return new WaitUntil(() => selectDiceNum > 0);
             diceBtnFire.Stop();
 
@@ -817,6 +856,7 @@ public class AdventureManager : MonoBehaviour
                     BattleManager.Instance.updateBattleBackground(curDiceEventPacket.getBattleBackSprite());
 
                     BattleManager.Instance.changeBossPhase(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType());
+                    
                     for (int i = 0; i < 4; i++)
                     {
                         //마지막 전투에서의 캐릭터 정보를 확인
@@ -832,9 +872,9 @@ public class AdventureManager : MonoBehaviour
                     }
                     battleBtn.transform.position = nextBtnObj.transform.position;
                     battleEventTrigger = true;
-
+                    
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
-
+                    
                     if (selectDiceCharacterIdx == -1 || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
                     {
                         selectDiceCharacterIdx = -1; //전투 후 돌아오면 해당 캐릭터가 생존했는지 확인한 다음 돌아올 수 있게 바꿀것. 
@@ -864,8 +904,12 @@ public class AdventureManager : MonoBehaviour
                         }
                         else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
                     }
-
-                    Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+                    if (tutorialVal == 4) //아이템 칸 설명을 위한 대화로 넘어가기.
+                    {
+                        TalkManager.Instance.startTalk(10);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        yield return new WaitUntil(() => tutorialVal == 5);
+                    }
                 }
                 if (curDiceEventPacket.getItemExist() == 2) // 랜덤한 아이템을 준다. 이부분은 추가 구현 필요.
                 {
@@ -877,6 +921,13 @@ public class AdventureManager : MonoBehaviour
                     demoEndChk = 1;
                     gameOverChk = true;
                 }
+                //튜토리얼 보스 클리어 확인
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101 && !gameOverChk)
+                {
+                    demoEndChk = 2;
+                    gameOverChk = true;
+                }
+
 
                 if (gameOverChk == false)
                 {
@@ -891,9 +942,19 @@ public class AdventureManager : MonoBehaviour
         }
         if (gameOverChk) //게임오버로 왔을 경우.
         {
-            if (demoEndChk == 1) { //데모 보스 잡은 경우 게임오버 띄우기
+            if (demoEndChk != 0) { //스테이지 보스 잡은 경우 스테이지 클리어 띄우기
+                
                 CameraManager.Instance.resultScreenActive(2);
+                
                 yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
+                
+
+                if (demoEndChk == 2) //튜토리얼 종료시
+                {
+                    TalkManager.Instance.startTalk(13);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    tutorialVal = 0;
+                }
                 demoEndChk = 0;
             }
             SoundManager_Main.Instance.stopSound(2);
@@ -1087,6 +1148,11 @@ public class AdventureManager : MonoBehaviour
     //가방, 전투 페이즈 입장을 위한 함수들
     public void enterUpgradeCanvas()
     {
+        if (tutorialVal == 4)
+        {
+            tutorialVal = 5;
+            TalkManager.Instance.startTalk(11);
+        }
         if (!itemManager.Instance.getItemBoxMove()) {
             if (itemManager.Instance.getItemBoxOpen())
             {

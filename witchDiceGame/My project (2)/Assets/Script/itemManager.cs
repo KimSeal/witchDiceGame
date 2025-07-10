@@ -545,7 +545,6 @@ public class itemManager : MonoBehaviour
         if (curSelectItemType == 0 && curSelectItemIndex != -1 && characterSelectIdx >=0 && CharacterManager.Instance.getCharacter(characterSelectIdx) != null)
         {
             CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
-            Debug.Log("click item! : " + characterSelectIdx + " : " + ItemArr[0, curSelectItemIndex].getVal(0) + " : " + ItemArr[0, curSelectItemIndex].getVal(1));
             useItem();
             click_characterInfoType_selectButton(0);
         }
@@ -554,21 +553,57 @@ public class itemManager : MonoBehaviour
 
     private void changeDice(int idx, int number)
     {
+
         CharacterManager.Instance.changeDice(characterSelectIdx, idx, number);
         diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
-        Debug.Log("change Dice "+ idx.ToString() + " to number " + number.ToString());
+    }
+    private void changeDice(int characterIdx, int idx, int number)
+    {
+
+        CharacterManager.Instance.changeDice(characterIdx, idx, number);
+        if (characterSelectIdx == characterIdx) //같은 경우만 변경
+        {
+            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
+        }
+    }
+    public void setTutorialInitDice()
+    {
+        for (int i=0;i<6;i++) {
+            CharacterManager.Instance.changeDice(0, i, 1);
+            diceBoardObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/1");
+        }
+        
     }
     public void click_dice_changeNum(int idx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
         if (curSelectItemType == 1 && curSelectItemIndex != -1) {
             int itemIdx = ItemArr[1, curSelectItemIndex].getIdx();
-            
-            if (itemIdx == 1) { //랜덤한 숫자로 변경 
-                changeDice(idx, Random.Range(1,7));
+
+            if (itemIdx == 1)
+            { //랜덤한 숫자로 변경 
+                changeDice(idx, Random.Range(1, 7));
             }
             else if (itemIdx >= 2 && itemIdx <= 7) //해당 숫자로 변경
             {
                 changeDice(idx, ItemArr[1, curSelectItemIndex].getVal(0));
+            }
+            else if (itemIdx == 8){ //현재 선택한 캐릭터에 대해 보통 주사위로 변경
+                for (int i = 0; i < 6; i++) changeDice(i, i + 1);
+            }
+            else if (itemIdx == 9) {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
+                for (int chIdx = 0; chIdx < 4; chIdx++) if (CharacterManager.Instance.getCharacterState(chIdx) == 0) for (int i = 0; i < 6; i++) changeDice(chIdx, i, i + 1);
+            }
+            else if (itemIdx == 10)
+            {
+                for (int i = 0; i < 6; i++) changeDice(i, Random.Range(1, 7));
+            }
+            else if (itemIdx == 11) { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
+                for (int chIdx = 0; chIdx < 4; chIdx++) if (CharacterManager.Instance.getCharacterState(chIdx) == 0) for (int i = 0; i < 6; i++) changeDice(chIdx, i, Random.Range(1, 7));
+            }
+            else if (itemIdx == 12)
+            {
+                int tempRandom = Random.Range(1, 7);
+                for (int i = 0; i < 6; i++) changeDice(i, tempRandom);
             }
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             useItem();

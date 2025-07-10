@@ -77,10 +77,25 @@ public class TalkManager : MonoBehaviour
         faceArr[2] = talkReader.characterRightFace;
         faceArr[3] = talkReader.characterRightestFace;
     }
+
+    private int[] lifeStartIdx = {3,  -99999};
+    public bool stageStart(int stageStart)
+    {
+        //스테이지가 0이 아니면서(다시 튜토리얼 시도 할때 대사 보여줘야 하니까) 기존에 방문했던 stage가 아니면
+        if (stageStart != 0 && (lifeStartIdx[stageStart] == -99999 || jsonDataManager.Instance.getStageWatched(stageStart))) {
+            return false;
+        }
+        else
+        {
+            startTalk(lifeStartIdx[stageStart]);
+            return true;
+        }
+        
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
         libraryEntry = false;
         talkList = CSVReader.Read<TalkReader>("Talk_2");
         
@@ -148,8 +163,11 @@ public class TalkManager : MonoBehaviour
             }
         }
     }
+
     public void startTalk(int a)
     {
+
+
         if (a == 1) {
             if (libraryEntry) return;
             else libraryEntry = true;
@@ -240,7 +258,7 @@ public class TalkManager : MonoBehaviour
         preBackground = talkList[a].backGround;
         setPreCharacterName();
     }
-    private void stopTalk()
+    public void stopTalk()
     {
         if (talkingChk)
         {

@@ -31,8 +31,7 @@ public class Goblin : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1) //고블린의 두번째 스킬이 호출된 경우
         {
-            Debug.Log("Yes, Iam add!");
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * 2, 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8, 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
         }
 
         return packets;

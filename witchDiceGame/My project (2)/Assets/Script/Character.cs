@@ -281,6 +281,10 @@ public abstract class Character
 
             if (this.hp <= 0)
             {
+                if (this.reviveUnit && AdventureManager.Instance.getTutorial() != 0) {
+                    jsonDataManager.Instance.tutorialRevive();
+                    this.hp = 1; return false; 
+                } //튜토리얼 용으로 하나 만들기.
                 this.hp = 0;
                 this.curState = 2;
                 return true;
@@ -323,6 +327,20 @@ public abstract class Character
         }
         return 0;
     }
+
+    public int downGradeDamage(int damage)
+    {
+        this.hp -= damage;
+        if (this.hp <= 0)
+        {
+            if (this.reviveUnit) {this.hp = 0; return 0; }
+            this.curState = 2;
+            this.hp = 0;
+            return 1;
+        }
+        return 0;
+    }
+
     public void setHp(int hp)
     {
         this.hp = hp;
@@ -371,7 +389,7 @@ public abstract class Character
     {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:경험치 / 
         if (idx == 0) //체력이 줄었고 
         {
-            if(damage(val) == 1) return 1;
+            if (downGradeDamage(val) == 1) return 1;
         }
         if (idx == 1)
         {

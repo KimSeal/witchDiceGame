@@ -143,6 +143,33 @@ public class jsonDataManager : MonoBehaviour
         playerPlayData.addCharacterToken(idx, addVal);
         jsonDataManager.Instance.SavePlayerDataToJson();
     }
+
+    public bool getStageWatched(int i)
+    {
+        return playerPlayData.getStageWatched(i);
+    }
+    public void setStageWatched(int i)
+    {
+        playerPlayData.setStageWatched(i);
+        jsonDataManager.Instance.SavePlayerDataToJson();
+    }
+    public void downGradeRevive()
+    {
+        if (!playerPlayData.downGradeRevive) {
+            TalkManager.Instance.startTalk(14);
+            playerPlayData.downGradeRevive = true;
+            SavePlayerDataToJson();
+        }
+    }
+    public void tutorialRevive()
+    {
+        if (!playerPlayData.tutorialRevive)
+        {
+            TalkManager.Instance.startTalk(15);
+            playerPlayData.tutorialRevive = true;
+            SavePlayerDataToJson();
+        }
+    }
 }
 
 public class PlayerPlayData{
@@ -154,6 +181,9 @@ public class PlayerPlayData{
     public int[] playCharacterToken = new int[10000];
     public bool[] monsterSkill0Meet = new bool[10000];
     public bool[] monsterSkill1Meet = new bool[10000];
+    public bool[] stageWatched = new bool[10000];
+    public bool downGradeRevive = false;
+    public bool tutorialRevive = false;
     public PlayerPlayData()
     {
         this.money = 0;
@@ -163,17 +193,20 @@ public class PlayerPlayData{
         this.witchPower[2] = true;
         for (int i = 3; i < witchPower.Length; i++) this.witchPower[i] = false;
 
-        for (int i = 0; i < playCharacterAble.GetLength(0); i++)
-        {
+        for (int i = 0; i < playCharacterAble.GetLength(0); i++){
             playCharacterAble[i] = false;
             playCharacterToken[i] = 0;
         }
-
-        for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++)
+        for (int i = 0; i < stageWatched.GetLength(0); i++)
         {
+            stageWatched[i] = false;
+        }
+        for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++){
             monsterSkill0Meet[i] = false;
             monsterSkill1Meet[i] = false;
         }
+        downGradeRevive = false;
+        tutorialRevive = false;
     }
     public PlayerPlayData(PlayerPlayData playerPlayerData)
     {
@@ -191,6 +224,20 @@ public class PlayerPlayData{
             monsterSkill0Meet[i] = playerPlayerData.monsterSkill0Meet[i];
             monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];
         }
+        for (int i = 0; i < stageWatched.GetLength(0); i++)
+        {
+            stageWatched[i] = playerPlayerData.stageWatched[i];
+        }
+        downGradeRevive = playerPlayerData.downGradeRevive;
+        tutorialRevive = playerPlayerData.tutorialRevive;
+    }
+    public bool getStageWatched(int i)
+    {
+        return stageWatched[i];
+    }
+    public bool setStageWatched(int i)
+    {
+        return stageWatched[i] = true;
     }
     public int getMoney()
     {

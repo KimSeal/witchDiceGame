@@ -180,6 +180,7 @@ public class BattleManager : MonoBehaviour
     public void changeBossPhase(int a)
     {
         if(a == 100) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
+        if (a == 101) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
     {
@@ -926,11 +927,12 @@ public class BattleManager : MonoBehaviour
         while (true)
         {
             yield return new WaitUntil(() => curPhase == 1 && currentLightUI == 0 && currentMoveUI == 0);
-            Debug.Log("DiceThrow Test! curPhase is " + curPhase.ToString());
             StartCoroutine(DiceThrowPhase_Coroutine());
             yield return new WaitUntil(() => curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0);
-            Debug.Log("WitchPower Test! curPhase is " + curPhase.ToString());
-            StartCoroutine(witchPowerPhase_Coroutine());
+            
+            if (AdventureManager.Instance.getTutorial() != 1 && AdventureManager.Instance.getTutorial() != 2 ) { StartCoroutine(witchPowerPhase_Coroutine()); } //첫 튜토리얼에서는 마녀능력을 사용하지 않는다. X
+            else curPhase = 3;
+            
             yield return new WaitUntil(() => curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0);
             
             StartCoroutine(skillSelectPhase_Coroutine());
@@ -943,6 +945,7 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
             if (curPhase != 1) break;
         }
+        Debug.Log("battle End Chk alright?");
     }
 
 
@@ -988,6 +991,15 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 1)
         {
+            if (AdventureManager.Instance.getTutorial() == 1) {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
+                TalkManager.Instance.startTalk(5);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+            else if (AdventureManager.Instance.getTutorial() == 3) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            {
+                TalkManager.Instance.startTalk(7);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
             //아군 모든 주사위 던지기
             for (int i = 0; i < 4; i++)
             {
@@ -1071,9 +1083,16 @@ public class BattleManager : MonoBehaviour
     private IEnumerator witchPowerPhase_Coroutine()
     {
         witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
+        
         StartCoroutine(makeBright(backGroundObj[1], 0.0f));
         StartCoroutine(createWitchPowerUI());
         StartCoroutine(MoveUI(backGroundObj[1], -108.0f));
+        if (AdventureManager.Instance.getTutorial() == 3) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+        {
+            TalkManager.Instance.startTalk(8);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        }
+
         yield return new WaitUntil(() => currentLightUI == 0 && currentMoveUI == 0);
         witchPowerState = 0;
         witchPowerMoveState = 0;
@@ -1449,7 +1468,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase_Coroutine()
     {
-       
+        
         StartCoroutine(MoveUI(diceFullUI, 60.0f));
         StartCoroutine(MoveUI(backGroundObj[0], 0.0f)); // 78f : skillSelect  62f: battle
         StartCoroutine(makeBright(backGroundObj[0], 0.0f));
@@ -1470,7 +1489,12 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(makeBright(myCharacterObjUI[i], 0.0f));
             StartCoroutine(makeBright(enemyCharacterObjUI[i], 0.0f));
         }
-        TalkManager.Instance.startTalk(6);
+        if (AdventureManager.Instance.getTutorial() == 1)
+        {
+            TalkManager.Instance.startTalk(6);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+        } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
         yield return new WaitUntil(() => currentMoveUI == 0 && currentLightUI == 0); //
     }
 
@@ -2287,6 +2311,7 @@ public class BattleManager : MonoBehaviour
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
                     Debug.Log("you should click : " + nextDice.ToString());
                     nextSkill = myDiceTake[nextDice];
+                    clickDice_battlePhase = -998;
                     yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
                     Debug.Log("My Skill Use : " + clickDice_battlePhase.ToString());
 
@@ -2507,7 +2532,8 @@ public class BattleManager : MonoBehaviour
                                 {
                                     GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    //사망 아닐시
+                                    //사망인 경우
+
                                     if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
@@ -2515,7 +2541,7 @@ public class BattleManager : MonoBehaviour
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                     }
-                                    else // 사망일시
+                                    else // 사망이 아닌 경우
                                     {
                                         changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                                         if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
@@ -2663,8 +2689,12 @@ public class BattleManager : MonoBehaviour
         itemManager.Instance.flipItemBox_BattleUI(); //켜진 item box 끄기
         yield return new WaitForSeconds(0.2f);
         int result = winningCheck();
+        //tutorial용 전투 종료 확인
+        if (AdventureManager.Instance.getTutorial() == 1) AdventureManager.Instance.setTutorial(2);
+        if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
+
         //아군 전멸
-        if(result == 2)
+        if (result == 2)
         {
             //itemManager.Instance.endOfBattlePhase();
             Debug.Log("you lose!");
@@ -2694,6 +2724,19 @@ public class BattleManager : MonoBehaviour
         //적군 전멸
         else if (result == 1)
         {
+            if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
+            if (AdventureManager.Instance.getTutorial() == 4) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            {
+                TalkManager.Instance.startTalk(9);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+            if (bossPhase == 101 && AdventureManager.Instance.getTutorial() == 5) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            {
+                TalkManager.Instance.startTalk(12);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                bossPhase = 0;
+                AdventureManager.Instance.setTutorial(6); //튜토리얼 마지막
+            }
 
             if (bossPhase == 0)
             {
@@ -2705,12 +2748,6 @@ public class BattleManager : MonoBehaviour
                     enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
                 }
 
-                //랜덤 아이템 배정하고 출력
-                makeRandomResult();
-                for (int i = 0; i < 3; i++) printRandomResult(i, false);
-
-                resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
-
                 CharacterManager.Instance.character_reset();
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
                 {
@@ -2721,6 +2758,18 @@ public class BattleManager : MonoBehaviour
                     }
                 }
 
+                if (!(AdventureManager.Instance.getTutorial() == 3 || AdventureManager.Instance.getTutorial() == 4))
+                {
+                    //랜덤 아이템 배정하고 출력
+                    makeRandomResult();
+                    for (int i = 0; i < 3; i++) printRandomResult(i, false);
+
+                    resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
+                }
+                else
+                {
+                    resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
+                }
 
                 Debug.Log("you win!");
                 bosang_click = true;
@@ -2730,7 +2779,6 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.5f);
                 }
 
-
                 resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
                 for (int i = 0; i < 4; i++)
                 {
@@ -2739,6 +2787,7 @@ public class BattleManager : MonoBehaviour
                     myDiceState[i] = 0;
                     myDiceStateAnim[i].Play("0");
                 }
+                curPhase = 0;
             }
             else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
             {
@@ -2747,6 +2796,7 @@ public class BattleManager : MonoBehaviour
                 setEnemyCharacter(1, 10013);
             }
             
+
         }
         //전투 지속 필요
         else
@@ -2981,12 +3031,7 @@ public class BattleManager : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-                Debug.Log("bug test");
-                Debug.Log(myCharacterPosition[i].x);
-                Debug.Log(myCharacterSwing[i]);
-                Debug.Log(myCharacterPunch[i]);
                 if (myCharacterSwing[i] < 0.0) myCharacterSwing[i] = 0.0f;
-                Debug.Log(myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i]));
                 myCharacterObjEntityUI[i].transform.position = new Vector3(
                         myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
                         myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
