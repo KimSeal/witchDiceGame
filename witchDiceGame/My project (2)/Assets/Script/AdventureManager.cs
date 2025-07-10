@@ -535,7 +535,7 @@ public class AdventureManager : MonoBehaviour
     private IEnumerator phase_Manage_Coroutine()
     {
         gameOverChk = false;
-        stageNum = 0;
+        stageNum = 1;
         addAdventureMoney(0);
 
         //시작시 이미지 없애기
