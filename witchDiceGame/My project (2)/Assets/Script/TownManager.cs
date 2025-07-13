@@ -42,12 +42,13 @@ public class TownManager : MonoBehaviour
         }
         if (i == 1)
         {
-            Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+            
+            TalkManager.Instance.startTalk(16);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
         }
         if (i == 2)
         {
-            TalkManager.Instance.startTalk(2);
+            
             Debug.Log("libraryEnter");
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
             LibraryManager.Instance.enterLibrary(0);
@@ -55,7 +56,6 @@ public class TownManager : MonoBehaviour
         }
         if (i == 3)
         {
-            Screen.SetResolution(960, 540, FullScreenMode.Windowed);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
     }
@@ -76,9 +76,17 @@ public class TownManager : MonoBehaviour
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
         SoundManager_Main.Instance.playSound(0);
     }
+    public void backToMain()
+    {
+        CameraManager.Instance.updateInitPosition(new Vector3(-1500f, -500f, CameraManager.Instance.cameraPointZ()));
+
+    }
     // Start is called before the first frame update
     void Start()
     {
+        //Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+        Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+
         clickAndImageChange = transform.Find("spr_town_home_click").gameObject;
     }
 

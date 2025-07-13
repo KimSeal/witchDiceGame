@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
+public class passiveReturn
+{
+    public bool used = false;
+    public string cal = "";
+    public int val = 0;
+    public passiveReturn(bool used, string cal, int val)
+    {
+        this.used = used;
+        this.cal = cal;
+        this.val = val;
+    }
+}
 public class itemManager : MonoBehaviour
 {
 
@@ -95,7 +108,8 @@ public class itemManager : MonoBehaviour
     private int dragCharacterEndNum = -1;
 
     //string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
-
+    [SerializeField]
+    public GameObject changeDiceEff;
     public void hoverInItem(int idx)
     {
         Debug.Log("hover!");
@@ -494,7 +508,7 @@ public class itemManager : MonoBehaviour
             else { infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
             infoBoardObj[1].GetComponent<TextMeshPro>().text = tempCharacter.getName();
             infoBoardObj[3].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
-            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getMp().ToString() + "/" + tempCharacter.getMaxMp().ToString(); //이후 Mp로 수정할것
+            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getPhyAtk().ToString();//tempCharacter.getMp().ToString() + "/" + tempCharacter.getMaxMp().ToString(); //이후 Mp로 수정할것
         }
         else if (idx == 1) // 주사위
         {
@@ -555,7 +569,9 @@ public class itemManager : MonoBehaviour
     {
 
         CharacterManager.Instance.changeDice(characterSelectIdx, idx, number);
-        diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
+            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
+            Instantiate(changeDiceEff, diceBoardObj[idx].transform.position, new Quaternion(0, 0, 0, 0));
+        
     }
     private void changeDice(int characterIdx, int idx, int number)
     {
@@ -563,14 +579,15 @@ public class itemManager : MonoBehaviour
         CharacterManager.Instance.changeDice(characterIdx, idx, number);
         if (characterSelectIdx == characterIdx) //같은 경우만 변경
         {
-            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
+                Instantiate(changeDiceEff, diceBoardObj[idx].transform.position, new Quaternion(0, 0, 0, 0));
+                diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
         }
     }
     public void setTutorialInitDice()
     {
         for (int i=0;i<6;i++) {
             CharacterManager.Instance.changeDice(0, i, 1);
-            diceBoardObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/1");
+            //diceBoardObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/1");
         }
         
     }
@@ -808,13 +825,13 @@ public class itemManager : MonoBehaviour
         descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
 
-        /*
+        
         //test Sample
         for (int i=0;i<7;i++) {
-            ItemExistArr[1, i] = true;
-            ItemArr[1,i] = new Item(itemList[1][i+1]);
-            ItemExistArr[3, i] = true;
-            ItemArr[3, i] = new Item(itemList[3][i+1]);
+            //ItemExistArr[1, i] = true;
+            //ItemArr[1,i] = new Item(itemList[1][i+1]);
+            //ItemExistArr[3, i] = true;
+            //ItemArr[3, i] = new Item(itemList[3][i+1]);
         }
         ItemExistArr[0, 0] = true;
         ItemArr[0, 0] = new Item(itemList[0][1]);
@@ -825,7 +842,7 @@ public class itemManager : MonoBehaviour
         ItemArr[2, 0] = new Item(itemList[2][1]);
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
-        */
+        
         updateInventory();
     }
 
@@ -855,43 +872,46 @@ public class itemManager : MonoBehaviour
 
     }
 
+
     //passive Item use function start
-    public bool usePassiveItem(TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTiming)
+    public passiveReturn usePassiveItem(TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTiming)
     {
-        if (!ItemExistArr[3, idx]) {return false;} // 아이템이 없으면 그냥 스킵
+        if (!ItemExistArr[3, idx]) {return new passiveReturn(false, "", 0);} // 아이템이 없으면 그냥 스킵
         Item item = ItemArr[3, idx];
-        if (item.getVal(0) != takeSkillPacket.getSkillType()) return false; //스킬이 아이템 타입하고 안맞으면 종료 
+        if (item.getVal(0) != takeSkillPacket.getSkillType()) { return new passiveReturn(false, "", 0); };  //스킬이 아이템 타입하고 안맞으면 종료 
         
         //클릭 이전 타이밍 이면서 주사위 조건이 안맞으면 return
-        if (activeTiming == 0 && !conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) return false;
-        
+        if (activeTiming == 0 && !conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) { return new passiveReturn(false, "", 0); }
+
         //클릭 이후 대상. 이건 몬스터 정보 같은거도 받아야해서 조건 추가될 예정
-        if (activeTiming == 1 && false) return false;
+        if (activeTiming == 1 && false) { return new passiveReturn(false, "", 0); }
+
+        passiveReturn returnVal = new passiveReturn(true, "+", item.getVal(3));
 
         switch (item.getIdx())
         {
             case 1:
-                takeSkillPacket.addVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 2:
-                takeSkillPacket.addVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 3:
-                takeSkillPacket.mulVal(item.getVal(3)); break;
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
             case 4:
-                takeSkillPacket.mulVal(item.getVal(3)); break;
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
             case 5:
-                takeSkillPacket.addVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 6:
-                takeSkillPacket.mulVal(item.getVal(3)); break;
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
             case 7:
-                takeSkillPacket.addVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 8:
-                takeSkillPacket.addVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 9:
-                takeSkillPacket.addVal(item.getVal(3)); break;
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
         }
 
 
-        return true;
+        return returnVal;
     }
 
     private bool conditionCheck_dice(int[] diceArr, int condition0, int condition1, int condition2, int condition3, int condition4)

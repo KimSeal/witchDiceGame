@@ -64,7 +64,7 @@ public class CharacterManager : MonoBehaviour
             skillArr[8] = skillList[destinyReaderList[i].skill8];
             skillArr[9] = skillList[destinyReaderList[i].skill9];
 
-            if(destinyReaderList[i].DestinyIdx <= 10000) destinyList.Add(new Destiny(destinyReaderList[i], skillArr));
+            if(destinyReaderList[i].DestinyIdx <= 10000 && destinyReaderList[i].DestinyIdx >= 0 ) destinyList.Add(new Destiny(destinyReaderList[i], skillArr));
             else if (destinyReaderList[i].DestinyIdx > 10000) destinyList_monster.Add(new Destiny(destinyReaderList[i], skillArr));
         }
         Debug.Log(destinyReaderList.Count);
@@ -73,8 +73,8 @@ public class CharacterManager : MonoBehaviour
         //캐릭터 테스트 0번에 용사 배치
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 1);
-        setCharacter(2, 2);
+        setCharacter(1, 5);
+        setCharacter(2, 6);
         //setCharacter(3, 4);
     }
     public void setTurotialCharacterSet()
@@ -90,8 +90,8 @@ public class CharacterManager : MonoBehaviour
     {
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 1);
-        setCharacter(2, 2);
+        setCharacter(1, 3);
+        setCharacter(2, 4);
     }
     // Update is called once per frame
     void Update()
@@ -116,6 +116,10 @@ public class CharacterManager : MonoBehaviour
     public Destiny getDestiny(int idx)
     {
         return destinyList[idx];
+    }
+    public int getRandomCharacterDestinyIdx()
+    {
+        return Random.Range(1, destinyList.Count) ;
     }
     public int getCharacterState(int idx)
     {

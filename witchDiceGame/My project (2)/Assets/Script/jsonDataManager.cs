@@ -170,6 +170,18 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+    public bool getTutorialDid()
+    {
+        return playerPlayData.getTutorialDid();
+    }
+    public void tutorialDid()
+    {
+        if (!playerPlayData.tutorialDid)
+        {
+            playerPlayData.tutorialDid = true;
+            SavePlayerDataToJson();
+        }
+    }
 }
 
 public class PlayerPlayData{
@@ -184,6 +196,7 @@ public class PlayerPlayData{
     public bool[] stageWatched = new bool[10000];
     public bool downGradeRevive = false;
     public bool tutorialRevive = false;
+    public bool tutorialDid = false;
     public PlayerPlayData()
     {
         this.money = 0;
@@ -207,6 +220,7 @@ public class PlayerPlayData{
         }
         downGradeRevive = false;
         tutorialRevive = false;
+        tutorialDid = false;
     }
     public PlayerPlayData(PlayerPlayData playerPlayerData)
     {
@@ -230,7 +244,17 @@ public class PlayerPlayData{
         }
         downGradeRevive = playerPlayerData.downGradeRevive;
         tutorialRevive = playerPlayerData.tutorialRevive;
+        tutorialDid = playerPlayerData.tutorialDid; 
     }
+    public bool getTutorialDid()
+    {
+        return tutorialDid;
+    }
+    public void setTutorialDid()
+    {
+        tutorialDid = true;
+    }
+
     public bool getStageWatched(int i)
     {
         return stageWatched[i];

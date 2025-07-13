@@ -146,6 +146,23 @@ public class AdventureManager : MonoBehaviour
         return lastCharacter[idx];
     }
 
+    public void mainPlayButton()
+    {
+        //if (false) {
+        if (!jsonDataManager.Instance.getTutorialDid()) {
+            CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
+            tutorialStart();
+            Debug.Log("tutorial!");
+        }
+        else
+        {
+            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
+        }
+    }
+    public void mainExitButton()
+    {
+        Application.Quit();
+    }
     void resetItemResult()
     {
         for (int i = 0; i < 4; i++)
@@ -438,7 +455,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; // 이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 29;//i; //이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -766,6 +783,12 @@ public class AdventureManager : MonoBehaviour
                 }
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
                 diceBtnFire.Stop();
+                if (curDiceEvent.getEventType() == 6) 
+                {
+                    diceBtnFire.Play();
+                    Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                }
+                
 
                 adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
@@ -887,8 +910,10 @@ public class AdventureManager : MonoBehaviour
                     battleBtn.transform.position += new Vector3(0, 300, 0);
                     updateCharacterFace();
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                    selectInfo.GetComponent<TextMeshPro>().text = "Battle is over. Now, we need to move";
+                    selectInfo.GetComponent<TextMeshPro>().text = "전투 종료! 다음 이벤트로 넘어가자!";
                 }
+
+                
 
                 if (curDiceEventPacket.getItemExist() == 1) { //이벤트 결과로 정해진 아이템을 준다.
                     resultObj.SetActive(true);
@@ -908,14 +933,60 @@ public class AdventureManager : MonoBehaviour
                     {
                         TalkManager.Instance.startTalk(10);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        eventEndClick = true;
+                        clickAble = false;
                         yield return new WaitUntil(() => tutorialVal == 5);
+                        clickAble = true;
                     }
                 }
-                if (curDiceEventPacket.getItemExist() == 2) // 랜덤한 아이템을 준다. 이부분은 추가 구현 필요.
+ 
+                if (curDiceEventPacket.getItemExist() >= 11 && curDiceEventPacket.getItemExist() <= 14 ) // 랜덤한 아이템을 준다.
                 {
                     resultObj.SetActive(true);
+                    for (int i = 0; i < 4; i++)   // 보상 수만큼 해주기
+                    {
+                        if (curDiceEventPacket.getItemExist() % 10 > i) //아이템 수 만큼만 지급.
+                        {
+                            int j = Random.Range(0, 3);
+                            if (j == 2) j++; //데모버젼이니까 장비 아이템은 안나오도록
+                            int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
+ 
+                            resultItemArr[i, 0] = j;
+                            resultItemArr[i, 1] = k;
+                        }
+                        else
+                        {
+                            resultItemArr[i, 0] = -99999;
+                            resultItemArr[i, 1] = -99999;
+                        }
+                        //결과로 나오는 아이템에 대한 이미지 처리
+                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                        else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                    }
                 }
-
+                if (curDiceEventPacket.getItemExist() >= 21 && curDiceEventPacket.getItemExist() <= 24) // 랜덤한 캐릭터를 준다.
+                {
+                    resultObj.SetActive(true);
+                    for (int i = 0; i < 4; i++)   
+                    {
+                        if (curDiceEventPacket.getItemExist() % 10 > i) // 지정된 캐릭터 보상 수만큼 해주기
+                        {
+                            resultItemArr[i, 0] = 4;
+                            resultItemArr[i, 1] = CharacterManager.Instance.getRandomCharacterDestinyIdx();
+                        }
+                        else
+                        {
+                            resultItemArr[i, 0] = -99999;
+                            resultItemArr[i, 1] = -99999;
+                        }
+                        //결과로 나오는 아이템에 대한 이미지 처리
+                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                        else if (resultItemArr[i, 0] == 4) //캐릭터를 얻는 이벤트의 경우
+                        {
+                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                        }
+                    }
+                }
                 //데모 보스 클리어 확인
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk) {
                     demoEndChk = 1;
@@ -926,6 +997,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     demoEndChk = 2;
                     gameOverChk = true;
+                    jsonDataManager.Instance.tutorialDid();
                 }
 
 
@@ -942,6 +1014,7 @@ public class AdventureManager : MonoBehaviour
         }
         if (gameOverChk) //게임오버로 왔을 경우.
         {
+            selectInfo.GetComponent<TextMeshPro>().text = "";
             if (demoEndChk != 0) { //스테이지 보스 잡은 경우 스테이지 클리어 띄우기
                 
                 CameraManager.Instance.resultScreenActive(2);
@@ -980,9 +1053,14 @@ public class AdventureManager : MonoBehaviour
     private int demoEndChk = 0;
     public void clickResultItem(int idx)
     {
+        Debug.Log("click Item!");
+        Debug.Log(eventEndClick);
+        Debug.Log(resultItemArr[idx, 0]);
+        Debug.Log(resultItemArr[idx, 1]);
         //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때
         if (eventEndClick && resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999)
         {
+            Debug.Log("well.. not bad...");
             if (resultItemArr[idx, 0] == 4) //캐릭터 습득일 경우
             {
                 int emptyPlaceExist = -1;
@@ -994,8 +1072,13 @@ public class AdventureManager : MonoBehaviour
                         break;
                     }
                 }
-                if (emptyPlaceExist == -1) Debug.Log("you need Place to add character!");
-                else {
+                if (emptyPlaceExist == -1)
+                {
+                    fullUI.showFull();
+                    Debug.Log("you need Place to add character!");
+                }
+                else
+                {
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
@@ -1015,7 +1098,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 else if (result == 1) //꽉차서 못담는 경우.
                 {
-
+                    fullUI.showFull();
                 }
                 else if (result == 2)
                 {

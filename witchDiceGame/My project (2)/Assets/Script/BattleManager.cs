@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using AnimatedBattleText.Examples;
 public class BattleManager : MonoBehaviour
 {
     [SerializeField]
@@ -93,6 +93,8 @@ public class BattleManager : MonoBehaviour
     private int[] myCharacterAtkReady = { 0,0,0,0};
     private int[] enemyCharacterAtkReady = { 0, 0, 0, 0 };
 
+    [SerializeField]
+    public GameObject specialTextManager; 
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     private IEnumerator battleTimer = null;
@@ -2266,10 +2268,12 @@ public class BattleManager : MonoBehaviour
         {
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
             { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
-
-                if (itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 0) & updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
+                
+                passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 0);
+                if (tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
                 {
-                    
+
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                     GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
 
@@ -2388,9 +2392,9 @@ public class BattleManager : MonoBehaviour
                             {
                                 if(myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    
-                                    GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0,45,0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0,45,0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
@@ -2421,9 +2425,9 @@ public class BattleManager : MonoBehaviour
 
                                 if (enemyCharacter[tempTargetIdx-4] != null && enemyCharacter[tempTargetIdx-4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    
-                                    GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
@@ -2530,8 +2534,9 @@ public class BattleManager : MonoBehaviour
                                 
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //사망인 경우
 
                                     if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
@@ -2558,8 +2563,9 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
+                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //사망한경우
                                     if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
                                     {
@@ -2665,7 +2671,8 @@ public class BattleManager : MonoBehaviour
         
         for (int i=0;i<3;i++)
         {
-            int j = Random.Range(0, 4);
+            int j = Random.Range(0, 3);
+            if (j == 2) j++;
             int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
             resultItem[i] = itemManager.Instance.getItem(j, k);
         }
