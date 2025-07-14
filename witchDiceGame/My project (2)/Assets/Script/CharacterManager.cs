@@ -71,10 +71,13 @@ public class CharacterManager : MonoBehaviour
         Debug.Log(destinyList.Count);
 
         //캐릭터 테스트 0번에 용사 배치
+        emptyMyCharacter(0);
+        emptyMyCharacter(1);
+        emptyMyCharacter(2);
+        emptyMyCharacter(3);
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 5);
-        setCharacter(2, 6);
+
         //setCharacter(3, 4);
     }
     public void setTurotialCharacterSet()
@@ -88,10 +91,14 @@ public class CharacterManager : MonoBehaviour
     }
     public void setTestCharacterSet()
     {
+        emptyMyCharacter(0);
+        emptyMyCharacter(1);
+        emptyMyCharacter(2);
+        emptyMyCharacter(3);
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 3);
-        setCharacter(2, 4);
+        //setCharacter(1, 3);
+        //setCharacter(2, 4);
     }
     // Update is called once per frame
     void Update()

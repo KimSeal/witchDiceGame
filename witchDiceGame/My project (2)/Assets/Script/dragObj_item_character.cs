@@ -15,6 +15,7 @@ public class dragObj_item_character : MonoBehaviour, IBeginDragHandler, IEndDrag
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        SoundManager_Sfx.Instance.playSound(0);
         defaultPoint = this.transform.position;
         int temp = -1;
         for (int i=0;i<=3;i++)
@@ -35,8 +36,8 @@ public class dragObj_item_character : MonoBehaviour, IBeginDragHandler, IEndDrag
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        
-            this.transform.position = defaultPoint;
+        SoundManager_Sfx.Instance.playSound(4);
+        this.transform.position = defaultPoint;
             itemManager.Instance.turnOnCharacterCollider_item();
         Debug.Log(itemManager.Instance.getDragCharacterStartNum());
 

@@ -62,20 +62,24 @@ public class LibraryManager : MonoBehaviour
         int buyChk = jsonDataManager.Instance.checkWitchPower(buyPowerVal);
         if (buyChk == 1)
         {
+            SoundManager_Sfx.Instance.playSound(1);
             jsonDataManager.Instance.buyWitchPower(buyPowerVal);
             drawPowerByLock(buyPowerVal);
             buyUI[0].SetActive(false);
         }
         else if (buyChk == 0)
         {
+            SoundManager_Sfx.Instance.playSound(7);
             buyUI[2].GetComponent<TextMeshPro>().text = "You have this!";
         }
         else if (buyChk == 2) {
+            SoundManager_Sfx.Instance.playSound(7);
             buyUI[2].GetComponent<TextMeshPro>().text = "You need To more money!";
         }
     }
     public void noBuyPower()
     {
+        SoundManager_Sfx.Instance.playSound(1);
         buyUI[0].SetActive(false);
     }
     public void tryBuyPower(int idx)
@@ -186,6 +190,7 @@ public class LibraryManager : MonoBehaviour
         //이미 배치된 파워 해제용
         if (curWitchPower[idx] != -1)
         {
+            SoundManager_Sfx.Instance.playSound(7);
             clickWitchPower(curWitchPower[idx]);
         }
     }
@@ -198,6 +203,7 @@ public class LibraryManager : MonoBehaviour
             {
                 if (curWitchPower[idx] == input)
                 {
+                    SoundManager_Sfx.Instance.playSound(7);
                     //이미 사용중인 거 선택시 해제
                     Debug.Log("make empty about current box");
                     hoverOutCurPower(idx);
@@ -210,10 +216,11 @@ public class LibraryManager : MonoBehaviour
             //배틀 매니져에 선택 세팅하기
             for (int idx = 1; idx < curWitchPower.Length; idx++)
             {
-
+                
                 //mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                 if (curWitchPower[idx] == -1)
                 {
+                    SoundManager_Sfx.Instance.playSound(4);
                     CameraManager.Instance.VibrateForeTime(0.1f);
 
                     curWitchPower[idx] = input;
@@ -225,8 +232,11 @@ public class LibraryManager : MonoBehaviour
         }
         else
         {
+            SoundManager_Sfx.Instance.playSound(0);
             tryBuyPower(input);
+            return;
         }
+        SoundManager_Sfx.Instance.playSound(7);
     }
 
     public void enterLibrary(int idx)
@@ -235,6 +245,8 @@ public class LibraryManager : MonoBehaviour
         //CameraManager.Instance.zoomEvent();
         CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
         SoundManager_Main.Instance.playSound(1);
+        SoundManager_Main.Instance.stopSound(0);
+        SoundManager_Main.Instance.stopSound(7);
         jsonDataManager.Instance.addMoney(0);
         //배틀 매니져에서 받아오기
         for (int i = 1; i < curWitchPower.Length; i++)

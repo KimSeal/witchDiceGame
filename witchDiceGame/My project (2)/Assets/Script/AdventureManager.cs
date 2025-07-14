@@ -148,19 +148,23 @@ public class AdventureManager : MonoBehaviour
 
     public void mainPlayButton()
     {
+        Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+        SoundManager_Sfx.Instance.playSound(0);
+        SoundManager_Main.Instance.stopSound(0);
         //if (false) {
         if (!jsonDataManager.Instance.getTutorialDid()) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
-            tutorialStart();
-            Debug.Log("tutorial!");
+            tutorialStart();            
         }
         else
         {
             CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
+            SoundManager_Main.Instance.playSound(7);
         }
     }
     public void mainExitButton()
     {
+
         Application.Quit();
     }
     void resetItemResult()
@@ -191,6 +195,7 @@ public class AdventureManager : MonoBehaviour
             int buyResult = itemManager.Instance.getItemResult(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
             if (buyResult == 0) //정상작동의 경우
             {
+                SoundManager_Sfx.Instance.playSound(4);
                 addAdventureMoney(storeItemArr[storeIdx, 2] * -1);
                 storeItemArr[storeIdx, 0] = -99999;
                 storeItemArr[storeIdx, 1] = -99999;
@@ -201,11 +206,14 @@ public class AdventureManager : MonoBehaviour
             }
             else if (buyResult == 1) //인벤토리가 가득 찬 경우
             {
+                
+                SoundManager_Sfx.Instance.playSound(7);
                 storeCheckPriceObj.text = "더 넣을 공간이 없어요!";
             }
         }
         else
         {
+            SoundManager_Sfx.Instance.playSound(7);
             storeCheckPriceObj.text = "돈이 부족해요!";
         }
     }
@@ -224,6 +232,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void storeArrow(int dir)
     {
+        SoundManager_Sfx.Instance.playSound(0);
         if (dir == 1){
             storeIdx++;
             if (storeIdx > 3) storeIdx = 0;
@@ -237,9 +246,14 @@ public class AdventureManager : MonoBehaviour
     public void tryBuyItem()
     {
         //아이템이 비어있는 경우 불가능하도록
-        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) return;
+        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999)
+        {
+            SoundManager_Sfx.Instance.playSound(7);
+            return;
+        }
         else
         {
+            SoundManager_Sfx.Instance.playSound(0);
             storeCheckEntityObj.SetActive(true);
             Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
             storeCheckImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
@@ -250,6 +264,7 @@ public class AdventureManager : MonoBehaviour
     public void closeTryBuyItem()
     {
         storeCheckEntityObj.SetActive(false);
+        SoundManager_Sfx.Instance.playSound(7);
     }
     
     public void hoverInItem_store()
@@ -455,7 +470,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 29;//i; //이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -656,6 +671,7 @@ public class AdventureManager : MonoBehaviour
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_start");
                     GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                     temp_0.GetComponent<Animator>().Play("balpanCreate");
+                    SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.2f);
                 }
                 else if (stageIdx + i >= adventureEventArr.Length) //넘어가는 경우는 출력하지 않는다
@@ -670,7 +686,7 @@ public class AdventureManager : MonoBehaviour
 
                     GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                     temp_0.GetComponent<Animator>().Play("balpanCreate");
-
+                    SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.2f);
                 }
             }
@@ -693,6 +709,8 @@ public class AdventureManager : MonoBehaviour
             diceBtnFire.Stop();
 
             Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
+            SoundManager_Sfx.Instance.playSound(2);
+
             loadEnd = false;
             yield return new WaitUntil(() => loadEnd);
 
@@ -711,6 +729,8 @@ public class AdventureManager : MonoBehaviour
             {
                 GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i + 1].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp_0.GetComponent<Animator>().Play("balpanTouch");
+                SoundManager_Sfx.Instance.playSound(4);
+
                 balpanArrow.transform.position = balpanObj[i+1].transform.position + new Vector3(0,8,0);
                 stageIdx++;
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
@@ -787,6 +807,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     diceBtnFire.Play();
                     Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                    SoundManager_Sfx.Instance.playSound(0);
                 }
                 
 
@@ -872,7 +893,7 @@ public class AdventureManager : MonoBehaviour
                 {
 
                     
-                    SoundManager_Main.Instance.PauseSound(2);
+                    SoundManager_Main.Instance.stopSound(2);
                     SoundManager_Main.Instance.playSound(5);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -904,7 +925,7 @@ public class AdventureManager : MonoBehaviour
                         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                     }
                     SoundManager_Main.Instance.stopSound(5);
-                    SoundManager_Main.Instance.unPauseSound(2);
+                    SoundManager_Main.Instance.playSound(2);
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
 
                     battleBtn.transform.position += new Vector3(0, 300, 0);
@@ -1014,23 +1035,62 @@ public class AdventureManager : MonoBehaviour
         }
         if (gameOverChk) //게임오버로 왔을 경우.
         {
+            SoundManager_Main.Instance.stopSound(2); //기본 브금 제거
+            SoundManager_Main.Instance.playSound(3); //기본 브금 제거
             selectInfo.GetComponent<TextMeshPro>().text = "";
             if (demoEndChk != 0) { //스테이지 보스 잡은 경우 스테이지 클리어 띄우기
-                
+                if (demoEndChk == 1) //튜토리얼 종료시
+                {
+                    if (!jsonDataManager.Instance.getOwlBattleWin())
+                    {
+                        
+                        TalkManager.Instance.startTalk(18);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
                 CameraManager.Instance.resultScreenActive(2);
+
                 
+
+                if (!jsonDataManager.Instance.getFirstGetCharacterPart() )
+                {
+                    bool newDestinyChk = false;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
+                        if (destinyIdx != -99999 && destinyIdx != 0) newDestinyChk = true;
+                    }
+                    if (newDestinyChk)
+                    {
+                        jsonDataManager.Instance.firstGetCharacterPart();
+                        TalkManager.Instance.startTalk(20);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                }
                 yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
-                
+
+                if (demoEndChk == 1) //튜토리얼 종료시
+                {
+                    if (!jsonDataManager.Instance.getOwlBattleWin())
+                    {
+                        jsonDataManager.Instance.owlBattleWin();
+                        TalkManager.Instance.startTalk(19);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
 
                 if (demoEndChk == 2) //튜토리얼 종료시
                 {
                     TalkManager.Instance.startTalk(13);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    TalkManager.Instance.startTalk(16);
                     tutorialVal = 0;
                 }
                 demoEndChk = 0;
             }
-            SoundManager_Main.Instance.stopSound(2);
+            SoundManager_Main.Instance.stopSound(3); //기본 브금 제거
             //gameOverChk가 true가 되면 끝
             CharacterManager.Instance.resetCharacterManager();
             selectDiceCharacterIdx = -1;
@@ -1043,6 +1103,7 @@ public class AdventureManager : MonoBehaviour
             standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
 
             TownManager.Instance.backToTownUI();
+            
             adventureMoney = 0;
             addAdventureMoney(0);
             Debug.Log("end of game!");
@@ -1074,11 +1135,13 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (emptyPlaceExist == -1)
                 {
+                    SoundManager_Sfx.Instance.playSound(7);
                     fullUI.showFull();
                     Debug.Log("you need Place to add character!");
                 }
                 else
                 {
+                    SoundManager_Sfx.Instance.playSound(3);
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
@@ -1091,6 +1154,7 @@ public class AdventureManager : MonoBehaviour
                 int result = itemManager.Instance.getItemResult(resultItemArr[idx, 0], resultItemArr[idx, 1]);
                 if (result == 0)
                 {
+                    SoundManager_Sfx.Instance.playSound(3);
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
@@ -1098,6 +1162,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 else if (result == 1) //꽉차서 못담는 경우.
                 {
+                    SoundManager_Sfx.Instance.playSound(7);
                     fullUI.showFull();
                 }
                 else if (result == 2)
@@ -1177,11 +1242,12 @@ public class AdventureManager : MonoBehaviour
     public void clickDice(int characterIdx)
     {
         if (!clickAble) return;
-
+        
         if (descObj[0].activeSelf == true) hoverOutItem();
 
         if (characterIdx == -1 && eventEndClick)
         {
+            SoundManager_Sfx.Instance.playSound(7);
             CameraManager.Instance.VibrateForeTime(0.2f);
             eventEndClick = false;
             return;
@@ -1191,7 +1257,6 @@ public class AdventureManager : MonoBehaviour
         if (selectDiceNum == -1 && characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
             if (selectDiceCharacterIdx >=0)
             {
-
                 characterIdx = selectDiceCharacterIdx;
                 Debug.Log("test ! : " + characterIdx);
                 CharacterManager.Instance.throwDice(characterIdx);
@@ -1205,6 +1270,7 @@ public class AdventureManager : MonoBehaviour
         }
         else if (selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
         {
+            SoundManager_Sfx.Instance.playSound(0);
             Debug.Log("charactger click Dice");
             for (int i=0;i<4;i++)
             {
@@ -1214,6 +1280,10 @@ public class AdventureManager : MonoBehaviour
             selectDiceCharacterIdx = characterIdx;
             balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));
             standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_"+ CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back" );
+        }
+        else if(selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) != 0)
+        {
+            SoundManager_Sfx.Instance.playSound(7);
         }
     } 
     public void hoverInCharacterDice(int characterIdx)
@@ -1231,6 +1301,7 @@ public class AdventureManager : MonoBehaviour
     //가방, 전투 페이즈 입장을 위한 함수들
     public void enterUpgradeCanvas()
     {
+        SoundManager_Sfx.Instance.playSound(0);
         if (tutorialVal == 4)
         {
             tutorialVal = 5;
@@ -1259,6 +1330,7 @@ public class AdventureManager : MonoBehaviour
     {
         if (!itemManager.Instance.getItemBoxMove())
         {
+            SoundManager_Sfx.Instance.playSound(0); 
                 curCanvasIsAdventure = true;
                 CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                 //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);

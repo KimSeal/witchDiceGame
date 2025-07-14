@@ -44,10 +44,13 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void startAdventure()
     {
+        SoundManager_Main.Instance.stopSound(7);
+        SoundManager_Sfx.Instance.playSound(0);
         AdventureManager.Instance.startAdventure();
     }
     public void enterAdventureReady()
     {
+        SoundManager_Main.Instance.playSound(7);
         drawSelectPower(0, BattleManager.Instance.getWitchPower(1));
         drawSelectPower(1, BattleManager.Instance.getWitchPower(2));
         CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.cameraPointZ()));
@@ -70,6 +73,12 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void clickCurPower()
     {
+        if (!jsonDataManager.Instance.getLibraryMeet())
+        {
+            jsonDataManager.Instance.libraryMeet();
+            TalkManager.Instance.startTalk(1);
+        }
+        SoundManager_Sfx.Instance.playSound(0);
         LibraryManager.Instance.enterLibrary(1);
     }
     private string[] powerType = { "reroll", "turn", "add", "sub" };

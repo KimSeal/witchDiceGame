@@ -74,9 +74,15 @@ public class CameraManager : MonoBehaviour
     int direction = 0;
     int timeDelay = 3;
 
+    bool windowChk = false;
     // Update is called once per frame
     void Update()
     {
+        if (!windowChk)
+        {
+            windowChk = true;
+            Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+        }
         if (ZoomTime > 0)
         {
             
@@ -145,12 +151,13 @@ public class CameraManager : MonoBehaviour
     {
         initialPosition = vec;
         ShakeTime = 0.0f;
+        FadeUIScript.fadeIn();
     }
     bool loseChk = false;
     public void resultScreenActive(int caseVal)
     {
         int updateMoney = AdventureManager.Instance.getAdventureMoney();
-        money.text = updateMoney.ToString(); //돈 관련 텍스트 업데이트;
+        money.text = "$" + updateMoney.ToString(); //돈 관련 텍스트 업데이트;
         if (caseVal == 2) updateMoney *= 5;
         if (caseVal == 2) money.text += " X 5";
 

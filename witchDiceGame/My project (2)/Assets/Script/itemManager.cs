@@ -443,6 +443,7 @@ public class itemManager : MonoBehaviour
     {
         if(curSelectItemIndex != -1)
         {
+            SoundManager_Sfx.Instance.playSound(6);
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             useItem();
         }
@@ -467,6 +468,7 @@ public class itemManager : MonoBehaviour
 
         if(idx != curSelectItemType) //같으면 이동 안함. 다르니까 이동하는 경우에 대한 처리
         {
+            SoundManager_Sfx.Instance.playSound(0);
             curSelectItemIndex = -1; //택한 아이템 초기화
             curSelectItemType = idx; //타입 변경   
             for (int i=0;i < 11;i++)
@@ -475,12 +477,16 @@ public class itemManager : MonoBehaviour
             }
             updateInventory();
         }
+        else { SoundManager_Sfx.Instance.playSound(7); }
     }
     
     public void click_characterInfoType_selectButton(int idx) // 캐릭터 정보 창에서 선택한 정보
     {
         //TalkManager.Instance.startTalk(11);
+        if(curSelectCharacterInfoType == idx) SoundManager_Sfx.Instance.playSound(7);
+        else SoundManager_Sfx.Instance.playSound(0);
         curSelectCharacterInfoType = idx;
+        
         for (int i=0;i<5;i++)
         {
             if (i == idx)
@@ -559,15 +565,20 @@ public class itemManager : MonoBehaviour
         if (curSelectItemType == 0 && curSelectItemIndex != -1 && characterSelectIdx >=0 && CharacterManager.Instance.getCharacter(characterSelectIdx) != null)
         {
             CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            SoundManager_Sfx.Instance.playSound(2);
             useItem();
             click_characterInfoType_selectButton(0);
+        }
+        else
+        {
+            SoundManager_Sfx.Instance.playSound(7);
         }
        
     }
 
     private void changeDice(int idx, int number)
     {
-
+        SoundManager_Sfx.Instance.playSound(1);
         CharacterManager.Instance.changeDice(characterSelectIdx, idx, number);
             diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
             Instantiate(changeDiceEff, diceBoardObj[idx].transform.position, new Quaternion(0, 0, 0, 0));

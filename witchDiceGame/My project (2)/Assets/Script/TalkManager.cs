@@ -167,11 +167,6 @@ public class TalkManager : MonoBehaviour
     public void startTalk(int a)
     {
 
-
-        if (a == 1) {
-            if (libraryEntry) return;
-            else libraryEntry = true;
-        }
         if (!talkingChk)
         {
             
@@ -199,6 +194,7 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
+            SoundManager_Sfx.Instance.playSound(0);
             if (talkList[curIdx].talkIdx != talkList[curIdx + 1].talkIdx)
             {
                 stopTalk();
@@ -212,6 +208,14 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        if(a == listIdx[2] + 35)
+        {
+            SoundManager_Main.Instance.playSound(8);
+        }
+        if (a == listIdx[2] + 76)
+        {
+            SoundManager_Main.Instance.stopSound(8);
+        }
         setCharacterName(talkList[a]);
         setCharacterFace(talkList[a]);
         setPoint(talkList[a]);

@@ -182,103 +182,171 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+    public bool getTowerMeet()
+    {
+        return playerPlayData.towerMeet;
+    }
+    public void towerMeet()
+    {
+        if (!playerPlayData.towerMeet)
+        {
+            playerPlayData.towerMeet = true;
+            SavePlayerDataToJson();
+        }
+    }
+    public bool getLibraryMeet()
+    {
+        return playerPlayData.libraryMeet;
+    }
+    public void libraryMeet()
+    {
+        if (!playerPlayData.libraryMeet)
+        {
+            playerPlayData.libraryMeet = true;
+            SavePlayerDataToJson();
+        }
+    }
+    public bool getOwlBattleWin()
+    {
+        return playerPlayData.owlBattleWin;
+    }
+    public void owlBattleWin()
+    {
+        if (!playerPlayData.owlBattleWin) { 
+            playerPlayData.owlBattleWin = true;
+            SavePlayerDataToJson();
+        }
+    }
+    public bool getFirstGetCharacterPart()
+    {
+        return playerPlayData.firstGetCharacterPart;
+    }
+    public void firstGetCharacterPart()
+    {
+        if (!playerPlayData.getFirstGetCharacterPart())
+        {
+            playerPlayData.firstGetCharacterPart = true;
+            SavePlayerDataToJson();
+        }
 }
 
-public class PlayerPlayData{
+    public class PlayerPlayData
+    {
 
-    public int[] curWitchPower = new int[2];
-    public int money = 0;
-    public bool[] witchPower = new bool[100];
-    public bool[] playCharacterAble = new bool[10000];
-    public int[] playCharacterToken = new int[10000];
-    public bool[] monsterSkill0Meet = new bool[10000];
-    public bool[] monsterSkill1Meet = new bool[10000];
-    public bool[] stageWatched = new bool[10000];
-    public bool downGradeRevive = false;
-    public bool tutorialRevive = false;
-    public bool tutorialDid = false;
-    public PlayerPlayData()
-    {
-        this.money = 0;
-        curWitchPower[0] = 1;
-        curWitchPower[1] = 2;
-        this.witchPower[1] = true;
-        this.witchPower[2] = true;
-        for (int i = 3; i < witchPower.Length; i++) this.witchPower[i] = false;
+        public int[] curWitchPower = new int[2];
+        public int money = 0;
+        public bool[] witchPower = new bool[100];
+        public bool[] playCharacterAble = new bool[10000];
+        public int[] playCharacterToken = new int[10000];
+        public bool[] monsterSkill0Meet = new bool[10000];
+        public bool[] monsterSkill1Meet = new bool[10000];
+        public bool[] stageWatched = new bool[10000];
+        public bool downGradeRevive = false;
+        public bool tutorialRevive = false;
+        public bool tutorialDid = false;
+        public bool towerMeet = false;
+        public bool libraryMeet = false;
+        public bool owlBattleWin = false;
+        public bool firstGetCharacterPart = false;
+        public PlayerPlayData()
+        {
+            this.money = 0;
+            curWitchPower[0] = 1;
+            curWitchPower[1] = 2;
+            this.witchPower[1] = true;
+            this.witchPower[2] = true;
+            for (int i = 3; i < witchPower.Length; i++) this.witchPower[i] = false;
 
-        for (int i = 0; i < playCharacterAble.GetLength(0); i++){
-            playCharacterAble[i] = false;
-            playCharacterToken[i] = 0;
+            for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+            {
+                playCharacterAble[i] = false;
+                playCharacterToken[i] = 0;
+            }
+            for (int i = 0; i < stageWatched.GetLength(0); i++)
+            {
+                stageWatched[i] = false;
+            }
+            for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++)
+            {
+                monsterSkill0Meet[i] = false;
+                monsterSkill1Meet[i] = false;
+            }
+            downGradeRevive = false;
+            tutorialRevive = false;
+            tutorialDid = false;
+            towerMeet = false;
+            libraryMeet = false;
+            owlBattleWin = false;
+            firstGetCharacterPart = false;
         }
-        for (int i = 0; i < stageWatched.GetLength(0); i++)
+        public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
-            stageWatched[i] = false;
+            this.money = playerPlayerData.money;
+            curWitchPower[0] = playerPlayerData.curWitchPower[0];
+            curWitchPower[1] = playerPlayerData.curWitchPower[1];
+            for (int i = 0; i < witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];
+            for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+            {
+                playCharacterAble[i] = playerPlayerData.playCharacterAble[i];
+                playCharacterToken[i] = playerPlayerData.playCharacterToken[i];
+            }
+            for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+            {
+                monsterSkill0Meet[i] = playerPlayerData.monsterSkill0Meet[i];
+                monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];
+            }
+            for (int i = 0; i < stageWatched.GetLength(0); i++)
+            {
+                stageWatched[i] = playerPlayerData.stageWatched[i];
+            }
+            downGradeRevive = playerPlayerData.downGradeRevive;
+            tutorialRevive = playerPlayerData.tutorialRevive;
+            tutorialDid = playerPlayerData.tutorialDid;
+            towerMeet = playerPlayerData.towerMeet;
+            libraryMeet = playerPlayerData.libraryMeet;
+            owlBattleWin = playerPlayerData.owlBattleWin;
+            firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
         }
-        for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++){
-            monsterSkill0Meet[i] = false;
-            monsterSkill1Meet[i] = false;
-        }
-        downGradeRevive = false;
-        tutorialRevive = false;
-        tutorialDid = false;
-    }
-    public PlayerPlayData(PlayerPlayData playerPlayerData)
-    {
-        this.money = playerPlayerData.money;
-        curWitchPower[0] = playerPlayerData.curWitchPower[0];
-        curWitchPower[1] = playerPlayerData.curWitchPower[1];
-        for(int i=0;i<witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];
-        for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+        public bool getFirstGetCharacterPart()
         {
-            playCharacterAble[i] = playerPlayerData.playCharacterAble[i];
-            playCharacterToken[i] = playerPlayerData.playCharacterToken[i];
+            return firstGetCharacterPart;
         }
-        for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+        public bool getTutorialDid()
         {
-            monsterSkill0Meet[i] = playerPlayerData.monsterSkill0Meet[i];
-            monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];
+            return tutorialDid;
         }
-        for (int i = 0; i < stageWatched.GetLength(0); i++)
+        public void setTutorialDid()
         {
-            stageWatched[i] = playerPlayerData.stageWatched[i];
+            tutorialDid = true;
         }
-        downGradeRevive = playerPlayerData.downGradeRevive;
-        tutorialRevive = playerPlayerData.tutorialRevive;
-        tutorialDid = playerPlayerData.tutorialDid; 
-    }
-    public bool getTutorialDid()
-    {
-        return tutorialDid;
-    }
-    public void setTutorialDid()
-    {
-        tutorialDid = true;
-    }
 
-    public bool getStageWatched(int i)
-    {
-        return stageWatched[i];
-    }
-    public bool setStageWatched(int i)
-    {
-        return stageWatched[i] = true;
-    }
-    public int getMoney()
-    {
-        return money;
-    }
-    public void addMoney(int a)
-    {
-        money += a;
-        jsonDataManager.Instance.changeMoney(this.money);
-    }
-    public void minusMoney(int a) {
-        money -= a;
-        jsonDataManager.Instance.changeMoney(this.money);
-    }
+        public bool getStageWatched(int i)
+        {
+            return stageWatched[i];
+        }
+        public bool setStageWatched(int i)
+        {
+            return stageWatched[i] = true;
+        }
+        public int getMoney()
+        {
+            return money;
+        }
+        public void addMoney(int a)
+        {
+            money += a;
+            jsonDataManager.Instance.changeMoney(this.money);
+        }
+        public void minusMoney(int a)
+        {
+            money -= a;
+            jsonDataManager.Instance.changeMoney(this.money);
+        }
 
-    public void addCharacterToken(int idx, int addVal) { //캐릭터 토큰 얻은 경우
-        playCharacterToken[idx] += addVal;
+        public void addCharacterToken(int idx, int addVal)
+        { //캐릭터 토큰 얻은 경우
+            playCharacterToken[idx] += addVal;
+        }
     }
 
 }

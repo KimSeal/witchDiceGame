@@ -18,7 +18,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     {
         if (!itemManager.Instance.getItemBoxMove())
         { //이동중이면 움직임 X
-
+            SoundManager_Sfx.Instance.playSound(0);
             defaultPoint = this.transform.position;
             int temp = -1;
             for (int i = 0; i <= 10; i++)
@@ -53,6 +53,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     {
         if (chkBegin && !itemManager.Instance.getItemBoxMove())
         { //이동중이면 움직임 X
+            SoundManager_Sfx.Instance.playSound(4);
             this.transform.position = defaultPoint;
             //GetComponent<BoxCollider2D>().enabled = true;
             itemManager.Instance.turnOnItemCollider_item();

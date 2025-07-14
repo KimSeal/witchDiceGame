@@ -22,6 +22,7 @@ public class exitButton : MonoBehaviour
     }
     public void ButtonDown()
     {
+        SoundManager_Sfx.Instance.playSound(5);
         Debug.Log("start");
         isClick = true;
         animator.Play("hold");
@@ -29,11 +30,17 @@ public class exitButton : MonoBehaviour
     public void ButtonUp()
     {
         Debug.Log("end");
+        SoundManager_Sfx.Instance.stopSound(5);
         isClick = false;
         if (animEndChk)
         {
+            SoundManager_Sfx.Instance.playSound(6);
             //캐릭터 방출 function
             itemManager.Instance.deleteCharacter();
+        }
+        else
+        {
+            SoundManager_Sfx.Instance.playSound(7);
         }
         animator.Play("normal");
         animEndChk = false;

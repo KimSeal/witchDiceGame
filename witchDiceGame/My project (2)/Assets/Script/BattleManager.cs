@@ -409,6 +409,7 @@ public class BattleManager : MonoBehaviour
         {
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
+                SoundManager_Sfx.Instance.playSound(4);
                 if (curSelectInfo == 0)
                 {
                     drawDice(myCharacter[i]);
@@ -427,6 +428,7 @@ public class BattleManager : MonoBehaviour
                 writeBattleInfo(myCharacter[i]); //정보 출력
             }
             else {
+                SoundManager_Sfx.Instance.playSound(7);
                 makeEmptyBattleInfoBox();
             }
         }
@@ -435,7 +437,7 @@ public class BattleManager : MonoBehaviour
             i -= 4;
             if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
             {
-                
+                SoundManager_Sfx.Instance.playSound(4);
                 if (curSelectInfo == 0)
                 {
                     drawDice(enemyCharacter[i]);
@@ -454,6 +456,7 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
+                SoundManager_Sfx.Instance.playSound(7);
                 makeEmptyBattleInfoBox();
             }
         }
@@ -701,14 +704,21 @@ public class BattleManager : MonoBehaviour
     {
         if (currentLightUI == 0 && currentMoveUI == 0)
         {
-            if (curPhase == 2) click_witchPower_Dice(diceIdx);
+            if (curPhase == 2)
+            {
+                SoundManager_Sfx.Instance.playSound(0);
+                click_witchPower_Dice(diceIdx);
+            }
             else if (curPhase == 3)
             {
+                SoundManager_Sfx.Instance.playSound(4);
                 if (diceIdx >= 0 && diceIdx < 4) click_characterSkill_Dice(diceIdx); //아군 스킬 배정용
                 else if (diceIdx >= 4 && diceIdx < 8) click_enemySkill_Dice(diceIdx);
             }
-            else if (curPhase == 5) {
-                if (diceIdx >= 0 && diceIdx < 4)  click_BattleSkill_dice(diceIdx); //아군 스킬 사용
+            else if (curPhase == 5)
+            {
+                SoundManager_Sfx.Instance.playSound(3);
+                if (diceIdx >= 0 && diceIdx < 4) click_BattleSkill_dice(diceIdx); //아군 스킬 사용
             }
         }
     }
@@ -1008,6 +1018,7 @@ public class BattleManager : MonoBehaviour
                 if (myDice[i] != null)
                 {
                     Instantiate(diceRollEff, myDiceUI[i].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                    SoundManager_Sfx.Instance.playSound(2);
                     yield return new WaitForSeconds(0.25f);
                     myDice[i].throwDice();
                     myDiceNum[i] = myDice[i].getNum();
@@ -1023,6 +1034,7 @@ public class BattleManager : MonoBehaviour
                 if (enemyDice[i] != null)
                 {
                     Instantiate(diceRollEff, enemyDiceUI[i].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                    SoundManager_Sfx.Instance.playSound(2);
                     yield return new WaitForSeconds(0.25f);
                     enemyDice[i].throwDice();
                     enemyDiceNum[i] = enemyDice[i].getNum();
@@ -1117,6 +1129,7 @@ public class BattleManager : MonoBehaviour
     public void witchPowerState_Change(int dir)
     {
         Debug.Log(witchPowerMoveState);
+        SoundManager_Sfx.Instance.playSound(0);
         if (curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0)
         {
             
@@ -1157,6 +1170,7 @@ public class BattleManager : MonoBehaviour
         {
             if (witchPowerMoveState == 0)
             {
+                SoundManager_Sfx.Instance.playSound(6);
                 witchPowerMoveState = 1; //마녀 파워 선택 종료
                 StartCoroutine(deleteWitchPowerUI());
                 StartCoroutine(select_witchPower_Dice());
@@ -1245,10 +1259,12 @@ public class BattleManager : MonoBehaviour
                         if (clickedDice[i] >= 0 && clickedDice[i] <= 3)
                         {
                             Instantiate(diceRollEff, myDiceUI[clickedDice[i]].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                            SoundManager_Sfx.Instance.playSound(2);
                         }
                         if (clickedDice[i] >= 4 && clickedDice[i] <= 7)
                         {
                             Instantiate(diceRollEff, enemyDiceUI[clickedDice[i] - 4].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                            SoundManager_Sfx.Instance.playSound(2);
                         }
                     }
                     yield return new WaitForSeconds(1f);
@@ -1350,8 +1366,8 @@ public class BattleManager : MonoBehaviour
                 myDiceNum[idx] = myDice[idx].getNum();
                 myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
                 Debug.Log("turn to sprite index is...! " + (myDice[idx].getNum() - 1).ToString());
-                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1]; 
-                
+                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
+                SoundManager_Sfx.Instance.playSound(2);
             }
         }
         else
@@ -1363,6 +1379,7 @@ public class BattleManager : MonoBehaviour
                 enemyDiceNum[idx] = enemyDice[idx].getNum();
                 enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[idx].dir * -90);
                 enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[idx].getNum() - 1];
+                SoundManager_Sfx.Instance.playSound(2);
             }
         }
         witchPowerClickState = -1;
@@ -1535,12 +1552,14 @@ public class BattleManager : MonoBehaviour
                         StartCoroutine(makeBright(skillSelectUI[characterIdx * 2 + skillIdx], 0.0f));
                         mySkillUsed[characterIdx, skillIdx] = false;
                         deleteSkillCommand();
+                        SoundManager_Sfx.Instance.playSound(7);
                     }
                     else
                     {
                         curClickSkill = input;
                         StartCoroutine(makeDark(skillSelectUI[characterIdx * 2 + skillIdx], 0.7f));
                         makeSkillCommand(characterIdx, skillIdx);
+                        SoundManager_Sfx.Instance.playSound(0);
                     }
                     
                 }
@@ -1552,15 +1571,18 @@ public class BattleManager : MonoBehaviour
                     if (mySkillUsed[characterIdx, skillIdx]) //할당이 된 스킬인 경우
                     {
                         curClickSkill = -1;
+                        SoundManager_Sfx.Instance.playSound(7);
                     }
                     else if (curClickSkill == input) { //할당이 안된 다른 같은인경우
                         curClickSkill = -1;
+                        SoundManager_Sfx.Instance.playSound(7);
                     }
                     else if(curClickSkill != input) //할당이 안된 다른 스킬인 경우
                     {
                         StartCoroutine(makeDark(skillSelectUI[characterIdx * 2 + skillIdx], 0.7f));
                         curClickSkill = input;
                         makeSkillCommand(characterIdx, skillIdx);
+                        SoundManager_Sfx.Instance.playSound(0);
                     }
                 }
 
@@ -1712,6 +1734,7 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase != 4 && curPhase != 5)
         {
+            SoundManager_Sfx.Instance.playSound(0);
             itemManager.Instance.flipItemBox_BattleUI();
         }
     }
@@ -2226,6 +2249,7 @@ public class BattleManager : MonoBehaviour
             for (int i = 0; i < moneyTemp; i++)
             {
                 Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                
             }
 
             updateEnemyDiceUI();
@@ -2276,7 +2300,7 @@ public class BattleManager : MonoBehaviour
                     specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                     GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
-
+                    SoundManager_Sfx.Instance.playSound(0);
                     for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
                     {
                         battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
@@ -2300,6 +2324,7 @@ public class BattleManager : MonoBehaviour
     private void makeHitEffect(int tempTargetIdx)
     {
         Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+        SoundManager_Sfx.Instance.playSound(Random.Range(8,11));
     }
     private IEnumerator BattlePhase_Coroutine()
     {
@@ -2819,9 +2844,14 @@ public class BattleManager : MonoBehaviour
         int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
         if (result == 0)
         {
+            SoundManager_Sfx.Instance.playSound(4);
             resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
 
             resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
+        }
+        else
+        {
+            SoundManager_Sfx.Instance.playSound(7);
         }
     }
     public void click_backToAdventure()
