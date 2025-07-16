@@ -208,11 +208,11 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
-        if(a == listIdx[2] + 35)
+        if(a == listIdx[2] + 36)
         {
             SoundManager_Main.Instance.playSound(8);
         }
-        if (a == listIdx[2] + 76)
+        if (a == listIdx[2] + 78)
         {
             SoundManager_Main.Instance.stopSound(8);
         }
@@ -249,8 +249,11 @@ public class TalkManager : MonoBehaviour
         //캐릭터 스프라이트 업데이트
         for (int i = 0; i < lightingArr.Length; i++)
         {
-            Debug.Log(("sprite/TestSprite/CharacterTalkStand/spr_stand_" + nameArr[i] + "_" + faceArr[i]));
-            characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
+            if (nameArr[i] == "People") characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(200 ,216);
+            else characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(100f, 216f);
+
+            if (nameArr[i] == ".") characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/empty/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
+            else characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
         }
 
         //배경 이미지 업데이트

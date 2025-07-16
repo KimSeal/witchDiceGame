@@ -148,6 +148,7 @@ public class AdventureManager : MonoBehaviour
 
     public void mainPlayButton()
     {
+        TalkManager.Instance.startTalk(21) ;
         Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
