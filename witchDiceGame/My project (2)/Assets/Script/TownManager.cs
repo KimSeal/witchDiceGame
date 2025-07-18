@@ -46,8 +46,7 @@ public class TownManager : MonoBehaviour
         }
         if (i == 1)
         {
-            SoundManager_Main.Instance.stopSound(7);
-            //TalkManager.Instance.startTalk(16);
+            //SoundManager_Main.Instance.stopSound(7);
             fullUI.showFull("데모에선 막힌 구간입니다!\n본편을 기대해주세요!");
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
         }
@@ -65,8 +64,7 @@ public class TownManager : MonoBehaviour
         }
         if (i == 3)
         {
-            SoundManager_Main.Instance.stopSound(7);
-            //TalkManager.Instance.startTalk(16);
+            //SoundManager_Main.Instance.stopSound(7);
             fullUI.showFull("데모에선 막힌 구간입니다!\n본편을 기대해주세요!");
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
