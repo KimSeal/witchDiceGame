@@ -112,7 +112,6 @@ public class itemManager : MonoBehaviour
     public GameObject changeDiceEff;
     public void hoverInItem(int idx)
     {
-        Debug.Log("hover!");
         if (idx == 11) {
             if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
@@ -139,7 +138,6 @@ public class itemManager : MonoBehaviour
     }
     public void hoverOutItem(int idx)
     {
-        Debug.Log("hover out!");
         descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         descObj[2].GetComponent<TextMeshPro>().text = "";
         descObj[3].GetComponent<TextMeshPro>().text = "";
@@ -345,8 +343,6 @@ public class itemManager : MonoBehaviour
                 itemBoxOpenPoint = -1; //종료 후 포인트 변경
             }
             gameObjTemp.transform.position = destination;
-            Debug.Log("Arrive!");
-            
             itemBoxMove = false;
         }
     }
@@ -540,9 +536,7 @@ public class itemManager : MonoBehaviour
                 
                 skillBoardObj[i, 1].GetComponent<TextMeshPro>().text = temp.getSkillName();
                 skillBoardObj[i, 2].GetComponent<TextMeshPro>().text = temp.getCommand();
-                for (int j=0;j<4; j++)
-                {
-                    Debug.Log("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
+                for (int j=0;j<4; j++) {
                     skillBoardObj[i, j + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
                 }
             }
@@ -643,7 +637,6 @@ public class itemManager : MonoBehaviour
     {   //주사위 변수 값은 val1으로 변경했습니다
         if (curSelectItemType == 2 && curSelectItemIndex != -1)
         {
-            Debug.Log("test Debug : " + curSelectItemIndex + "/" + ItemArr[2, curSelectItemIndex].getIdx());
             CharacterManager.Instance.changeEquip(characterSelectIdx, idx, 2, ItemArr[2, curSelectItemIndex].getIdx());
 
             equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, curSelectItemIndex].getItemName().ToString());
@@ -758,7 +751,6 @@ public class itemManager : MonoBehaviour
         }
 
         itemReaderList = CSVReader.Read<ItemReader>("Item");    //csv 읽고 해당 Item을 타입에 맞춰 넣는 모습
-        Debug.Log("ItemReadList Count is : " + itemReaderList.Count);
         for (int i=0;i<itemReaderList.Count;i++)
         {
             itemList[itemReaderList[i].type].Add(new Item(itemReaderList[i]));

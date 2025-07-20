@@ -541,7 +541,6 @@ public class BattleManager : MonoBehaviour
                 liveCharacterList.Add(i);
             }
         }
-        Debug.Log("add skill List");
         for (int i=0;i<8;i++)
         {
             if (enemySkillDiceNum[i] != -999)
@@ -557,8 +556,6 @@ public class BattleManager : MonoBehaviour
             //특수 변수 확인
             int characterIdxTemp = liveSkillList[skillIdx0] % 4;
             int skillIdxTemp = liveSkillList[skillIdx0] / 4;
-            Debug.Log("skill Special Chk");
-            Debug.Log(characterIdxTemp + " / " + skillIdxTemp);
             //만약 special한 공격이고(스택사용)
             if (enemyCharacter[characterIdxTemp].getCharacter_battle().getSpecialVal() != enemyCharacter[characterIdxTemp].skillUse(skillIdxTemp).getSpecialVal()) //만약 조건하고 다른경우 건너뛴다.
             {
@@ -756,7 +753,6 @@ public class BattleManager : MonoBehaviour
     {
         currentMoveUI++;
         yield return new WaitForSeconds(delayTemp);
-        Debug.Log("MoveUI Start");
         float termY = 0.2f;
         Vector3 destination = new Vector3(gameObjTemp.transform.position.x, inputY, 0);
         if (gameObjTemp.transform.position.y < inputY)
@@ -915,8 +911,6 @@ public class BattleManager : MonoBehaviour
         string strTemp = "dice_skillChk_";
         if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
         strTemp += (characterIdx + 1).ToString();
-        Debug.Log(diceStartIdx.ToString() + " " + diceEndIdx.ToString());
-
         for (int i = diceStartIdx; i < diceEndIdx; i++)
         {
             diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_chain");
@@ -934,7 +928,6 @@ public class BattleManager : MonoBehaviour
     {
         Start_Battle_Phase();
         itemManager.Instance.enterBattlePhase();
-        Debug.Log("Start Phase Test! curPhase is " + curPhase.ToString());
         //curPhase = 2;
         while (true)
         {
@@ -957,7 +950,6 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
             if (curPhase != 1) break;
         }
-        Debug.Log("battle End Chk alright?");
     }
 
 
@@ -992,7 +984,6 @@ public class BattleManager : MonoBehaviour
 
 
         yield return new WaitForSeconds(1f);
-        Debug.Log("phase change to 2!");
         curPhase = 2;
     }
     private bool diceThrowChk = false;
@@ -1076,7 +1067,6 @@ public class BattleManager : MonoBehaviour
 
             //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
             MakeEnemyAttackSet();
-            Debug.Log("Dice Throw Make enemy Array : " + enemyDiceTake[0].ToString() + " " + enemyDiceTake[1].ToString() + " " + enemyDiceTake[2].ToString() + " " + enemyDiceTake[3].ToString() + " ");
             updateEnemyDiceUI();
             diceThrowChk = true;
         }
@@ -1128,7 +1118,6 @@ public class BattleManager : MonoBehaviour
     //마녀 파워 선택 (좌우)
     public void witchPowerState_Change(int dir)
     {
-        Debug.Log(witchPowerMoveState);
         SoundManager_Sfx.Instance.playSound(0);
         if (curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0)
         {
@@ -1187,7 +1176,6 @@ public class BattleManager : MonoBehaviour
             {
                 witchPowerClickState = 6;
                 int witchPowerTemp = witchPowerIdx[witchPowerState];
-                Debug.Log("witch Number : " + witchPowerTemp);
                 int diceNum = 6;
                 if (witchPowerTemp == 0) diceNum = 0; //능력을 사용하지 않는 경우
                 if (witchPowerTemp >= 1 && witchPowerTemp <= 3) diceNum = 1; // 능력이 reroll이어서 주사위 하나만 쓰는 경우
@@ -1227,7 +1215,6 @@ public class BattleManager : MonoBehaviour
                     }
                     if (witchPowerTemp >= 4 && witchPowerTemp <= 6) //turn 스킬 사용시 
                     {
-                        Debug.Log("witchPowerClickState : " + witchPowerClickState.ToString());
                         diceArrowSet[clickedDice[0]].SetActive(true); //해당 주사위 화살표 활성화
                         yield return new WaitUntil(() => witchPowerClickState == -1);
                         diceArrowSet[clickedDice[0]].SetActive(false);
@@ -1365,7 +1352,6 @@ public class BattleManager : MonoBehaviour
                 myDice[idx].turnDice(dir);
                 myDiceNum[idx] = myDice[idx].getNum();
                 myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
-                Debug.Log("turn to sprite index is...! " + (myDice[idx].getNum() - 1).ToString());
                 myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
                 SoundManager_Sfx.Instance.playSound(2);
             }
@@ -1383,8 +1369,6 @@ public class BattleManager : MonoBehaviour
             }
         }
         witchPowerClickState = -1;
-        Debug.Log("Turn Dice Here!");
-
     }
 
     //마녀 좌우 선택 UI 천천히 제거
@@ -1522,7 +1506,6 @@ public class BattleManager : MonoBehaviour
     //스킬 선택 중 버튼 클릭에 대한 코드
     public void click_characterSkill_Button(int input)
     {
-        Debug.Log(curPhase);
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
             Debug.Log("lets do this");
@@ -1533,7 +1516,6 @@ public class BattleManager : MonoBehaviour
                 //현재 선택된게 없는 경우.
                 if (curClickSkill == -1)
                 {
-                    Debug.Log("not select now, so we need to select");
                     //현재 주사위에 배치되어 있는 경우
                     if (mySkillUsed[characterIdx, skillIdx])
                     {
@@ -1565,7 +1547,6 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("select now, so we need to turn off");
                     StartCoroutine(makeBright(skillSelectUI[(curClickSkill / 10) * 2 + (curClickSkill % 10)], 0.0f));
                     deleteSkillCommand();
                     if (mySkillUsed[characterIdx, skillIdx]) //할당이 된 스킬인 경우
@@ -1901,7 +1882,6 @@ public class BattleManager : MonoBehaviour
     {   //캐릭터를 누르면 해당 캐릭터 클릭이 비활성화되고
         if (curPhase == 5 && characterTargetIdx != -999 && characterClickAble[characterIdxInput])
         {
-            Debug.Log("hello!");
             clickCharacter[this.characterTargetIdx] = characterIdxInput; //누른 캐릭터 저장
             battleTargetUI[characterIdxInput].SetActive(false); //해당 target ui 배활성화
             characterClickAble[characterIdxInput] = false;  //누를수 없게 변경
@@ -2115,7 +2095,6 @@ public class BattleManager : MonoBehaviour
             if (option == 1)
             {
                 myCharacterObjUIAnim[characterIdx].Play("Hit");
-                Debug.Log(characterIdx.ToString() + " is hit by monster!");
             }
             else if (option == 2) myCharacterObjUIAnim[characterIdx].Play("Dead");
         }
@@ -2362,12 +2341,9 @@ public class BattleManager : MonoBehaviour
             {
                 if (myDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
-                    Debug.Log("you should click : " + nextDice.ToString());
                     nextSkill = myDiceTake[nextDice];
                     clickDice_battlePhase = -998;
                     yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
-                    Debug.Log("My Skill Use : " + clickDice_battlePhase.ToString());
-
 
                     /*
                     이후 passive 아이템 사용을 위해 사용된 주사위를 받아두기 위함.
@@ -2539,7 +2515,6 @@ public class BattleManager : MonoBehaviour
                 if (enemyDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
                     nextSkill = enemyDiceTake[nextDice];
-                    Debug.Log("Enemy Skill Use : " + nextSkill.ToString());
                     for (int i = 0; i < 4; i++)
                     {
                         if (enemyDiceTake[i] == nextSkill)
@@ -2573,17 +2548,15 @@ public class BattleManager : MonoBehaviour
                         makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
                         SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         
-                        Debug.Log("it is only slime skill idx testLog : "+enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx).ToString());
-                        
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-                        Debug.Log("enemy who use skill" + skillUseCharacter);
+
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
                             
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
-                            Debug.Log("target is...! : " + tempTargetIdx.ToString());
+
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
                                 
@@ -2694,7 +2667,6 @@ public class BattleManager : MonoBehaviour
         {
             clickDice_battlePhase = enemyDiceTake[input - 4];
         }
-        Debug.Log(clickDice_battlePhase);
         
     }
 
@@ -2761,8 +2733,6 @@ public class BattleManager : MonoBehaviour
         if (result == 2)
         {
             //itemManager.Instance.endOfBattlePhase();
-            Debug.Log("you lose!");
-
             //AdventureManager.Instance.loseGame();
             CameraManager.Instance.resultScreenActive(0);
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));

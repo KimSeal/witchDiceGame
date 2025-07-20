@@ -49,8 +49,7 @@ public class CharacterManager : MonoBehaviour
         {
             skillList.Add(new Skill(skillReaderList[i]) );
         }
-        Debug.Log(skillReaderList.Count);
-        Debug.Log(skillList.Count);
+
         for (int i=0;i < destinyReaderList.Count;i++)
         {
             skillArr[0] = skillList[destinyReaderList[i].skill0];
@@ -67,8 +66,7 @@ public class CharacterManager : MonoBehaviour
             if(destinyReaderList[i].DestinyIdx <= 10000 && destinyReaderList[i].DestinyIdx >= 0 ) destinyList.Add(new Destiny(destinyReaderList[i], skillArr));
             else if (destinyReaderList[i].DestinyIdx > 10000) destinyList_monster.Add(new Destiny(destinyReaderList[i], skillArr));
         }
-        Debug.Log(destinyReaderList.Count);
-        Debug.Log(destinyList.Count);
+
 
         //캐릭터 테스트 0번에 용사 배치
         emptyMyCharacter(0);
@@ -273,7 +271,6 @@ public class CharacterManager : MonoBehaviour
         if (characterIdx > 10000) {
             setCharacter_destinyBase(ref enemyCharacter[place], characterIdx);
         }
-        Debug.Log("character Set test");
     }
 
     
@@ -341,6 +338,5 @@ public class CharacterManager : MonoBehaviour
     public void CharacterUpgrade(int idx, int type, int val)
     {
         myCharacter[idx].upGrade(type, val);
-        Debug.Log("heal did!" + idx + " : "+type + " : "+ val);
     }
 }

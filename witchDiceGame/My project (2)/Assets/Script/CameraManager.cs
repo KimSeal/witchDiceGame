@@ -41,13 +41,11 @@ public class CameraManager : MonoBehaviour
 
     // Start is called before the first frame update
     public void VibrateForeTime(float time) {
-        Debug.Log("camera Shake");
         ShakeTime = time;
         ShakeAmount = 0.1f;
     }
     public void VibrateForeTime(float time, float power)
     {
-        Debug.Log("camera Shake");
         ShakeTime = time;
         ShakeAmount = power * 2;
     }
@@ -58,7 +56,6 @@ public class CameraManager : MonoBehaviour
     {
         Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
         tempSize = gameObject.GetComponent<UnityEngine.U2D.PixelPerfectCamera>().assetsPPU * timeDelay;
-        Debug.Log("hey! " + tempSize);
         initialPosition = transform.position;
         ZoomTime = -1f;
         loseUI = GameObject.Find("obj_ui_lose");

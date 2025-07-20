@@ -333,7 +333,6 @@ public class AdventureManager : MonoBehaviour
     }
     public void hoverOutItem()
     {
-        Debug.Log("hover out!");
         descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         descObj[2].GetComponent<TextMeshPro>().text = "";
         descObj[3].GetComponent<TextMeshPro>().text = "";
@@ -417,8 +416,6 @@ public class AdventureManager : MonoBehaviour
                 && adventureEventReaderList[eventIdx].eventIdx == adventureEventPacketReaderList[packetIdx].eventIdx) //다른 event나올때까지 업
             {
                 tempList[packetArrIdx++] = adventureEventPacketReaderList[packetIdx++];
-                Debug.Log(eventIdx);
-                Debug.Log(packetIdx);
             }
             adventureEventList[adventureEventReaderList[eventIdx].stageIdx].Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
@@ -491,12 +488,6 @@ public class AdventureManager : MonoBehaviour
             adventureEventArr[j] = temp; 
             */
         }
-        Debug.Log("randomTest!");
-        for (int i = 0; i < adventureEventArr.Length; i++) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
-        {
-            Debug.Log(adventureEventArr[i]);
-        }
-        Debug.Log("randomTest Over!");
     }
     private void makeStage_placeBalpan()
     {
@@ -551,7 +542,6 @@ public class AdventureManager : MonoBehaviour
             else
             {
                 balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 290 + adventureEventArr_Y[stageIdx + i] * 10, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
-                Debug.Log(adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());
                 balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
             }
         }
@@ -1107,7 +1097,6 @@ public class AdventureManager : MonoBehaviour
             
             adventureMoney = 0;
             addAdventureMoney(0);
-            Debug.Log("end of game!");
         }
         
     }
@@ -1115,14 +1104,9 @@ public class AdventureManager : MonoBehaviour
     private int demoEndChk = 0;
     public void clickResultItem(int idx)
     {
-        Debug.Log("click Item!");
-        Debug.Log(eventEndClick);
-        Debug.Log(resultItemArr[idx, 0]);
-        Debug.Log(resultItemArr[idx, 1]);
         //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때
         if (eventEndClick && resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999)
         {
-            Debug.Log("well.. not bad...");
             if (resultItemArr[idx, 0] == 4) //캐릭터 습득일 경우
             {
                 int emptyPlaceExist = -1;
@@ -1259,7 +1243,6 @@ public class AdventureManager : MonoBehaviour
             if (selectDiceCharacterIdx >=0)
             {
                 characterIdx = selectDiceCharacterIdx;
-                Debug.Log("test ! : " + characterIdx);
                 CharacterManager.Instance.throwDice(characterIdx);
                 //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
