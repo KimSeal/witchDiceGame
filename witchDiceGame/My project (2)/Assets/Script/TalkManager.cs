@@ -53,6 +53,9 @@ public class TalkManager : MonoBehaviour
     private string[] faceArr = {"","","",""};
     private string preBackground = "";
 
+    private int[] jumpChk = { 0, 0, 0, 0 };
+    private float[] jumpSpd = { 0, 0, 0, 0 };
+
     private bool libraryEntry = false;
     private void setPoint(TalkReader talkReader){
         pointArr[0] = new Vector3(talkReader.characterLeftestX, 0, 0);
@@ -139,7 +142,7 @@ public class TalkManager : MonoBehaviour
             //투명도 조정
             for (int i = 0; i < characterImage.Length; i++)
             {
-                if (lightingArr[i] == '1')
+                if (lightingArr[i] != '0')
                 {
                     if (material[i].GetFloat("_Transparency") > 0.0f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
                     else material[i].SetFloat("_Transparency", 0.0f);
@@ -157,9 +160,27 @@ public class TalkManager : MonoBehaviour
                     characterMoveVal[i] -= 0.1f;
                     if (characterMoveVal[i] > 0.0f)
                     {
-                        characterImage[i].GetComponent<RectTransform>().localPosition = Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f);
+                        characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f).x,
+                            characterImage[i].GetComponent<RectTransform>().localPosition.y, characterImage[i].GetComponent<RectTransform>().localPosition.z);
                     }
                 }
+                if (jumpChk[i] > 0  )
+                {
+                    if(jumpChk[i] % 2 == 0)
+                    {
+                        jumpSpd[i] = 4;
+                        jumpChk[i]--;
+                    }
+
+                    characterImage[i].GetComponent<RectTransform>().localPosition += new Vector3(0, jumpSpd[i], 0);
+                    jumpSpd[i] -= 0.5f;
+                    if (characterImage[i].GetComponent<RectTransform>().localPosition.y < 0) {
+                        characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, 0, characterImage[i].GetComponent<RectTransform>().localPosition.z);
+                        jumpChk[i]--;
+                        jumpSpd[i] = 0;
+                    }
+                }
+                else characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, 0, characterImage[i].GetComponent<RectTransform>().localPosition.z);
             }
         }
     }
@@ -208,7 +229,11 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
-        if(a == listIdx[2] + 36)
+
+        if(talkList[a].eventType == 1) FadeUIScript.fadeIn();
+        if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);
+
+        if (a == listIdx[2] + 36)
         {
             SoundManager_Main.Instance.playSound(8);
         }
@@ -246,6 +271,13 @@ public class TalkManager : MonoBehaviour
             lightingArr[i] = talkList[a].brightCharacter[i + 1];
         }
 
+        for (int i = 0; i < lightingArr.Length; i++)    //점프 애니메이션 관련
+        {
+            if (jumpChk[i] == 0){
+                if (talkList[a].brightCharacter[i + 1] == '2'){jumpChk[i] = 2;}
+                if (talkList[a].brightCharacter[i + 1] == '3'){ jumpChk[i] = 4; }
+            }
+        }
         //캐릭터 스프라이트 업데이트
         for (int i = 0; i < lightingArr.Length; i++)
         {

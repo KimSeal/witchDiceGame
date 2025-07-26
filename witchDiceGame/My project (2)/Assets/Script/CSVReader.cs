@@ -125,6 +125,7 @@ public class TalkReader{
     public string brightCharacter;
     public int imagePlace;
     public int imageIdx;
+    public int eventType;
     public string Name;
     public string Text;
     public string backGround;
