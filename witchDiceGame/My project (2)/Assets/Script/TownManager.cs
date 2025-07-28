@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TownManager : MonoBehaviour
 {
+    [SerializeField]
+    public GameObject[] cloudObj = new GameObject[4];
+
     private static TownManager instance = null;
     private void Awake()
     {
@@ -40,6 +43,7 @@ public class TownManager : MonoBehaviour
                 jsonDataManager.Instance.towerMeet();
                 TalkManager.Instance.startTalk(17);
             }
+            for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
             AdventureReadyManager.Instance.enterAdventureReady();
             // clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
         }
@@ -56,6 +60,7 @@ public class TownManager : MonoBehaviour
                 jsonDataManager.Instance.libraryMeet();
                 TalkManager.Instance.startTalk(1);
             }
+            for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
             LibraryManager.Instance.enterLibrary(0);
             SoundManager_Main.Instance.stopSound(0);
@@ -81,7 +86,7 @@ public class TownManager : MonoBehaviour
     }
     public void backToTownUI()
     {
-
+        for (int i = 0; i < cloudObj.Length; i++) cloudObj[i].GetComponent<cloudMove>().cloudActive();
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.playSound(7);
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));

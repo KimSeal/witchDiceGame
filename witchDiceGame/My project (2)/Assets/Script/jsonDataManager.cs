@@ -170,6 +170,22 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+    // 0 - 0 : 아무것도 안함. 1 :처음 들어감 2: 중간 보스 클리어 3: 최종 보스 클리어 4: 올빼미 선배 조우 5: 올빼미 선배 쓰러트림 6: 기억 모두 봄.
+    public int getChapterDid(int idx)
+    {
+        return playerPlayData.chapterDid[idx];
+    }
+    
+    public bool setChapterDid(int idx, int num)
+    {
+        if (playerPlayData.chapterDid[idx] < num)
+        {
+            playerPlayData.chapterDid[idx] = num;
+            SavePlayerDataToJson();
+            return true;
+        }
+        return false;
+    }
     public bool getTutorialDid()
     {
         return playerPlayData.getTutorialDid();
@@ -228,7 +244,19 @@ public class jsonDataManager : MonoBehaviour
             playerPlayData.firstGetCharacterPart = true;
             SavePlayerDataToJson();
         }
-}
+    }
+    public int getChapterRead(int chapterIdx, int idx)
+    {
+        if (chapterIdx == 1) return playerPlayData.chapter1Read[idx];
+        else return 0;
+    }
+    public void setChapterRead(int chapterIdx, int idx) {
+        if (chapterIdx == 1)
+        {
+            playerPlayData.chapter1Read[idx]++;
+            SavePlayerDataToJson();
+        }
+    }
 
     public class PlayerPlayData
     {
@@ -248,6 +276,16 @@ public class jsonDataManager : MonoBehaviour
         public bool libraryMeet = false;
         public bool owlBattleWin = false;
         public bool firstGetCharacterPart = false;
+        public int[] chapterDid = new int[6];
+        public int[] chapter1Read = new int[3];
+        public int getChapterDid(int idx)
+        {
+            return chapterDid[idx];
+        }
+        public void setChapterDid(int idx, int num)
+        {
+            if(chapterDid[idx] < num) chapterDid[idx] = num;
+        }
         public PlayerPlayData()
         {
             this.money = 0;
@@ -278,6 +316,7 @@ public class jsonDataManager : MonoBehaviour
             libraryMeet = false;
             owlBattleWin = false;
             firstGetCharacterPart = false;
+            for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -306,6 +345,7 @@ public class jsonDataManager : MonoBehaviour
             libraryMeet = playerPlayerData.libraryMeet;
             owlBattleWin = playerPlayerData.owlBattleWin;
             firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
+            for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = playerPlayerData.chapterDid[i];
         }
         public bool getFirstGetCharacterPart()
         {

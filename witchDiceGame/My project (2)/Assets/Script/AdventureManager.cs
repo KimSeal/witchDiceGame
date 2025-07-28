@@ -159,8 +159,9 @@ public class AdventureManager : MonoBehaviour
         }
         else
         {
-            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
-            SoundManager_Main.Instance.playSound(7);
+            TownManager.Instance.backToTownUI();
+            //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
+            //SoundManager_Main.Instance.playSound(7);
         }
     }
     public void mainExitButton()
@@ -468,7 +469,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 10; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 30; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -882,8 +883,12 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
+                    if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && jsonDataManager.Instance.setChapterDid(0, 4))
+                    { // 올빼미 선배 클리어
+                        TalkManager.Instance.startTalk(21);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
 
-                    
                     SoundManager_Main.Instance.stopSound(2);
                     SoundManager_Main.Instance.playSound(5);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
@@ -999,8 +1004,22 @@ public class AdventureManager : MonoBehaviour
                         }
                     }
                 }
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 && jsonDataManager.Instance.setChapterDid(0, 2)){ // 1스테이지 중간 보스 클리어
+                    if(jsonDataManager.Instance.getChapterRead(1,0) == 0) jsonDataManager.Instance.setChapterRead(1,0);
+                    TalkManager.Instance.startTalk(32);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 && jsonDataManager.Instance.setChapterDid(0, 3))
+                { // 1스테이지 최종 보스 클리어
+                    if (jsonDataManager.Instance.getChapterRead(1, 1) == 0) jsonDataManager.Instance.setChapterRead(1, 1);
+                    TalkManager.Instance.startTalk(32);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
                 //데모 보스 클리어 확인
-                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk) {
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 5)) { // 올빼미 선배 클리어
+                    if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) jsonDataManager.Instance.setChapterRead(1, 2);
+                    TalkManager.Instance.startTalk(18);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     demoEndChk = 1;
                     gameOverChk = true;
                 }
@@ -1092,6 +1111,29 @@ public class AdventureManager : MonoBehaviour
             adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/adventureBoard_2");
             adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+            if(jsonDataManager.Instance.getChapterRead(1,0) == 1) //만약 1스테이지 중간 보스를 무찔렀는 경우.
+            {
+                jsonDataManager.Instance.setChapterRead(1, 0);
+                TalkManager.Instance.startTalk(23); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(24); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(25); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+            if (jsonDataManager.Instance.getChapterRead(1, 1) == 1) //만약 1스테이지 최종 보스를 무찔렀는 경우.
+            {
+                jsonDataManager.Instance.setChapterRead(1, 1);
+                TalkManager.Instance.startTalk(26); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(27); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(28); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+            if (jsonDataManager.Instance.getChapterRead(1, 2) == 1) //만약 부엉이 선배를 무찔렀는 경우.
+            {
+                jsonDataManager.Instance.setChapterRead(1, 2);
+                TalkManager.Instance.startTalk(29); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(30); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(31); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.startTalk(19); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
 
             TownManager.Instance.backToTownUI();
             

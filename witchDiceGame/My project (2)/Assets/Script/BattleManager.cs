@@ -2825,6 +2825,8 @@ public class BattleManager : MonoBehaviour
             }
             else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
             {
+                TalkManager.Instance.startTalk(22);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
                 setEnemyCharacter(1, 10013);

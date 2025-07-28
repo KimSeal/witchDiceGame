@@ -20,7 +20,10 @@ public class LibraryManager : MonoBehaviour
 
     private int savePreScreen = 0;
     //어디서 왓는지 확인. 0 : 마을 지도창  1: 모험 시작 창
-    
+
+    [SerializeField]
+    public GameObject Owl;
+
     private void Awake()
     {
         if (null == instance)
@@ -163,6 +166,7 @@ public class LibraryManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         curPowerDescInfo = GameObject.Find("obj_library_desc");
         for (int i = 1; i < BtnArr.Length; i++) {
             BtnArr[i] = GameObject.Find("obj_library_btn_" + i.ToString());
@@ -241,6 +245,12 @@ public class LibraryManager : MonoBehaviour
 
     public void enterLibrary(int idx)
     {
+        // 올빼미 수인 보여주기
+        if (jsonDataManager.Instance.getChapterDid(0) == 6) { 
+            Owl.GetComponent<Animator>().Play(Random.Range(1,3).ToString()); 
+        }
+        else Owl.GetComponent<Animator>().Play("0");
+
         savePreScreen = idx;
         //CameraManager.Instance.zoomEvent();
         CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
