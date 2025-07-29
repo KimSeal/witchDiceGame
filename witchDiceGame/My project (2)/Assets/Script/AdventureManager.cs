@@ -145,10 +145,17 @@ public class AdventureManager : MonoBehaviour
     public int getLastCharacter(int idx) {
         return lastCharacter[idx];
     }
+    private void storyLineErrorChk() //챕터스토리를 보다가 끊고 다시 들어온 경우 임시 대처.(본걸로 처리)
+    {
+        for (int i = 0; i < 3; i++) {
+            if (jsonDataManager.Instance.getChapterRead(1, i) == 1) jsonDataManager.Instance.setChapterRead(1, i);
+        }
+    }
 
     public void mainPlayButton()
     {
-        TalkManager.Instance.startTalk(21) ;
+        storyLineErrorChk();
+        //TalkManager.Instance.startTalk(21) ; //시작 말하기 테스트
         Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
@@ -1114,25 +1121,25 @@ public class AdventureManager : MonoBehaviour
 
             if(jsonDataManager.Instance.getChapterRead(1,0) == 1) //만약 1스테이지 중간 보스를 무찔렀는 경우.
             {
-                jsonDataManager.Instance.setChapterRead(1, 0);
                 TalkManager.Instance.startTalk(23); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(24); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(25); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                jsonDataManager.Instance.setChapterRead(1, 0);
             }
             if (jsonDataManager.Instance.getChapterRead(1, 1) == 1) //만약 1스테이지 최종 보스를 무찔렀는 경우.
             {
-                jsonDataManager.Instance.setChapterRead(1, 1);
                 TalkManager.Instance.startTalk(26); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(27); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(28); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                jsonDataManager.Instance.setChapterRead(1, 1);
             }
             if (jsonDataManager.Instance.getChapterRead(1, 2) == 1) //만약 부엉이 선배를 무찔렀는 경우.
             {
-                jsonDataManager.Instance.setChapterRead(1, 2);
                 TalkManager.Instance.startTalk(29); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(30); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(31); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(19); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                jsonDataManager.Instance.setChapterRead(1, 2);
             }
 
             TownManager.Instance.backToTownUI();

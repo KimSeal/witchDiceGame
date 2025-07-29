@@ -277,7 +277,7 @@ public class jsonDataManager : MonoBehaviour
         public bool owlBattleWin = false;
         public bool firstGetCharacterPart = false;
         public int[] chapterDid = new int[6];
-        public int[] chapter1Read = new int[3];
+        public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
         public int getChapterDid(int idx)
         {
             return chapterDid[idx];

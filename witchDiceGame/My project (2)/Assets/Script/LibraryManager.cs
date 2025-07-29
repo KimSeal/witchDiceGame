@@ -287,7 +287,7 @@ public class LibraryManager : MonoBehaviour
         }
         else //지금은 못나가게 하는 게 다지만, 기존 마녀 능력 유지하는거 공지 화면과 함께 나갈껀지 물어보고, 그래도 나간다 그러면 이전 마녀능력으로 돌리기
         {
-            
+            fullUI.showFull("능력을 2개 선택해주세요!");
         }
     }
 }
