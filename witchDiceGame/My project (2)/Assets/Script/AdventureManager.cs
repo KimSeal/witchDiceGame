@@ -284,14 +284,18 @@ public class AdventureManager : MonoBehaviour
 
             if (storeItemArr[storeIdx, 0] == 4)
             {
+                
                 Destiny hoverDestiny = CharacterManager.Instance.getDestiny(storeItemArr[storeIdx, 1]);
+                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
                 descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
                 descObj[3].GetComponent<TextMeshPro>().text = "Lets be a friend!";
             }
             else
             {
+                
                 Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
+                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
                 descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
                 descObj[3].GetComponent<TextMeshPro>().text = typeArr[storeItemArr[storeIdx, 0]] + "\n\n" + hoverItem.getContent();
@@ -318,6 +322,7 @@ public class AdventureManager : MonoBehaviour
             if (resultItemArr[idx, 0] == 4)
             {
                 Destiny hoverDestiny = CharacterManager.Instance.getDestiny(resultItemArr[idx, 1]);
+                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
                 descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
                 descObj[3].GetComponent<TextMeshPro>().text = "Lets be a friend!";
@@ -325,6 +330,7 @@ public class AdventureManager : MonoBehaviour
             else
             {
                 Item hoverItem = itemManager.Instance.getItem(resultItemArr[idx, 0], resultItemArr[idx, 1]);
+                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItemArr[idx, 0]] + "ItemSprite/spr_item_" + typeArr[resultItemArr[idx, 0]] + "_" + hoverItem.getItemName());
                 descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
                 descObj[3].GetComponent<TextMeshPro>().text = typeArr[resultItemArr[idx, 0]] + "\n\n" + hoverItem.getContent();
@@ -476,7 +482,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 30; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 8; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -707,8 +713,8 @@ public class AdventureManager : MonoBehaviour
             yield return new WaitUntil(() => selectDiceNum > 0);
             diceBtnFire.Stop();
 
-            Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
-            SoundManager_Sfx.Instance.playSound(2);
+            //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
+            //SoundManager_Sfx.Instance.playSound(2);
 
             loadEnd = false;
             yield return new WaitUntil(() => loadEnd);
@@ -760,6 +766,8 @@ public class AdventureManager : MonoBehaviour
 
             if (true)//adventureEventArr[stageIdx] == 1)
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
+                nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
+                nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
                 adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
@@ -805,8 +813,8 @@ public class AdventureManager : MonoBehaviour
                 if (curDiceEvent.getEventType() == 6) 
                 {
                     diceBtnFire.Play();
-                    Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
-                    SoundManager_Sfx.Instance.playSound(0);
+                    //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                    //SoundManager_Sfx.Instance.playSound(0);
                 }
                 
 
@@ -835,6 +843,8 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
+                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
+                    nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     curDiceEventPacket = curDiceEvent.getPacket(0); // 주사위 결과가 의미 없는 경우 0번째 packet으로 변경
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEventPacket.getSpriteIndex()); //적힌 sprite받아오기
                     selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
@@ -921,7 +931,9 @@ public class AdventureManager : MonoBehaviour
                     battleEventTrigger = true;
                     
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
-                    
+
+                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
+                    nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     if (selectDiceCharacterIdx == -1 || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
                     {
                         selectDiceCharacterIdx = -1; //전투 후 돌아오면 해당 캐릭터가 생존했는지 확인한 다음 돌아올 수 있게 바꿀것. 
@@ -1011,12 +1023,12 @@ public class AdventureManager : MonoBehaviour
                         }
                     }
                 }
-                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 && jsonDataManager.Instance.setChapterDid(0, 2)){ // 1스테이지 중간 보스 클리어
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 2)){ // 1스테이지 중간 보스 클리어
                     if(jsonDataManager.Instance.getChapterRead(1,0) == 0) jsonDataManager.Instance.setChapterRead(1,0);
                     TalkManager.Instance.startTalk(32);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
-                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 && jsonDataManager.Instance.setChapterDid(0, 3))
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 3))
                 { // 1스테이지 최종 보스 클리어
                     if (jsonDataManager.Instance.getChapterRead(1, 1) == 0) jsonDataManager.Instance.setChapterRead(1, 1);
                     TalkManager.Instance.startTalk(32);
@@ -1271,6 +1283,7 @@ public class AdventureManager : MonoBehaviour
         {
             diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
         }
+        balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
     public void clickDice(int characterIdx)
@@ -1295,10 +1308,15 @@ public class AdventureManager : MonoBehaviour
                 CharacterManager.Instance.throwDice(characterIdx);
                 //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
-
+                Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                SoundManager_Sfx.Instance.playSound(0);
                 nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
                 nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
                 selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
+            }
+            else
+            {
+                fullUI.showFull("주사위를 굴릴 캐릭터를 선택해주세요!");
             }
         }
         else if (selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
@@ -1334,33 +1352,48 @@ public class AdventureManager : MonoBehaviour
     //가방, 전투 페이즈 입장을 위한 함수들
     public void enterUpgradeCanvas()
     {
+        bool tutorialChk = true;
         SoundManager_Sfx.Instance.playSound(0);
         if (tutorialVal == 4)
         {
-            tutorialVal = 5;
-            TalkManager.Instance.startTalk(11);
-        }
-        if (!itemManager.Instance.getItemBoxMove()) {
-            if (itemManager.Instance.getItemBoxOpen())
-            {
-                itemManager.Instance.flipItemBox(1, 1);
+            if (resultItemArr[0, 0] == -99999 && resultItemArr[0, 1] == -99999 &&
+                resultItemArr[1, 0] == -99999 && resultItemArr[1, 1] == -99999 &&
+                resultItemArr[2, 0] == -99999 && resultItemArr[2, 1] == -99999 &&
+                resultItemArr[3, 0] == -99999 && resultItemArr[3, 1] == -99999 ) {
+                tutorialVal = 5;
+                TalkManager.Instance.startTalk(11);
+                
             }
-            else
+            else {
+                tutorialChk = false;
+                fullUI.showFull("아이템을 모두 먹고 와주세요!");
+            } 
+        }
+        if (tutorialChk) //튜토리얼에서 문제 없는 경우.
+        {
+            if (!itemManager.Instance.getItemBoxMove())
             {
-                itemManager.Instance.flipItemBox(0, 0);
-                curCanvasIsAdventure = false;
+                if (itemManager.Instance.getItemBoxOpen())
+                {
+                    itemManager.Instance.flipItemBox(1, 1);
+                }
+                else
+                {
+                    itemManager.Instance.flipItemBox(0, 0);
+                    curCanvasIsAdventure = false;
 
-                itemManager.Instance.click_upgradeCanvas_start();
-                itemManager.Instance.updateCharacterUIBtn();
-                itemManager.Instance.setUpAnimator();
-                CameraManager.Instance.updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-                //mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                    itemManager.Instance.click_upgradeCanvas_start();
+                    itemManager.Instance.updateCharacterUIBtn();
+                    itemManager.Instance.setUpAnimator();
+                    CameraManager.Instance.updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+                    //mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+                }
             }
         }
-        
     }
     public void exitUpgradeCanvas()
     {
+        
         if (!itemManager.Instance.getItemBoxMove())
         {
             SoundManager_Sfx.Instance.playSound(0); 

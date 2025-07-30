@@ -1847,14 +1847,16 @@ public class BattleManager : MonoBehaviour
             {
                 if (myCharacter[i] != null && myCharacter[i].getCurState() != 2) {
                     battleTargetUI[i].SetActive(true);
+                    battleTargetUI[i].GetComponent<Animator>().Play("Create");
                     characterClickAble[i] = true;
                 }
             }
         }
         else if (clickAbleTeam != 1) {//적군 선택만 가능한 경우
             for (int i = 4; i < 8; i++) {
-                //if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() != 2) {
+                //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
                     battleTargetUI[i].SetActive(true);
+                    battleTargetUI[i].GetComponent<Animator>().Play("Create");
                     characterClickAble[i] = true; 
                 //}  
             }
@@ -2305,6 +2307,8 @@ public class BattleManager : MonoBehaviour
     }
     private void makeHitEffect(int tempTargetIdx)
     {
+        GameObject temp = Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position , Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+        temp.GetComponent<Animator>().Play("TargetDestroy");
         Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
         SoundManager_Sfx.Instance.playSound(Random.Range(8,11));
     }
@@ -2709,15 +2713,22 @@ public class BattleManager : MonoBehaviour
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     private void printRandomResult(int i, bool pointOn)
     {
-        if(pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
-        else resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + resultItem[i].getRare());
+        //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
+        //else
+        {
+            resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + resultItem[i].getRare());
+        }
 
-        resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
+            resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
             resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
             resultObj[i, 3].GetComponent<TextMeshPro>().text = typeArr[resultItem[i].getType()] + "\n\n" + resultItem[i].getContent();
     }
-    public void pointEnterRandomResult(int i){ printRandomResult(i, true);}
-    public void pointExitRandomResult(int i) { printRandomResult(i, false); }
+    public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f); }
+// printRandomResult(i, true);}
+    public void pointExitRandomResult(int i) {
+    resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f); 
+    }
+//printRandomResult(i, false); }
 
     bool bosang_click = false;
     private IEnumerator EndPhase_Coroutine()
