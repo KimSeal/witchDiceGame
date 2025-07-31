@@ -64,6 +64,8 @@ public class itemManager : MonoBehaviour
         }*/
      
     }
+    [SerializeField]
+    public GameObject effObj;
 
 
     public List<Item>[] itemList = new List<Item>[5];
@@ -114,6 +116,7 @@ public class itemManager : MonoBehaviour
     {
         if (idx == 11) {
             if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
+            descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             descObj[2].GetComponent<TextMeshPro>().text = "Delete Box";
             descObj[3].GetComponent<TextMeshPro>().text = "이곳으로 아이템을 드래그하면 버릴 수 있습니다.";
@@ -122,6 +125,7 @@ public class itemManager : MonoBehaviour
         {
             if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
             Item hoverItem = ItemArr[curSelectItemType, idx];
+            descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[curSelectItemType] + "ItemSprite/spr_item_" + typeArr[curSelectItemType] + "_" + hoverItem.getItemName());
             descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
             descObj[3].GetComponent<TextMeshPro>().text = typeArr[curSelectItemType] + "\n" + hoverItem.getContent();
@@ -422,6 +426,26 @@ public class itemManager : MonoBehaviour
                     if (curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
                     curSelectItemIndex = idx;
                     changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
+                    if (curSelectItemType == 0) { 
+                        click_characterInfoType_selectButton(0);
+                        GameObject temp = Instantiate(effObj, infoBoardObj[0].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
+                        temp.GetComponent<Animator>().Play("itemTarget");
+                    }
+                    if (curSelectItemType == 1) { 
+                        click_characterInfoType_selectButton(1);
+                        for (int tempIdx = 0; tempIdx < 6; tempIdx++)
+                        {
+                            GameObject temp = Instantiate(effObj, diceBoardObj[tempIdx].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
+                            temp.GetComponent<Animator>().Play("itemTarget");
+                        }
+                    }
+                    if (curSelectItemType == 2) { 
+                        click_characterInfoType_selectButton(3);
+                        GameObject temp = Instantiate(effObj, equipBoardObj[0].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
+                        temp.GetComponent<Animator>().Play("itemTarget");
+                        GameObject temp2 = Instantiate(effObj, equipBoardObj[3].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
+                        temp2.GetComponent<Animator>().Play("itemTarget");
+                    }
                 }
             }
             else //아이템이 없는 경우 해제
