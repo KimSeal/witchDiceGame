@@ -16,7 +16,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!itemManager.Instance.getItemBoxMove())
+        if (AdventureManager.Instance.curCanvasItemCanvas && !itemManager.Instance.getItemBoxMove())
         { //이동중이면 움직임 X
             SoundManager_Sfx.Instance.playSound(0);
             defaultPoint = this.transform.position;
@@ -35,6 +35,9 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             itemManager.Instance.turnOffItemCollider_item();
             //GetComponent<BoxCollider2D>().enabled = false;
         }
+        else if(!itemManager.Instance.getItemBoxMove()) {
+            fullUI.showFull("아이템 위치 변경은\n강화 창에서만 가능합니다.");
+        }
     }
     public void OnDrag(PointerEventData eventData)
     {
@@ -44,14 +47,14 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         // 원인을 아시는 분은 댓글로 알려주시면 감사하겠습니다
         //currentPos.z = 90f;
         //currentPos.y -= 160f;
-        if (chkBegin && !itemManager.Instance.getItemBoxMove() )
+        if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin && !itemManager.Instance.getItemBoxMove() )
         { //이동중이면 움직임 X
             this.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0, 0, 6f);//eventData.position;//currentPos;
         }
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (chkBegin && !itemManager.Instance.getItemBoxMove())
+        if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin && !itemManager.Instance.getItemBoxMove())
         { //이동중이면 움직임 X
             SoundManager_Sfx.Instance.playSound(4);
             this.transform.position = defaultPoint;

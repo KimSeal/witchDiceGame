@@ -161992,6 +161992,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diceRollEff: {fileID: 587083212400032754, guid: cb2c4f34418ad9c43871fc0ece915558, type: 3}
   loadEnd: 1
+  curCanvasItemCanvas: 0
 --- !u!4 &2050254737
 Transform:
   m_ObjectHideFlags: 0

@@ -119,7 +119,7 @@ public class itemManager : MonoBehaviour
             descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             descObj[2].GetComponent<TextMeshPro>().text = "Delete Box";
-            descObj[3].GetComponent<TextMeshPro>().text = "이곳으로 아이템을 드래그하면 버릴 수 있습니다.";
+            descObj[3].GetComponent<TextMeshPro>().text = "아이템을 선택 후 이곳을 클릭하면\n아이템을 버릴 수 있습니다.";
         }
         else if (ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 해당 아이템으로 변경
         {
@@ -212,7 +212,7 @@ public class itemManager : MonoBehaviour
 
     public void swapItem()
     {
-        if(! (dragObjEndNum == -1 || dragObjStartNum == -1))
+        if(AdventureManager.Instance.curCanvasItemCanvas && !(dragObjEndNum == -1 || dragObjStartNum == -1))
         {
             int a = dragObjStartNum;
             int b = dragObjEndNum;
@@ -706,6 +706,7 @@ public class itemManager : MonoBehaviour
             {
                 inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
+            //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];
         }
     }
 
@@ -761,6 +762,7 @@ public class itemManager : MonoBehaviour
     }
 
     GameObject mainCamera;
+    private Vector3[] itemBoxInitPoint = new Vector3[12];
     // Start is called before the first frame update
     void Start()
     {
@@ -816,7 +818,11 @@ public class itemManager : MonoBehaviour
         {
             for(int j=0;j<5;j++) ItemExistArr[j, i] = false; //아이템 없다는 것을 초기화를 통해 배정
             inventoryUIArr[i] = GameObject.Find("obj_inventory_" + i.ToString()); //inventory 오브젝트 설정
+
+            itemBoxInitPoint[i] = GameObject.Find("obj_inventory_box_" + i.ToString()).transform.position;
+
         }
+        itemBoxInitPoint[11] = GameObject.Find("obj_inventory_box_11").transform.position;
         for (int i = 0; i < 6; i++)
         {
             diceBoardObj[i] = GameObject.Find("itemUI_board_diceBoard_diceBtn_" + i.ToString()); //inventory 오브젝트 설정
@@ -855,10 +861,10 @@ public class itemManager : MonoBehaviour
         
         //test Sample
         for (int i=0;i<7;i++) {
-            //ItemExistArr[1, i] = true;
-            //ItemArr[1,i] = new Item(itemList[1][i+1]);
-            //ItemExistArr[3, i] = true;
-            //ItemArr[3, i] = new Item(itemList[3][i+1]);
+            ItemExistArr[1, i] = true;
+            ItemArr[1,i] = new Item(itemList[1][i+1]);
+            ItemExistArr[3, i] = true;
+            ItemArr[3, i] = new Item(itemList[3][i+1]);
         }
         ItemExistArr[0, 0] = true;
         ItemArr[0, 0] = new Item(itemList[0][1]);

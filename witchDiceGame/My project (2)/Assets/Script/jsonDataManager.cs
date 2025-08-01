@@ -32,9 +32,10 @@ public class jsonDataManager : MonoBehaviour
     // Start is called before the first frame update
     private PlayerPlayData playerPlayData;
     private int[] witchPowerMoney = {0, 0, 0, 5000, 1000, 2000, 5000, 1000, 2000, 5000, 1000, 2000, 5000 };
+    private string jsonFileName = "playerData2.json";
     void Start()
     {
-        string fileName = Path.Combine(Application.dataPath, "playerData.json");
+        string fileName = Path.Combine(Application.dataPath, jsonFileName);
 
         if (File.Exists(fileName)) {
             LoadPlayerFromJson();
@@ -55,12 +56,12 @@ public class jsonDataManager : MonoBehaviour
     public void SavePlayerDataToJson()
     {
         string jsonData = JsonUtility.ToJson(playerPlayData);
-        string path = Path.Combine(Application.dataPath, "playerData.json");
+        string path = Path.Combine(Application.dataPath, jsonFileName);
         File.WriteAllText(path, jsonData);
     }
     public void LoadPlayerFromJson()
     {
-        string fileName = Path.Combine(Application.dataPath, "playerData.json");
+        string fileName = Path.Combine(Application.dataPath, jsonFileName);
         if (File.Exists(fileName)) {
             string jsonFromFile = File.ReadAllText(fileName);
             PlayerPlayData temp = JsonUtility.FromJson<PlayerPlayData>(jsonFromFile);
@@ -317,6 +318,7 @@ public class jsonDataManager : MonoBehaviour
             owlBattleWin = false;
             firstGetCharacterPart = false;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = 0;
+            for (int i = 0; i < 3; i++) chapter1Read[i] = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -346,6 +348,7 @@ public class jsonDataManager : MonoBehaviour
             owlBattleWin = playerPlayerData.owlBattleWin;
             firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = playerPlayerData.chapterDid[i];
+            for (int i = 0; i < 3; i++) chapter1Read[i] = playerPlayerData.chapter1Read[i];
         }
         public bool getFirstGetCharacterPart()
         {

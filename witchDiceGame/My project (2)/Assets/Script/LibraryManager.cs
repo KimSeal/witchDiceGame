@@ -246,7 +246,7 @@ public class LibraryManager : MonoBehaviour
     public void enterLibrary(int idx)
     {
         // 올빼미 수인 보여주기
-        if (jsonDataManager.Instance.getChapterDid(0) == 6) { 
+        if (jsonDataManager.Instance.getChapterRead(1,2) == 2) { 
             Owl.GetComponent<Animator>().Play(Random.Range(1,3).ToString()); 
         }
         else Owl.GetComponent<Animator>().Play("0");

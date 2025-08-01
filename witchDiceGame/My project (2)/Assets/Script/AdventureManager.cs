@@ -482,7 +482,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 8; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -1025,7 +1025,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 2)){ // 1스테이지 중간 보스 클리어
                     if(jsonDataManager.Instance.getChapterRead(1,0) == 0) jsonDataManager.Instance.setChapterRead(1,0);
-                    TalkManager.Instance.startTalk(32);
+                    TalkManager.Instance.startTalk(33);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 3))
@@ -1072,11 +1072,11 @@ public class AdventureManager : MonoBehaviour
                 {
                     if (!jsonDataManager.Instance.getOwlBattleWin())
                     {
-                        
-                        TalkManager.Instance.startTalk(18);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        jsonDataManager.Instance.owlBattleWin();
+                       // TalkManager.Instance.startTalk(18);
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     }
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
                 CameraManager.Instance.resultScreenActive(2);
 
@@ -1099,16 +1099,6 @@ public class AdventureManager : MonoBehaviour
                 }
                 yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
 
-                if (demoEndChk == 1) //튜토리얼 종료시
-                {
-                    if (!jsonDataManager.Instance.getOwlBattleWin())
-                    {
-                        jsonDataManager.Instance.owlBattleWin();
-                        TalkManager.Instance.startTalk(19);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                    }
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                }
 
                 if (demoEndChk == 2) //튜토리얼 종료시
                 {
@@ -1385,17 +1375,20 @@ public class AdventureManager : MonoBehaviour
                     itemManager.Instance.click_upgradeCanvas_start();
                     itemManager.Instance.updateCharacterUIBtn();
                     itemManager.Instance.setUpAnimator();
+                    curCanvasItemCanvas = true;
                     CameraManager.Instance.updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                     //mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
                 }
             }
         }
     }
+    public bool curCanvasItemCanvas = false;
     public void exitUpgradeCanvas()
     {
         
         if (!itemManager.Instance.getItemBoxMove())
         {
+            curCanvasItemCanvas = false;
             SoundManager_Sfx.Instance.playSound(0); 
                 curCanvasIsAdventure = true;
                 CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
@@ -1416,6 +1409,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
+                   
                     gameOverChk = false;
                     curCanvasIsAdventure = false;
                     BattleManager.Instance.startBattle_fromAdventure();
