@@ -81778,7 +81778,6 @@ GameObject:
   - component: {fileID: 927589258}
   - component: {fileID: 927589256}
   - component: {fileID: 927589261}
-  - component: {fileID: 927589262}
   m_Layer: 0
   m_Name: obj_itemUI_battleBtn
   m_TagString: Untagged
@@ -81930,18 +81929,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 24, y: 24}
   m_EdgeRadius: 0
---- !u!114 &927589262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927589254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &930368106
 GameObject:
   m_ObjectHideFlags: 0
