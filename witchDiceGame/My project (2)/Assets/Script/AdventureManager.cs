@@ -195,7 +195,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void addAdventureMoney(int money) {
         adventureMoney += money;
-        moneyText.text = adventureMoney.ToString();
+        moneyText.text = "$  " + adventureMoney.ToString();
     }
     public void buyItem()
     {
