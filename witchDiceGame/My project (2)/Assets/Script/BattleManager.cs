@@ -403,6 +403,21 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public void hoverInSkillDesc(int i)
+    {
+        if (hoverCharacterIdx != i) {
+            Material material3 = faceDesc[i/4, i%4].GetComponent<SpriteRenderer>().material;
+            material3.SetFloat("_Transparency", 0.0f);
+        }
+
+    }
+    public void hoverOutSkillDesc(int i) {
+        if (hoverCharacterIdx != i)
+        {
+            Material material3 = faceDesc[i / 4, i % 4].GetComponent<SpriteRenderer>().material;
+            material3.SetFloat("_Transparency", 0.7f);
+        }
+    }
     public void clickSkillDesc(int i) //전투 ui에서 캐릭터 얼굴에 가져다댄 후 정보 출력
     {
         if (i >= 0 && i < 4)

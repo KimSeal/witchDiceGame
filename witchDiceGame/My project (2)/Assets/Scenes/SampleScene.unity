@@ -793,6 +793,38 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!61 &20107132
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -22500,6 +22532,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: clickSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -46150,6 +46214,38 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 6
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 6
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!61 &413152627
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -56767,6 +56863,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: clickSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -88326,6 +88454,38 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 5
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 5
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!61 &951560469
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -116173,6 +116333,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: clickSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -161568,6 +161760,38 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!61 &2034296189
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -164341,6 +164565,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: clickSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInSkillDesc
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutSkillDesc
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
