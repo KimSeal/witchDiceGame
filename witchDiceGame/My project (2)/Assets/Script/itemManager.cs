@@ -858,7 +858,7 @@ public class itemManager : MonoBehaviour
         descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
 
-        
+        /*
         //test Sample
         for (int i=0;i<7;i++) {
             ItemExistArr[1, i] = true;
@@ -866,6 +866,7 @@ public class itemManager : MonoBehaviour
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i+1]);
         }
+        */
         ItemExistArr[0, 0] = true;
         ItemArr[0, 0] = new Item(itemList[0][1]);
         ItemExistArr[0, 1] = true;

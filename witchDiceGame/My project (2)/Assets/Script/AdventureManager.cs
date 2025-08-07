@@ -482,7 +482,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 26; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -1172,7 +1172,7 @@ public class AdventureManager : MonoBehaviour
                 if (emptyPlaceExist == -1)
                 {
                     SoundManager_Sfx.Instance.playSound(7);
-                    fullUI.showFull();
+                    fullUI.showFull(0);
                     Debug.Log("you need Place to add character!");
                 }
                 else
@@ -1199,7 +1199,7 @@ public class AdventureManager : MonoBehaviour
                 else if (result == 1) //꽉차서 못담는 경우.
                 {
                     SoundManager_Sfx.Instance.playSound(7);
-                    fullUI.showFull();
+                    fullUI.showFull(0);
                 }
                 else if (result == 2)
                 {
@@ -1306,7 +1306,7 @@ public class AdventureManager : MonoBehaviour
             }
             else
             {
-                fullUI.showFull("주사위를 굴릴 캐릭터를 선택해주세요!");
+                fullUI.showFull(1);
             }
         }
         else if (selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
@@ -1356,7 +1356,7 @@ public class AdventureManager : MonoBehaviour
             }
             else {
                 tutorialChk = false;
-                fullUI.showFull("아이템을 모두 먹고 와주세요!");
+                fullUI.showFull(2);
             } 
         }
         if (tutorialChk) //튜토리얼에서 문제 없는 경우.

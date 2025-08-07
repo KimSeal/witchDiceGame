@@ -36,7 +36,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             //GetComponent<BoxCollider2D>().enabled = false;
         }
         else if(!itemManager.Instance.getItemBoxMove()) {
-            fullUI.showFull("아이템 위치 변경은\n강화 창에서만 가능합니다.");
+            fullUI.showFull(3);
         }
     }
     public void OnDrag(PointerEventData eventData)

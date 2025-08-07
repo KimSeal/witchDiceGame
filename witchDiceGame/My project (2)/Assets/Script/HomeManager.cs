@@ -115,12 +115,13 @@ public class HomeManager : MonoBehaviour
             }
             else
             {
-                fullUI.showFull("아직 되찾지 못한 이야기입니다!");
+                fullUI.showFull(4);
             }
         }
         else
         {
-            fullUI.showFull("본편에서 개방될 이야기입니다.");
+            
+            fullUI.showFull(5);
         }
     }
     

@@ -49,6 +49,12 @@ public class Dice
         setCurDice(Random.Range(0, 6), Random.Range(0, 4));
         return this.diceNum[curIdx];
     }
+    public int throwDice(int a)
+    {
+        setCurDice(a, Random.Range(0, 4));
+        return this.diceNum[curIdx];
+    }
+
     public int getNum()
     {
         return this.diceNum[curIdx];
