@@ -35,6 +35,7 @@ public class TalkManager : MonoBehaviour
     private GameObject[] talkImage = new GameObject[2];
     private GameObject background;
     private List<TalkReader> talkList = new List<TalkReader>();
+    private List<DescReader> descList = new List<DescReader>();
     private Material[] material = new Material[4];
     private int curIdx = 0;
     private int initIdx = -1;
@@ -96,12 +97,23 @@ public class TalkManager : MonoBehaviour
         
     }
 
+    
     // Start is called before the first frame update
     void Start()
     {
         libraryEntry = false;
         talkList = CSVReader.Read<TalkReader>("Talk_2");
-        
+        for (int i = 0; i < talkList.Count; i++)
+        {
+            talkList[i].Text = talkList[i].Text.Replace("\\n", "\n");
+        }
+        descList = CSVReader.Read<DescReader>("Desc");
+        for (int i=0;i<descList.Count;i++) { 
+            descList[i].KR = descList[i].KR.Replace("\\n", "\n");
+            descList[i].EN = descList[i].EN.Replace("\\n", "\n");
+            descList[i].JP = descList[i].JP.Replace("\\n", "\n");
+        }
+
         initIdx = -1;
         
         for (int i = 0; i < talkList.Count; i++)
@@ -185,6 +197,10 @@ public class TalkManager : MonoBehaviour
         }
     }
 
+    public string getDesc(int idx)
+    {
+        return descList[idx].KR;
+    }
     public void startTalk(int a)
     {
 

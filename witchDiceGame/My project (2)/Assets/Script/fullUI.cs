@@ -37,7 +37,7 @@ public class fullUI : MonoBehaviour
     {
         alphaVal = 1.2f;
         canvasGroup.alpha = 1.00f;
-        textTemp.text = UIstringKR[strIdx];
+        textTemp.text = TalkManager.Instance.getDesc(strIdx);//UIstringKR[strIdx];
     }
 
 }

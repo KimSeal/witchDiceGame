@@ -104,6 +104,14 @@ public class AdventureEventPacketReader
     public string battleBackSprite;
 }
 
+public class DescReader
+{
+    public int index;
+    public string KR;
+    public string EN;
+    public string JP;
+}
+
 public class TalkReader{
     public int talkIdx;
     public int Idx;

@@ -119,7 +119,7 @@ public class itemManager : MonoBehaviour
             descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             descObj[2].GetComponent<TextMeshPro>().text = "Delete Box";
-            descObj[3].GetComponent<TextMeshPro>().text = "아이템을 선택 후 이곳을 클릭하면\n아이템을 버릴 수 있습니다.";
+            descObj[3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(8);//"아이템을 선택 후 이곳을 클릭하면\n아이템을 버릴 수 있습니다.";
         }
         else if (ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 해당 아이템으로 변경
         {
