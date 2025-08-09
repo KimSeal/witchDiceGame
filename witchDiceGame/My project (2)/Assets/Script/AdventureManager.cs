@@ -289,7 +289,7 @@ public class AdventureManager : MonoBehaviour
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
                 descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
-                descObj[3].GetComponent<TextMeshPro>().text = "Lets be a friend!";
+                descObj[3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(9);//"Lets be a friend!";
             }
             else
             {
@@ -325,7 +325,7 @@ public class AdventureManager : MonoBehaviour
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
                 descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
-                descObj[3].GetComponent<TextMeshPro>().text = "Lets be a friend!";
+                descObj[3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(9);
             }
             else
             {
