@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 public class adventureEvent_Packet{
-    private string chooseText;
-    private string resultText;
+    private string[] chooseText = new string[3];
+    private string[] resultText = new string[3];
     private int selectType; // 0 : 대화문  1 : 아이템 취득  2: 아이템 버리기  3 : 능력치 감소  4 : 능력치 획득 5 : 능력치 감소 및 획득
                      // 6 : 배틀
     private int[] val = new int[8];
@@ -23,8 +23,16 @@ public class adventureEvent_Packet{
 
     public adventureEvent_Packet(AdventureEventPacketReader adventureEventPacketReader)
     {
-        this.chooseText = adventureEventPacketReader.chooseText;
-        this.resultText = adventureEventPacketReader.resultText;
+
+        this.chooseText[0] = adventureEventPacketReader.chooseTextKR.Replace("\\n", "\n"); ;
+        this.resultText[0] = adventureEventPacketReader.resultTextKR.Replace("\\n", "\n"); ;
+
+        this.chooseText[1] = adventureEventPacketReader.chooseTextEN.Replace("\\n", "\n"); ;
+        this.resultText[1] = adventureEventPacketReader.resultTextEN.Replace("\\n", "\n"); ;
+
+        this.chooseText[2] = adventureEventPacketReader.chooseTextJP.Replace("\\n", "\n"); ;
+        this.resultText[2] = adventureEventPacketReader.resultTextJP.Replace("\\n", "\n"); ;
+
         this.selectType = adventureEventPacketReader.selectType;
         this.val[0] = adventureEventPacketReader.selectVal0;
         this.val[1] = adventureEventPacketReader.selectVal1;
@@ -50,8 +58,11 @@ public class adventureEvent_Packet{
 
     public adventureEvent_Packet(adventureEvent_Packet adventureEventPacketReader)
     {
-        this.chooseText = adventureEventPacketReader.chooseText;
-        this.resultText = adventureEventPacketReader.resultText;
+        for (int i = 0; i < chooseText.Length; i++)
+        {
+            this.chooseText[i] = adventureEventPacketReader.chooseText[i].Replace("\\n", "\n"); ;
+            this.resultText[i] = adventureEventPacketReader.resultText[i].Replace("\\n", "\n"); ;
+        }
         this.selectType = adventureEventPacketReader.selectType;
         for (int i=0;i<8;i++)
         {
@@ -77,11 +88,11 @@ public class adventureEvent_Packet{
     }
     public string getChooseText()
     {
-        return chooseText;
+        return chooseText[jsonDataManager.Instance.getLanguage()];
     }
     public string getResultText()
     {
-        return resultText;
+        return resultText[jsonDataManager.Instance.getLanguage()];
     }
     public int getSelectType()
     {
@@ -122,7 +133,7 @@ public class adventureEvent
     private int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
     private int levelIdxStart; //해당 이벤트가 나올 수 있는 스테이지의 단계 최소값
     private int levelIdxEnd; // 해당 이벤가 나올 수 있는 스테이지의 최대값
-    private string selectText; // 이벤트 등장시 나오는 text
+    private string[] selectText = new string[3]; // 이벤트 등장시 나오는 text
 
     adventureEvent_Packet[] packet = new adventureEvent_Packet[6];
 
@@ -136,7 +147,9 @@ public class adventureEvent
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
-        this.selectText = adventureEventReader.selectText;
+        this.selectText[0] = adventureEventReader.selectTextKR.Replace("\\n", "\n"); ;
+        this.selectText[1] = adventureEventReader.selectTextEN.Replace("\\n", "\n"); ;
+        this.selectText[2] = adventureEventReader.selectTextJP.Replace("\\n", "\n"); ;
 
         this.eventType = adventureEventReader.eventType;
         this.NPCSprite = adventureEventReader.NPCSprite;
@@ -166,7 +179,7 @@ public class adventureEvent
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
-        this.selectText = adventureEventReader.selectText;
+        for(int i=0;i<selectText.Length;i++) this.selectText[i] = adventureEventReader.selectText[i].Replace("\\n", "\n");
 
         this.eventType = adventureEventReader.eventType;
         this.backgroundSprite = adventureEventReader.backgroundSprite;
@@ -189,7 +202,7 @@ public class adventureEvent
     }
     public string getSelectText()
     {
-        return this.selectText;
+        return this.selectText[jsonDataManager.Instance.getLanguage()];
     }
     public string getEventName()
     {

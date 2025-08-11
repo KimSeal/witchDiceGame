@@ -482,7 +482,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 0; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
@@ -757,7 +757,7 @@ public class AdventureManager : MonoBehaviour
 
             //발판 이벤트 종료 
 
-            stageInfo.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + adventureEventList[stageNum].Count.ToString(); //초기화
+            stageInfo.GetComponent<TextMeshPro>().text = "";//(stageIdx+1).ToString() + " / " + adventureEventList[stageNum].Count.ToString(); //초기화
             updateCharacterFace();
 
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.

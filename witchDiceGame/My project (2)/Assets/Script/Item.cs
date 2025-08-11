@@ -8,15 +8,17 @@ public class Item
     private int type; // 0. consumable  1. dice   2. equip   3. passive   4.destiny 
     private int rare; // 0 : 일단 1 : 희귀 2 : 영웅 3 : 전설 4 : 그 이상(아직 못정함) 
     private string itemName;
-    private string content;
+    private string[] content = new string[10];
     private int[] val = new int[8];
 
-    public Item(int idx, int type, string itemName, string content, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7)
+    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7)
     {
         this.type = type;
         this.idx = idx;
         this.itemName = itemName;
-        this.content = content;
+        this.content[0] = contentKR;
+        this.content[1]= contentEN;
+        this.content[2] = contentJP;
         this.val[0] = val0;
         this.val[1] = val1;
         this.val[2] = val2;
@@ -31,9 +33,11 @@ public class Item
         this.idx = itemReader.idx;
         this.type=itemReader.type;
         this.itemName = itemReader.itemName;
-        this.content=itemReader.content0;
-        if (itemReader.content1.Length != 0) this.content += ("\n" + itemReader.content1);
-        if (itemReader.content2.Length != 0) this.content += ("\n" + itemReader.content2);
+
+        this.content[0] = itemReader.contentKR.Replace("\\n", "\n");
+        this.content[1] = itemReader.contentEN.Replace("\\n", "\n");
+        this.content[2] = itemReader.contentJP.Replace("\\n", "\n");
+
         this.val[0] = itemReader.val0;
         this.val[1] = itemReader.val1;
         this.val[2] = itemReader.val2;
@@ -50,7 +54,7 @@ public class Item
         this.idx = item.idx;
         this.type = item.type;
         this.itemName = item.itemName;
-        this.content = item.content;
+        for(int i=0;i<content.Length;i++) this.content[i] = item.content[i];
         for (int i=0;i<8;i++)
         {
             this.val[i] = item.val[i];
@@ -76,7 +80,7 @@ public class Item
     }
     public string getContent()
     {
-        return content;
+        return content[jsonDataManager.Instance.getLanguage()];
     }
     public int getVal(int idx)
     {

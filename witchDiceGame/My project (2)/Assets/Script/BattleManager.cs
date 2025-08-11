@@ -2261,6 +2261,7 @@ public class BattleManager : MonoBehaviour
         int result;
         if (input < 50) result = 120;
         else result = 120 + (input - 50) * 2 / 5;
+        if (result > 500) result = 500;
         return result.ToString();
     }
 
@@ -2286,6 +2287,7 @@ public class BattleManager : MonoBehaviour
     bool passiveItemChk = false;
     private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArr, int [] usedDiceArr, bool updateLook, int itemType) 
     {
+        float activeTime = 0.1f;
         passiveItemChk = true;
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
         {
@@ -2314,7 +2316,8 @@ public class BattleManager : MonoBehaviour
                         + "</size>";
                         yield return new WaitForSeconds(0.02f);
                     }
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(activeTime);
+                    activeTime /= 2.0f;
                 }
             }
         }

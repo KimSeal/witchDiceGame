@@ -258,10 +258,19 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+    public int getLanguage()
+    {
+        return this.playerPlayData.language;
+    }
+    public void setLanguage(int lan)
+    {
+        this.playerPlayData.setLanguage(lan);
+        SavePlayerDataToJson();
+    }
 
     public class PlayerPlayData
     {
-
+        public int language;
         public int[] curWitchPower = new int[2];
         public int money = 0;
         public bool[] witchPower = new bool[100];
@@ -283,12 +292,17 @@ public class jsonDataManager : MonoBehaviour
         {
             return chapterDid[idx];
         }
+        public void setLanguage(int language)
+        {
+            this.language = language;
+        }
         public void setChapterDid(int idx, int num)
         {
             if(chapterDid[idx] < num) chapterDid[idx] = num;
         }
         public PlayerPlayData()
         {
+            this.language = 1;
             this.money = 0;
             curWitchPower[0] = 1;
             curWitchPower[1] = 2;
@@ -347,6 +361,7 @@ public class jsonDataManager : MonoBehaviour
             libraryMeet = playerPlayerData.libraryMeet;
             owlBattleWin = playerPlayerData.owlBattleWin;
             firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
+            this.language = playerPlayerData.language;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = playerPlayerData.chapterDid[i];
             for (int i = 0; i < 3; i++) chapter1Read[i] = playerPlayerData.chapter1Read[i];
         }

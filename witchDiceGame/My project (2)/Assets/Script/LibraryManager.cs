@@ -91,8 +91,8 @@ public class LibraryManager : MonoBehaviour
             buyPowerVal = idx;
             buyUI[0].SetActive(true);
             buyUI[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(idx - 1) / 3] + "_" + targetType[(idx - 1) % 3]);
-            buyUI[2].GetComponent<TextMeshPro>().text = "능력 가격 : " + jsonDataManager.Instance.getPowerPrice(idx).ToString() +
-                "\n현재 금액" + jsonDataManager.Instance.getMoney().ToString() + " -> " + (jsonDataManager.Instance.getMoney() - jsonDataManager.Instance.getPowerPrice(idx)).ToString();
+            buyUI[2].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(10) + " : " + jsonDataManager.Instance.getPowerPrice(idx).ToString() +
+                "\n" + TalkManager.Instance.getDesc(11) + " : " + jsonDataManager.Instance.getMoney().ToString() + " -> " + (jsonDataManager.Instance.getMoney() - jsonDataManager.Instance.getPowerPrice(idx)).ToString();
         } 
     }
     //보유 여부 확인후 Lock인지 아닌지 바꾸기
@@ -121,13 +121,21 @@ public class LibraryManager : MonoBehaviour
             {
                 curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
             }
-            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[power].PowerName + "\n" + witchPowerInfoList[power].KR;
+            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[power].PowerName + "\n";
+
+            if(jsonDataManager.Instance.getLanguage() == 0) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[power].KR;
+            else if (jsonDataManager.Instance.getLanguage() == 1) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[power].EN;
+            else if (jsonDataManager.Instance.getLanguage() == 2) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[power].JP;
         }
         else
         {
             if (power == 0) curPowerArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
             else curPowerArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
-            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[0].PowerName + "\n" + witchPowerInfoList[0].KR;
+            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[0].PowerName + "\n";
+
+            if (jsonDataManager.Instance.getLanguage() == 0) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].KR;
+            else if (jsonDataManager.Instance.getLanguage() == 1) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].EN;
+            else if (jsonDataManager.Instance.getLanguage() == 2) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].JP;
         }
     }
 
@@ -261,7 +269,6 @@ public class LibraryManager : MonoBehaviour
         //배틀 매니져에서 받아오기
         for (int i = 1; i < curWitchPower.Length; i++)
         {
-            Debug.Log("we draw at " + i.ToString() + "  about curWitch power " + curWitchPower[i]);
             curWitchPower[i] = BattleManager.Instance.getWitchPower(i);
             drawSelectPower(i-1, curWitchPower[i]);
             makeDarkBtn(curWitchPower[i]);

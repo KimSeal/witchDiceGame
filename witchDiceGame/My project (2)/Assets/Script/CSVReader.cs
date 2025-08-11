@@ -36,7 +36,9 @@ public class SkillReader
     public int Var0;
     public int Var1;
     public int Var2;
-    public string Command;
+    public string CommandKR;
+    public string CommandEN;
+    public string CommandJP;
     public int Anim;
     public int AnimMove;
 
@@ -75,9 +77,10 @@ public class ItemReader
     public int type;
     public int rare;
     public string itemName;
-    public string content0, content1, content2;
+    
     public int val0, val1, val2, val3, val4, val5, val6, val7;
     public int activeTiming;
+    public string contentKR, contentEN, contentJP;
 }
 
 public class AdventureEventReader
@@ -92,13 +95,13 @@ public class AdventureEventReader
     public int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
     public int levelIdxStart; //해당 이벤트가 나올 수 있는 스테이지의 단계 최소값
     public int levelIdxEnd; // 해당 이벤가 나올 수 있는 스테이지의 최대값
-    public string selectText; //이벤트 전체에 대한 설명
+    public string selectTextKR, selectTextEN, selectTextJP; //이벤트 전체에 대한 설명
 }
 public class AdventureEventPacketReader
 {
     public int eventIdx, diceNum, selectType,
         selectVal0, selectVal1, selectVal2, selectVal3, selectVal4, selectVal5, selectVal6, selectVal7;
-    public string chooseText, resultText;
+    public string chooseTextKR, chooseTextEN, chooseTextJP, resultTextKR, resultTextEN, resultTextJP;
     public string spriteIndex;
     public int itemExist, itemType0, itemIdx0, itemType1, itemIdx1, itemType2, itemIdx2, itemType3, itemIdx3;
     public string battleBackSprite;

@@ -98,7 +98,7 @@ public class Skill
     public int Var0;
     public int Var1;
     public int Var2;
-    public string Command;
+    public string[] Command = new string[3];
     public int Anim;
     public int AnimMove;
 
@@ -123,7 +123,9 @@ public class Skill
         this.Var0 = skillReader.Var0;
         this.Var1 = skillReader.Var1;
         this.Var2 = skillReader.Var2;
-        this.Command = skillReader.Command;
+        this.Command[0] = skillReader.CommandKR;
+        this.Command[1] = skillReader.CommandEN;
+        this.Command[2] = skillReader.CommandJP;
 
         this.Anim = skillReader.Anim;
         this.AnimMove = skillReader.AnimMove;
@@ -147,7 +149,7 @@ public class Skill
         this.Var0 = skillReader.Var0;
         this.Var1 = skillReader.Var1;
         this.Var2 = skillReader.Var2;
-        this.Command = skillReader.Command;
+        for(int i=0;i<Command.Length;i++) this.Command[i] = skillReader.Command[i];
 
         this.Anim = skillReader.Anim;
         this.AnimMove = skillReader.AnimMove;
@@ -194,7 +196,7 @@ public class Skill
     }
     public string getCommand()
     {
-        return this.Command;
+        return this.Command[jsonDataManager.Instance.getLanguage()];
     }
     public int getVal(int idx)
     {
