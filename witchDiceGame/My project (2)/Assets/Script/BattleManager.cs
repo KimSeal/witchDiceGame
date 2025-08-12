@@ -1101,6 +1101,10 @@ public class BattleManager : MonoBehaviour
     //witch Power 선택 시작!
     private IEnumerator witchPowerPhase_Coroutine()
     {
+        Material material = witchPowerObj[0].GetComponent<SpriteRenderer>().material;
+        float curAlpha = material.GetFloat("_Transparency");
+        material.SetFloat("_Transparency", 0.0f);
+
         witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
         
         StartCoroutine(makeBright(backGroundObj[1], 0.0f));
@@ -3377,6 +3381,8 @@ public class BattleManager : MonoBehaviour
         //배틀시 타겟에 대한 UI 비활성
         for (int i=0;i<8;i++)
         {
+            Material material = battleTargetUI[i].GetComponent<SpriteRenderer>().material;
+            material.SetFloat("_Transparency", 0.0f);
             battleTargetUI[i].SetActive(false);
         }
 
