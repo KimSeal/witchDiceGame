@@ -81,6 +81,10 @@ public class TalkManager : MonoBehaviour
         faceArr[2] = talkReader.characterRightFace;
         faceArr[3] = talkReader.characterRightestFace;
     }
+    public string SpecialTextChange(string inputStr)
+    {
+        return inputStr.Replace("\\n", "\n").Replace("+o", ",");
+    }
 
     private int[] lifeStartIdx = {3,  -99999};
     public bool stageStart(int stageStart)
@@ -105,13 +109,15 @@ public class TalkManager : MonoBehaviour
         talkList = CSVReader.Read<TalkReader>("Talk_2");
         for (int i = 0; i < talkList.Count; i++)
         {
-            talkList[i].Text = talkList[i].Text.Replace("\\n", "\n");
+            talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
+            talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN); 
+            talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP); 
         }
         descList = CSVReader.Read<DescReader>("Desc");
-        for (int i=0;i<descList.Count;i++) { 
-            descList[i].KR = descList[i].KR.Replace("\\n", "\n");
-            descList[i].EN = descList[i].EN.Replace("\\n", "\n");
-            descList[i].JP = descList[i].JP.Replace("\\n", "\n");
+        for (int i=0;i<descList.Count;i++) {
+            descList[i].KR = SpecialTextChange(descList[i].KR);
+            descList[i].EN = SpecialTextChange(descList[i].EN);
+            descList[i].JP = SpecialTextChange(descList[i].JP);
         }
 
         initIdx = -1;
@@ -319,9 +325,12 @@ public class TalkManager : MonoBehaviour
         //배경 이미지 업데이트
         background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + talkList[a].backGround);
 
+        //언어따라 다른 text
         characterName.GetComponent<TextMeshProUGUI>().text = talkList[a].Name;
-        characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].Text;
-        
+        if(jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
+        else if (jsonDataManager.Instance.getLanguage() == 2) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextJP;
+        else characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextEN;
+
         preBackground = talkList[a].backGround;
         setPreCharacterName();
     }

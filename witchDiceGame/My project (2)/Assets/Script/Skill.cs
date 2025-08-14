@@ -123,9 +123,9 @@ public class Skill
         this.Var0 = skillReader.Var0;
         this.Var1 = skillReader.Var1;
         this.Var2 = skillReader.Var2;
-        this.Command[0] = skillReader.CommandKR;
-        this.Command[1] = skillReader.CommandEN;
-        this.Command[2] = skillReader.CommandJP;
+        this.Command[0] = TalkManager.Instance.SpecialTextChange(skillReader.CommandKR);
+        this.Command[1] = TalkManager.Instance.SpecialTextChange(skillReader.CommandEN);
+        this.Command[2] = TalkManager.Instance.SpecialTextChange(skillReader.CommandJP);
 
         this.Anim = skillReader.Anim;
         this.AnimMove = skillReader.AnimMove;

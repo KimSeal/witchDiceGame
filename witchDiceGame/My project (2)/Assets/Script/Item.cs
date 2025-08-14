@@ -34,9 +34,9 @@ public class Item
         this.type=itemReader.type;
         this.itemName = itemReader.itemName;
 
-        this.content[0] = itemReader.contentKR.Replace("\\n", "\n");
-        this.content[1] = itemReader.contentEN.Replace("\\n", "\n");
-        this.content[2] = itemReader.contentJP.Replace("\\n", "\n");
+        this.content[0] = TalkManager.Instance.SpecialTextChange(itemReader.contentKR);
+        this.content[1] = TalkManager.Instance.SpecialTextChange(itemReader.contentEN);
+        this.content[2] = TalkManager.Instance.SpecialTextChange(itemReader.contentJP);
 
         this.val[0] = itemReader.val0;
         this.val[1] = itemReader.val1;

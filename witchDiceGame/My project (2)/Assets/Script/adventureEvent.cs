@@ -24,14 +24,14 @@ public class adventureEvent_Packet{
     public adventureEvent_Packet(AdventureEventPacketReader adventureEventPacketReader)
     {
 
-        this.chooseText[0] = adventureEventPacketReader.chooseTextKR.Replace("\\n", "\n"); ;
-        this.resultText[0] = adventureEventPacketReader.resultTextKR.Replace("\\n", "\n"); ;
+        this.chooseText[0] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.chooseTextKR);
+        this.resultText[0] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.resultTextKR);
 
-        this.chooseText[1] = adventureEventPacketReader.chooseTextEN.Replace("\\n", "\n"); ;
-        this.resultText[1] = adventureEventPacketReader.resultTextEN.Replace("\\n", "\n"); ;
+        this.chooseText[1] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.chooseTextEN);
+        this.resultText[1] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.resultTextEN);
 
-        this.chooseText[2] = adventureEventPacketReader.chooseTextJP.Replace("\\n", "\n"); ;
-        this.resultText[2] = adventureEventPacketReader.resultTextJP.Replace("\\n", "\n"); ;
+        this.chooseText[2] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.chooseTextJP);
+        this.resultText[2] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.resultTextJP);
 
         this.selectType = adventureEventPacketReader.selectType;
         this.val[0] = adventureEventPacketReader.selectVal0;
@@ -60,8 +60,8 @@ public class adventureEvent_Packet{
     {
         for (int i = 0; i < chooseText.Length; i++)
         {
-            this.chooseText[i] = adventureEventPacketReader.chooseText[i].Replace("\\n", "\n"); ;
-            this.resultText[i] = adventureEventPacketReader.resultText[i].Replace("\\n", "\n"); ;
+            this.chooseText[i] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.chooseText[i]);
+            this.resultText[i] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.resultText[i]);
         }
         this.selectType = adventureEventPacketReader.selectType;
         for (int i=0;i<8;i++)
@@ -147,9 +147,9 @@ public class adventureEvent
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
-        this.selectText[0] = adventureEventReader.selectTextKR.Replace("\\n", "\n"); ;
-        this.selectText[1] = adventureEventReader.selectTextEN.Replace("\\n", "\n"); ;
-        this.selectText[2] = adventureEventReader.selectTextJP.Replace("\\n", "\n"); ;
+        this.selectText[0] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextKR);
+        this.selectText[1] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextEN);
+        this.selectText[2] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextJP);
 
         this.eventType = adventureEventReader.eventType;
         this.NPCSprite = adventureEventReader.NPCSprite;
@@ -179,7 +179,7 @@ public class adventureEvent
         this.levelIdxStart = adventureEventReader.levelIdxStart;
         this.levelIdxEnd = adventureEventReader.levelIdxEnd;
         this.eventIdx = adventureEventReader.eventIdx;
-        for(int i=0;i<selectText.Length;i++) this.selectText[i] = adventureEventReader.selectText[i].Replace("\\n", "\n");
+        for (int i = 0; i < selectText.Length; i++) this.selectText[i] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectText[i]);
 
         this.eventType = adventureEventReader.eventType;
         this.backgroundSprite = adventureEventReader.backgroundSprite;

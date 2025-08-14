@@ -138,8 +138,12 @@ public class TalkReader{
     public int imageIdx;
     public int eventType;
     public string Name;
-    public string Text;
     public string backGround;
+
+    public string TextKR;
+    public string TextEN;
+    public string TextJP;
+    
 }
 
 public class CSVReader

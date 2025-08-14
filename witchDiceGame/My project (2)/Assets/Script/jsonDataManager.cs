@@ -50,7 +50,7 @@ public class jsonDataManager : MonoBehaviour
     }
     public void changeMoney(int a)
     {
-        libraryMoneyDesc.GetComponent<TextMeshPro>().text = a.ToString();
+        libraryMoneyDesc.GetComponent<TextMeshPro>().text = "$ "+ a.ToString();
     }
 
     public void SavePlayerDataToJson()
