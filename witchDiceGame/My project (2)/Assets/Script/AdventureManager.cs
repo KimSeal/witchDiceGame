@@ -160,7 +160,7 @@ public class AdventureManager : MonoBehaviour
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
         //if (false) {
-        if (!jsonDataManager.Instance.getTutorialDid()) {
+        if (jsonDataManager.Instance.getTutorialDid()) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
             tutorialStart();            
         }
@@ -901,7 +901,7 @@ public class AdventureManager : MonoBehaviour
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
                     if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && jsonDataManager.Instance.setChapterDid(0, 4))
-                    { // 올빼미 선배 클리어
+                    { // 올빼미 선배
                         TalkManager.Instance.startTalk(21);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     }

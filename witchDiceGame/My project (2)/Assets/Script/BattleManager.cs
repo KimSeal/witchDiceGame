@@ -36,6 +36,7 @@ public class BattleManager : MonoBehaviour
     public int clickMonster = -1;
     public int clickSelf = -1;
 
+    private GameObject fireObject;
     //phase 흐름을 위한 시스템
     private int battlePhaseState = 0;
 
@@ -122,7 +123,9 @@ public class BattleManager : MonoBehaviour
 
     private GameObject[] witchPowerObj = new GameObject[3];
     private GameObject[] backGroundObj = new GameObject[5];
-    
+    private int[] witchPowerWaitTurn = { 0, 0, 0 };
+    private GameObject[] diceArrow = new GameObject[8];
+
     private int[] clickedDice = new int[2];
     
     // 적군이 주사위를 보고 스킬을 배치하게 하기 위한 변수들//
@@ -972,6 +975,12 @@ public class BattleManager : MonoBehaviour
     //DiceThrow Phase  Start (phase 1- dice throw start)//
     private IEnumerator DiceThrowPhase_Coroutine()
     {
+        for (int i = 0; i < 4; i++)
+        {
+            myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+
         //주사위 굴리기 UI(ui 초기화)
         StartCoroutine(MoveUI(characterUI, -75.0f));
         StartCoroutine(MoveUI(diceFullUI, -58.0f));
@@ -1155,18 +1164,27 @@ public class BattleManager : MonoBehaviour
                     if (witchPowerState < 0) witchPowerState = 2;
                 }
                 //테스트를 위한 turn 능력이미지
-                if (witchPowerState == 0) {
+                //턴 소모해야 해서 아직 못쓰는 경우
+                if (witchPowerWaitTurn[witchPowerState] != 0) {
+                    witchPowerObj[0].GetComponent<Animator>().Play("cantUse_turn" + witchPowerWaitTurn[witchPowerState].ToString());
+                }
+                else if (witchPowerState == 0)
+                {
                     witchPowerObj[0].GetComponent<Animator>().Play("0");
                     //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse"); 
                 }
-                else if (witchPowerState == 1) {
+                else if (witchPowerState == 1)
+                {
                     witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[1].ToString());
                     //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn"); 
                 }
-                else if (witchPowerState == 2) {
+                else if (witchPowerState == 2)
+                {
                     witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[2].ToString());
                     //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn_blue"); 
                 }
+
+                
             }
         }
     }
@@ -1176,7 +1194,11 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            if (witchPowerMoveState == 0)
+            //아직 더 턴이 필요한 경우
+            if (witchPowerWaitTurn[witchPowerState] != 0) {
+                fullUI.showFull(12);
+            }
+            else if (witchPowerMoveState == 0)
             {
                 SoundManager_Sfx.Instance.playSound(6);
                 witchPowerMoveState = 1; //마녀 파워 선택 종료
@@ -1198,33 +1220,89 @@ public class BattleManager : MonoBehaviour
                 int diceNum = 6;
                 if (witchPowerTemp == 0) diceNum = 0; //능력을 사용하지 않는 경우
                 if (witchPowerTemp >= 1 && witchPowerTemp <= 3) diceNum = 1; // 능력이 reroll이어서 주사위 하나만 쓰는 경우
-                if (witchPowerTemp >= 4 && witchPowerTemp <=6 ) diceNum = 1; // 능력이 turn이어서 주사위 하나만 쓰는 경우
+                if (witchPowerTemp >= 4 && witchPowerTemp <= 6) diceNum = 1; // 능력이 turn이어서 주사위 하나만 쓰는 경우
                 if (witchPowerTemp >= 7 && witchPowerTemp <= 9) diceNum = 1; // 능력이 add1이어서 주사위 하나만 쓰는 경우
                 if (witchPowerTemp >= 10 && witchPowerTemp <= 12) diceNum = 1; // 능력이 sub1이어서 주사위 하나만 쓰는 경우
                 clickedDice[0] = -1;
                 clickedDice[1] = -1;
                 witchPowerClickState = diceNum;
-                
-                if (witchPowerTemp %3 ==2) { //적군 만을 대상으로 하는 경우
-                    for (int i = 0; i < 4; i++) { 
+
+                if (witchPowerTemp % 3 == 2)
+                { //적군 만을 대상으로 하는 경우
+                    witchPowerWaitTurn[witchPowerState] = 2;
+                    for (int i = 0; i < 4; i++)
+                    {
+
+                        //적군 주사위들에 대해 처리.
+                        if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() != 0)
+                        {
+                            Material materialTemp = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                            materialTemp.SetFloat("_Transparency", 0.7f);
+                        }
+                        else
+                        {
+                            diceArrowAnimationControl(i + 4, true);
+                        }
+
                         Material material = myDiceUI[i].GetComponent<SpriteRenderer>().material;
                         material.SetFloat("_Transparency", 0.7f);
                     }
                 }
                 if (witchPowerTemp % 3 == 1) //아군 만을 대상으로 하는 경우
                 {
+                    witchPowerWaitTurn[witchPowerState] = 1;
                     for (int i = 0; i < 4; i++)
                     {
+                        //아군 주사위들에 대해 처리.
+                        if (myCharacter[i] == null || myCharacter[i].getCurState() != 0)
+                        {
+                            Material materialTemp = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                            materialTemp.SetFloat("_Transparency", 0.7f);
+                        }
+                        else
+                        {
+                            diceArrowAnimationControl(i, true);
+                        }
                         Material material = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
                         material.SetFloat("_Transparency", 0.7f);
                     }
                 }
+                else if (witchPowerTemp != 0 && witchPowerTemp % 3 == 0)
+                { //Nouse 제외, 모두를 대상으로 하는 경우
+                    witchPowerWaitTurn[witchPowerState] = 3;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        //아군 주사위들에 대해 처리.
+                        if (myCharacter[i] == null || myCharacter[i].getCurState() != 0)
+                        {
+                            Material materialTemp = myDiceUI[i].GetComponent<SpriteRenderer>().material;
+                            materialTemp.SetFloat("_Transparency", 0.7f);
+                        }
+                        else
+                        {
+                            diceArrowAnimationControl(i, true);
+                        }
+                        //적군 주사위들에 대해 처리.
+                        if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() != 0)
+                        {
+                            Material materialTemp = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                            materialTemp.SetFloat("_Transparency", 0.7f);
+                        }
+                        else
+                        {
+                            diceArrowAnimationControl(i + 4, true);
+                        }
+                    }
+
+                }
 
                 yield return new WaitUntil(() => witchPowerClickState == 0); //요구되는 주사위 수를 모두 채웠을때.
 
-                
+                for (int i = 0; i < 8; i++) {
+                    diceArrowAnimationControl(i, false);
+                }
 
-                
 
                 if (witchPowerTemp != 0) //능력 사용시만
                 {
@@ -1395,22 +1473,31 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 2)
         {
+            /*
             currentLightUI++;
             Color color = witchPowerObj[1].GetComponent<SpriteRenderer>().color;
             while (color.a > 0.00f)
             {
                 //witchPowerObj[0].GetComponent<SpriteRenderer>().color = color;
+                
                 witchPowerObj[1].GetComponent<SpriteRenderer>().color = color;
                 witchPowerObj[2].GetComponent<SpriteRenderer>().color = color;
-                color.a -= 0.2f;
+                color.a -= 0.02f;
                 yield return new WaitForSeconds(0.1f);
             }
-            for(int i=1;i<3;i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 300, witchPowerObj[i].transform.position.z);
+            */
+            yield return new WaitForSeconds(0.1f);
+            for (int i=1;i<3;i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 300, witchPowerObj[i].transform.position.z);
 
+            if (witchPowerState != 0) //no use일땐 그냥 넘어가도록
+            {
+                GameObject witchPowerDestroyObj = Instantiate(hitEff, witchPowerObj[0].transform.position, Quaternion.Euler(0, 0, 0));
+                witchPowerDestroyObj.GetComponent<Animator>().Play("witchPowerDestroy");
+            }
             witchPowerObj[0].SetActive(false);
             witchPowerObj[1].SetActive(false);
             witchPowerObj[2].SetActive(false);
-            currentLightUI--;
+            //currentLightUI--;
         }
     }
     //마녀 좌우 선택 UI 천천히 생성
@@ -2355,25 +2442,64 @@ public class BattleManager : MonoBehaviour
         }
         //if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
     }
+
+    private void diceArrowAnimationControl(int idx, bool onOff)
+    {
+        if (onOff){
+            diceArrow[idx].GetComponent<Animator>().Play("yesArrow");
+        }
+        else{
+            diceArrow[idx].GetComponent<Animator>().Play("noArrow");
+        }
+        if (idx < 4)
+        {
+            if(myDiceTake[idx] == -999) diceArrow[idx].transform.localPosition = new Vector3(0f, 24f, 0f);
+            else diceArrow[idx].transform.localPosition = new Vector3(0f, 42f, 0f);
+        }
+        else {
+            if (enemyDiceTake[idx-4] == -999) diceArrow[idx].transform.localPosition = new Vector3(0f, 24f, 0f);
+            diceArrow[idx].transform.localPosition = new Vector3(0f, 42f, 0f);
+        }
+    }
+
+    private void fireMove(int idx) {
+        for (int i=0;i<4;i++)
+        {
+            if(i != idx) myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            else myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            if (i != i + 4) enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            else enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+        
+        if(idx == -999) fireObject.transform.position = new Vector3(-234f, 22f, 0f);
+        else if (idx < 4) fireObject.transform.position = myDiceUI[idx].transform.position + new Vector3(0, -4, 0);
+        else if (idx < 8) fireObject.transform.position = enemyDiceUI[idx-4].transform.position + new Vector3(0, -4, 0);
+    }
+
     private IEnumerator BattlePhase_Coroutine()
     {
+        clickDice_battlePhase = -999;
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
-        if(curPhase == 5)
+        if (curPhase == 5)
         {
             int nextDice = 0;
             int nextSkill = -999;
             //아군 스킬 클릭 
             while (nextDice < 4)
             {
+                if (winningCheck() != 0) break;
                 if (myDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
                     nextSkill = myDiceTake[nextDice];
                     clickDice_battlePhase = -998;
+                    diceArrowAnimationControl(nextDice, true);
+                    fireMove(nextDice);
+                    //diceArrow[nextDice].GetComponent<Animator>().Play("yesArrow");
                     yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
-
+                    diceArrowAnimationControl(nextDice, false);
+                    //diceArrow[nextDice].GetComponent<Animator>().Play("noArrow");
                     /*
                     이후 passive 아이템 사용을 위해 사용된 주사위를 받아두기 위함.
-
                     */
                     int usedDiceIdx = 0;
                     int[] usedDiceArr = { -99999, -99999, -99999, -99999 };
@@ -2513,9 +2639,19 @@ public class BattleManager : MonoBehaviour
                             updateHp();
                             updateMyDiceUI();
                             updateBattleUI();
+
+                            //if (winningCheck() != 0) break;
                         }
+
+                        
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
+
+                        if (winningCheck() != 0) //공격할 적이 더이상 없는 경우
+                        {
+                            battleTextObj.GetComponent<TextMeshPro>().text = "";
+                            break;
+                        }
 
                         if (i + 1 < curSkill.getTargetChance()) { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
                             skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
@@ -2528,6 +2664,7 @@ public class BattleManager : MonoBehaviour
 
                     //
                     nextSkill = 0;
+                    
                 }
                 nextDice++;
             }
@@ -2537,9 +2674,13 @@ public class BattleManager : MonoBehaviour
             //적군 스킬 자동 사용
             while (nextDice < 4)
             {
-                
+                if (winningCheck() != 0) break;
                 if (enemyDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
+                    //diceArrow[nextDice + 4].GetComponent<Animator>().Play("yesArrow");
+                    diceArrowAnimationControl(nextDice + 4, true);
+                    fireMove(nextDice+4);
+
                     nextSkill = enemyDiceTake[nextDice];
                     for (int i = 0; i < 4; i++)
                     {
@@ -2648,9 +2789,14 @@ public class BattleManager : MonoBehaviour
                             updateHp();
                             updateEnemyDiceUI();
                             updateBattleUI();
+                            
                         }
+
                         skillAnimationControl(false, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 0);
+
+                        //공격할 아군이 더 남아있지 않으면 종료
+                        if (winningCheck() != 0) break;
 
                         if (i + 1 < curSkill.getTargetChance())
                         { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
@@ -2660,13 +2806,28 @@ public class BattleManager : MonoBehaviour
                         }
 
                     }
-
+                    diceArrowAnimationControl(nextDice + 4, false);
 
                     //
                     nextSkill = 0;
                     yield return new WaitForSeconds(1.0f);
                 }
                 nextDice++;
+            }
+            fireMove(-999);
+
+            
+            for (int i = 0; i < 4; i++)
+            {
+                myDiceChange(i, 0, -999);
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+                enemyDiceChange(i, -999);
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                diceUIChk[i+4].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                if (i+3 != 6) diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
             nextDice = 0;
             //배틀 끝나서 모두 사용됨.
@@ -2761,6 +2922,12 @@ public class BattleManager : MonoBehaviour
         //tutorial용 전투 종료 확인
         if (AdventureManager.Instance.getTutorial() == 1) AdventureManager.Instance.setTutorial(2);
         if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
+
+        for (int i = 0; i < witchPowerWaitTurn.Length; i++)
+        {
+            if (witchPowerWaitTurn[i] > 0) witchPowerWaitTurn[i]--;
+        }
+
 
         //아군 전멸
         if (result == 2)
@@ -2929,7 +3096,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-       
+        fireObject = GameObject.Find("obj_battle_fire");
         //초반 turn 화살표 지우기
         for (int i = 0;i<8;i++) {
             skillSelectUI[i] = GameObject.Find("obj_skillSelect_" + i.ToString());
@@ -2939,8 +3106,12 @@ public class BattleManager : MonoBehaviour
             diceArrowSet[i].SetActive(false);
         }
         //
+        for (int i = 0; i < 8; i++)
+        {
+            diceArrow[i] = GameObject.Find("obj_battleDice_arrow_" + i.ToString());
+            diceArrowAnimationControl(i, false);
+        }    
 
-        
 
 
         skillSelectDescUI[0] = GameObject.Find("battle_skill_skillImage_selected"); //스킬 이미지
@@ -3206,8 +3377,19 @@ public class BattleManager : MonoBehaviour
 
     public void startBattle_fromAdventure()
     {
+        for (int i = 0; i < witchPowerWaitTurn.Length; i++) { 
+            witchPowerWaitTurn[i] = 0;
+        }
+        for (int i = 0; i < 8; i++) {
+            diceArrowAnimationControl(i, false);
+        }
         for (int i = 0; i < 4; i++)
         {
+            myCharacterPunch[i] = 0f;
+            myCharacterSwing[i] = 0f;
+            enemyCharacterPunch[i] = 0f;
+            enemyCharacterSwing[i] = 0f;
+
             changeDiceState(i, 0);
             changeDiceState(i+4, 0);
             myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
