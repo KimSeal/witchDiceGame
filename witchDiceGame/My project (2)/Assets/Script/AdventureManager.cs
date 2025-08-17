@@ -160,7 +160,7 @@ public class AdventureManager : MonoBehaviour
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
         //if (false) {
-        if (jsonDataManager.Instance.getTutorialDid()) {
+        if (!jsonDataManager.Instance.getTutorialDid()) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
             tutorialStart();            
         }
