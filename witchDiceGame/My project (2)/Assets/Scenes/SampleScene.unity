@@ -14049,7 +14049,7 @@ MonoBehaviour:
   expandAbleBySelf: 0
   shakeVal: 0.5
   shakeAmountChangeVal: 1
-  expandVal: 0
+  expandVal: 0.1
 --- !u!1 &91784123
 GameObject:
   m_ObjectHideFlags: 0
@@ -16803,6 +16803,7 @@ GameObject:
   - component: {fileID: 154727391}
   - component: {fileID: 154727390}
   - component: {fileID: 154727389}
+  - component: {fileID: 154727393}
   m_Layer: 0
   m_Name: obj_enemyDice_5
   m_TagString: Untagged
@@ -16932,6 +16933,23 @@ Transform:
   m_Father: {fileID: 1110327696}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &154727393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154727388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &154773732
 GameObject:
   m_ObjectHideFlags: 0
@@ -59150,6 +59168,7 @@ GameObject:
   - component: {fileID: 462517896}
   - component: {fileID: 462517895}
   - component: {fileID: 462517894}
+  - component: {fileID: 462517897}
   m_Layer: 0
   m_Name: obj_skillSelect_1
   m_TagString: Untagged
@@ -59279,6 +59298,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &462517897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462517892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &468547840
 GameObject:
   m_ObjectHideFlags: 0
@@ -65776,6 +65812,7 @@ GameObject:
   - component: {fileID: 619127401}
   - component: {fileID: 619127400}
   - component: {fileID: 619127399}
+  - component: {fileID: 619127402}
   m_Layer: 0
   m_Name: obj_skillSelect_3
   m_TagString: Untagged
@@ -65905,6 +65942,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &619127402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619127397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &630556582
 GameObject:
   m_ObjectHideFlags: 0
@@ -77054,6 +77108,7 @@ GameObject:
   - component: {fileID: 787447806}
   - component: {fileID: 787447805}
   - component: {fileID: 787447804}
+  - component: {fileID: 787447807}
   m_Layer: 0
   m_Name: obj_skillSelect_5
   m_TagString: Untagged
@@ -77183,6 +77238,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &787447807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787447802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &792043743
 GameObject:
   m_ObjectHideFlags: 0
@@ -79178,7 +79250,7 @@ MonoBehaviour:
   expandAbleBySelf: 0
   shakeVal: 0.5
   shakeAmountChangeVal: 1
-  expandVal: 0
+  expandVal: 0.1
 --- !u!1 &836878836
 GameObject:
   m_ObjectHideFlags: 0
@@ -86558,6 +86630,7 @@ GameObject:
   - component: {fileID: 905062215}
   - component: {fileID: 905062214}
   - component: {fileID: 905062213}
+  - component: {fileID: 905062217}
   m_Layer: 0
   m_Name: obj_enemyDice_4
   m_TagString: Untagged
@@ -86687,6 +86760,23 @@ Transform:
   m_Father: {fileID: 32486443}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &905062217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905062212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &909369321
 GameObject:
   m_ObjectHideFlags: 0
@@ -102734,6 +102824,7 @@ GameObject:
   - component: {fileID: 1039226145}
   - component: {fileID: 1039226148}
   - component: {fileID: 1039226149}
+  - component: {fileID: 1039226150}
   m_Layer: 0
   m_Name: witchPower_button_left
   m_TagString: Untagged
@@ -102875,6 +102966,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1039226150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039226144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1039755394
 GameObject:
   m_ObjectHideFlags: 0
@@ -105222,6 +105330,7 @@ GameObject:
   - component: {fileID: 1096861196}
   - component: {fileID: 1096861195}
   - component: {fileID: 1096861194}
+  - component: {fileID: 1096861197}
   m_Layer: 0
   m_Name: obj_skillSelect_7
   m_TagString: Untagged
@@ -105351,6 +105460,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1096861197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096861192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1097769203
 GameObject:
   m_ObjectHideFlags: 0
@@ -110995,6 +111121,7 @@ GameObject:
   - component: {fileID: 1272535806}
   - component: {fileID: 1272535805}
   - component: {fileID: 1272535807}
+  - component: {fileID: 1272535808}
   m_Layer: 0
   m_Name: obj_endSkillSettest
   m_TagString: Untagged
@@ -111098,6 +111225,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 1272535808}
+          m_TargetAssemblyTypeName: hoverRotate, Assembly-CSharp
+          m_MethodName: shakeStart
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!61 &1272535806
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -111136,6 +111275,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1272535808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272535802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1274451525
 GameObject:
   m_ObjectHideFlags: 0
@@ -117116,6 +117272,7 @@ GameObject:
   - component: {fileID: 1314177055}
   - component: {fileID: 1314177054}
   - component: {fileID: 1314177053}
+  - component: {fileID: 1314177056}
   m_Layer: 0
   m_Name: obj_skillSelect_2
   m_TagString: Untagged
@@ -117245,6 +117402,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1314177056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314177051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1316299485
 GameObject:
   m_ObjectHideFlags: 0
@@ -118718,6 +118892,7 @@ GameObject:
   - component: {fileID: 1366574698}
   - component: {fileID: 1366574701}
   - component: {fileID: 1366574702}
+  - component: {fileID: 1366574703}
   m_Layer: 0
   m_Name: witchPower_button_right
   m_TagString: Untagged
@@ -118859,6 +119034,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1366574703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366574697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1388572871
 GameObject:
   m_ObjectHideFlags: 0
@@ -120680,6 +120872,7 @@ GameObject:
   - component: {fileID: 1416091617}
   - component: {fileID: 1416091616}
   - component: {fileID: 1416091615}
+  - component: {fileID: 1416091618}
   m_Layer: 0
   m_Name: obj_skillSelect_6
   m_TagString: Untagged
@@ -120809,6 +121002,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1416091618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416091613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1422445596
 GameObject:
   m_ObjectHideFlags: 0
@@ -141009,7 +141219,7 @@ GameObject:
   - component: {fileID: 1669191940}
   - component: {fileID: 1669191943}
   - component: {fileID: 1669191944}
-  - component: {fileID: 1669191945}
+  - component: {fileID: 1669191946}
   m_Layer: 0
   m_Name: obj_witchPower
   m_TagString: Untagged
@@ -141053,7 +141263,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 64a54e54a9b67d142a3fd6ed4f972f0e, type: 2}
+  - {fileID: 2100000, guid: ff745a402f475ee45ac7a5f73e8af1bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -141073,7 +141283,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 7
   m_Sprite: {fileID: 21300000, guid: 94bdeff901c4a944bb864265a992ef8c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -141150,7 +141360,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1669191945
+--- !u!114 &1669191946
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -141159,9 +141369,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1669191939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shakeAbleBySelf: 1
+  expandAbleBySelf: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1672739625
 GameObject:
   m_ObjectHideFlags: 0
@@ -141787,6 +142002,7 @@ GameObject:
   - component: {fileID: 1676736665}
   - component: {fileID: 1676736664}
   - component: {fileID: 1676736663}
+  - component: {fileID: 1676736666}
   m_Layer: 0
   m_Name: obj_skillSelect_4
   m_TagString: Untagged
@@ -141916,6 +142132,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1676736666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676736661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1678666236
 GameObject:
   m_ObjectHideFlags: 0
@@ -157767,7 +158000,7 @@ MonoBehaviour:
   expandAbleBySelf: 0
   shakeVal: 0.5
   shakeAmountChangeVal: 1
-  expandVal: 0
+  expandVal: 0.1
 --- !u!1 &1817405265
 GameObject:
   m_ObjectHideFlags: 0
@@ -166124,7 +166357,7 @@ MonoBehaviour:
   expandAbleBySelf: 0
   shakeVal: 0.5
   shakeAmountChangeVal: 1
-  expandVal: 0
+  expandVal: 0.1
 --- !u!1 &1963872839
 GameObject:
   m_ObjectHideFlags: 0
@@ -170346,6 +170579,7 @@ GameObject:
   - component: {fileID: 2063355538}
   - component: {fileID: 2063355537}
   - component: {fileID: 2063355536}
+  - component: {fileID: 2063355540}
   m_Layer: 0
   m_Name: obj_enemyDice_6
   m_TagString: Untagged
@@ -170475,6 +170709,23 @@ Transform:
   m_Father: {fileID: 1701263567}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2063355540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063355535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &2069615448
 GameObject:
   m_ObjectHideFlags: 0
@@ -176625,6 +176876,7 @@ GameObject:
   - component: {fileID: 2104171804}
   - component: {fileID: 2104171803}
   - component: {fileID: 2104171802}
+  - component: {fileID: 2104171806}
   m_Layer: 0
   m_Name: obj_enemyDice_7
   m_TagString: Untagged
@@ -176754,6 +177006,23 @@ Transform:
   m_Father: {fileID: 2133393209}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2104171806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104171801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &2106309433
 GameObject:
   m_ObjectHideFlags: 0
@@ -177438,6 +177707,7 @@ GameObject:
   - component: {fileID: 2134966583}
   - component: {fileID: 2134966582}
   - component: {fileID: 2134966581}
+  - component: {fileID: 2134966584}
   m_Layer: 0
   m_Name: obj_skillSelect_0
   m_TagString: Untagged
@@ -177567,6 +177837,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2134966584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2134966579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &2135182893
 GameObject:
   m_ObjectHideFlags: 0

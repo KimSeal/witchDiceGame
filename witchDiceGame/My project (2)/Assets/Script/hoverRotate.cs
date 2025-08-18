@@ -80,5 +80,12 @@ public class hoverRotate : MonoBehaviour
         sizeLerpVal = Mathf.PI * 0.25f;
         sizeOnOff = false;
     }
-
+    public void shakeAble(bool onOff)
+    {
+        this.shakeAbleBySelf = onOff;
+    }
+    public void expandAble(bool onOff) {
+        this.expandAbleBySelf = onOff;
+        if(!onOff) expandEnd(); 
+    }
 }
