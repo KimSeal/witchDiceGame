@@ -8,6 +8,8 @@ public class hoverRotate : MonoBehaviour
     public bool shakeAbleBySelf = false;
     [SerializeField]
     public bool expandAbleBySelf = false;
+    [SerializeField]
+    public bool shakeAbleByClick = false;
 
     [SerializeField]
     public float shakeVal = 0.5f;
@@ -60,6 +62,9 @@ public class hoverRotate : MonoBehaviour
         if (expandAbleBySelf) expandStart();
     }
 
+    private void OnMouseUp() {
+        if(shakeAbleByClick) shakeStart();
+    }
     private void OnMouseExit()
     {
         if (expandAbleBySelf) expandEnd();
@@ -68,8 +73,17 @@ public class hoverRotate : MonoBehaviour
     public void shakeStart()
     {
         shakeAmount = 30;
+        shakeAmountChangeVal = 1.0f;
         rotateVal = 0;
     }
+
+    public void shakeStart(float amount)
+    {
+        shakeAmount = amount;
+        shakeAmountChangeVal = shakeAmount/30.0f;
+        rotateVal = 0;
+    }
+
     public void expandStart()
     {
         sizeLerpVal = 0f;
@@ -87,5 +101,8 @@ public class hoverRotate : MonoBehaviour
     public void expandAble(bool onOff) {
         this.expandAbleBySelf = onOff;
         if(!onOff) expandEnd(); 
+    }
+    public void clickShakeAble(bool onOff) { 
+        this.shakeAbleByClick = onOff;
     }
 }

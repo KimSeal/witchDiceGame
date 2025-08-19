@@ -993,6 +993,13 @@ public class BattleManager : MonoBehaviour
     private IEnumerator DiceThrowPhase_Coroutine()
     {
         for (int i = 0; i < 4; i++)
+        { //처음에는 건들여도 별 변화 없도록
+            hoverRotateAble(myDiceUI[i], 0, false);
+            hoverRotateAble(enemyDiceUI[i], 0, false);
+            hoverRotateAble(myDiceUI[i], 1, false);
+            hoverRotateAble(enemyDiceUI[i], 1, false);
+        }
+        for (int i = 0; i < 4; i++)
         {
             myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
@@ -1035,10 +1042,7 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 1)
         {
-            for (int i = 0; i < 4; i++) { //처음에는 건들여도 별 변화 없도록
-                hoverRotateAble(myDiceUI[i], 0, false);
-                hoverRotateAble(enemyDiceUI[i], 0, false);
-            }
+            
 
             if (AdventureManager.Instance.getTutorial() == 1) {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
                 TalkManager.Instance.startTalk(5);
@@ -2087,7 +2091,9 @@ public class BattleManager : MonoBehaviour
             {
                 if (myCharacter[i] != null && myCharacter[i].getCurState() != 2) {
                     battleTargetUI[i].SetActive(true);
+                    shakeObject(battleTargetUI[i]);
                     battleTargetUI[i].GetComponent<Animator>().Play("Create");
+                    battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                     characterClickAble[i] = true;
                 }
             }
@@ -2096,7 +2102,9 @@ public class BattleManager : MonoBehaviour
             for (int i = 4; i < 8; i++) {
                 //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
                     battleTargetUI[i].SetActive(true);
+                    shakeObject(battleTargetUI[i]);
                     battleTargetUI[i].GetComponent<Animator>().Play("Create");
+                    battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                     characterClickAble[i] = true; 
                 //}  
             }

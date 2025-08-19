@@ -816,12 +816,12 @@ public class AdventureManager : MonoBehaviour
                     //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
                     //SoundManager_Sfx.Instance.playSound(0);
                 }
-                
 
-                adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
+                adventureBackground.GetComponent<hoverRotate>().shakeStart(15.0f);
+                /*adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
                 loadEnd = false;
                 yield return new WaitUntil(() => loadEnd);
-
+                */
                 eventWatchTrigger = false;
                 for (int i = 0; i < 6; i++)
                 {
