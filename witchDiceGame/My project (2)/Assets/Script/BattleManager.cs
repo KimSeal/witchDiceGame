@@ -24,6 +24,10 @@ public class BattleManager : MonoBehaviour
     public GameObject hitEff;
     [SerializeField]
     public GameObject coinEff;
+    [SerializeField]
+    public GameObject bagShake;
+    [SerializeField]
+    public GameObject starEff;
 
     public int chooseDiceIdx;
 
@@ -173,6 +177,10 @@ public class BattleManager : MonoBehaviour
 
     public void shakeObject(GameObject gameObjectTemp) {
         gameObjectTemp.GetComponent<hoverRotate>().shakeStart();
+    }
+    public void shakeBag()
+    {
+        shakeObject(bagShake);
     }
     public Character getCharacter(int a) {
         if(a<4) return myCharacter[a];
@@ -2558,6 +2566,10 @@ public class BattleManager : MonoBehaviour
     }
     private void makeHitEffect(int tempTargetIdx)
     {
+        GameObject startemp = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+        Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+        Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+
         GameObject temp = Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position , Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
         temp.GetComponent<Animator>().Play("TargetDestroy");
         Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect

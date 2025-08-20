@@ -14185,6 +14185,7 @@ GameObject:
   - component: {fileID: 93265826}
   - component: {fileID: 93265825}
   - component: {fileID: 93265829}
+  - component: {fileID: 93265830}
   m_Layer: 0
   m_Name: adventure_nextBtn_0
   m_TagString: Untagged
@@ -14348,6 +14349,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &93265830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93265823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &94378838
 GameObject:
   m_ObjectHideFlags: 0
@@ -15940,6 +15959,7 @@ GameObject:
   - component: {fileID: 139469149}
   - component: {fileID: 139469151}
   - component: {fileID: 139469150}
+  - component: {fileID: 139469152}
   m_Layer: 0
   m_Name: obj_adventureResult_Item_0
   m_TagString: Untagged
@@ -16101,6 +16121,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 24, y: 24}
   m_EdgeRadius: 0
+--- !u!114 &139469152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 139469147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &139883916
 GameObject:
   m_ObjectHideFlags: 0
@@ -23674,6 +23712,109 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &200098122
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 200098123}
+  - component: {fileID: 200098125}
+  - component: {fileID: 200098124}
+  m_Layer: 0
+  m_Name: ui_adventureBack_0 (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &200098123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200098122}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2050125907}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &200098124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200098122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
+--- !u!212 &200098125
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200098122}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 64a54e54a9b67d142a3fd6ed4f972f0e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -12
+  m_Sprite: {fileID: 21300000, guid: d9d7f83eb90dab446be41c1959e320e0, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 235, y: 117}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &206135796
 GameObject:
   m_ObjectHideFlags: 0
@@ -28835,6 +28976,7 @@ GameObject:
   - component: {fileID: 209744495}
   - component: {fileID: 209744494}
   - component: {fileID: 209744493}
+  - component: {fileID: 209744496}
   m_Layer: 0
   m_Name: spr_ui_adventureStore_noBtn
   m_TagString: Untagged
@@ -28954,6 +29096,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &209744496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209744491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &209770437
 GameObject:
   m_ObjectHideFlags: 0
@@ -29090,6 +29250,7 @@ GameObject:
   - component: {fileID: 218620533}
   - component: {fileID: 218620532}
   - component: {fileID: 218620531}
+  - component: {fileID: 218620534}
   m_Layer: 0
   m_Name: obj_adventureResult_Item_2
   m_TagString: Untagged
@@ -29251,6 +29412,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &218620534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 218620529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &222361900
 GameObject:
   m_ObjectHideFlags: 0
@@ -30856,6 +31035,7 @@ GameObject:
   - component: {fileID: 295076538}
   - component: {fileID: 295076537}
   - component: {fileID: 295076536}
+  - component: {fileID: 295076539}
   m_Layer: 0
   m_Name: obj_adventureStore_Item_image
   m_TagString: Untagged
@@ -30914,6 +31094,22 @@ MonoBehaviour:
         - m_Target: {fileID: 2050254736}
           m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
           m_MethodName: hoverOutItem
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2050254736}
+          m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
+          m_MethodName: tryBuyItem
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -31001,6 +31197,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &295076539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295076534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &298217702
 GameObject:
   m_ObjectHideFlags: 0
@@ -38547,6 +38761,7 @@ GameObject:
   m_Component:
   - component: {fileID: 349688978}
   - component: {fileID: 349688979}
+  - component: {fileID: 349688980}
   m_Layer: 0
   m_Name: obj_balpan_2
   m_TagString: Untagged
@@ -38621,6 +38836,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &349688980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349688977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &351341768
 GameObject:
   m_ObjectHideFlags: 0
@@ -44081,6 +44314,8 @@ MonoBehaviour:
   diceRollEff: {fileID: 587083212400032754, guid: cb2c4f34418ad9c43871fc0ece915558, type: 3}
   hitEff: {fileID: 2081603705384473503, guid: 3ad585fb8168f9848aa6200c1be26f2f, type: 3}
   coinEff: {fileID: 8433911307360513763, guid: 16d1d9b232140414a8f816b09995d317, type: 3}
+  bagShake: {fileID: 386159704}
+  starEff: {fileID: 1369900200745065299, guid: 832bc1487c2b00c478a92da00d83ed47, type: 3}
   chooseDiceIdx: 0
   firstAttackTeam: 1
   clickState: 0
@@ -49949,6 +50184,7 @@ GameObject:
   - component: {fileID: 375919712}
   - component: {fileID: 375919710}
   - component: {fileID: 375919713}
+  - component: {fileID: 375919714}
   m_Layer: 0
   m_Name: obj_adventureStore_Item_arrow_left
   m_TagString: Untagged
@@ -50078,6 +50314,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 12, y: 24}
   m_EdgeRadius: 0
+--- !u!114 &375919714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 375919708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &378088981
 GameObject:
   m_ObjectHideFlags: 0
@@ -50435,6 +50689,7 @@ GameObject:
   - component: {fileID: 385777793}
   - component: {fileID: 385777792}
   - component: {fileID: 385777791}
+  - component: {fileID: 385777795}
   m_Layer: 0
   m_Name: obj_adventureStore_Item_rerollBtn
   m_TagString: Untagged
@@ -50464,7 +50719,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 385777789}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
@@ -50535,7 +50790,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ddebaf6d7ba854a4387d155d9c4be22d, type: 2}
+  - {fileID: 2100000, guid: 64a54e54a9b67d142a3fd6ed4f972f0e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -50567,6 +50822,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &385777795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385777789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &386159704
 GameObject:
   m_ObjectHideFlags: 0
@@ -60628,6 +60901,7 @@ GameObject:
   - component: {fileID: 488955960}
   - component: {fileID: 488955959}
   - component: {fileID: 488955958}
+  - component: {fileID: 488955961}
   m_Layer: 0
   m_Name: obj_adventureResult_Item_3
   m_TagString: Untagged
@@ -60789,6 +61063,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &488955961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488955956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &489044254
 GameObject:
   m_ObjectHideFlags: 0
@@ -63684,6 +63976,7 @@ GameObject:
   - component: {fileID: 562516692}
   - component: {fileID: 562516691}
   - component: {fileID: 562516690}
+  - component: {fileID: 562516693}
   m_Layer: 0
   m_Name: spr_ui_adventureStore_yesBtn
   m_TagString: Untagged
@@ -63803,6 +64096,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &562516693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562516688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &565462573
 GameObject:
   m_ObjectHideFlags: 0
@@ -66443,6 +66754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 644601019}
   - component: {fileID: 644601020}
+  - component: {fileID: 644601021}
   m_Layer: 0
   m_Name: obj_balpan_1
   m_TagString: Untagged
@@ -66517,6 +66829,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &644601021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 644601018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &646435149
 GameObject:
   m_ObjectHideFlags: 0
@@ -73053,7 +73383,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -99
+  m_SortingOrder: -11
   m_Sprite: {fileID: 21300000, guid: d9d7f83eb90dab446be41c1959e320e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -73863,6 +74193,8 @@ MonoBehaviour:
   diceRollEff: {fileID: 0}
   hitEff: {fileID: 0}
   coinEff: {fileID: 0}
+  bagShake: {fileID: 0}
+  starEff: {fileID: 0}
   chooseDiceIdx: 0
   firstAttackTeam: 1
   clickState: 0
@@ -75042,6 +75374,7 @@ Transform:
   - {fileID: 1332153118}
   - {fileID: 916985569}
   - {fileID: 2076910156}
+  - {fileID: 2050125907}
   m_Father: {fileID: 2050254737}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -75738,6 +76071,7 @@ GameObject:
   m_Component:
   - component: {fileID: 754194395}
   - component: {fileID: 754194396}
+  - component: {fileID: 754194397}
   m_Layer: 0
   m_Name: obj_balpan_0
   m_TagString: Untagged
@@ -75812,6 +76146,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &754194397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754194394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &754824313
 GameObject:
   m_ObjectHideFlags: 0
@@ -77093,7 +77445,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 54
+  m_SortingOrder: 1054
   m_Sprite: {fileID: 21300000, guid: a1f1b0b3589fb624c9be4d28a97d65eb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -78789,7 +79141,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 54
+  m_SortingOrder: 1054
   m_Sprite: {fileID: 21300000, guid: 68c0b0373772a694696f12ec15e94561, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -79047,6 +79399,7 @@ GameObject:
   - component: {fileID: 822641927}
   - component: {fileID: 822641926}
   - component: {fileID: 822641925}
+  - component: {fileID: 822641929}
   m_Layer: 0
   m_Name: obj_adventureStore_Item_buyBtn
   m_TagString: Untagged
@@ -79076,7 +79429,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822641923}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
@@ -79178,6 +79531,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &822641929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822641923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &827539977
 GameObject:
   m_ObjectHideFlags: 0
@@ -88378,13 +88749,14 @@ GameObject:
   - component: {fileID: 927589258}
   - component: {fileID: 927589261}
   - component: {fileID: 927589262}
+  - component: {fileID: 927589263}
   m_Layer: 0
   m_Name: obj_itemUI_battleBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &927589258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88520,6 +88892,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &927589263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927589254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &930368106
 GameObject:
   m_ObjectHideFlags: 0
@@ -101613,6 +102003,7 @@ GameObject:
   m_Component:
   - component: {fileID: 994454144}
   - component: {fileID: 994454145}
+  - component: {fileID: 994454146}
   m_Layer: 0
   m_Name: obj_balpan_4
   m_TagString: Untagged
@@ -101687,6 +102078,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &994454146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994454143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1010267383
 GameObject:
   m_ObjectHideFlags: 0
@@ -101901,7 +102310,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 54
+  m_SortingOrder: 1054
   m_Sprite: {fileID: 21300000, guid: 31c8d6201ee4e354f849f3fc97dfa660, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -105316,6 +105725,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1084579042}
   - component: {fileID: 1084579043}
+  - component: {fileID: 1084579044}
   m_Layer: 0
   m_Name: obj_balpan_3
   m_TagString: Untagged
@@ -105390,6 +105800,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1084579044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084579041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1088342118
 GameObject:
   m_ObjectHideFlags: 0
@@ -106583,6 +107011,7 @@ GameObject:
   - component: {fileID: 1126656217}
   - component: {fileID: 1126656216}
   - component: {fileID: 1126656215}
+  - component: {fileID: 1126656218}
   m_Layer: 0
   m_Name: obj_ui_adventureStore_buy
   m_TagString: Untagged
@@ -106687,6 +107116,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1126656218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1126656214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1133497191
 GameObject:
   m_ObjectHideFlags: 0
@@ -121632,6 +122079,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1427121875}
   - component: {fileID: 1427121876}
+  - component: {fileID: 1427121877}
   m_Layer: 0
   m_Name: obj_balpan_6
   m_TagString: Untagged
@@ -121706,6 +122154,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1427121877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427121874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1430926685
 GameObject:
   m_ObjectHideFlags: 0
@@ -143265,6 +143731,7 @@ GameObject:
   - component: {fileID: 1682030864}
   - component: {fileID: 1682030863}
   - component: {fileID: 1682030862}
+  - component: {fileID: 1682030865}
   m_Layer: 0
   m_Name: obj_adventureResult_Item_1
   m_TagString: Untagged
@@ -143426,6 +143893,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1682030865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682030860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1684214717
 GameObject:
   m_ObjectHideFlags: 0
@@ -151905,6 +152390,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1772844206}
   - component: {fileID: 1772844207}
+  - component: {fileID: 1772844208}
   m_Layer: 0
   m_Name: obj_balpan_5
   m_TagString: Untagged
@@ -151979,6 +152465,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1772844208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772844205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1775837822
 GameObject:
   m_ObjectHideFlags: 0
@@ -166867,6 +167371,7 @@ GameObject:
   - component: {fileID: 1962385371}
   - component: {fileID: 1962385369}
   - component: {fileID: 1962385372}
+  - component: {fileID: 1962385373}
   m_Layer: 0
   m_Name: obj_adventureStore_Item_arrow_right
   m_TagString: Untagged
@@ -166996,6 +167501,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 12, y: 24}
   m_EdgeRadius: 0
+--- !u!114 &1962385373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962385367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1963772629
 GameObject:
   m_ObjectHideFlags: 0
@@ -169281,7 +169804,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 54
+  m_SortingOrder: 1054
   m_Sprite: {fileID: 21300000, guid: 1190f99d89272db459e483503543a8fb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -170802,6 +171325,110 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2050125906
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2050125907}
+  - component: {fileID: 2050125909}
+  - component: {fileID: 2050125908}
+  m_Layer: 0
+  m_Name: ui_adventureBack_backBoard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2050125907
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050125906}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8, y: 8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 200098123}
+  m_Father: {fileID: 743118160}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2050125908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050125906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
+--- !u!212 &2050125909
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050125906}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 64a54e54a9b67d142a3fd6ed4f972f0e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -13
+  m_Sprite: {fileID: 21300000, guid: d9d7f83eb90dab446be41c1959e320e0, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 235, y: 117}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &2050254735
 GameObject:
   m_ObjectHideFlags: 0
@@ -171988,7 +172615,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2076910156
 Transform:
   m_ObjectHideFlags: 0
@@ -178504,7 +179131,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 54
+  m_SortingOrder: 1054
   m_Sprite: {fileID: 21300000, guid: 83b8a0e1cdd57cc48b8d4600eb2fb0d1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

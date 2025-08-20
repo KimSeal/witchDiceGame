@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class coinMove : MonoBehaviour
 {
+
     int phase = 0;
     float spd = 0;
     float dir = 0;
@@ -42,7 +43,11 @@ public class coinMove : MonoBehaviour
             lastTime += 0.02f;
             if (lastTime >= 1.0f) phase = 2;
         }
-        else if (phase == 2) Destroy(gameObject);
+        else if (phase == 2)
+        {
+            BattleManager.Instance.shakeBag();
+            Destroy(gameObject);
+        }
     }
 
     public void changeDest(int i)

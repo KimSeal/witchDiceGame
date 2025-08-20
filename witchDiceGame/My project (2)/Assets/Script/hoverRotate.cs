@@ -34,7 +34,11 @@ public class hoverRotate : MonoBehaviour
     {
         transform.eulerAngles = new Vector3(0, 0, shakeAmount * Mathf.Sin(rotateVal));
         rotateVal += shakeVal;
-        if (shakeAmount > 0) shakeAmount -= shakeAmountChangeVal;
+        if (shakeAmount > 0)
+        {
+            shakeAmount -= shakeAmountChangeVal;
+            if (shakeAmount < 0) shakeAmount = 0.0f;
+        }
         if (rotateVal > 100 * Mathf.PI) rotateVal -= 100.0f * Mathf.PI;
 
         if (sizeOnOff) {

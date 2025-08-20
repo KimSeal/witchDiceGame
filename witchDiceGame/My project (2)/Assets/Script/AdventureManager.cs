@@ -62,8 +62,6 @@ public class AdventureManager : MonoBehaviour
     private GameObject[] resultObjArr = new GameObject[4];
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
-    private GameObject battleBtn;
-
     
     public List<adventureEvent>[] adventureEventList = new List<adventureEvent>[5]; //
 
@@ -77,7 +75,7 @@ public class AdventureManager : MonoBehaviour
 
     private GameObject adventureBackground;
     private GameObject adventureNPC;
-    private GameObject adventureLoad;
+    private GameObject adventureBackBoard;
     private GameObject[] watchNumObject = new GameObject[6];
 
     bool curCanvasIsAdventure = true;
@@ -102,18 +100,38 @@ public class AdventureManager : MonoBehaviour
     private TextMeshPro moneyText;
     private int[,] storeItemArr = new int[4, 3]; //4개의 아이템이 배치, 각각 type, index(아이템 고유번호), 가격이 저장될 예정 
     private GameObject storeEntityObj;
-    private SpriteRenderer storeImageObj;
+    private GameObject storeImageObj;
     private TextMeshPro storePriceObj;
 
     private GameObject storeCheckEntityObj;
     private SpriteRenderer storeCheckImageObj;
     private TextMeshPro storeCheckPriceObj;
+    private GameObject storeCheckButtonYes;
+    private GameObject storeCheckButtonNo;
 
     private int storeIdx = 0;
 
     private int[] lastCharacter = new int[4];
 
     private int tutorialVal = 0;
+
+    private void clickAbleObjSet(GameObject gameObjectTemp, bool onOff, int opt)
+    {
+        if (opt == 1) { gameObjectTemp.GetComponent<hoverRotate>().expandEnd(); }
+        hoverRotateAble(gameObjectTemp, opt, onOff);
+    }
+
+    public void hoverRotateAble(GameObject gameObjectTemp, int eventType, bool onOff)
+    {
+        if (eventType == 0) gameObjectTemp.GetComponent<hoverRotate>().shakeAble(onOff);
+        else if (eventType == 1) gameObjectTemp.GetComponent<hoverRotate>().expandAble(onOff);
+        else if (eventType == 2) gameObjectTemp.GetComponent<hoverRotate>().clickShakeAble(onOff); //에러있음.
+    }
+
+    public void shakeObject(GameObject gameObjectTemp)
+    {
+        gameObjectTemp.GetComponent<hoverRotate>().shakeStart();
+    }
 
     public int getTutorial()
     {
@@ -211,17 +229,20 @@ public class AdventureManager : MonoBehaviour
                 storeItemArr[storeIdx, 2] = -99999;
 
                 closeTryBuyItem();
+                shakeObject(storeImageObj);
                 updateStore();
             }
             else if (buyResult == 1) //인벤토리가 가득 찬 경우
             {
                 
                 SoundManager_Sfx.Instance.playSound(7);
+                shakeObject(storeCheckEntityObj);
                 storeCheckPriceObj.text = "더 넣을 공간이 없어요!";
             }
         }
         else
         {
+            shakeObject(storeCheckEntityObj);
             SoundManager_Sfx.Instance.playSound(7);
             storeCheckPriceObj.text = "돈이 부족해요!";
         }
@@ -229,18 +250,19 @@ public class AdventureManager : MonoBehaviour
     public void updateStore() //가게 이미지 업데이트
     {
         if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) { 
-            storeImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            storeImageObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             storePriceObj.text = "";//"No Item Here!";
         }
         else
         {
             Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
-            storeImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
+            storeImageObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
             storePriceObj.text = storeItemArr[storeIdx, 2].ToString();
         }
     }
     public void storeArrow(int dir)
     {
+        shakeObject(storeImageObj);
         SoundManager_Sfx.Instance.playSound(0);
         if (dir == 1){
             storeIdx++;
@@ -263,7 +285,12 @@ public class AdventureManager : MonoBehaviour
         else
         {
             SoundManager_Sfx.Instance.playSound(0);
+            
             storeCheckEntityObj.SetActive(true);
+            clickAbleObjSet(storeCheckButtonYes, true, 1);
+            clickAbleObjSet(storeCheckButtonNo, true, 1);
+            shakeObject(storeCheckEntityObj);
+
             Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
             storeCheckImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
             storeCheckPriceObj.text = "가격 : " + storeItemArr[storeIdx, 2].ToString() +
@@ -272,6 +299,8 @@ public class AdventureManager : MonoBehaviour
     }
     public void closeTryBuyItem()
     {
+        storeCheckButtonYes.GetComponent<hoverRotate>().expandEnd();
+        storeCheckButtonNo.GetComponent<hoverRotate>().expandEnd();
         storeCheckEntityObj.SetActive(false);
         SoundManager_Sfx.Instance.playSound(7);
     }
@@ -385,9 +414,9 @@ public class AdventureManager : MonoBehaviour
         eventInfo = GameObject.Find("adventure_eventInfo");
         selectImage = GameObject.Find("adventure_selectDice");
 
-        adventureLoad = GameObject.Find("ui_adventure_loading");
         adventureBackground = GameObject.Find("ui_adventureBack_0");
         adventureNPC = GameObject.Find("ui_adventureNPC_0");
+        adventureBackBoard = GameObject.Find("ui_adventureBack_backBoard");
 
         nextBtnObj = GameObject.Find("adventure_nextBtn_0");
         standObj = GameObject.Find("ui_backImage_0");
@@ -445,17 +474,18 @@ public class AdventureManager : MonoBehaviour
         for (int i=0;i<7;i++){  //발판 오브젝트 담기
             balpanObj[i] = GameObject.Find("obj_balpan_" + i.ToString()); 
         }
-        battleBtn = GameObject.Find("obj_itemUI_battleBtn");
 
         //상점 관련
         moneyText = GameObject.Find("obj_adventure_money").GetComponent<TextMeshPro>();
         storeEntityObj = GameObject.Find("obj_adventureStore");
-        storeImageObj = GameObject.Find("obj_adventureStore_Item_image").GetComponent<SpriteRenderer>();
+        storeImageObj = GameObject.Find("obj_adventureStore_Item_image");
         storePriceObj = GameObject.Find("obj_adventureStore_Item_price").GetComponent<TextMeshPro>();
         storeEntityObj.SetActive(false);
         storeCheckEntityObj = GameObject.Find("obj_ui_adventureStore_buy");
         storeCheckImageObj = GameObject.Find("obj_ui_adventureStore_buy_sprite").GetComponent<SpriteRenderer>();
         storeCheckPriceObj = GameObject.Find("obj_ui_adventureStore_buy_text").GetComponent<TextMeshPro>();
+        storeCheckButtonYes = GameObject.Find("spr_ui_adventureStore_yesBtn");
+        storeCheckButtonNo = GameObject.Find("spr_ui_adventureStore_noBtn");
         storeCheckEntityObj.SetActive(false);
     }
 
@@ -531,13 +561,14 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
+        
         adventureMoney = 0;
         addAdventureMoney(0);
         CharacterManager.Instance.setTestCharacterSet();
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
-        
 
+        resetDice();
         //지금은 시작 버튼 누르면 바로 시작
         StartCoroutine(phase_Manage_Coroutine(1));
     }
@@ -583,20 +614,16 @@ public class AdventureManager : MonoBehaviour
         for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
         {
             diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
-            if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0)
-            {
+            if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0) {
                 diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
                 continue;
             }
-            if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
-            {
+            if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null){
                 diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
-                if(selectDiceCharacterIdx == characterIdx){diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);}
-                else { diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f); };
-                //검정으로 바꾸는 뷰분
             }
             else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
         }
+        hoverOutCharacterDice(0);
     }
 
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
@@ -663,19 +690,24 @@ public class AdventureManager : MonoBehaviour
             balpanLoad.GetComponent<Animator>().Play("On");
             loadEnd = false;
             clickAble = false; // 주사위 클릭 못하게
+            clickAbleObjSet(nextBtnObj, false, 1);
+
+
             yield return new WaitUntil(() => loadEnd);
             balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 18, balpanScreen.transform.position.z);
-            
+
             //발판 이벤트를 위한 이펙트
             //setBalpan(stageIdx);
             for (int i = 0; i < 7; i++)
             {
+                shakeObject(balpanObj[i]);
                 if (stageIdx + i == -1) // 스테이지 시작지점인 경우
                 {
-                    balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 0, balpanObj[i].transform.position.z);
+                    balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 8.2f, balpanObj[i].transform.position.z);
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_start");
                     GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                     temp_0.GetComponent<Animator>().Play("balpanCreate");
+                    shakeObject(temp_0);
                     SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.2f);
                 }
@@ -685,22 +717,29 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
-                    balpanObj[i].transform.position = new Vector3(-620 + (i * 40), -1 * 10 + adventureEventArr_Y[stageIdx + i] * 10, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
+                    balpanObj[i].transform.position = new Vector3(-620 + (i * 40), -1 * 10 + adventureEventArr_Y[stageIdx + i] * 10 + 8.2f, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
 
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
 
                     GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                     temp_0.GetComponent<Animator>().Play("balpanCreate");
+                    shakeObject(temp_0);
                     SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.2f);
                 }
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
+                { shakeObject(diceObject[i]); }
             }
             if (selectDiceCharacterIdx != -1 && CharacterManager.Instance.getCharacterState(selectDiceCharacterIdx) == 0)
             {
                 balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx));
             }
-            balpanArrow.transform.position = balpanObj[0].transform.position + new Vector3(0, 8, 0);
+            balpanArrow.transform.position = balpanObj[0].transform.position; //+ new Vector3(0, 8, 0);
             clickAble = true;
+            clickAbleObjSet(nextBtnObj, true, 1);
             //나아갈수 있다는 것을 주사위에 표시
             nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
             nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -735,8 +774,9 @@ public class AdventureManager : MonoBehaviour
                 GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i + 1].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp_0.GetComponent<Animator>().Play("balpanTouch");
                 SoundManager_Sfx.Instance.playSound(4);
-
-                balpanArrow.transform.position = balpanObj[i+1].transform.position + new Vector3(0,8,0);
+                shakeObject(temp_0);
+                shakeObject(balpanObj[i+1]);
+                balpanArrow.transform.position = balpanObj[i + 1].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
@@ -769,9 +809,14 @@ public class AdventureManager : MonoBehaviour
                 nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
                 nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-                adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
-                loadEnd = false;
-                yield return new WaitUntil(() => loadEnd);
+                float tempMoveVal = 1.0f;
+                float timeVal = 0.0f;
+                while(timeVal < 1.0f) {
+                    adventureBackground.transform.localPosition = new Vector3(0.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 16.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    adventureBackBoard.transform.localPosition = new Vector3(8.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 8.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    timeVal += 0.05f;
+                    yield return new WaitForSeconds(0.01f);
+                }
 
                 eventWatchNum = 0;
 
@@ -796,6 +841,17 @@ public class AdventureManager : MonoBehaviour
 
                 selectImage.transform.rotation = Quaternion.Euler(0, 0, 0);
 
+                timeVal = 0.0f;
+                float amountTemp = 2.0f;
+                while (timeVal < 1.0f)
+                {
+                    adventureBackground.transform.localPosition = new Vector3(0.0f + (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 16.0f - (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    adventureBackBoard.transform.localPosition = new Vector3(8.0f - (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 8.0f + (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    timeVal += 0.02f;
+                    amountTemp -= 0.04f;
+                    yield return new WaitForSeconds(0.01f);
+                }
+
 
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
 
@@ -817,11 +873,7 @@ public class AdventureManager : MonoBehaviour
                     //SoundManager_Sfx.Instance.playSound(0);
                 }
 
-                adventureBackground.GetComponent<hoverRotate>().shakeStart(15.0f);
-                /*adventureLoad.GetComponent<Animator>().Play("On", -1, 0f);
-                loadEnd = false;
-                yield return new WaitUntil(() => loadEnd);
-                */
+                adventureBackground.GetComponent<hoverRotate>().shakeStart(10.0f);
                 eventWatchTrigger = false;
                 for (int i = 0; i < 6; i++)
                 {
@@ -927,7 +979,13 @@ public class AdventureManager : MonoBehaviour
                         balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
                         balpanArrow.GetComponent<Animator>().Play("arrowAnim");
                     }
+                    /*
+                    hoverRotateAble(battleBtn, 2, true);
+                    hoverRotateAble(battleBtn, 1, true);
+                    shakeObject(battleBtn);
                     battleBtn.transform.position = nextBtnObj.transform.position;
+                    */
+                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Battle");
                     battleEventTrigger = true;
                     
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
@@ -943,7 +1001,6 @@ public class AdventureManager : MonoBehaviour
                     SoundManager_Main.Instance.playSound(2);
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
 
-                    battleBtn.transform.position += new Vector3(0, 300, 0);
                     updateCharacterFace();
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                     selectInfo.GetComponent<TextMeshPro>().text = "전투 종료! 다음 이벤트로 넘어가자!";
@@ -958,12 +1015,21 @@ public class AdventureManager : MonoBehaviour
                         resultItemArr[i, 0] = curDiceEventPacket.getItemType(i);
                         resultItemArr[i, 1] = curDiceEventPacket.getItemIdx(i);
                         //결과로 나오는 아이템에 대한 이미지 처리
-                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                        else if (resultItemArr[i, 0] == 4) //캐릭터를 얻는 이벤트의 경우
+                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
                         {
-                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                            clickAbleObjSet(resultObjArr[i], false, 1);
+                            clickAbleObjSet(resultObjArr[i], false, 2);
+                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                         }
-                        else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                        else  //캐릭터를 얻는 이벤트의 경우
+                        {
+                            clickAbleObjSet(resultObjArr[i], true, 1);
+                            clickAbleObjSet(resultObjArr[i], true, 2);
+                            if (resultItemArr[i, 0] == 4) {
+                                resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                            }
+                            else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                        }
                     }
                     if (tutorialVal == 4) //아이템 칸 설명을 위한 대화로 넘어가기.
                     {
@@ -971,8 +1037,10 @@ public class AdventureManager : MonoBehaviour
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         eventEndClick = true;
                         clickAble = false;
+                        clickAbleObjSet(nextBtnObj, false, 1);
                         yield return new WaitUntil(() => tutorialVal == 5);
                         clickAble = true;
+                        clickAbleObjSet(nextBtnObj, true, 1);
                     }
                 }
  
@@ -986,7 +1054,7 @@ public class AdventureManager : MonoBehaviour
                             int j = Random.Range(0, 3);
                             if (j == 2) j++; //데모버젼이니까 장비 아이템은 안나오도록
                             int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
- 
+
                             resultItemArr[i, 0] = j;
                             resultItemArr[i, 1] = k;
                         }
@@ -996,8 +1064,18 @@ public class AdventureManager : MonoBehaviour
                             resultItemArr[i, 1] = -99999;
                         }
                         //결과로 나오는 아이템에 대한 이미지 처리
-                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                        else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
+                        {
+                            clickAbleObjSet(resultObjArr[i], false, 1);
+                            clickAbleObjSet(resultObjArr[i], false, 2);
+                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                        }
+                        else
+                        {
+                            clickAbleObjSet(resultObjArr[i], true, 1);
+                            clickAbleObjSet(resultObjArr[i], true, 2);
+                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                        }
                     }
                 }
                 if (curDiceEventPacket.getItemExist() >= 21 && curDiceEventPacket.getItemExist() <= 24) // 랜덤한 캐릭터를 준다.
@@ -1016,9 +1094,16 @@ public class AdventureManager : MonoBehaviour
                             resultItemArr[i, 1] = -99999;
                         }
                         //결과로 나오는 아이템에 대한 이미지 처리
-                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999) resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                        if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
+                        {
+                            clickAbleObjSet(resultObjArr[i], false, 1);
+                            clickAbleObjSet(resultObjArr[i], false, 2);
+                            resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                        }
                         else if (resultItemArr[i, 0] == 4) //캐릭터를 얻는 이벤트의 경우
                         {
+                            clickAbleObjSet(resultObjArr[i], true, 1);
+                            clickAbleObjSet(resultObjArr[i], true, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
                         }
                     }
@@ -1182,6 +1267,8 @@ public class AdventureManager : MonoBehaviour
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
+                    clickAbleObjSet(resultObjArr[idx], false, 1);
+                    clickAbleObjSet(resultObjArr[idx], false, 2);
                     updateCharacterFace();
                 }
             }
@@ -1194,6 +1281,8 @@ public class AdventureManager : MonoBehaviour
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
+                    clickAbleObjSet(resultObjArr[idx], false, 1);
+                    clickAbleObjSet(resultObjArr[idx], false, 2);
 
                 }
                 else if (result == 1) //꽉차서 못담는 경우.
@@ -1257,22 +1346,26 @@ public class AdventureManager : MonoBehaviour
         selectDiceCharacterIdx = -2; //의미 없는 캐릭터 idx로 변경
         for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
         {
+            
             diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
             if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0)
             {
+                clickAbleObjSet(diceObject[characterIdx], false, 1);
+                clickAbleObjSet(diceObject[characterIdx], false, 2);
                 diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
                 continue;
             }
+
+            clickAbleObjSet(diceObject[characterIdx], true, 1);
+            clickAbleObjSet(diceObject[characterIdx], true, 2);
             if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
             {
                 diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
             }
             else { diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
         }
-        for (int i = 0; i < 4; i++)
-        {
-            diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-        }
+        hoverOutCharacterDice(0);
+ 
         balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
@@ -1281,6 +1374,10 @@ public class AdventureManager : MonoBehaviour
         if (!clickAble) return;
         
         if (descObj[0].activeSelf == true) hoverOutItem();
+
+        if (battleEventTrigger) {
+            enterBattleCanvas();
+        }
 
         if (characterIdx == -1 && eventEndClick)
         {
@@ -1294,6 +1391,7 @@ public class AdventureManager : MonoBehaviour
         if (selectDiceNum == -1 && characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
             if (selectDiceCharacterIdx >=0)
             {
+                shakeObject(diceObject[selectDiceCharacterIdx]);
                 characterIdx = selectDiceCharacterIdx;
                 CharacterManager.Instance.throwDice(characterIdx);
                 //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
@@ -1306,6 +1404,13 @@ public class AdventureManager : MonoBehaviour
             }
             else
             {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
+                    {
+                        shakeObject(diceObject[i]);
+                    }
+                }
                 fullUI.showFull(1);
             }
         }
@@ -1313,12 +1418,8 @@ public class AdventureManager : MonoBehaviour
         {
             SoundManager_Sfx.Instance.playSound(0);
             Debug.Log("charactger click Dice");
-            for (int i=0;i<4;i++)
-            {
-                diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-            }
-            diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
             selectDiceCharacterIdx = characterIdx;
+            hoverOutCharacterDice(selectDiceCharacterIdx);
             balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));
             standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_"+ CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back" );
         }
@@ -1329,13 +1430,17 @@ public class AdventureManager : MonoBehaviour
     } 
     public void hoverInCharacterDice(int characterIdx)
     {
-        diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+        for(int i = 0; i < 4; i++) {
+            if(characterIdx != i && selectDiceCharacterIdx != i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
     }
     public void hoverOutCharacterDice(int characterIdx)
     {
-        if (selectDiceCharacterIdx != characterIdx)
+        for (int i = 0; i < 4; i++)
         {
-            diceObject[characterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            if(selectDiceCharacterIdx == i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
         }
     }
 

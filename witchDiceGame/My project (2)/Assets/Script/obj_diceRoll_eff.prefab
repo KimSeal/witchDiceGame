@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 587083212400032753}
   - component: {fileID: 587083212400032752}
   - component: {fileID: 587083212400032755}
+  - component: {fileID: 7036431638469107097}
   m_Layer: 0
   m_Name: obj_diceRoll_eff
   m_TagString: Untagged
@@ -146,3 +147,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7036431638469107097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 587083212400032754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 0
+  shakeAbleByClick: 0
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1

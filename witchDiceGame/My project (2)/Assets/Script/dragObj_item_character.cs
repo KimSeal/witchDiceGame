@@ -32,7 +32,9 @@ public class dragObj_item_character : MonoBehaviour, IBeginDragHandler, IEndDrag
     }
     public void OnDrag(PointerEventData eventData)
     {
-        this.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition ) + new Vector3(0,0f,6f);//eventData.position;//currentPos;
+        Vector3 vectorTemp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        vectorTemp.y = defaultPoint.y;
+        this.transform.position = vectorTemp + new Vector3(0,0f,6f);//eventData.position;//currentPos;
     }
     public void OnEndDrag(PointerEventData eventData)
     {

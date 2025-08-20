@@ -49,7 +49,9 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         //currentPos.y -= 160f;
         if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin && !itemManager.Instance.getItemBoxMove() )
         { //이동중이면 움직임 X
-            this.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0, 0, 6f);//eventData.position;//currentPos;
+            Vector3 tempVector = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            tempVector.y = defaultPoint.y;
+            this.transform.position = tempVector + new Vector3(0, 0, 6f);//eventData.position;//currentPos;
         }
     }
     public void OnEndDrag(PointerEventData eventData)
