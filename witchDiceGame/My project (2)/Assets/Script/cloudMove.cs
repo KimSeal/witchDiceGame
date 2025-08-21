@@ -30,7 +30,6 @@ public class cloudMove : MonoBehaviour
     private void cloudSpriteChange()
     {
         int spriteTemp = Random.Range(0, 3);
-        Debug.Log("cloud sprite is...! " + spriteTemp);
         gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_cloud_" + spriteTemp.ToString());
     }
 

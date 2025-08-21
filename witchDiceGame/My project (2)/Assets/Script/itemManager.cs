@@ -732,7 +732,7 @@ public class itemManager : MonoBehaviour
         //초반 캐릭터는 살아있는 친구로 선택하는 코드 나중에 넘어올떄마다 실행시킬수 있도록 코드
 
         updateCharacterBar();
-    
+        
         StartCoroutine(ItemMoveUI(inventoryUI, 0, 0));
 
         //mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);

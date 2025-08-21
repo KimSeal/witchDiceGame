@@ -175,7 +175,6 @@ public class CSVReader
         for (int i = 1; i < lines.Length; i++)
         {
             if(i == lines.Length - 1) { continue; }
-            Debug.Log(lines[i]);
             string[] values = lines[i].Split(",");
             //string[] values = Regex.Split(lines[i], SPLIT_RE);
             //if (values.Length == 0 || values[0] == "") continue;

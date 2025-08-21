@@ -144,6 +144,7 @@ public class AdventureManager : MonoBehaviour
 
     public IEnumerator tutorial_Coroutine()
     {
+        resetDice();
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         //튜토리얼이 시작되었음을 알림.
@@ -177,7 +178,7 @@ public class AdventureManager : MonoBehaviour
         Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
-        if (false) {
+        if (true) {
         //if (!jsonDataManager.Instance.getTutorialDid()) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
             tutorialStart();            
@@ -809,7 +810,7 @@ public class AdventureManager : MonoBehaviour
                 nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
                 nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-                float tempMoveVal = 1.0f;
+                //float tempMoveVal = 1.0f;
                 float timeVal = 0.0f;
                 while(timeVal < 1.0f) {
                     adventureBackground.transform.localPosition = new Vector3(0.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 16.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
@@ -1449,14 +1450,15 @@ public class AdventureManager : MonoBehaviour
     {
         bool tutorialChk = true;
         SoundManager_Sfx.Instance.playSound(0);
+        if (tutorialVal == 1 || tutorialVal == 2 || tutorialVal == 3) tutorialChk = false;
         if (tutorialVal == 4)
         {
-            if (resultItemArr[0, 0] == -99999 && resultItemArr[0, 1] == -99999 &&
+            if (resultObj.activeSelf == true &&
+                resultItemArr[0, 0] == -99999 && resultItemArr[0, 1] == -99999 &&
                 resultItemArr[1, 0] == -99999 && resultItemArr[1, 1] == -99999 &&
                 resultItemArr[2, 0] == -99999 && resultItemArr[2, 1] == -99999 &&
                 resultItemArr[3, 0] == -99999 && resultItemArr[3, 1] == -99999 ) {
-                tutorialVal = 5;
-                TalkManager.Instance.startTalk(11);
+                
                 
             }
             else {
@@ -1474,6 +1476,10 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
+                    if (tutorialVal == 4) {
+                        tutorialVal = 5;
+                        TalkManager.Instance.startTalk(11);
+                    }
                     itemManager.Instance.flipItemBox(0, 0);
                     curCanvasIsAdventure = false;
 

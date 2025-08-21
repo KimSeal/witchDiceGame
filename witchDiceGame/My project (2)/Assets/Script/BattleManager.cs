@@ -2068,7 +2068,7 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.2f);
                 }
             }
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.3f);
             curClickSkill = -1;
             curPhase = 5;
         }
@@ -2566,9 +2566,18 @@ public class BattleManager : MonoBehaviour
     }
     private void makeHitEffect(int tempTargetIdx)
     {
-        GameObject startemp = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-        Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-        Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+        //별이랑 원형 이펙트
+        for (int i = 0; i < 3; i++)
+        {
+            GameObject startemp = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+            startemp.GetComponent<effMove>().changeSprite();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+            startemp2.GetComponent<effMove>().changeSprite(-999);
+        }
+        
 
         GameObject temp = Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position , Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
         temp.GetComponent<Animator>().Play("TargetDestroy");
@@ -3249,6 +3258,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            fullUI.showFull(0);
             SoundManager_Sfx.Instance.playSound(7);
         }
     }
@@ -3319,7 +3329,6 @@ public class BattleManager : MonoBehaviour
             enemyCharacterPunch[i] = 0;
             for (int j = 0; j < 2; j++)
             {
-                Debug.Log("obj_myCharacter_fire_" + i.ToString() + j.ToString());
                 myFireObj[i, j] = GameObject.Find("obj_myCharacter_fire_" + i.ToString() + j.ToString()).GetComponent<ParticleSystem>();
                 myFireObj[i, j].Stop();
                 enemyFireObj[i, j] = GameObject.Find("obj_enemyCharacter_fire_" + i.ToString() + j.ToString()).GetComponent<ParticleSystem>();
