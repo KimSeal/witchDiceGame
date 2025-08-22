@@ -178,7 +178,7 @@ public class AdventureManager : MonoBehaviour
         Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
-        if (true) {
+        if (false) {
         //if (!jsonDataManager.Instance.getTutorialDid()) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
             tutorialStart();            
