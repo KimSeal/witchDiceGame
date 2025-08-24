@@ -31,12 +31,10 @@ public class HomeManager : MonoBehaviour
     [SerializeField]
     public Sprite[] homeNPCSprite = new Sprite[6];
 
-    private string[] homeNPCText = { "", "역시 집이 편하네요.\n노곤노곤해져요."
-    ,"...청소 좀 할 걸 그랬나?","조각들을 다시 만지면\n기억을 다시 볼 수 있어요!",
-    "주사위 게임 하실래요?\n마법은 안 쓸테니까요!","..."};
+
     private TextMeshPro textBoxText;
-    
-    
+    private List<DescReader> homeNPCText = new List<DescReader>();
+
     private int[] chapterIdx = {6, 1, 2};
     private int[] chapter1Talk = { 24, 27, 30 };
     private int homeSoundIdx = 1;
@@ -72,6 +70,14 @@ public class HomeManager : MonoBehaviour
         chapterIdx[0] = 6;
         chapterIdx[1] = 1;
         chapterIdx[2] = 2;
+        homeNPCText = CSVReader.Read<DescReader>("HomeDesc");
+        for (int i=0;i<homeNPCText.Count;i++)
+        {
+            homeNPCText[i].KR = TalkManager.Instance.SpecialTextChange(homeNPCText[i].KR);
+            homeNPCText[i].JP = TalkManager.Instance.SpecialTextChange(homeNPCText[i].JP);
+            homeNPCText[i].EN = TalkManager.Instance.SpecialTextChange(homeNPCText[i].EN);
+        }
+
     }
 
     // Update is called once per frame
@@ -89,12 +95,21 @@ public class HomeManager : MonoBehaviour
         }
     }
 
+
+    public string getDesc(int idx)
+    {
+        if (jsonDataManager.Instance.getLanguage() == 0) return homeNPCText[idx].KR;
+        if (jsonDataManager.Instance.getLanguage() == 0) return homeNPCText[idx].EN;
+        if (jsonDataManager.Instance.getLanguage() == 0) return homeNPCText[idx].JP;
+        return homeNPCText[idx].EN;
+    }
+
     public void clickNpc()
     {
         textBox.SetActive(true);
         int randomVal = Random.Range(1, 6);
         homeNPC.GetComponent<SpriteRenderer>().sprite = homeNPCSprite[randomVal];
-        textBoxText.text = homeNPCText[randomVal];
+        textBoxText.text = getDesc(randomVal);
         textBoxTimer = 12f;
     }
     IEnumerator jewelTalk(int talkIdx)

@@ -30151,6 +30151,7 @@ GameObject:
   - component: {fileID: 262810567}
   - component: {fileID: 262810566}
   - component: {fileID: 262810569}
+  - component: {fileID: 262810570}
   m_Layer: 0
   m_Name: obj_home_jewel_1_2
   m_TagString: Untagged
@@ -30282,6 +30283,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &262810570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262810564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &268786703
 GameObject:
   m_ObjectHideFlags: 0
@@ -75038,7 +75057,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 732670775}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -100, y: -75, z: 0}
+  m_LocalPosition: {x: -80.9, y: -75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -75954,6 +75973,7 @@ GameObject:
   - component: {fileID: 753369733}
   - component: {fileID: 753369732}
   - component: {fileID: 753369735}
+  - component: {fileID: 753369736}
   m_Layer: 0
   m_Name: obj_home_jewel_0_1
   m_TagString: Untagged
@@ -76085,6 +76105,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &753369736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 753369730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &754194394
 GameObject:
   m_ObjectHideFlags: 0
@@ -106724,6 +106762,7 @@ GameObject:
   - component: {fileID: 1098923962}
   - component: {fileID: 1098923961}
   - component: {fileID: 1098923964}
+  - component: {fileID: 1098923965}
   m_Layer: 0
   m_Name: obj_home_jewel_2_1
   m_TagString: Untagged
@@ -106855,6 +106894,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1098923965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098923959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1110327695
 GameObject:
   m_ObjectHideFlags: 0
@@ -107230,6 +107287,7 @@ GameObject:
   - component: {fileID: 1114831997}
   - component: {fileID: 1114831996}
   - component: {fileID: 1114831999}
+  - component: {fileID: 1114832000}
   m_Layer: 0
   m_Name: obj_home_jewel_0_2
   m_TagString: Untagged
@@ -107361,6 +107419,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1114832000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114831994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1126656214
 GameObject:
   m_ObjectHideFlags: 0
@@ -111123,6 +111199,7 @@ GameObject:
   - component: {fileID: 1242426669}
   - component: {fileID: 1242426668}
   - component: {fileID: 1242426671}
+  - component: {fileID: 1242426672}
   m_Layer: 0
   m_Name: obj_home_jewel_1_0
   m_TagString: Untagged
@@ -111254,6 +111331,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1242426672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242426666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1243097620
 GameObject:
   m_ObjectHideFlags: 0
@@ -120697,6 +120792,7 @@ GameObject:
   - component: {fileID: 1393955004}
   - component: {fileID: 1393955003}
   - component: {fileID: 1393955006}
+  - component: {fileID: 1393955007}
   m_Layer: 0
   m_Name: obj_home_jewel_2_0
   m_TagString: Untagged
@@ -120828,6 +120924,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1393955007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393955001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1394048885
 GameObject:
   m_ObjectHideFlags: 0
@@ -126839,6 +126953,7 @@ GameObject:
   - component: {fileID: 1525581674}
   - component: {fileID: 1525581673}
   - component: {fileID: 1525581676}
+  - component: {fileID: 1525581677}
   m_Layer: 0
   m_Name: obj_home_jewel_1_1
   m_TagString: Untagged
@@ -126970,6 +127085,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1525581677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525581671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1530647713
 GameObject:
   m_ObjectHideFlags: 0
@@ -138053,6 +138186,7 @@ GameObject:
   - component: {fileID: 1578447798}
   - component: {fileID: 1578447800}
   - component: {fileID: 1578447801}
+  - component: {fileID: 1578447802}
   m_Layer: 0
   m_Name: obj_npc
   m_TagString: Untagged
@@ -138120,8 +138254,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1578447797}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -100, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -80.900024, y: -23.6, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 962982588}
@@ -138172,6 +138306,24 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1578447802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578447797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1580217355
 GameObject:
   m_ObjectHideFlags: 0
@@ -160017,6 +160169,7 @@ GameObject:
   - component: {fileID: 1817869617}
   - component: {fileID: 1817869616}
   - component: {fileID: 1817869619}
+  - component: {fileID: 1817869620}
   m_Layer: 0
   m_Name: obj_home_jewel_0_0
   m_TagString: Untagged
@@ -160148,6 +160301,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1817869620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1817869614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &1820043057
 GameObject:
   m_ObjectHideFlags: 0
@@ -173614,6 +173785,7 @@ GameObject:
   - component: {fileID: 2085770558}
   - component: {fileID: 2085770557}
   - component: {fileID: 2085770560}
+  - component: {fileID: 2085770561}
   m_Layer: 0
   m_Name: obj_home_jewel_2_2
   m_TagString: Untagged
@@ -173745,6 +173917,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2085770561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085770555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAbleBySelf: 0
+  expandAbleBySelf: 1
+  shakeAbleByClick: 1
+  shakeVal: 0.5
+  shakeAmountChangeVal: 1
+  expandVal: 0.1
 --- !u!1 &2087615304
 GameObject:
   m_ObjectHideFlags: 0
