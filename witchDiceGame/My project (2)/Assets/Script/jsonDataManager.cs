@@ -68,6 +68,13 @@ public class jsonDataManager : MonoBehaviour
             playerPlayData = new PlayerPlayData(temp);
         }
     }
+
+    public int getScreenSize()
+    {
+        return playerPlayData.getScreenSize();
+    }
+    public void setScreenSize(int idx) { playerPlayData.setScreenSize(idx); } 
+
     public int getMoney() { return playerPlayData.getMoney(); }
     public int getPowerPrice(int idx) { return witchPowerMoney[idx]; }
     public void addMoney(int addMoney) {
@@ -264,6 +271,7 @@ public class jsonDataManager : MonoBehaviour
     }
     public void setLanguage(int lan)
     {
+        Debug.Log(lan);
         this.playerPlayData.setLanguage(lan);
         SavePlayerDataToJson();
     }
@@ -271,6 +279,7 @@ public class jsonDataManager : MonoBehaviour
     public class PlayerPlayData
     {
         public int language;
+        public int screenSize = 1;
         public int[] curWitchPower = new int[2];
         public int money = 0;
         public bool[] witchPower = new bool[100];
@@ -291,6 +300,14 @@ public class jsonDataManager : MonoBehaviour
         public int getChapterDid(int idx)
         {
             return chapterDid[idx];
+        }
+        public int getScreenSize()
+        {
+            return screenSize;
+        }
+        public void setScreenSize(int idx)
+        {
+            screenSize = idx;
         }
         public void setLanguage(int language)
         {

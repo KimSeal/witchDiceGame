@@ -71,14 +71,28 @@ public class CameraManager : MonoBehaviour
     int direction = 0;
     int timeDelay = 3;
 
+    
+
+
     bool windowChk = false;
+
+    public void changeScreenSize(int idx)
+    {
+        if(idx >=0 && idx<5)jsonDataManager.Instance.setScreenSize(idx);
+        if (jsonDataManager.Instance.getScreenSize() == 0) Screen.SetResolution(640, 360, FullScreenMode.Windowed);
+        if (jsonDataManager.Instance.getScreenSize() == 1) Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+        if (jsonDataManager.Instance.getScreenSize() == 2) Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
+        if (jsonDataManager.Instance.getScreenSize() == 3) Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+        if (jsonDataManager.Instance.getScreenSize() == 4) Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (!windowChk)
         {
             windowChk = true;
-            Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+            changeScreenSize(jsonDataManager.Instance.getScreenSize());
         }
         if (ZoomTime > 0)
         {

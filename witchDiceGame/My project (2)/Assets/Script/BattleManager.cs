@@ -242,7 +242,7 @@ public class BattleManager : MonoBehaviour
         for (int skillIdx = 0; skillIdx < 2; skillIdx++)
         {
             Skill thisSkill = character.skillUse(skillIdx);
-            if (jsonDataManager.Instance.getMonsterSkill(character.getDestiny().DestinyIdx, skillIdx)) // 만난적있는 지 확인
+            if (character.getDestiny().DestinyIdx <10001 || jsonDataManager.Instance.getMonsterSkill(character.getDestiny().DestinyIdx, skillIdx)) // 만난적있는 지 확인
             {
                 
                 if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
