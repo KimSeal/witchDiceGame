@@ -26,7 +26,6 @@ public class Elf : Character
         {
             packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
         }*/
-        TakeSkillPacket takeSkillPacket;
         if (this.destiny.getDestinyIdx() == 0)
         {
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬

@@ -596,6 +596,8 @@ public class itemManager : MonoBehaviour
 
     private void changeDice(int idx, int number)
     {
+        if (number < 1) number = 1;
+        if (number > 6) number = 6;
         SoundManager_Sfx.Instance.playSound(1);
         CharacterManager.Instance.changeDice(characterSelectIdx, idx, number);
             diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
@@ -604,7 +606,8 @@ public class itemManager : MonoBehaviour
     }
     private void changeDice(int characterIdx, int idx, int number)
     {
-
+        if (number < 1) number = 1;
+        if (number > 6) number = 6;
         CharacterManager.Instance.changeDice(characterIdx, idx, number);
         if (characterSelectIdx == characterIdx) //같은 경우만 변경
         {
@@ -633,17 +636,20 @@ public class itemManager : MonoBehaviour
             {
                 changeDice(idx, ItemArr[1, curSelectItemIndex].getVal(0));
             }
-            else if (itemIdx == 8){ //현재 선택한 캐릭터에 대해 보통 주사위로 변경
+            else if (itemIdx == 8)
+            { //현재 선택한 캐릭터에 대해 보통 주사위로 변경
                 for (int i = 0; i < 6; i++) changeDice(i, i + 1);
             }
-            else if (itemIdx == 9) {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
+            else if (itemIdx == 9)
+            {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
                 for (int chIdx = 0; chIdx < 4; chIdx++) if (CharacterManager.Instance.getCharacterState(chIdx) == 0) for (int i = 0; i < 6; i++) changeDice(chIdx, i, i + 1);
             }
             else if (itemIdx == 10)
             {
                 for (int i = 0; i < 6; i++) changeDice(i, Random.Range(1, 7));
             }
-            else if (itemIdx == 11) { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
+            else if (itemIdx == 11)
+            { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
                 for (int chIdx = 0; chIdx < 4; chIdx++) if (CharacterManager.Instance.getCharacterState(chIdx) == 0) for (int i = 0; i < 6; i++) changeDice(chIdx, i, Random.Range(1, 7));
             }
             else if (itemIdx == 12)
@@ -651,6 +657,14 @@ public class itemManager : MonoBehaviour
                 int tempRandom = Random.Range(1, 7);
                 for (int i = 0; i < 6; i++) changeDice(i, tempRandom);
             }
+            else if (itemIdx >= 13 && itemIdx <= 18)
+            {
+                for (int i = 0; i < 6; i++) changeDice(i, itemIdx - 12);
+            }
+            else if (itemIdx == 19) changeDice(idx, CharacterManager.Instance.getDiceNum(characterSelectIdx, idx) +1);
+            else if (itemIdx == 20) changeDice(idx, CharacterManager.Instance.getDiceNum(characterSelectIdx, idx) - 1);
+            else if (itemIdx == 21) for (int i = 0; i < 6; i++) changeDice(i, CharacterManager.Instance.getDiceNum(characterSelectIdx, i) + 1);
+            else if (itemIdx == 22) for (int i = 0; i < 6; i++) changeDice(i, CharacterManager.Instance.getDiceNum(characterSelectIdx, i) - 1);
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             useItem();
 
@@ -721,6 +735,7 @@ public class itemManager : MonoBehaviour
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
             {
                 characterSelectIdx = i;
+                click_characterInfoType_selectButton(i);
                 changeAlpha(CharacterUIArr[i], 0.0f);
                 break;
             }
@@ -861,8 +876,7 @@ public class itemManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
-            ItemArr[1, i] = new Item(itemList[1][7]);
-            if (i % 2 == 0) ItemArr[1, i] = new Item(itemList[1][2]);
+            ItemArr[1, i] = new Item(itemList[1][i+13]);
         }
         //test Sample
         for (int i=0;i<7;i++) {

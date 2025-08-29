@@ -95,7 +95,7 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(3);
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        //setCharacter(1, 3);
+        setCharacter(1, 3);
         //setCharacter(2, 4);
         //setCharacter(3, 3);
     }
@@ -137,6 +137,8 @@ public class CharacterManager : MonoBehaviour
     }
     public void changeDice(int characterIdx, int diceIdx, int diceNum)
     {
+        if (diceNum > 6) diceNum = 6;
+        if (diceNum < 1) diceNum = 1;
         myCharacter[characterIdx].changeDiceNum(diceIdx, diceNum);
     }
 

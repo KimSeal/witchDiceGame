@@ -206,8 +206,8 @@ public class TalkManager : MonoBehaviour
     public string getDesc(int idx)
     {
         if(jsonDataManager.Instance.getLanguage() == 0) return descList[idx].KR;
-        if (jsonDataManager.Instance.getLanguage() == 0) return descList[idx].EN;
-        if (jsonDataManager.Instance.getLanguage() == 0) return descList[idx].JP;
+        if (jsonDataManager.Instance.getLanguage() == 1) return descList[idx].EN;
+        if (jsonDataManager.Instance.getLanguage() == 2) return descList[idx].JP;
         return descList[idx].EN;
     }
     public void startTalk(int a)

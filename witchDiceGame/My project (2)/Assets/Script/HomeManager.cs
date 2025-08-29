@@ -127,7 +127,6 @@ public class HomeManager : MonoBehaviour
             int detailIdx = num % 3;
             if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapter1Talk[detailIdx]));
-
             }
             else
             {
@@ -137,7 +136,7 @@ public class HomeManager : MonoBehaviour
         }
         else
         {
-            
+            TalkManager.Instance.startTalk(0);
             fullUI.showFull(5);
         }
     }

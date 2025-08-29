@@ -333,21 +333,24 @@ public abstract class Character
         this.hp -= damage;
         if (this.hp <= 0)
         {
-            if (this.reviveUnit) {this.hp = 0; return 0; }
-            this.curState = 2;
-            this.hp = 0;
-            return 1;
+            this.hp = 1;
+            //if (this.reviveUnit) {this.hp = 0; return 0; }
+            //this.curState = 2;
+            //this.hp = 0;
+            //return 1;
         }
         return 0;
     }
 
     public void setHp(int hp)
     {
+        if (this.hp <=0 && hp > 0) this.curState = 0; //부활인 경우
         this.hp = hp;
         if (hp == 0 )
         {
             if(this.curState == 0) this.curState = 2;
         }
+        
     }
     public int upGrade(int idx, int val)
     {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:경험치 / 
@@ -397,9 +400,9 @@ public abstract class Character
             if (maxHp < hp) hp = maxHp;
             if (maxHp <= 0)
             {
-                this.curState = 2;
-                maxHp = 0;
-                hp = 0; return 1;
+                //this.curState = 2;
+                maxHp = 1;
+                hp = 1; //return 1;
             }
         }
         if (idx == 2)

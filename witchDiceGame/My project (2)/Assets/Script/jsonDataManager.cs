@@ -67,13 +67,33 @@ public class jsonDataManager : MonoBehaviour
             PlayerPlayData temp = JsonUtility.FromJson<PlayerPlayData>(jsonFromFile);
             playerPlayData = new PlayerPlayData(temp);
         }
+        SoundManager_Main.Instance.setBackgroundVolume(getBackgroundVol());
+        SoundManager_Sfx.Instance.setSFXVolume(getSFXVol());
     }
+
+    public float getBackgroundVol() { return this.playerPlayData.getBackgroundVol(); }
+    public void setBackgroundVol(float input) { 
+        this.playerPlayData.setBackgroundVol(input);
+        SoundManager_Main.Instance.setBackgroundVolume(input);
+        SavePlayerDataToJson(); 
+    }
+
+    public float getSFXVol() { return this.playerPlayData.getSFXVol(); }
+    public void setSFXVol(float input) {
+        SoundManager_Sfx.Instance.setSFXVolume(input);
+        this.playerPlayData.setSFXVol(input); 
+        SavePlayerDataToJson(); 
+    }
+
 
     public int getScreenSize()
     {
         return playerPlayData.getScreenSize();
     }
-    public void setScreenSize(int idx) { playerPlayData.setScreenSize(idx); } 
+    public void setScreenSize(int idx) { 
+        playerPlayData.setScreenSize(idx);
+        SavePlayerDataToJson();
+    } 
 
     public int getMoney() { return playerPlayData.getMoney(); }
     public int getPowerPrice(int idx) { return witchPowerMoney[idx]; }
@@ -280,6 +300,8 @@ public class jsonDataManager : MonoBehaviour
     {
         public int language;
         public int screenSize = 1;
+        public float backgroundVolume = 1.0f;
+        public float SFXVolume = 1.0f;
         public int[] curWitchPower = new int[2];
         public int money = 0;
         public bool[] witchPower = new bool[100];
@@ -297,6 +319,13 @@ public class jsonDataManager : MonoBehaviour
         public bool firstGetCharacterPart = false;
         public int[] chapterDid = new int[6];
         public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
+
+
+        public void setBackgroundVol(float input) {  backgroundVolume = input;}
+        public float getBackgroundVol(){ return backgroundVolume; }
+        public void setSFXVol(float input) { SFXVolume = input; }
+        public float getSFXVol() { return SFXVolume; }
+
         public int getChapterDid(int idx)
         {
             return chapterDid[idx];
@@ -319,8 +348,11 @@ public class jsonDataManager : MonoBehaviour
         }
         public PlayerPlayData()
         {
+            this.screenSize = 1;
             this.language = 1;
             this.money = 0;
+            this.SFXVolume = 1.0f;
+            this.backgroundVolume = 1.0f;
             curWitchPower[0] = 1;
             curWitchPower[1] = 2;
             this.witchPower[1] = true;
@@ -353,7 +385,12 @@ public class jsonDataManager : MonoBehaviour
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
+            this.screenSize = playerPlayerData.screenSize;
             this.money = playerPlayerData.money;
+
+            this.SFXVolume = playerPlayerData.SFXVolume;
+            this.backgroundVolume = playerPlayerData.backgroundVolume;
+
             curWitchPower[0] = playerPlayerData.curWitchPower[0];
             curWitchPower[1] = playerPlayerData.curWitchPower[1];
             for (int i = 0; i < witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];

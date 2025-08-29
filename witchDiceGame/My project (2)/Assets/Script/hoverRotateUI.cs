@@ -22,6 +22,8 @@ public class hoverRotateUI : MonoBehaviour
     public float shakeAmountChangeVal = 1.0f;
     [SerializeField]
     private float expandVal = 0.1f;
+    [SerializeField]
+    private bool textExist = true;
 
     private float shakeAmount = 0;
     private float rotateVal = 0;
@@ -61,19 +63,22 @@ public class hoverRotateUI : MonoBehaviour
             if (sizeVal > 0.0f) sizeVal -= 0.025f;
             else sizeVal = 0.0f;
         }
-        
-        transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 12f * (sizeVal * Mathf.Abs(Mathf.Sin(sizeLerpVal))) + 24f ;
-        if (!lanOnOff) {
-            if (transform.GetChild(0).transform.localPosition.x > 0f)
-            {
-                transform.GetChild(0).transform.localPosition -= new Vector3(15, 0, 0);
-            }
-        }
-        else
+        if (textExist)
         {
-            if (transform.GetChild(0).transform.localPosition.x < 75f && 75f - transform.GetChild(0).transform.localPosition.x > 0.1f)
+            transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 12f * (sizeVal * Mathf.Abs(Mathf.Sin(sizeLerpVal))) + 24f;
+            if (!lanOnOff)
             {
-                transform.GetChild(0).transform.localPosition += new Vector3((75f - transform.GetChild(0).transform.localPosition.x) / 4.0f, 0, 0);
+                if (transform.GetChild(0).transform.localPosition.x > 0f)
+                {
+                    transform.GetChild(0).transform.localPosition -= new Vector3(15, 0, 0);
+                }
+            }
+            else
+            {
+                if (transform.GetChild(0).transform.localPosition.x < 75f && 75f - transform.GetChild(0).transform.localPosition.x > 0.1f)
+                {
+                    transform.GetChild(0).transform.localPosition += new Vector3((75f - transform.GetChild(0).transform.localPosition.x) / 4.0f, 0, 0);
+                }
             }
         }
         
@@ -96,7 +101,7 @@ public class hoverRotateUI : MonoBehaviour
     public void setLanguageActive(bool input)
     {
         lanOnOff = input;
-        if (input) transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "O "+ 
+        if (input) transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "* "+ 
                 transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Substring(2, transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Length - 2);
         else transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "- " +
                 transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Substring(2, transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Length - 2);

@@ -364,20 +364,29 @@ public class BattleManager : MonoBehaviour
         }
         else clickBattleUIInfo(curSelectInfo); //선택된 캐릭터도, 선택된 ui도 있는 경우
     }
+    private bool characterInfoOpenAble = true; //다른 목적으로 쓰는 중(최종 보상 획득 씬에서 아이템 선택창 나왔는지 여부)
+    private bool getLoseChk = false; // 패배씬 나왔을때 true바꿈. 패배씬 나오는 동안은 캐릭터랑 아이템 사용 안되도록
     public void clickCharacterInfoBox()
     {
-        makeEmptyBattleInfoBox();
-        if (!characterInfoOpen)
+        if (!getLoseChk)
         {
-            characterInfoOpen = true;
-            battleDescBox.transform.position = new Vector3(0, 0, battleDescBox.transform.position.z);
+            if (characterInfoOpenAble || (!characterInfoOpenAble && !itemManager.Instance.getItemBoxOpen() && !itemManager.Instance.getItemBoxMove()))
+            {
+                makeEmptyBattleInfoBox();
+                if (!characterInfoOpen)
+                {
+
+                    characterInfoOpen = true;
+                    battleDescBox.transform.position = new Vector3(0, 0, battleDescBox.transform.position.z);
+                }
+                else
+                {
+                    characterInfoOpen = false;
+                    battleDescBox.transform.position = new Vector3(0, 500, battleDescBox.transform.position.z);
+                }
+            }
+            else if (!itemManager.Instance.getItemBoxMove()) { flipBag_battle(); }
         }
-        else
-        {
-            characterInfoOpen = false;
-            battleDescBox.transform.position = new Vector3(0, 500, battleDescBox.transform.position.z);
-        }
-        
     }
     public void clickBattleUIInfo(int idx) //전투 ui에서 뭐볼지 선택하는 경우
     {
@@ -1947,8 +1956,10 @@ public class BattleManager : MonoBehaviour
 
     public void flipBag_battle()    // 가방 키고 끄는 함수. 4페이즈, 5페이즈 일땐 끌수 없게 한다.
     {
-        if (curPhase != 4 && curPhase != 5)
+        if (!getLoseChk && curPhase != 4 && curPhase != 5)
         {
+            //아이템 킬꺼면 캐릭터창 종료
+            if (characterInfoOpen) clickCharacterInfoBox();
             SoundManager_Sfx.Instance.playSound(0);
             itemManager.Instance.flipItemBox_BattleUI();
         }
@@ -3135,11 +3146,12 @@ public class BattleManager : MonoBehaviour
         //아군 전멸
         if (result == 2)
         {
-            //itemManager.Instance.endOfBattlePhase();
+            itemManager.Instance.endOfBattlePhase();
             //AdventureManager.Instance.loseGame();
             CameraManager.Instance.resultScreenActive(0);
+            getLoseChk = true;
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
-
+            getLoseChk = false;
 
             if (characterInfoOpen) clickCharacterInfoBox();
             //CameraManager.Instance.loseScreenUnActive();
@@ -3188,13 +3200,21 @@ public class BattleManager : MonoBehaviour
                 CharacterManager.Instance.character_reset();
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
                 {
+                    if (myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0 ) { //만약 부활캐릭터이면서 해당 캐릭터가 죽은 경우
+                        myCharacter[i].setHp(1);
+                    }
+
                     if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
                     if (myCharacter[i].getCharacter_battle().getOriginIdx() >= 0 && myCharacter[i].getCharacter_battle().getOriginIdx() <= 3)
                     {
                         CharacterManager.Instance.character_battleEnd_deepCopy(myCharacter[i].getCharacter_battle().getOriginIdx(), myCharacter[i]);
                     }
                 }
-
+                //보상 나와있으면 캐릭터 창 끌수 있도록
+                if (characterInfoOpen) {
+                    clickCharacterInfoBox();
+                 }
+                characterInfoOpenAble = false;
                 if (!(AdventureManager.Instance.getTutorial() == 3 || AdventureManager.Instance.getTutorial() == 4))
                 {
                     //랜덤 아이템 배정하고 출력
@@ -3210,13 +3230,14 @@ public class BattleManager : MonoBehaviour
 
                 Debug.Log("you win!");
                 bosang_click = true;
-                yield return new WaitUntil(() => !bosang_click); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                yield return new WaitUntil(() => !bosang_click); 
                 while (!AdventureManager.Instance.exitBattleCanvas(true))
                 {
                     yield return new WaitForSeconds(0.5f);
                 }
 
                 resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
+                characterInfoOpenAble = true;
                 for (int i = 0; i < 4; i++)
                 {
                     enemyDiceState[i] = 0;
@@ -3300,6 +3321,11 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
+        //캐릭터 정보하고 아이템 창 control을 위한 변수
+        characterInfoOpenAble = true;
+        getLoseChk = false;
+
+
         fireObject = GameObject.Find("obj_battle_fire");
         //초반 turn 화살표 지우기
         for (int i = 0;i<8;i++) {
