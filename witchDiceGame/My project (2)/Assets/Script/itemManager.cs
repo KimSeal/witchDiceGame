@@ -582,7 +582,8 @@ public class itemManager : MonoBehaviour
     {
         if (curSelectItemType == 0 && curSelectItemIndex != -1 && characterSelectIdx >=0 && CharacterManager.Instance.getCharacter(characterSelectIdx) != null)
         {
-            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            //CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            useItemToUpgrade();
             SoundManager_Sfx.Instance.playSound(2);
             useItem();
             click_characterInfoType_selectButton(0);
@@ -592,6 +593,30 @@ public class itemManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(7);
         }
        
+    }
+
+    public void useItemToUpgrade()
+    {
+        Item useItem = ItemArr[0, curSelectItemIndex];
+        int useItemIdx = useItem.getIdx();
+        //단일
+        if (useItemIdx == 0 || useItemIdx == 1 || useItemIdx == 5 || useItemIdx == 6 || useItemIdx == 13 || useItemIdx == 14){
+            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+        }
+        if (useItemIdx == 3 || useItemIdx == 4 || useItemIdx == 7 || useItemIdx == 8) // 2개의 stat에 대하여 업그레이드
+        {
+            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(2), ItemArr[0, curSelectItemIndex].getVal(3));
+        }
+        if (useItemIdx == 9 || useItemIdx == 10 || useItemIdx == 15) { //모든 캐릭터에 대하여 1개 stat 업그레이드
+            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0) CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+        }
+        if (useItemIdx == 11 || useItemIdx == 12){ //모든 캐릭터에 대하여 1개 stat 업그레이드
+            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0){
+                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, curSelectItemIndex].getVal(2), ItemArr[0, curSelectItemIndex].getVal(3));
+            }
+        }
     }
 
     private void changeDice(int idx, int number)
@@ -879,6 +904,16 @@ public class itemManager : MonoBehaviour
             ItemArr[1, i] = new Item(itemList[1][i+13]);
         }
         //test Sample
+        for (int i = 0; i < 9; i++)
+        {
+            ItemExistArr[3, i] = true;
+            ItemArr[3, i] = new Item(itemList[3][i + 19]);
+        }
+
+        ItemArr[3, 0] = new Item(itemList[3][5]);
+        ItemArr[3, 1] = new Item(itemList[3][32]);
+        ItemArr[3, 2] = new Item(itemList[3][33]);
+        /*
         for (int i=0;i<7;i++) {
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i+1]);
@@ -893,16 +928,17 @@ public class itemManager : MonoBehaviour
         ItemExistArr[3, 7] = true;
         ItemArr[3, 7] = new Item(itemList[3][8]);
         ItemExistArr[3, 8] = true;
-        ItemArr[3, 8] = new Item(itemList[3][2]);
+        ItemArr[3, 8] = new Item(itemList[3][9]);
         ItemExistArr[3, 9] = true;
-        ItemArr[3, 9] = new Item(itemList[3][3]);
+        ItemArr[3, 9] = new Item(itemList[3][10]);
+        */
 
+        for (int i = 0; i < 10; i++)
+        {
+            ItemExistArr[0, i] = true;
+            ItemArr[0, i] = new Item(itemList[0][i + 6]);
+        }
 
-
-        ItemExistArr[0, 0] = true;
-        ItemArr[0, 0] = new Item(itemList[0][1]);
-        ItemExistArr[0, 1] = true;
-        ItemArr[0, 1] = new Item(itemList[0][2]);
 
         ItemExistArr[2, 0] = true;
         ItemArr[2, 0] = new Item(itemList[2][1]);
@@ -940,20 +976,30 @@ public class itemManager : MonoBehaviour
 
 
     //passive Item use function start
-    public passiveReturn usePassiveItem(TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTiming)
+    public passiveReturn usePassiveItem(List<TakeSkillPacket> takeSkillPacketList, TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTime)
     {
         if (!ItemExistArr[3, idx]) {return new passiveReturn(false, "", 0);} // 아이템이 없으면 그냥 스킵
         Item item = ItemArr[3, idx];
+        int activeTiming = item.getActiveTiming();
+        if (item.getIdx() == 33)
+        {
+            Debug.Log("this is 33!");
+            Debug.Log(activeTiming);
+            Debug.Log(activeTime);
+            Debug.Log(item.getVal(0));
+            Debug.Log(takeSkillPacket.getSkillType());
+        }
+        if (activeTiming != activeTime) { return new passiveReturn(false, "", 0); } //원하는 타이밍이 아니면 생략
+
         if (item.getVal(0) != takeSkillPacket.getSkillType()) { return new passiveReturn(false, "", 0); };  //스킬이 아이템 타입하고 안맞으면 종료 
         
         //클릭 이전 타이밍 이면서 주사위 조건이 안맞으면 return
         if (activeTiming == 0 && !conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) { return new passiveReturn(false, "", 0); }
-
         //클릭 이후 대상. 이건 몬스터 정보 같은거도 받아야해서 조건 추가될 예정
-        if (activeTiming == 1 && false) { return new passiveReturn(false, "", 0); }
+        if (activeTiming == 1 && !conditionCheck_target(takeSkillPacket, item)) { return new passiveReturn(false, "", 0); }
 
         passiveReturn returnVal = new passiveReturn(true, "+", item.getVal(3));
-
+        int sumDiceVal = 0;
         switch (item.getIdx())
         {
             case 1:
@@ -973,12 +1019,134 @@ public class itemManager : MonoBehaviour
             case 8:
                 takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 9:
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
+            case 10:
                 takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
+            case 11:
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
+            case 12:
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
+            case 13:
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
+            case 14:
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
+            case 15:
+                takeSkillPacket.setStateChange(Random.Range(1, 3) * 2); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+            case 16:
+                takeSkillPacket.setStateChange(Random.Range(0, 2) * 2 + 1); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+            case 17:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, Random.Range(0, 2) * 2 + 1, -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+            case 18:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, Random.Range(1, 3) * 2, -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+            case 19:
+                for (int i = 0; i < 4; i++) if (diceArr[i] >= 1 && diceArr[i] < 7) sumDiceVal += diceArr[i];
+                takeSkillPacket.addVal(sumDiceVal); returnVal = new passiveReturn(true, "+", sumDiceVal); break;
+            case 20:
+                for (int i = 0; i < 4; i++) if (diceArr[i] >= 1 && diceArr[i] < 7) sumDiceVal += diceArr[i];
+                takeSkillPacket.addVal(sumDiceVal); returnVal = new passiveReturn(true, "+", sumDiceVal); break;
+            case 21:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, item.getVal(3), 0, 2));
+                returnVal = new passiveReturn(true, "none", item.getVal(3)); break;//자신에게 공격력 추가
+            case 22:
+                takeSkillPacket.mulVal(item.getVal(3));
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(4), -999));
+                returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
+            case 23:
+                takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
+            case 24:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+                break;
+            case 25:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+                break;
+            case 26:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
+                break;
+            case 27:
+                sumDiceVal = 1;
+                for (int i = 0; i < 4; i++) if (diceArr[i] == 4) {sumDiceVal *= 2; } takeSkillPacket.mulVal(sumDiceVal);
+                returnVal = new passiveReturn(true, "X", sumDiceVal); break;
+                break;
+            case 28:
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
+            case 29:
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3));
+                takeSkillPacketList.Add(new TakeSkillPacket(takeSkillPacket.getTargetIdx(), 0, item.getVal(4), -999));
+                break;
+            case 30:
+                takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
+            case 31:
+                takeSkillPacket.mulVal(item.getVal(3));
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(4), -999));
+                returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
+            case 32:
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, item.getVal(4), 0, 1)); //아군 한명에게 10만큼 회복
+                for (int i = 0; i < 8; i++) {
+                    int temp = BattleManager.Instance.getCurSkillInfo().getClickCharacter(i);
+                    if (temp == -999) break;
+                    takeSkillPacketList.Add(new TakeSkillPacket(temp, 0, item.getVal(3), 0));
+                } 
+                returnVal = new passiveReturn(true, "+", item.getVal(4)); break;
+            case 33:
+                Debug.Log("Item Test :");
+                Debug.Log(BattleManager.Instance.getCurSkillInfo().useCharacterIdx);
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, item.getVal(4), 0, 1)); //아군 한명에게 10만큼 회복
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), 0));
+                returnVal = new passiveReturn(true, "+", item.getVal(4)); break;
         }
 
 
         return returnVal;
     }
+
+    private bool conditionCheck_target(TakeSkillPacket takeSkillPacket, Item item)
+    {
+        if (takeSkillPacket.getSkillType() < 1000)
+        {
+            int characterIdx = takeSkillPacket.getTargetIdx();
+
+            return conditionCheck_target_detail(takeSkillPacket, item, characterIdx);
+        }
+        else {
+            bool chkTrue = false;
+            for (int i = 0; i < 8; i++){
+                int characterIdx = BattleManager.Instance.getCurSkillInfo().getClickCharacter(i);
+                Debug.Log("targeting Character! : ");
+                Debug.Log(characterIdx);
+                if (characterIdx == -999) continue;
+                if (conditionCheck_target_detail(takeSkillPacket, item, characterIdx)) {chkTrue = true; break; }
+            }
+            return chkTrue;
+        }
+        return false;
+    }
+
+    private bool conditionCheck_target_detail(TakeSkillPacket takeSkillPacket, Item item, int characterIdx) {
+        if (!(characterIdx >= 0 && characterIdx < 8)) return false; //캐릭터가 타겟팅 되지 않았거나
+        if (BattleManager.Instance.getCharacter(characterIdx) == null || BattleManager.Instance.getCharacter(characterIdx).getCurState() != 0) return false; //캐릭터가 존재하지 않으면 false 
+
+        if (item.getVal(1) == 1)
+        {//단순 주사위 확인
+            int diceNum = BattleManager.Instance.getDiceNum(characterIdx);
+            Debug.Log("targeting Character's dice ! : ");
+            Debug.Log(diceNum);
+            if (item.getVal(2) == 0)
+            { //어떤 주사위든 상관없이
+                Debug.Log("it is work!");
+                return true;
+            }
+            if (item.getVal(2) >= 1 && item.getVal(2) <= 6 && diceNum == item.getVal(2))
+            {//캐릭터와 주사위 일치
+                return true;
+            }
+            if ((item.getVal(2) == 7 && diceNum % 2 == 1) || (item.getVal(2) == 8 && diceNum % 2 == 0)) //짝수 홀수 체크
+            {//캐릭터와 주사위 일치
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private bool conditionCheck_dice(int[] diceArr, int condition0, int condition1, int condition2, int condition3, int condition4)
     {   //diceArr : 주사위에 대한 조건 확인
@@ -993,12 +1161,14 @@ public class itemManager : MonoBehaviour
             }
         }
 
+
+        if (condition0 == 0) return true;
         //존재 개수를 기반하는 조건들의 계산
         if(condition0 >=1 && condition0 <= 4){ return condition0 <= sumOfNumber(arr, condition1); } //한개일때 숫자
         if ((condition0 >= 11 && condition0 <= 13) || condition0 == 22) return (condition0 / 10 <= sumOfNumber(arr, condition1)) && (condition0 % 10 <= sumOfNumber(arr, condition2));
         if (condition0 >= 111 && condition0 <= 112) return (condition0 / 100 <= sumOfNumber(arr, condition1)) && ((condition0 % 100) / 10 <= sumOfNumber(arr, condition2)) && (condition0 % 10 <= sumOfNumber(arr, condition3));
         if (condition0 == 1111) return (condition0 / 1000 <= sumOfNumber(arr, condition1)) && ((condition0 % 1000) / 100 <= sumOfNumber(arr, condition2)) && ((condition0 % 100) / 10 <= sumOfNumber(arr, condition3)) && (condition0 % 10 <= sumOfNumber(arr, condition4)) ;
-        if (condition0 == 5) return condition1 == sumOfNumber(arr, 0);
+        if (condition0 == 5) return condition1 == sumOfNumber(arr, 0); //사용된 주사위 수와 일치, 보다 적게, 보다 크게 사용된 경우
         if (condition0 == 6) return condition1 <= sumOfNumber(arr, 0);
         if (condition0 == 7) return condition1 >= sumOfNumber(arr, 0);
         return false;

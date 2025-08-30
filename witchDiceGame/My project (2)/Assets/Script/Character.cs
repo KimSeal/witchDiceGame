@@ -273,7 +273,7 @@ public abstract class Character
 
     public bool TakeSkillPacket(TakeSkillPacket takeSkillPacket)
     {
-        if (takeSkillPacket.getSkillType() == 0)
+        if (takeSkillPacket.getSkillType() == 0 || takeSkillPacket.getSkillType() == 1000)
         {
             this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
             Debug.Log("this damage is : " + takeSkillPacket.getVal());
@@ -281,9 +281,10 @@ public abstract class Character
 
             if (this.hp <= 0)
             {
-                if (this.reviveUnit && AdventureManager.Instance.getTutorial() != 0) {
+                if (this.reviveUnit && AdventureManager.Instance.getTutorial() != 0)
+                {
                     jsonDataManager.Instance.tutorialRevive();
-                    this.hp = 1; return false; 
+                    this.hp = 1; return false;
                 } //튜토리얼 용으로 하나 만들기.
                 this.hp = 0;
                 this.curState = 2;
@@ -291,7 +292,7 @@ public abstract class Character
             }
             return false;
         }
-        else if (takeSkillPacket.getSkillType() == 1) //회복인 경우
+        else if (takeSkillPacket.getSkillType() == 1 || takeSkillPacket.getSkillType() == 1001) //회복인 경우
         {
             Debug.Log("Heal is " + takeSkillPacket.getVal());
             this.hp += takeSkillPacket.getVal();
@@ -311,6 +312,7 @@ public abstract class Character
         {
             this.character_battle.setSpecialVal(takeSkillPacket.getVal()); // 변수를 해당 값으로 변화시킨다.
         }
+
         return false;
     }
 

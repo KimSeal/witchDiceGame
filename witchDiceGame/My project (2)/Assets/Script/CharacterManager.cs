@@ -95,8 +95,8 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(3);
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 3);
-        //setCharacter(2, 4);
+        setCharacter(1, 1);
+        setCharacter(2, 2);
         //setCharacter(3, 3);
     }
     // Update is called once per frame
@@ -340,6 +340,8 @@ public class CharacterManager : MonoBehaviour
     }
     public void CharacterUpgrade(int idx, int type, int val)
     {
-        myCharacter[idx].upGrade(type, val);
+        
+        if(val >= 0) myCharacter[idx].upGrade(type, val);
+        else myCharacter[idx].downGrade(type, val);
     }
 }

@@ -30,6 +30,10 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
             }
         }
     }
+    public int getClickCharacter(int idx)
+    {
+        return targetIdx[idx];
+    }
     public void addClickCharacter(int[] characterArr)
     {
         for (int i = 0; i < targetIdx.Length; i++) { 
@@ -57,14 +61,13 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     }
 
 
-
     private int targetIdx;
     private int val;
     private int stateChange;
     private int diceChange;
 
     private int skillType;
-    // 0 : 데미지. 1: 회복
+    // 0 : 데미지. 1: 회복, 2: 단순 상태 변경
 
     public int getTargetIdx()
     {
@@ -77,7 +80,8 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     public int getVal () { return val; }
     public int getStateChange() { return stateChange; }
     public void addVal(int val) { this.val += val; }
-    public void mulVal(int val) { this.val *= val; }
+    public void mulVal(int val) { this.val *= val; Debug.Log(this.val); }
+    public void setStateChange(int val) { this.stateChange = val; }
 
 }
 

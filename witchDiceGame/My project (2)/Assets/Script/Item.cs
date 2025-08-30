@@ -10,8 +10,9 @@ public class Item
     private string itemName;
     private string[] content = new string[10];
     private int[] val = new int[8];
+    private int activeTiming =0;
 
-    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7)
+    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7, int activeTiming)
     {
         this.type = type;
         this.idx = idx;
@@ -27,6 +28,7 @@ public class Item
         this.val[5] = val5;
         this.val[6] = val6;
         this.val[7] = val7;
+        this.activeTiming = activeTiming;
     }
     public Item(ItemReader itemReader)
     {
@@ -47,6 +49,7 @@ public class Item
         this.val[6] = itemReader.val6;
         this.val[7] = itemReader.val7;
         this.rare = itemReader.rare;
+        this.activeTiming = itemReader.activeTiming;
     }
 
     public Item(Item item)
@@ -60,8 +63,12 @@ public class Item
             this.val[i] = item.val[i];
         }
         this.rare = item.rare;
+        this.activeTiming = item.activeTiming;
     }
-
+    public int getActiveTiming()
+    {
+        return activeTiming;
+    }
     public int getRare()
     {
         return this.rare;

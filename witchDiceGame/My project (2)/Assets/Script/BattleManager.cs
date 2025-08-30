@@ -2519,6 +2519,7 @@ public class BattleManager : MonoBehaviour
 
     private void changeDiceState(int characterIdx, int stateChange)
     {
+        
         if (stateChange == 0) return;
         if (stateChange == -999)
         {
@@ -2537,44 +2538,75 @@ public class BattleManager : MonoBehaviour
     }
 
     bool passiveItemChk = false;
-    private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArr, int [] usedDiceArr, bool updateLook, int itemType) 
+    private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArr, int [] usedDiceArr, bool updateLook) 
     {
         float activeTime = 0.1f;
         passiveItemChk = true;
+        bool[] effectChk = {false, false, false, false, false, false, false, false, false, false, false, false};
+
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
         {
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
             { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
                 
-                passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 0);
-                if (tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
+                passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArr, takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr,0);
+                if (!effectChk[passiveItemIdx] && tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
                 {
-
-                    specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
+                    effectChk[passiveItemIdx] = true;
+                    if (tempPassiveReturn.cal != "none") specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                     GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                     SoundManager_Sfx.Instance.playSound(0);
                     for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
                     {
-                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
-                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                        + "</size>";
-                        yield return new WaitForSeconds(0.02f);
+                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                        {
+                            battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                                takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                            + "</size>";
+                        }
+                        yield return new WaitForSeconds(activeTime / 5.0f);
                     }
-                    for (int fontSizeIdx = 10; fontSizeIdx > 00; fontSizeIdx--)
+                    for (int fontSizeIdx = 10; fontSizeIdx > 0; fontSizeIdx--)
                     {
-                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                        {
+                            battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
                             takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
                         + "</size>";
-                        yield return new WaitForSeconds(0.02f);
+                            yield return new WaitForSeconds(activeTime / 5.0f);
+                        }
                     }
                     yield return new WaitForSeconds(activeTime);
-                    activeTime /= 2.0f;
+                    activeTime /= 1.5f;
                 }
             }
         }
         passiveItemChk = false;
     }
+
+    private void passiveUpdateAfterClick(List<TakeSkillPacket> takeSkillPacketArr, int[] usedDiceArr, bool updateLook)
+    {
+        bool[] effectChk = { false, false, false, false, false, false, false, false, false, false, false, false };
+        for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
+        {
+            for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
+            { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
+                passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArr, takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 1);
+                if (!effectChk[passiveItemIdx])
+                {
+                    effectChk[passiveItemIdx] = true;
+                    if (tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
+                    {
+                        if (tempPassiveReturn.cal != "none") specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
+                        //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
+                        GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
+                    }
+                }
+            }
+        }
+    }
+
     private void makeHitEffect(int tempTargetIdx)
     {
         //별이랑 원형 이펙트
@@ -2596,24 +2628,26 @@ public class BattleManager : MonoBehaviour
         SoundManager_Sfx.Instance.playSound(Random.Range(8,11));
     }
 
-    private void makeCalculateText(bool myTeam, int skillType, int idx, int val)
+    private bool makeCalculateText(bool myTeam, int skillType, int idx, int val, int height)
     {
-        if (val == 0) return;
+        if (val == 0) return false;
         else
         {
             if (myTeam) //아군 대상일 경우
             {
-                if (skillType == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(idx, val);
-                if (skillType == 1) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamHeal(idx, val);
-                if (skillType == 2) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamAtkUp(idx, val);
+                if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(idx, val, height); return true; }
+                if (skillType == 1) {specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamHeal(idx, val, height); return true; }
+                if (skillType == 2) {specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamAtkUp(idx, val, height); return true; }
             }
             else // 적군 대상일 경우
             {
-                if (skillType == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(idx, val);
-                if (skillType == 1) specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamHeal(idx, val);
-                if (skillType == 2) specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamAtkUp(idx, val);
+                if (skillType == 0) {specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(idx, val, height); return true; }
+                if (skillType == 1) {specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamHeal(idx, val, height); return true; }
+                if (skillType == 2) {specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamAtkUp(idx, val, height); return true; }
             }
         }
+
+        return false;
         //if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
     }
 
@@ -2684,6 +2718,29 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
+
+    //현재 사용하고 있는 아군의 스킬을 정보를 받아온다.
+    private SendSkillPacket sendSkillPacketTemp;
+    public SendSkillPacket getCurSkillInfo()
+    {
+        return sendSkillPacketTemp;
+    }
+    private void takeSkillPacketLastFix(List<TakeSkillPacket> takeSkillPackets)
+    {
+        bool[] check = {false, false, false, false, false };
+        for (int i=0;i<takeSkillPackets.Count;i++)
+        {
+            if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <=4) check[takeSkillPackets[i].getSkillType()] = true;
+        }
+        for (int i = 0; i < check.Length; i++)
+        {
+            if (check[i])
+            {
+                takeSkillPackets.Insert(0, new TakeSkillPacket(0, 0, 0, 1000 + i));
+            }
+        }
+    }
+    
     private IEnumerator BattlePhase_Coroutine()
     {
         
@@ -2738,24 +2795,25 @@ public class BattleManager : MonoBehaviour
 
                     skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                     yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
+
                     
 
                     //타겟이 정해지지 않은 takeSkillPacket 생성.
                     makeMyDice_BattlePhase(nextDice, curSkill.getNeedDiceNum());
                     for (int i = 0; i < clickCharacter.Length; i++) clickCharacter[i] = -999;
-                    SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                    sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                     takeSkillPacketArr.Clear();
                     takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-                    
+                    takeSkillPacketLastFix(takeSkillPacketArr);
                     //skill기반의 takeSkillPacket의 값 얻고 이벤트 보여주기
                     // 활성화 보여주고, 클릭 전 패시브 대상으로 하며
-                    
-                    StartCoroutine( passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true, 0));
+
+                    StartCoroutine( passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
                     yield return new WaitUntil(() => !passiveItemChk);
 
                     for (int i=0;i<curSkill.getTargetChance();i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
-
+                        int[] textHeight = {0,0,0,0,0,0,0,0};
                         //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
 
                         StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
@@ -2768,10 +2826,14 @@ public class BattleManager : MonoBehaviour
                         //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                        takeSkillPacketLastFix(takeSkillPacketArr);
 
-                        StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false, 0));
+
+                        StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false));
                         yield return new WaitUntil(() => !passiveItemChk);
-
+ 
+                        passiveUpdateAfterClick(takeSkillPacketArr, usedDiceArr, true);
+ 
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
@@ -2781,7 +2843,8 @@ public class BattleManager : MonoBehaviour
                             {
                                 if(myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    
+                                    if(makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                     /*if ( == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 1) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamHeal(, );
                                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 2) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamAtkUp(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
@@ -2819,7 +2882,8 @@ public class BattleManager : MonoBehaviour
 
                                 if (enemyCharacter[tempTargetIdx-4] != null && enemyCharacter[tempTargetIdx-4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    if(makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+
                                     //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
@@ -2922,12 +2986,12 @@ public class BattleManager : MonoBehaviour
                     
                     for (int i = 0; i < curSkill.getTargetChance(); i++)
                     { // 해당 스킬이 공격하는 숫자
-
+                        int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
                         makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
 
                         //스킬에 대한 공격용 Packet 생성
                         makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
-                        SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                        sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
@@ -2943,7 +3007,7 @@ public class BattleManager : MonoBehaviour
                                 
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    if(makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                     //specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
@@ -2973,7 +3037,7 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    if(makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                     //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());

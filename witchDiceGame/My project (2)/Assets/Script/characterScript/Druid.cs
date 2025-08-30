@@ -31,11 +31,14 @@ public class Druid : Character
         //{
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8, 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 4, 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 4, -999));
             }
             if (sendSkillPacket.useSkillIdx == 1) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 10, 0));
+                int finalVal = sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + sendSkillPacket.diceNum[2];
+                for (int i = 0; i < 3; i++) if (sendSkillPacket.diceNum[i] == 4) finalVal *= 2;
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], finalVal, 0));
             }
         //}
         return packets;
