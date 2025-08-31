@@ -218,6 +218,8 @@ public class CharacterManager : MonoBehaviour
                     character = new Border(0, destinyList[characterIdx]); break;
                 case 6:
                     character = new Wawa(0, destinyList[characterIdx]); break;
+                case 7:
+                    character = new Shine(0, destinyList[characterIdx]); break;
 
             }
         }
