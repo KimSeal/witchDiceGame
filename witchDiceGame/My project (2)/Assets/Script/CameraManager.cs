@@ -71,9 +71,6 @@ public class CameraManager : MonoBehaviour
     int direction = 0;
     int timeDelay = 3;
 
-    
-
-
     bool windowChk = false;
 
     public void changeScreenSize(int idx)
@@ -208,6 +205,7 @@ public class CameraManager : MonoBehaviour
     {
         loseChk = false;
         loseUI.transform.position = new Vector3(0,300, loseUI.transform.position.z);
+        AdventureManager.Instance.exitBattleCanvas(false);
     }
     public bool getLoseScreenActive()
     {

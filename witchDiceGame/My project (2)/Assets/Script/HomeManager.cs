@@ -136,7 +136,7 @@ public class HomeManager : MonoBehaviour
         }
         else
         {
-            TalkManager.Instance.startTalk(0);
+            TalkManager.Instance.startTalk(31);
             fullUI.showFull(5);
         }
     }
