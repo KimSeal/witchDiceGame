@@ -175,7 +175,7 @@ public class AdventureManager : MonoBehaviour
     {
         storyLineErrorChk();
         //TalkManager.Instance.startTalk(21) ; //시작 말하기 테스트
-        Screen.SetResolution(960, 540, FullScreenMode.Windowed);
+        //Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
         if (false) {
@@ -513,7 +513,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 15; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
         int EndPoint = adventureEventArr.Length - 1;
 
