@@ -151,7 +151,7 @@ public class TalkManager : MonoBehaviour
         entity.SetActive(false);
     }
 
-    
+    bool jumpFlag = false;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -171,6 +171,7 @@ public class TalkManager : MonoBehaviour
                     else material[i].SetFloat("_Transparency", 0.7f);
                 }
             }
+            jumpFlag = false;
             //움직임 조정
             for (int i = 0; i < 4; i++)
             {
@@ -188,6 +189,9 @@ public class TalkManager : MonoBehaviour
                     {
                         jumpSpd[i] = 4;
                         jumpChk[i]--;
+
+                        if(!jumpFlag){ SoundManager_Sfx.Instance.playSound(19); jumpFlag = true; }
+                        
                     }
 
                     characterImage[i].GetComponent<RectTransform>().localPosition += new Vector3(0, jumpSpd[i], 0);
@@ -202,6 +206,8 @@ public class TalkManager : MonoBehaviour
             }
         }
     }
+
+    private int preSound = 0;
 
     public string getDesc(int idx)
     {
@@ -232,6 +238,8 @@ public class TalkManager : MonoBehaviour
                 if (characterImage[i].activeSelf) characterImage[i].GetComponent<RectTransform>().localPosition = pointArr[i];
             }
 
+            preSound = talkList[curIdx].BackSnd;
+            if (preSound >= 0) SoundManager_Main.Instance.playSound(preSound);
             preBackground = talkList[a].backGround;
             printTalk(curIdx);
         }
@@ -243,6 +251,7 @@ public class TalkManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(0);
             if (talkList[curIdx].talkIdx != talkList[curIdx + 1].talkIdx)
             {
+                
                 stopTalk();
             }
             else
@@ -254,10 +263,23 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        if (talkList[a].SFX >= 0) SoundManager_Sfx.Instance.playSound(talkList[a].SFX);
 
-        if(talkList[a].eventType == 1) FadeUIScript.fadeIn();
+        if (preSound != talkList[a].BackSnd) { //배경음 변경 타이밍
+
+            if (preSound >= 0){
+                SoundManager_Main.Instance.stopSound(preSound); //노래가 바뀌었으니 이전 노래 정지
+            }
+            preSound = talkList[a].BackSnd; // 노래 변경
+            if (talkList[a].BackSnd >= 0) SoundManager_Main.Instance.playSound(talkList[a].BackSnd); //노래 틀어야 하는 경우 틀기.
+        } // 확인
+    
+        
+
+        if (talkList[a].eventType == 1) FadeUIScript.fadeIn();
         if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);
 
+        /*
         if (a == listIdx[2] + 36)
         {
             SoundManager_Main.Instance.playSound(8);
@@ -266,6 +288,7 @@ public class TalkManager : MonoBehaviour
         {
             SoundManager_Main.Instance.stopSound(8);
         }
+        */
         setCharacterName(talkList[a]);
         setCharacterFace(talkList[a]);
         setPoint(talkList[a]);
@@ -338,6 +361,7 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
+            if(preSound >=0)SoundManager_Main.Instance.stopSound(preSound);
             for (int i = 0; i < characterImage.Length; i++) {
                 characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_characterEmpty");
                 material[i].SetFloat("_Transparency", 0.7f);

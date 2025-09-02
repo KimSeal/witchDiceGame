@@ -143,7 +143,10 @@ public class TalkReader{
     public string TextKR;
     public string TextEN;
     public string TextJP;
-    
+
+    public int SFX;
+    public int BackSnd;
+
 }
 
 public class CSVReader

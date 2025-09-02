@@ -170,6 +170,35 @@ public class BattleManager : MonoBehaviour
     GameObject[] equipDescBox_image = new GameObject[2];
 
 
+    [SerializeField]
+    public GameObject giveUpBtn;
+
+    private bool giveUpChk = false;
+
+    public void useGiveUpBtn()
+    {
+        if (giveUpChk)
+        {
+            giveUpChk = false;
+            giveUpBtn.GetComponent<Animator>().Play("unactive");
+        }
+        else if (!giveUpChk)
+        {
+            if (AdventureManager.Instance.getTutorial() != 0)
+            {
+                giveUpChk = false;
+                fullUI.showFull(14);
+                giveUpBtn.GetComponent<Animator>().Play("unactive");
+            }
+            else
+            {
+                giveUpChk = true;
+                fullUI.showFull(15);
+                giveUpBtn.GetComponent<Animator>().Play("active");
+            }
+        }
+    }
+
     public void hoverRotateAble(GameObject gameObjectTemp, int eventType, bool onOff) {
         if (eventType == 0) gameObjectTemp.GetComponent<hoverRotate>().shakeAble(onOff);
         else if (eventType == 1) gameObjectTemp.GetComponent<hoverRotate>().expandAble(onOff);
@@ -3208,7 +3237,7 @@ public class BattleManager : MonoBehaviour
 
 
         //아군 전멸
-        if (result == 2)
+        if (result == 2 || giveUpChk)
         {
             itemManager.Instance.endOfBattlePhase();
             //AdventureManager.Instance.loseGame();
@@ -3670,6 +3699,9 @@ public class BattleManager : MonoBehaviour
 
     public void startBattle_fromAdventure()
     {
+        giveUpChk = true; //전투 시작시에는 항복 꺼두기
+        useGiveUpBtn(); 
+        
         for (int i = 0; i < witchPowerWaitTurn.Length; i++) { 
             witchPowerWaitTurn[i] = 0;
         }

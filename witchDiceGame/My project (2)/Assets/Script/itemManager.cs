@@ -376,8 +376,12 @@ public class itemManager : MonoBehaviour
 
     public void flipItemBox_AdventureUI(bool onOff)
     {
-        if (!itemBoxOpen) flipItemBox(1, 0);
-        else flipItemBox(1, 1);
+        if (!AdventureManager.Instance.getGameOverChk())
+        {
+            AdventureManager.Instance.activeGiveUpBoard(false);
+            if (!itemBoxOpen) flipItemBox(1, 0);
+            else flipItemBox(1, 1);
+        }
     }
 
     public void flipItemBox_BattleUI()
