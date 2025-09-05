@@ -219,7 +219,11 @@ public class CharacterManager : MonoBehaviour
                 case 6:
                     character = new Wawa(0, destinyList[characterIdx]); break;
                 case 7:
-                    character = new Shine(0, destinyList[characterIdx]); break;
+                    character = new Unu(0, destinyList[characterIdx]); break;
+                case 8:
+                    character = new Raco(0, destinyList[characterIdx]); break;
+                case 9:
+                    character = new LemGol(0, destinyList[characterIdx]); break;
 
             }
         }
