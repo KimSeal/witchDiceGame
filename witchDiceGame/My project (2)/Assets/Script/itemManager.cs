@@ -908,12 +908,13 @@ public class itemManager : MonoBehaviour
             ItemArr[1, i] = new Item(itemList[1][i+13]);
         }
         //test Sample
+        /*
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i + 24]);
         }
-
+        */
         /*
         for (int i=0;i<7;i++) {
             ItemExistArr[3, i] = true;
