@@ -133,10 +133,13 @@ public class itemManager : MonoBehaviour
         }
         else
         {
-            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            descObj[2].GetComponent<TextMeshPro>().text = "";
-            descObj[3].GetComponent<TextMeshPro>().text = "";
-            if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+            if (descObj[0].activeSelf == true)
+            {
+                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                descObj[2].GetComponent<TextMeshPro>().text = "";
+                descObj[3].GetComponent<TextMeshPro>().text = "";
+                descObj[0].SetActive(false);
+            }
 
         }
     }
@@ -895,27 +898,27 @@ public class itemManager : MonoBehaviour
         }
 
         setUpAnimator();
-
+        
         descObj[0] = GameObject.Find("obj_ui_item_Desc_board");
         descObj[1] = GameObject.Find("obj_ui_item_Desc_logo");
         descObj[2] = GameObject.Find("obj_ui_item_Desc_name");
         descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
-
+        /*
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
             ItemArr[1, i] = new Item(itemList[1][i+13]);
         }
         //test Sample
-        /*
+        
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i + 24]);
         }
         */
-        /*
+        
         for (int i=0;i<7;i++) {
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i+1]);
@@ -924,16 +927,16 @@ public class itemManager : MonoBehaviour
         ItemArr[3, 1] = new Item(itemList[3][8]);
         ItemArr[3, 2] = new Item(itemList[3][3]);
         ItemArr[3, 3] = new Item(itemList[3][2]);
-        ItemArr[3, 4] = new Item(itemList[3][8]);
-        ItemArr[3, 5] = new Item(itemList[3][3]);
-        ItemArr[3, 6] = new Item(itemList[3][3]);
+        ItemArr[3, 4] = new Item(itemList[3][11]);
+        ItemArr[3, 5] = new Item(itemList[3][12]);
+        ItemArr[3, 6] = new Item(itemList[3][22]);
         ItemExistArr[3, 7] = true;
-        ItemArr[3, 7] = new Item(itemList[3][8]);
+        ItemArr[3, 7] = new Item(itemList[3][30]);
         ItemExistArr[3, 8] = true;
-        ItemArr[3, 8] = new Item(itemList[3][9]);
+        ItemArr[3, 8] = new Item(itemList[3][31]);
         ItemExistArr[3, 9] = true;
-        ItemArr[3, 9] = new Item(itemList[3][10]);
-        */
+        ItemArr[3, 9] = new Item(itemList[3][33]);
+ 
 
         for (int i = 0; i < 10; i++)
         {
@@ -983,14 +986,6 @@ public class itemManager : MonoBehaviour
         if (!ItemExistArr[3, idx]) {return new passiveReturn(false, "", 0);} // 아이템이 없으면 그냥 스킵
         Item item = ItemArr[3, idx];
         int activeTiming = item.getActiveTiming();
-        if (item.getIdx() == 33)
-        {
-            Debug.Log("this is 33!");
-            Debug.Log(activeTiming);
-            Debug.Log(activeTime);
-            Debug.Log(item.getVal(0));
-            Debug.Log(takeSkillPacket.getSkillType());
-        }
         if (activeTiming != activeTime) { return new passiveReturn(false, "", 0); } //원하는 타이밍이 아니면 생략
 
         if (item.getVal(0) != takeSkillPacket.getSkillType()) { return new passiveReturn(false, "", 0); };  //스킬이 아이템 타입하고 안맞으면 종료 
@@ -1097,7 +1092,10 @@ public class itemManager : MonoBehaviour
                 returnVal = new passiveReturn(true, "+", item.getVal(4)); break;
         }
 
-
+        Debug.Log("Item Chk - after Man");
+        Debug.Log(item.getIdx());
+        Debug.Log(returnVal.used);
+        Debug.Log(returnVal.cal);
         return returnVal;
     }
 

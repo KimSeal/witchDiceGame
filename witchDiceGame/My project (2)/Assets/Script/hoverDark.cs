@@ -16,6 +16,10 @@ public class hoverDark : MonoBehaviour
         
     }
 
+    public void changeAlpha(float val)
+    {
+        gameObject.GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", val);
+    }
     private void OnMouseOver()
     {
         gameObject.GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);

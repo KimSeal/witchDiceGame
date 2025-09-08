@@ -1038,6 +1038,12 @@ public class BattleManager : MonoBehaviour
     //DiceThrow Phase  Start (phase 1- dice throw start)//
     private IEnumerator DiceThrowPhase_Coroutine()
     {
+
+        witchPowerObj[0].GetComponent<hoverRotate>().expandEnd();
+        witchPowerObj[1].GetComponent<hoverRotate>().expandEnd();
+        witchPowerObj[2].GetComponent<hoverRotate>().expandEnd();
+
+
         for (int i = 0; i < 4; i++)
         { //처음에는 건들여도 별 변화 없도록
             hoverRotateAble(myDiceUI[i], 0, false);
@@ -2622,14 +2628,15 @@ public class BattleManager : MonoBehaviour
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
             { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
                 passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArr, takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 1);
+
                 if (!effectChk[passiveItemIdx])
                 {
-                    effectChk[passiveItemIdx] = true;
                     if (tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
                     {
                         if (tempPassiveReturn.cal != "none") specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                         //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                         GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
+                        effectChk[passiveItemIdx] = true;
                     }
                 }
             }

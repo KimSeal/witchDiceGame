@@ -31,7 +31,7 @@ public class Pig : Character
         //{
         if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, this.getSkillVal(0, 0), 0, 1)); //자신 1명에게 10만큼 회복
+              packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, this.getSkillVal(0, 0), 0, 1)); //자신 1명에게 10만큼 회복
         }
         if (sendSkillPacket.useSkillIdx == 1) 
         {

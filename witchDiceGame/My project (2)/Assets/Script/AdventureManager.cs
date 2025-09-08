@@ -680,6 +680,7 @@ public class AdventureManager : MonoBehaviour
     }
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
+        rerollBtn.SetActive(false);
         gameOverAtBattle = false;
         giveUpBtnAble(false);
         gameOverChk = false;
@@ -807,13 +808,21 @@ public class AdventureManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
             yield return new WaitUntil(() => selectDiceNum > 0);
+            rerollBtn.SetActive(true);
+            rerollBtn.GetComponent<hoverRotate>().expandEnd();
+            rerollBtn.GetComponent<hoverDark>().changeAlpha(0.0f);
+            rerollChk = true;
+            yield return new WaitUntil(() => !rerollChk);
+            rerollBtn.SetActive(false);
             diceBtnFire.Stop();
 
+            Debug.Log("hello~");
             //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
             //SoundManager_Sfx.Instance.playSound(2);
-
+            /*
             loadEnd = false;
             yield return new WaitUntil(() => loadEnd);
+            */
 
             int moveCount = selectDiceNum;
             if(stageIdx + selectDiceNum >= adventureEventList[stageNum].Count)  // 넘어간 경우 자제한다
@@ -1367,6 +1376,8 @@ public class AdventureManager : MonoBehaviour
                 {
                     SoundManager_Sfx.Instance.playSound(3);
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
+                    for(int i=0;i<6;i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, Random.Range(1, 7)); // 주사위 랜덤으로 변경
+
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
@@ -1472,6 +1483,31 @@ public class AdventureManager : MonoBehaviour
         balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
+    public bool rerollChk = false;
+    [SerializeField]
+    public GameObject rerollBtn;
+    public void clickRerollBtn()
+    {
+        if (selectDiceCharacterIdx >= 0)
+        {
+            shakeObject(diceObject[selectDiceCharacterIdx]);
+            int characterIdx = selectDiceCharacterIdx;
+            CharacterManager.Instance.throwDice(characterIdx);
+            //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
+            //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
+            Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+            SoundManager_Sfx.Instance.playSound(0);
+            nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
+            nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
+            selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
+            rerollChk = false;
+        }
+        else
+        {
+            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0) { shakeObject(diceObject[i]); }
+            fullUI.showFull(1);
+        }
+    }
     public void clickDice(int characterIdx)
     {
         if (!clickAble) return;
@@ -1491,44 +1527,51 @@ public class AdventureManager : MonoBehaviour
         }
         //클릭 부분 확인
         diceBtnFire.Play(true);
-        if (selectDiceNum == -1 && characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
-            if (selectDiceCharacterIdx >=0)
-            {
-                shakeObject(diceObject[selectDiceCharacterIdx]);
-                characterIdx = selectDiceCharacterIdx;
-                CharacterManager.Instance.throwDice(characterIdx);
-                //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
-                //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
-                Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
-                SoundManager_Sfx.Instance.playSound(0);
-                nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
-                nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
-                selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
-            }
-            else
-            {
-                for (int i = 0; i < 4; i++)
+        if (characterIdx == -1) { //캐릭터가 선택되었고 다음으로 가는 주사위 누를 경우
+            if (selectDiceNum == -1) { //아직 주사위를 한번도 안굴렸을 경우.
+                if (selectDiceCharacterIdx >= 0)
                 {
-                    if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
-                    {
-                        shakeObject(diceObject[i]);
-                    }
+                    shakeObject(diceObject[selectDiceCharacterIdx]);
+                    characterIdx = selectDiceCharacterIdx;
+                    CharacterManager.Instance.throwDice(characterIdx);
+                    //selectImage.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
+                    //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
+                    Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                    SoundManager_Sfx.Instance.playSound(0);
+                    nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
+                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
+                    selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
+                    rerollChk = true;
                 }
-                fullUI.showFull(1);
+                else {
+                    for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0) { shakeObject(diceObject[i]); }
+                    fullUI.showFull(1);
+                }
+            }
+            else if (selectDiceNum > 0 && rerollChk) {
+                if (selectDiceCharacterIdx >= 0) {
+                    rerollChk = false;
+                }
+                else {
+                    for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0) { shakeObject(diceObject[i]); }
+                    fullUI.showFull(1);
+                }
             }
         }
-        else if (selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
-        {
-            SoundManager_Sfx.Instance.playSound(0);
-            Debug.Log("charactger click Dice");
-            selectDiceCharacterIdx = characterIdx;
-            hoverOutCharacterDice(selectDiceCharacterIdx);
-            balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));
-            standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_"+ CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back" );
-        }
-        else if(selectDiceNum == -1 && characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) != 0)
-        {
-            SoundManager_Sfx.Instance.playSound(7);
+        else if (selectDiceNum == -1 || rerollChk) {
+            if (characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
+            {
+                SoundManager_Sfx.Instance.playSound(0);
+                Debug.Log("charactger click Dice");
+                selectDiceCharacterIdx = characterIdx;
+                hoverOutCharacterDice(selectDiceCharacterIdx);
+                balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));
+                standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back");
+            }
+            else if ( characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) != 0)
+            {
+                SoundManager_Sfx.Instance.playSound(7);
+            }
         }
     } 
     public void hoverInCharacterDice(int characterIdx)
