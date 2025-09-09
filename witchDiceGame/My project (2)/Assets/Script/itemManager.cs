@@ -904,7 +904,7 @@ public class itemManager : MonoBehaviour
         descObj[2] = GameObject.Find("obj_ui_item_Desc_name");
         descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
-        /*
+        
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -917,7 +917,6 @@ public class itemManager : MonoBehaviour
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i + 24]);
         }
-        */
         
         for (int i=0;i<7;i++) {
             ItemExistArr[3, i] = true;
@@ -950,6 +949,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
+
         updateInventory();
     }
 
@@ -1081,15 +1081,15 @@ public class itemManager : MonoBehaviour
                 for (int i = 0; i < 8; i++) {
                     int temp = BattleManager.Instance.getCurSkillInfo().getClickCharacter(i);
                     if (temp == -999) break;
-                    takeSkillPacketList.Add(new TakeSkillPacket(temp, 0, item.getVal(3), 0));
+                    takeSkillPacketList.Add(new TakeSkillPacket(temp, 0, item.getVal(3), -999));
                 } 
-                returnVal = new passiveReturn(true, "+", item.getVal(4)); break;
+                returnVal = new passiveReturn(true, "none", item.getVal(4)); break;
             case 33:
                 Debug.Log("Item Test :");
                 Debug.Log(BattleManager.Instance.getCurSkillInfo().useCharacterIdx);
                 takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, item.getVal(4), 0, 1)); //아군 한명에게 10만큼 회복
-                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), 0));
-                returnVal = new passiveReturn(true, "+", item.getVal(4)); break;
+                takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999));
+                returnVal = new passiveReturn(true, "none", item.getVal(4)); break;
         }
 
         Debug.Log("Item Chk - after Man");

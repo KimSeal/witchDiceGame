@@ -138,6 +138,8 @@ public class optionManager : MonoBehaviour
     public void changeScreenSize(int idx) {
         if (optionIdx == 1) {
             CameraManager.Instance.changeScreenSize(idx);
+            soundBtn[0].GetComponent<soundDragAndDrop>().changeSoundMinMaxVal();
+            soundBtn[1].GetComponent<soundDragAndDrop>().changeSoundMinMaxVal();
             for (int i = 0; i < screenSizeBtn.Length; i++)
             {
                 if (idx == i)

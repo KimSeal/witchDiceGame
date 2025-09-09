@@ -125,7 +125,7 @@ public class HomeManager : MonoBehaviour
         if (num >= 3 && num < 6) { // 데모에선 1챕터만 봐야하니 다른거 막아두기
             int chapterNum = chapterIdx[num / 3];
             int detailIdx = num % 3;
-            if (true) { //jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
+            if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapter1Talk[detailIdx]));
             }
             else

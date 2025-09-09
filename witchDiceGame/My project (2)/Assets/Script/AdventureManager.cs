@@ -178,8 +178,8 @@ public class AdventureManager : MonoBehaviour
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
-        if (false) {
-        //if (!jsonDataManager.Instance.getTutorialDid()) {
+        //if (false) {
+        if (!jsonDataManager.Instance.getTutorialDid()) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
             tutorialStart();            
         }
@@ -662,12 +662,16 @@ public class AdventureManager : MonoBehaviour
     {
         return gameOverChk;
     }
+    public void clickGiveUpButton()
+    {
+        if (tutorialVal != 0)
+        { //튜토리얼 중에는 항복 불가능
+            fullUI.showFull(14);
+        }
+        else activeGiveUpBoard(true);
+    }
     public void activeGiveUpBoard(bool onOff)
     {
-        if (tutorialVal != 0) { //튜토리얼 중에는 항복 불가능
-            fullUI.showFull(14);
-            return;
-        }
         if (onOff && itemManager.Instance.getItemBoxOpen() || itemManager.Instance.getItemBoxMove()) return;//아이템 창 열려있으면 못키게
 
 
@@ -1201,11 +1205,14 @@ public class AdventureManager : MonoBehaviour
                     giveUpBtnAble(true);
                 }
                 //데모 보스 클리어 확인
-                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 5)) { // 올빼미 선배 클리어
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk ) { // 올빼미 선배 클리어
+                    if(jsonDataManager.Instance.setChapterDid(0, 5))
+                    {
+                        TalkManager.Instance.startTalk(18);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
                     if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) jsonDataManager.Instance.setChapterRead(1, 2);
                     giveUpBtnAble(false);
-                    TalkManager.Instance.startTalk(18);
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     demoEndChk = 1;
                     gameOverChk = true;
                 }
@@ -1514,11 +1521,11 @@ public class AdventureManager : MonoBehaviour
         
         if (descObj[0].activeSelf == true) hoverOutItem();
 
-        if (battleEventTrigger) {
+        if (characterIdx == -1 && battleEventTrigger && selectDiceCharacterIdx >= 0) {
             enterBattleCanvas();
         }
 
-        if (characterIdx == -1 && eventEndClick)
+        if (characterIdx == -1 && eventEndClick )
         {
             SoundManager_Sfx.Instance.playSound(7);
             CameraManager.Instance.VibrateForeTime(0.2f);

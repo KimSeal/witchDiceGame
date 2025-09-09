@@ -49792,6 +49792,7 @@ MonoBehaviour:
   specialTextManager: {fileID: 754824313}
   curPhase: -1
   giveUpBtn: {fileID: 1345126367}
+  battleBagBtn: {fileID: 386159704}
 --- !u!1 &362534185
 GameObject:
   m_ObjectHideFlags: 0
@@ -80442,6 +80443,7 @@ MonoBehaviour:
   specialTextManager: {fileID: 0}
   curPhase: -1
   giveUpBtn: {fileID: 0}
+  battleBagBtn: {fileID: 0}
 --- !u!212 &710481192
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -110110,8 +110112,8 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 2050254736}
           m_TargetAssemblyTypeName: AdventureManager, Assembly-CSharp
-          m_MethodName: activeGiveUpBoard
-          m_Mode: 6
+          m_MethodName: clickGiveUpButton
+          m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -161385,7 +161387,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -72.8, y: 28.7}
+  m_AnchoredPosition: {x: 25, y: 28.7}
   m_SizeDelta: {x: 24, y: 24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1741196916

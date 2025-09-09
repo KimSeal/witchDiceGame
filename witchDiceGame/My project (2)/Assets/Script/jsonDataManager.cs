@@ -37,13 +37,11 @@ public class jsonDataManager : MonoBehaviour
     {
         string fileName = Path.Combine(Application.dataPath, jsonFileName);
 
-        if (File.Exists(fileName)) {
-            LoadPlayerFromJson();
-        }
-        else { 
+        if (!File.Exists(fileName)) { 
             playerPlayData = new PlayerPlayData();
             SavePlayerDataToJson(); 
         }
+        LoadPlayerFromJson();
         BattleManager.Instance.takeJsonWitchPower();
 
         libraryMoneyDesc = GameObject.Find("obj_library_money");

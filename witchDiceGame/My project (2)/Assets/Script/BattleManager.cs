@@ -172,6 +172,8 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     public GameObject giveUpBtn;
+    [SerializeField]
+    public GameObject battleBagBtn;
 
     private bool giveUpChk = false;
 
@@ -1670,7 +1672,9 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase_Coroutine()
     {
-        
+        curClickSkill = -1;
+        for(int i=0;i<8;i++) StartCoroutine(makeBright(skillSelectUI[i], 0.0f));
+        deleteSkillCommand();
 
         StartCoroutine(MoveUI(diceFullUI, 60.0f));
         StartCoroutine(MoveUI(backGroundObj[0], 0.0f)); // 78f : skillSelect  62f: battle
@@ -1991,7 +1995,7 @@ public class BattleManager : MonoBehaviour
 
     public void flipBag_battle()    // 가방 키고 끄는 함수. 4페이즈, 5페이즈 일땐 끌수 없게 한다.
     {
-        if (!getLoseChk && curPhase != 4 && curPhase != 5)
+        if (!getLoseChk && curPhase != 4 && curPhase != 5 )
         {
             //아이템 킬꺼면 캐릭터창 종료
             if (characterInfoOpen) clickCharacterInfoBox();
@@ -2022,6 +2026,7 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            battleBagBtn.GetComponent<CircleCollider2D>().enabled = false;
             for (int i = 0; i < 4; i++)
             {
                 //이전에 달려있던 돌아가는 거 다 막아버리기
@@ -3230,6 +3235,7 @@ public class BattleManager : MonoBehaviour
     bool bosang_click = false;
     private IEnumerator EndPhase_Coroutine()
     {
+        battleBagBtn.GetComponent<CircleCollider2D>().enabled = true;
         itemManager.Instance.flipItemBox_BattleUI(); //켜진 item box 끄기
         yield return new WaitForSeconds(0.2f);
         int result = winningCheck();

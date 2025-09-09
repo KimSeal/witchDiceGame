@@ -25,6 +25,15 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
         
     }
 
+    public void changeSoundMinMaxVal()
+    {
+        int opt = jsonDataManager.Instance.getScreenSize();
+        float[] widthArr = { 640f, 960f, 1280f, 1920f, 1920f };
+        
+        minVal = 125f * widthArr[opt] / 1920f; 
+        maxVal = 750f * widthArr[opt] / 1920f;
+    }
+
     public void setUIButton()
     {
         this.GetComponent<hoverRotateUI>().shakeStart();
