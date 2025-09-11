@@ -76,7 +76,7 @@ public class AdventureReadyManager : MonoBehaviour
         if (!jsonDataManager.Instance.getLibraryMeet())
         {
             jsonDataManager.Instance.libraryMeet();
-            TalkManager.Instance.startTalk(1);
+            //TalkManager.Instance.startTalk(1);
         }
         SoundManager_Sfx.Instance.playSound(0);
         LibraryManager.Instance.enterLibrary(1);

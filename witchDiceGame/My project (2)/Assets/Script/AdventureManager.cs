@@ -328,7 +328,7 @@ public class AdventureManager : MonoBehaviour
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
                 descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
-                descObj[3].GetComponent<TextMeshPro>().text = typeArr[storeItemArr[storeIdx, 0]] + "\n\n" + hoverItem.getContent();
+                descObj[3].GetComponent<TextMeshPro>().text = typeArr2[storeItemArr[storeIdx, 0]] + "\n\n" + hoverItem.getContent();
             }
         }
         else
@@ -343,6 +343,7 @@ public class AdventureManager : MonoBehaviour
     #endregion
 
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
+    string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
     public void hoverInItem(int idx)
     {
         if (resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
@@ -1082,7 +1083,7 @@ public class AdventureManager : MonoBehaviour
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
 
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                    selectInfo.GetComponent<TextMeshPro>().text = "전투 종료! 다음 이벤트로 넘어가자!";
+                    selectInfo.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(16);
                 }
 
                 
@@ -1279,6 +1280,7 @@ public class AdventureManager : MonoBehaviour
 
                 if (demoEndChk == 2) //튜토리얼 종료시
                 {
+                    SoundManager_Main.Instance.stopSound(3); //기본 브금 제거
                     TalkManager.Instance.startTalk(13);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     TalkManager.Instance.startTalk(16);
@@ -1288,6 +1290,23 @@ public class AdventureManager : MonoBehaviour
             }
             else if(!gameOverAtBattle){
                 CameraManager.Instance.resultScreenActive(0);
+
+                if (!jsonDataManager.Instance.getFirstGetCharacterPart())
+                {
+                    bool newDestinyChk = false;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
+                        if (destinyIdx != -99999 && destinyIdx != 0) newDestinyChk = true;
+                    }
+                    if (newDestinyChk)
+                    {
+                        jsonDataManager.Instance.firstGetCharacterPart();
+                        TalkManager.Instance.startTalk(20);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                }
+
                 yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
             }
 

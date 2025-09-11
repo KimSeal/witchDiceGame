@@ -83,7 +83,7 @@ public class TalkManager : MonoBehaviour
     }
     public string SpecialTextChange(string inputStr)
     {
-        return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("£¿", "?").Replace("¡£", ".").Replace("¡¢", ", ").Replace("£¡", "!").Replace("£©",")").Replace("£¨", "(");
+        return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("£¿", "?")/*.Replace("¡£", ".").Replace("¡¢", ", ")*/.Replace("£¡", "!").Replace("£©",")").Replace("£¨", "(");
     }
 
     private int[] lifeStartIdx = {3,  -99999};

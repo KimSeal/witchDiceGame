@@ -95,9 +95,9 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(3);
         setCharacter(0, 0);
         myCharacter[0].setReviveUnit(true);
-        setCharacter(1, 5);
-        setCharacter(2, 3);
-        setCharacter(3, 4);
+        //setCharacter(1, 5);
+        //setCharacter(2, 3);
+        //setCharacter(3, 4);
     }
     // Update is called once per frame
     void Update()

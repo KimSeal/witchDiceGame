@@ -156,6 +156,8 @@ public class LibraryManager : MonoBehaviour
             else if (jsonDataManager.Instance.getLanguage() == 1) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].EN;
             else if (jsonDataManager.Instance.getLanguage() == 2) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].JP;
         }
+
+        curPowerDescInfo.GetComponent<TextMeshPro>().text = TalkManager.Instance.SpecialTextChange(curPowerDescInfo.GetComponent<TextMeshPro>().text);
     }
 
     public void hoverInCurPower(int i)

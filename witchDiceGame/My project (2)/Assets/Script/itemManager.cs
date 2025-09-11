@@ -128,7 +128,7 @@ public class itemManager : MonoBehaviour
             descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[curSelectItemType] + "ItemSprite/spr_item_" + typeArr[curSelectItemType] + "_" + hoverItem.getItemName());
             descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
-            descObj[3].GetComponent<TextMeshPro>().text = typeArr[curSelectItemType] + "\n" + hoverItem.getContent();
+            descObj[3].GetComponent<TextMeshPro>().text = typeArr2[curSelectItemType] + "\n" + hoverItem.getContent();
 
         }
         else
@@ -607,7 +607,7 @@ public class itemManager : MonoBehaviour
         Item useItem = ItemArr[0, curSelectItemIndex];
         int useItemIdx = useItem.getIdx();
         //단일
-        if (useItemIdx == 0 || useItemIdx == 1 || useItemIdx == 5 || useItemIdx == 6 || useItemIdx == 13 || useItemIdx == 14){
+        if (useItemIdx == 0 || useItemIdx == 1 || useItemIdx == 2 || useItemIdx == 5 || useItemIdx == 6 || useItemIdx == 13 || useItemIdx == 14){
             CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
         }
         if (useItemIdx == 3 || useItemIdx == 4 || useItemIdx == 7 || useItemIdx == 8) // 2개의 stat에 대하여 업그레이드
@@ -738,7 +738,7 @@ public class itemManager : MonoBehaviour
 
 
     string [] typeArr = { "consume", "dice", "equip", "passive", "destiny"}; //item type string 
-
+    string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
     private void updateInventory() //전체 inventory 업데이트
     {
         for (int i = 0; i < 11; i++)
@@ -904,7 +904,7 @@ public class itemManager : MonoBehaviour
         descObj[2] = GameObject.Find("obj_ui_item_Desc_name");
         descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
-        
+        /*
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -949,7 +949,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
-
+        */
         updateInventory();
     }
 

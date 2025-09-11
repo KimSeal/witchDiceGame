@@ -346,7 +346,7 @@ public class BattleManager : MonoBehaviour
         battleDescBoxCharacter.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + character.getName() + "/animator_" + character.getName());
         battleDescBoxName.GetComponent<TextMeshPro>().text = character.getName();
         battleDescBoxInfo.GetComponent<TextMeshPro>().text =
-            character.getHp() + "/" + character.getMaxHp() + "( +" + character.getCharacter_battle().getArmor() + " )\n"
+            character.getHp() + "/" + character.getMaxHp() + "( +" + character.getCharacter_battle().getArmor() + " )\n\n"
             //(getTotalHp(character)).ToString() + "(" + character.getHp().ToString() + "+" + character.getCharacter_battle().getArmor().ToString() +  ")" + "\n" 
             + (getTotalAtk(character)).ToString() + "(" + character.getPhyAtk().ToString() + "/" + character.getCharacter_battle().getAtk().ToString() + ")" + "\n";
     }
@@ -3213,6 +3213,7 @@ public class BattleManager : MonoBehaviour
         }
     }
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
+    string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
     private void printRandomResult(int i, bool pointOn)
     {
         //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
@@ -3223,7 +3224,7 @@ public class BattleManager : MonoBehaviour
 
             resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
             resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
-            resultObj[i, 3].GetComponent<TextMeshPro>().text = typeArr[resultItem[i].getType()] + "\n\n" + resultItem[i].getContent();
+            resultObj[i, 3].GetComponent<TextMeshPro>().text = typeArr2[resultItem[i].getType()] + "\n\n" + resultItem[i].getContent();
     }
     public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f); }
 // printRandomResult(i, true);}
@@ -3233,6 +3234,10 @@ public class BattleManager : MonoBehaviour
 //printRandomResult(i, false); }
 
     bool bosang_click = false;
+
+    [SerializeField]
+    public GameObject infoBtn;
+
     private IEnumerator EndPhase_Coroutine()
     {
         battleBagBtn.GetComponent<CircleCollider2D>().enabled = true;
@@ -3248,10 +3253,15 @@ public class BattleManager : MonoBehaviour
             if (witchPowerWaitTurn[i] > 0) witchPowerWaitTurn[i]--;
         }
 
-
+        
         //아군 전멸
         if (result == 2 || giveUpChk)
         {
+            infoBtn.GetComponent<BoxCollider2D>().enabled = false;
+            if (characterInfoOpen) {
+                clickCharacterInfoBox();
+            }
+
             itemManager.Instance.endOfBattlePhase();
             //AdventureManager.Instance.loseGame();
             CameraManager.Instance.resultScreenActive(0);
@@ -3279,6 +3289,12 @@ public class BattleManager : MonoBehaviour
         //적군 전멸
         else if (result == 1)
         {
+            infoBtn.GetComponent<BoxCollider2D>().enabled = false;
+            if (characterInfoOpen)
+            {
+                clickCharacterInfoBox();
+            }
+
             if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
             if (AdventureManager.Instance.getTutorial() == 4) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
@@ -3825,7 +3841,7 @@ public class BattleManager : MonoBehaviour
  
     public void Start_Battle_Phase()
     {
-
+        infoBtn.GetComponent<BoxCollider2D>().enabled = true;
         //선택된 주사위 이미지 초기화
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         

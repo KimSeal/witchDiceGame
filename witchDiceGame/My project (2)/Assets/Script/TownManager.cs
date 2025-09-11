@@ -66,7 +66,7 @@ public class TownManager : MonoBehaviour
             if (!jsonDataManager.Instance.getLibraryMeet())
             {
                 jsonDataManager.Instance.libraryMeet();
-                TalkManager.Instance.startTalk(1);
+                //TalkManager.Instance.startTalk(1);
             }
             for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
