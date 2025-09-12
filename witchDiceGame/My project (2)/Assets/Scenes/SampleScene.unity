@@ -19023,7 +19023,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e90f5304a8480cd4d924dde27f22d376, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -27077,7 +27077,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e90f5304a8480cd4d924dde27f22d376, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -35486,7 +35486,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e84d3ef96ccd39f46bf365ec43783be7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -49791,6 +49791,16 @@ MonoBehaviour:
   diceFullUI: {fileID: 597290865}
   specialTextManager: {fileID: 754824313}
   curPhase: -1
+  skillDescBox_dice_0:
+  - {fileID: 846547287}
+  - {fileID: 2012054726}
+  - {fileID: 1744355365}
+  - {fileID: 251301567}
+  skillDescBox_dice_1:
+  - {fileID: 618918273}
+  - {fileID: 423413982}
+  - {fileID: 92859820}
+  - {fileID: 160738038}
   giveUpBtn: {fileID: 1345126367}
   battleBagBtn: {fileID: 386159704}
   infoBtn: {fileID: 792043743}
@@ -58797,7 +58807,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e90f5304a8480cd4d924dde27f22d376, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -72512,7 +72522,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e90f5304a8480cd4d924dde27f22d376, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -80443,6 +80453,16 @@ MonoBehaviour:
   diceFullUI: {fileID: 0}
   specialTextManager: {fileID: 0}
   curPhase: -1
+  skillDescBox_dice_0:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  skillDescBox_dice_1:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   giveUpBtn: {fileID: 0}
   battleBagBtn: {fileID: 0}
   infoBtn: {fileID: 0}
@@ -86605,7 +86625,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e84d3ef96ccd39f46bf365ec43783be7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -162036,7 +162056,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e84d3ef96ccd39f46bf365ec43783be7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -162553,7 +162573,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 17
+  m_fontStyle: 33
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -180893,7 +180913,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8fca5a49f2741a34a9c81379a1d35914, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e84d3ef96ccd39f46bf365ec43783be7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

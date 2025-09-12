@@ -162,7 +162,11 @@ public class BattleManager : MonoBehaviour
     GameObject[] skillDescBox_title = new GameObject[2];
     GameObject[] skillDescBox_info = new GameObject[2];
     GameObject[] skillDescBox_image = new GameObject[2];
-    GameObject[,] skillDescBox_dice = new GameObject[2, 4];
+    [SerializeField]
+    public GameObject[] skillDescBox_dice_0 = new GameObject[4];
+
+    [SerializeField]
+    public GameObject[] skillDescBox_dice_1 = new GameObject[4];
 
     GameObject equipDescBox;
     GameObject[] equipDescBox_title = new GameObject[2];
@@ -288,7 +292,9 @@ public class BattleManager : MonoBehaviour
                 skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
                 for (int diceIdx = 0; diceIdx < 4; diceIdx++)
                 {
-                    skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+                    if(skillIdx == 0) skillDescBox_dice_0[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+                    if (skillIdx == 1) skillDescBox_dice_1[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+
                 }
             }
             else {
@@ -298,7 +304,9 @@ public class BattleManager : MonoBehaviour
                 for (int diceIdx = 0; diceIdx < 4; diceIdx++)
                 {
                     //만난적 없더라도 스킬 대처는 할 수 있도록
-                    skillDescBox_dice[skillIdx, diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+                    if (skillIdx == 0) skillDescBox_dice_0[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+                    if (skillIdx == 1) skillDescBox_dice_1[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
+
                 }
             }
         }
@@ -3567,7 +3575,7 @@ public class BattleManager : MonoBehaviour
 
             for (int j=0;j<4;j++) {
                 faceDesc[i, j] = GameObject.Find("board_skillDesc_faceImage_" + (i * 4 + j).ToString());
-                skillDescBox_dice[i, j] = GameObject.Find("board_skill_needDice_"+i.ToString() +"_"+j.ToString());
+                //skillDescBox_dice[i, j] = GameObject.Find("board_skill_needDice_"+i.ToString() +"_"+j.ToString());
             }
         }
         for (int i=0;i<6;i++)
