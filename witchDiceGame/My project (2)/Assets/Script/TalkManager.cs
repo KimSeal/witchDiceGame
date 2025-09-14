@@ -39,7 +39,7 @@ public class TalkManager : MonoBehaviour
     private Material[] material = new Material[4];
     private int curIdx = 0;
     private int initIdx = -1;
-    private int curLight = 0;
+    //private int curLight = 0;
     private bool talkingChk = false;
 
     private List<int> listIdx = new List<int>();

@@ -821,7 +821,6 @@ public class AdventureManager : MonoBehaviour
             rerollBtn.SetActive(false);
             diceBtnFire.Stop();
 
-            Debug.Log("hello~");
             //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0,4) * -90)); //사용된 아이템에 대해 effect
             //SoundManager_Sfx.Instance.playSound(2);
             /*
@@ -1588,7 +1587,6 @@ public class AdventureManager : MonoBehaviour
             if (characterIdx != -1 && CharacterManager.Instance.getCharacterState(characterIdx) == 0)
             {
                 SoundManager_Sfx.Instance.playSound(0);
-                Debug.Log("charactger click Dice");
                 selectDiceCharacterIdx = characterIdx;
                 hoverOutCharacterDice(selectDiceCharacterIdx);
                 balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));

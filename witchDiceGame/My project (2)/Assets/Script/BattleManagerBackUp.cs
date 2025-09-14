@@ -948,7 +948,7 @@ public class BattleManagerBackUp : MonoBehaviour
 
                 Skill useSkill = myCharacter[characterIdx].skillUse(skillIdx);
                 int needDiceNum = useSkill.getNeedDiceNum();
-                int needDiceVal;
+
                 //가능한지 확인
                 if(MakeMyAttackSet(characterIdx, skillIdx, diceIdx))
                 {   //가능한 경우 주사위의 ui를 업데이트

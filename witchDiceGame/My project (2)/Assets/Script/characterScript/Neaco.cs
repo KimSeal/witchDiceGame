@@ -22,7 +22,6 @@ public class Neaco : Character
     public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
-        TakeSkillPacket takeSkillPacket;
         if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
         {
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 3, 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
@@ -144,13 +143,7 @@ public class Unu : Character
     public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
-        /*for (int i=sendSkillPacket.targetIdx[0]; i<sendSkillPacket.targetIdx[1] ; i++)
-        {
-            packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
-        }*/
-        TakeSkillPacket takeSkillPacket;
-        //if (this.destiny.getDestinyIdx() == 0)
-        //{
+
         if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
         {
             packets.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 10, 0, 1)); //10회복하고

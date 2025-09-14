@@ -42,7 +42,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject fireObject;
     //phase 흐름을 위한 시스템
-    private int battlePhaseState = 0;
+    //private int battlePhaseState = 0;
 
 
     // Start is called before the first frame update
@@ -102,7 +102,7 @@ public class BattleManager : MonoBehaviour
     public GameObject specialTextManager; 
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
-    private IEnumerator battleTimer = null;
+    //private IEnumerator battleTimer = null;
 
     private GameObject resultObj_all;
     private GameObject resultExitBtn;
@@ -110,7 +110,7 @@ public class BattleManager : MonoBehaviour
     private Item[] resultItem = new Item[3];
 
     //phase버튼 누를수 있는지
-    private bool clickAble = true;
+    //private bool clickAble = true;
     public int curPhase = -1;
     // -1 : 아직 시작안함
     // 0 : Stage-Start 페이즈
@@ -625,12 +625,7 @@ public class BattleManager : MonoBehaviour
         }
         for (int i=0;i<8;i++)
         {
-            if (enemySkillDiceNum[i] != -999)
-            {
-                
-                Debug.Log(i);
-                liveSkillList.Add(i); ;
-            }
+            if (enemySkillDiceNum[i] != -999) { liveSkillList.Add(i);}
         }
 
         for (int skillIdx0=liveSkillList.Count-1; skillIdx0>=0;skillIdx0--)
@@ -1738,7 +1733,6 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            Debug.Log("lets do this");
             int characterIdx = input / 10;
             int skillIdx = input % 10;
             for (int i = 0; i < 4; i++){
@@ -3357,8 +3351,6 @@ public class BattleManager : MonoBehaviour
                 {
                     resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
                 }
-
-                Debug.Log("you win!");
                 bosang_click = true;
                 yield return new WaitUntil(() => !bosang_click); 
                 while (!AdventureManager.Instance.exitBattleCanvas(true))
@@ -3849,6 +3841,16 @@ public class BattleManager : MonoBehaviour
  
     public void Start_Battle_Phase()
     {
+
+        if (AdventureManager.Instance.getTutorial() == 1 || AdventureManager.Instance.getTutorial() == 2)
+        {
+            backGroundObj[3].GetComponent<Animator>().Play("Empty");
+            backGroundObj[4].GetComponent<Animator>().Play("Empty");
+        }
+        else {
+            backGroundObj[3].GetComponent<Animator>().Play("GrinIdle");
+            backGroundObj[4].GetComponent<Animator>().Play("eyeIdle");
+        }
         infoBtn.GetComponent<BoxCollider2D>().enabled = true;
         //선택된 주사위 이미지 초기화
         chooseDiceObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
@@ -3974,7 +3976,6 @@ public class BattleManager : MonoBehaviour
         updateHp();
         InitSetOfEnemySkill();
         updateInfoUIFaceUpdate();
-        Debug.Log("StartPhase !");
         curPhase = 1;
         
     }

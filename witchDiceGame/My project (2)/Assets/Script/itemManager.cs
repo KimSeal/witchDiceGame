@@ -1052,18 +1052,14 @@ public class itemManager : MonoBehaviour
                 takeSkillPacket.mulVal(item.getVal(3)); returnVal = new passiveReturn(true, "X", item.getVal(3)); break;
             case 24:
                 takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
-                break;
             case 25:
                 takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
-                break;
             case 26:
                 takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
-                break;
             case 27:
                 sumDiceVal = 1;
                 for (int i = 0; i < 4; i++) if (diceArr[i] == 4) {sumDiceVal *= 2; } takeSkillPacket.mulVal(sumDiceVal);
                 returnVal = new passiveReturn(true, "X", sumDiceVal); break;
-                break;
             case 28:
                 takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;
             case 29:
@@ -1118,7 +1114,6 @@ public class itemManager : MonoBehaviour
             }
             return chkTrue;
         }
-        return false;
     }
 
     private bool conditionCheck_target_detail(TakeSkillPacket takeSkillPacket, Item item, int characterIdx) {

@@ -276,8 +276,8 @@ public abstract class Character
         if (takeSkillPacket.getSkillType() == 0 || takeSkillPacket.getSkillType() == 1000)
         {
             this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
-            Debug.Log("this damage is : " + takeSkillPacket.getVal());
-            Debug.Log("my remain Hp is : " + this.hp);
+            //Debug.Log("this damage is : " + takeSkillPacket.getVal());
+            //Debug.Log("my remain Hp is : " + this.hp);
 
             if (this.hp <= 0)
             {
