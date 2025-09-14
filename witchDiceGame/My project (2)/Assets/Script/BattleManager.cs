@@ -1010,44 +1010,43 @@ public class BattleManager : MonoBehaviour
 
     //phase관리를 위한 코루틴
     //(코루틴이 너무 중첩해서 생기는 거 방지를 위해 만들어둠)
-    private IEnumerator phase_Manage_Coroutine()
+    bool phaseMoveChk(int phaseIdx)
     {
-        Start_Battle_Phase();
-        itemManager.Instance.enterBattlePhase();
-        //curPhase = 2;
-        while (true)
-        {
-            yield return new WaitUntil(() => curPhase == 1 && currentLightUI == 0 && currentMoveUI == 0);
-            StartCoroutine(DiceThrowPhase_Coroutine());
-            yield return new WaitUntil(() => curPhase == 2 && currentLightUI == 0 && currentMoveUI == 0);
-            
-            if (AdventureManager.Instance.getTutorial() != 1 && AdventureManager.Instance.getTutorial() != 2 ) { StartCoroutine(witchPowerPhase_Coroutine()); } //첫 튜토리얼에서는 마녀능력을 사용하지 않는다. X
-            else curPhase = 3;
-            
-            yield return new WaitUntil(() => curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0);
-            
-            StartCoroutine(skillSelectPhase_Coroutine());
-            yield return new WaitUntil(() => curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0);
-            StartCoroutine(moveToBattlePhase_Coroutine());
-            yield return new WaitUntil(() => curPhase == 5 && currentLightUI == 0 && currentMoveUI == 0);
-            StartCoroutine(BattlePhase_Coroutine());
-            yield return new WaitUntil(() => curPhase == 6 && currentLightUI == 0 && currentMoveUI == 0);
-            StartCoroutine(EndPhase_Coroutine());
-            yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
-            if (curPhase != 1) break;
-        }
+        return (curPhase == phaseIdx && currentLightUI == 0 && currentMoveUI == 0);
     }
 
 
 
+    private IEnumerator startPhaseManage()
+    {
+        startBattlePhase();
+        itemManager.Instance.enterBattlePhase();
+        do {
+            yield return new WaitUntil(() => phaseMoveChk(1));
+            StartCoroutine(diceThrowPhase());
+            yield return new WaitUntil(() => phaseMoveChk(2));
+            StartCoroutine(witchPowerPhase()); 
+            yield return new WaitUntil(() => phaseMoveChk(3));
+            StartCoroutine(skillSelectPhase());
+            yield return new WaitUntil(() => phaseMoveChk(4));
+            StartCoroutine(readyBattlePhase());
+            yield return new WaitUntil(() => phaseMoveChk(5));
+            StartCoroutine(battlePhase());
+            yield return new WaitUntil(() => phaseMoveChk(6));
+            StartCoroutine(endPhase());
+
+            yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
+            //페이즈가 1로 돌아가지 않았다면(승패 결정) 전투 종료로 반복문 탈출.
+        } while (curPhase == 1);
+    }
+
     //DiceThrow Phase  Start (phase 1- dice throw start)//
-    private IEnumerator DiceThrowPhase_Coroutine()
+    private IEnumerator diceThrowPhase()
     {
 
         witchPowerObj[0].GetComponent<hoverRotate>().expandEnd();
         witchPowerObj[1].GetComponent<hoverRotate>().expandEnd();
         witchPowerObj[2].GetComponent<hoverRotate>().expandEnd();
-
 
         for (int i = 0; i < 4; i++)
         { //처음에는 건들여도 별 변화 없도록
@@ -1099,8 +1098,6 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 1)
         {
-            
-
             if (AdventureManager.Instance.getTutorial() == 1) {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
                 TalkManager.Instance.startTalk(5);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1191,28 +1188,32 @@ public class BattleManager : MonoBehaviour
     private int witchPowerClickState = -1; //현재 마녀 능력 사용에 필요한 dice 수를 담는다 
 
     //witch Power 선택 시작!
-    private IEnumerator witchPowerPhase_Coroutine()
+    private IEnumerator witchPowerPhase()
     {
-        Material material = witchPowerObj[0].GetComponent<SpriteRenderer>().material;
-        float curAlpha = material.GetFloat("_Transparency");
-        material.SetFloat("_Transparency", 0.0f);
-
-        witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
-        
-        StartCoroutine(makeBright(backGroundObj[1], 0.0f));
-        StartCoroutine(createWitchPowerUI());
-        StartCoroutine(MoveUI(backGroundObj[1], -108.0f));
-        if (AdventureManager.Instance.getTutorial() == 3) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+        //첫 튜토리얼에서는 마녀의 능력을 사용하지 않는다. X
+        if (AdventureManager.Instance.getTutorial() == 1 || AdventureManager.Instance.getTutorial() == 2){ curPhase = 3; }
+        else
         {
-            TalkManager.Instance.startTalk(8);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-        }
+            Material material = witchPowerObj[0].GetComponent<SpriteRenderer>().material;
+            float curAlpha = material.GetFloat("_Transparency");
+            material.SetFloat("_Transparency", 0.0f);
 
-        yield return new WaitUntil(() => currentLightUI == 0 && currentMoveUI == 0);
-        witchPowerState = 0;
-        witchPowerMoveState = 0;
-        witchPowerClickState = -1;
-        
+            witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
+
+            StartCoroutine(makeBright(backGroundObj[1], 0.0f));
+            StartCoroutine(createWitchPowerUI());
+            StartCoroutine(MoveUI(backGroundObj[1], -108.0f));
+            if (AdventureManager.Instance.getTutorial() == 3) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            {
+                TalkManager.Instance.startTalk(8);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+
+            yield return new WaitUntil(() => currentLightUI == 0 && currentMoveUI == 0);
+            witchPowerState = 0;
+            witchPowerMoveState = 0;
+            witchPowerClickState = -1;
+        }
     }
 
     public int getWitchPower(int idx)
@@ -1673,7 +1674,7 @@ public class BattleManager : MonoBehaviour
 
     private int curClickSkill = -1; //마지막으로 클릭한 스킬 정보를 저장한다. 저장형식은 characterIdx * 10 + skillIdx의 형태를 띈다. 선택된게 없으면 -1을 갖는다.
 
-    private IEnumerator skillSelectPhase_Coroutine()
+    private IEnumerator skillSelectPhase()
     {
         curClickSkill = -1;
         for(int i=0;i<8;i++) StartCoroutine(makeBright(skillSelectUI[i], 0.0f));
@@ -2024,7 +2025,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private IEnumerator moveToBattlePhase_Coroutine()
+    private IEnumerator readyBattlePhase()
     {
         if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
@@ -2784,7 +2785,7 @@ public class BattleManager : MonoBehaviour
         }
     }
     
-    private IEnumerator BattlePhase_Coroutine()
+    private IEnumerator battlePhase()
     {
         
         clickDice_battlePhase = -999;
@@ -2864,23 +2865,19 @@ public class BattleManager : MonoBehaviour
                         characterTargetIdx = -999;
 
                         //스킬에 대한 공격용 Packet 생성
-                        //makeMyDice_BattlePhase(nextDice, curSkill.getNeedDiceNum() );
                         sendSkillPacketTemp.addClickCharacter(clickCharacter);
-                        //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
                         takeSkillPacketLastFix(takeSkillPacketArr);
-
-
+                        //패시브 아이템들이 적용되는 연출 출력
                         StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false));
                         yield return new WaitUntil(() => !passiveItemChk);
- 
                         passiveUpdateAfterClick(takeSkillPacketArr, usedDiceArr, true);
  
                         int tempTargetIdx;
+                        //만들어진 상호작용 Queue를 기반으로 전투 진행
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
-
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
@@ -2888,14 +2885,7 @@ public class BattleManager : MonoBehaviour
                                 {
                                     
                                     if(makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    /*if ( == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 1) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamHeal(, );
-                                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 2) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamAtkUp(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    */
-
-                                    //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0,45,0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                    if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) 
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
@@ -2917,8 +2907,6 @@ public class BattleManager : MonoBehaviour
                                         }
                                     }
                                 }
-                                
-                                
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
@@ -2966,7 +2954,7 @@ public class BattleManager : MonoBehaviour
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
 
-                        if (winningCheck() != 0) //공격할 적이 더이상 없는 경우
+                        if (winningCheck() != 0) //게임이 승리하여 공격할 적이 더이상 없는 경우
                         {
                             battleTextObj.GetComponent<TextMeshPro>().text = "";
                             break;
@@ -3240,7 +3228,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     public GameObject infoBtn;
 
-    private IEnumerator EndPhase_Coroutine()
+    private IEnumerator endPhase()
     {
         battleBagBtn.GetComponent<CircleCollider2D>().enabled = true;
         itemManager.Instance.flipItemBox_BattleUI(); //켜진 item box 끄기
@@ -3750,7 +3738,7 @@ public class BattleManager : MonoBehaviour
             enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }
         adventureStartChk = true;
-        StartCoroutine(phase_Manage_Coroutine());
+        StartCoroutine(startPhaseManage());
     }
 
     private IEnumerator makeDark(GameObject gameobj, float alphaVal)
@@ -3839,7 +3827,7 @@ public class BattleManager : MonoBehaviour
         }
     }
  
-    public void Start_Battle_Phase()
+    public void startBattlePhase()
     {
 
         if (AdventureManager.Instance.getTutorial() == 1 || AdventureManager.Instance.getTutorial() == 2)
