@@ -34,11 +34,9 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     private GameObject diceRollEff;
 
-    private GameObject[] descObj = new GameObject[4];
-    private GameObject balpanLoad;
-    private GameObject balpanScreen;
-    private GameObject balpanArrow;
-    private GameObject[] balpanObj = new GameObject[7];
+    [SerializeField] private GameObject[] descObj = new GameObject[4]; // obj_ui_adventure_item_Desc_ board/logo/name/desc
+    [SerializeField] private GameObject balpanLoad,balpanScreen, balpanArrow; // obj_adventure_diceBoard_load, obj_adventure_diceBoard, obj_balpan_arrow
+    [SerializeField] private GameObject[] balpanObj = new GameObject[7]; //obj_balpan_(number)
 
     private int stageNum = 0; //몇번째 스테이지인지 받는다.
     private int stageIdx = 0; //이번 스테이지에서 몇번째 맵인지(1-1 1-2의 개념) 
@@ -51,15 +49,14 @@ public class AdventureManager : MonoBehaviour
     //전투 : 0  주사위 굴리기 이벤트 : 1 
 
 
-    private GameObject stageInfo; //현재 스테이지의 level과 스테이지 정보를 담는 text
-    private GameObject selectInfo;
-    private GameObject eventInfo;
-    private GameObject selectImage;
+    [SerializeField]private GameObject stageInfo; //현재 스테이지의 level과 스테이지 정보를 담는 text
+    [SerializeField] private GameObject selectInfo; // adventure_selectInfo
+    [SerializeField] private GameObject selectImage; //adventure_selectDice
     private GameObject[] textObject = new GameObject[2]; // 주사위 굴렸을때 결과를 처리하기 위해 사용한다. 
-    private GameObject[] diceObject = new GameObject[4];
+    [SerializeField] private GameObject[] diceObject = new GameObject[4]; //adventure_dice_(number)
 
-    private GameObject resultObj;
-    private GameObject[] resultObjArr = new GameObject[4];
+    [SerializeField] private GameObject resultObj; //obj_adventureResuilt
+    [SerializeField] private GameObject[] resultObjArr = new GameObject[4]; //obj_adventureResult_Item_(number)
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
     
@@ -68,15 +65,13 @@ public class AdventureManager : MonoBehaviour
     public List<AdventureEventReader> adventureEventReaderList = new List<AdventureEventReader>(); // 
     public List<AdventureEventPacketReader> adventureEventPacketReaderList = new List<AdventureEventPacketReader>(); // 
 
-    GameObject mainCamera;
+    [SerializeField] GameObject mainCamera; //Main Camera
 
     private adventureEvent curDiceEvent;
     private adventureEvent_Packet curDiceEventPacket;
 
-    private GameObject adventureBackground;
-    private GameObject adventureNPC;
-    private GameObject adventureBackBoard;
-    private GameObject[] watchNumObject = new GameObject[6];
+    [SerializeField] private GameObject adventureBackground, adventureNPC, adventureBackBoard; //ui_adventure Back_0/ NPC_0 / backBoard
+    [SerializeField] private GameObject[] watchNumObject = new GameObject[6]; //obj_adventureBtn_selectBtn_(number)
 
     bool curCanvasIsAdventure = true;
     bool battleEventTrigger = false;
@@ -85,11 +80,11 @@ public class AdventureManager : MonoBehaviour
 
     //어드벤쳐 캐릭터 버튼 선택용
     private int selectDiceCharacterIdx = -1; //지금은 가장 앞에 있는 놈으로 해놨는데 추후 수정가능하게 만들기
-    private GameObject nextBtnObj;
-    private GameObject standObj;
+    [SerializeField] private GameObject nextBtnObj, standObj; //adventure_nextBtn_0, ui_backImage_0
 
+    [SerializeField] private GameObject diceBtnFireInit; // adventure_nextBtn_0_fire
     private ParticleSystem diceBtnFire;
-    private GameObject lifeObj, lifeObj_back;
+    [SerializeField] private GameObject lifeObj, lifeObj_back; //obj_life, obj_life_back
 
     private bool eventEndClick = false; //이벤트를 넘어갈 수 있는 경우, true가 된다.
 
@@ -99,15 +94,13 @@ public class AdventureManager : MonoBehaviour
     private int adventureMoney = 0;
     private TextMeshPro moneyText;
     private int[,] storeItemArr = new int[4, 3]; //4개의 아이템이 배치, 각각 type, index(아이템 고유번호), 가격이 저장될 예정 
-    private GameObject storeEntityObj;
-    private GameObject storeImageObj;
-    private TextMeshPro storePriceObj;
 
-    private GameObject storeCheckEntityObj;
+    [SerializeField] private GameObject storeEntityObj, storeImageObj, moneyTextInit; //obj_adventureStore, obj_adventureStore_Item_image, obj_adventure_money
+    [SerializeField] private GameObject storePriceObjInit, storeCheckImageObjInit, storeCheckPriceObjInit; //obj_ui_adventureStore _item_price  _buy_ sprite/text
+    private TextMeshPro storePriceObj;
     private SpriteRenderer storeCheckImageObj;
     private TextMeshPro storeCheckPriceObj;
-    private GameObject storeCheckButtonYes;
-    private GameObject storeCheckButtonNo;
+    [SerializeField] private GameObject storeCheckEntityObj, storeCheckButtonYes, storeCheckButtonNo; // spr_ui_adventureStore_ yes/no Btn
 
     private int storeIdx = 0;
 
@@ -391,51 +384,24 @@ public class AdventureManager : MonoBehaviour
         lastCharacter[2] = -99999;
         lastCharacter[3] = -99999;
 
-        lifeObj = GameObject.Find("obj_life");
-        lifeObj_back = GameObject.Find("obj_life_back");
-
         lifeObj.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 0f);
         lifeObj_back.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 0f);
 
         lifeObj.SetActive(false);
-
-        descObj[0] = GameObject.Find("obj_ui_adventure_item_Desc_board");
-        descObj[1] = GameObject.Find("obj_ui_adventure_item_Desc_logo");
-        descObj[2] = GameObject.Find("obj_ui_adventure_item_Desc_name");
-        descObj[3] = GameObject.Find("obj_ui_adventure_item_Desc_desc");
         descObj[0].SetActive(false);
 
-        diceBtnFire = GameObject.Find("adventure_nextBtn_0_fire").GetComponent<ParticleSystem>();
+        diceBtnFire = diceBtnFireInit.GetComponent<ParticleSystem>();
         diceBtnFire.Stop();
-        for (int i = 0; i < 4; i++)
-        {
-            diceObject[i] = GameObject.Find("adventure_dice_" + i.ToString());
-        }
-        mainCamera = GameObject.Find("Main Camera");
-        selectInfo = GameObject.Find("adventure_selectInfo");
-        eventInfo = GameObject.Find("adventure_eventInfo");
-        selectImage = GameObject.Find("adventure_selectDice");
 
-        adventureBackground = GameObject.Find("ui_adventureBack_0");
-        adventureNPC = GameObject.Find("ui_adventureNPC_0");
-        adventureBackBoard = GameObject.Find("ui_adventureBack_backBoard");
-
-        nextBtnObj = GameObject.Find("adventure_nextBtn_0");
-        standObj = GameObject.Find("ui_backImage_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
 
-        resultObj = GameObject.Find("obj_adventureResult");
         for (int i = 0; i < 4; i++)
         {
-            resultObjArr[i] = GameObject.Find("obj_adventureResult_Item_" + i.ToString());
             resetItemResult();
         }
         resultObj.SetActive(false);
-
-
         stageNum = 1;
         stageIdx = 1;
-        stageInfo = GameObject.Find("adventure_stageInfo");
         //stageInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx;
         //selectInfo.GetComponent<TextMeshPro>().text = "Stage : " + stageNum + "  Level : " + stageIdx;
 
@@ -465,29 +431,14 @@ public class AdventureManager : MonoBehaviour
             adventureEventList[adventureEventReaderList[eventIdx].stageIdx].Add(new adventureEvent(adventureEventReaderList[eventIdx], tempList)); //packet과 event 내용을 받은 event 리스트 생성
         }
 
-        for (int i = 0; i < 6; i++)
-        {
-            watchNumObject[i] = GameObject.Find("obj_adventureBtn_selectBtn_" + (i + 1).ToString());
-        }
-
-        balpanLoad = GameObject.Find("obj_Adventure_diceBoard_load");
-        balpanScreen = GameObject.Find("obj_Adventure_diceBoard");//"obj_balpan");
-        balpanArrow = GameObject.Find("obj_balpan_arrow");
-        for (int i=0;i<7;i++){  //발판 오브젝트 담기
-            balpanObj[i] = GameObject.Find("obj_balpan_" + i.ToString()); 
-        }
 
         //상점 관련
-        moneyText = GameObject.Find("obj_adventure_money").GetComponent<TextMeshPro>();
-        storeEntityObj = GameObject.Find("obj_adventureStore");
-        storeImageObj = GameObject.Find("obj_adventureStore_Item_image");
-        storePriceObj = GameObject.Find("obj_adventureStore_Item_price").GetComponent<TextMeshPro>();
+        moneyText = moneyTextInit.GetComponent<TextMeshPro>();
+        storePriceObj = storePriceObjInit.GetComponent<TextMeshPro>();
+
         storeEntityObj.SetActive(false);
-        storeCheckEntityObj = GameObject.Find("obj_ui_adventureStore_buy");
-        storeCheckImageObj = GameObject.Find("obj_ui_adventureStore_buy_sprite").GetComponent<SpriteRenderer>();
-        storeCheckPriceObj = GameObject.Find("obj_ui_adventureStore_buy_text").GetComponent<TextMeshPro>();
-        storeCheckButtonYes = GameObject.Find("spr_ui_adventureStore_yesBtn");
-        storeCheckButtonNo = GameObject.Find("spr_ui_adventureStore_noBtn");
+        storeCheckImageObj = storeCheckImageObjInit.GetComponent<SpriteRenderer>();
+        storeCheckPriceObj = storeCheckPriceObjInit.GetComponent<TextMeshPro>();
         storeCheckEntityObj.SetActive(false);
     }
 

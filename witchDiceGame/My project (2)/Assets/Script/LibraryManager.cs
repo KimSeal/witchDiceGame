@@ -7,20 +7,20 @@ public class LibraryManager : MonoBehaviour
 {
     private static LibraryManager instance = null;
     private int[] curWitchPower = new int[3];
-    private GameObject[] BtnArr = new GameObject[13];
+    [SerializeField] private GameObject[] BtnArr = new GameObject[13];//obj_library_btn_(number)
     private Sprite[] spriteArr = new Sprite[12];
 
-    private GameObject curPowerDesc;
-    private GameObject curPowerDescInfo;
-    private GameObject[] curPowerArr = new GameObject[2];
+    [SerializeField] private GameObject curPowerDesc; //obj_library_witchPower_curSelect
+    [SerializeField] private GameObject curPowerDescInfo; //obj_library_desc
+    [SerializeField] private GameObject[] curPowerArr = new GameObject[2]; //obj_library_witchPower_Select_(number)
 
     private List<WitchPowerReader> witchPowerInfoList = new List<WitchPowerReader>();
 
-    private GameObject[] buyUI = new GameObject[3]; //순서대로 전체, 스프라이트, text를 받을 예정
+    [SerializeField] private GameObject[] buyUI = new GameObject[3]; //순서대로 전체, 스프라이트, text를 받을 예정 obj_ui_library_buy_  /sprite/text
 
     private int savePreScreen = 0;
     //어디서 왓는지 확인. 0 : 마을 지도창  1: 모험 시작 창
-
+    [SerializeField] private GameObject[] buyButton = new GameObject[2]; //spr_ui_library_yes/no Btn
     [SerializeField]
     public GameObject Owl;
 
@@ -71,7 +71,7 @@ public class LibraryManager : MonoBehaviour
 
     private int buyPowerVal = 0;
 
-    private GameObject[] buyButton = new GameObject[2];
+    
 
     public void buyPower()
     {
@@ -222,25 +222,7 @@ public class LibraryManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-
-        curPowerDescInfo = GameObject.Find("obj_library_desc");
-        for (int i = 1; i < BtnArr.Length; i++) {
-            BtnArr[i] = GameObject.Find("obj_library_btn_" + i.ToString());
-        }
-
-        curPowerDesc = GameObject.Find("obj_library_witchPower_curSelect");
-        for (int i = 0; i < 2; i++) {
-            curPowerArr[i] = GameObject.Find("obj_library_witchPower_Select_" + i.ToString());
-        }
         witchPowerInfoList = CSVReader.Read<WitchPowerReader>("witchPower");
-
-        buyButton[0] = GameObject.Find("spr_ui_library_yesBtn");
-        buyButton[1] = GameObject.Find("spr_ui_library_noBtn");
-
-        buyUI[0] = GameObject.Find("obj_ui_library_buy");
-        buyUI[1] = GameObject.Find("obj_ui_library_buy_sprite");
-        buyUI[2] = GameObject.Find("obj_ui_library_buy_text");
     }
 
     // Update is called once per frame

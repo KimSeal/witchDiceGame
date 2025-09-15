@@ -33,7 +33,7 @@ public class TownManager : MonoBehaviour
         }
     }
 
-    GameObject clickAndImageChange;
+    [SerializeField]GameObject clickAndImageChange;
 
     private void shakeTownText(int idx)
     {
@@ -115,7 +115,6 @@ public class TownManager : MonoBehaviour
         //Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);
-        clickAndImageChange = transform.Find("spr_town_home_click").gameObject;
     }
 
     // Update is called once per frame

@@ -74,22 +74,28 @@ public class itemManager : MonoBehaviour
     private Item[,] ItemArr = new Item[5,11];
     private bool[,] ItemExistArr = new bool[5, 11];
 
-    private GameObject[] characterBoardState = new GameObject[5]; //캐릭터 보드의 선택버튼에 대한 object
+    [SerializeField] private GameObject[] characterBoardState = new GameObject[5]; //캐릭터 보드의 선택버튼에 대한 object
     private GameObject[] itemBoardState = new GameObject[5]; //item 보드 선택버튼에 대한 object
 
-    private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
+    [SerializeField] private GameObject[] CharacterUIArr = new GameObject[4]; //상단부 캐릭터 선택에 대한 오브젝트 모음
+    [SerializeField] private GameObject[] CharacterStandArrInit = new GameObject[4];// 중단부 캐릭터 스탠딩 애니메이션 오브젝트 모음
     private Animator[] CharacterStandArr = new Animator[4];// 중단부 캐릭터 스탠딩 애니메이션 오브젝트 모음
-    private GameObject[] inventoryUIArr = new GameObject[11]; // 하단부 인벤토리에 대한 오브젝트 모음
-    private GameObject inventoryUI; //하단부 인벤토리 전체에 대한 오브젝트
+    [SerializeField]private GameObject[] inventoryUIArr = new GameObject[11]; // 하단부 인벤토리에 대한 오브젝트 모음, obj_inventory_(number)
+    [SerializeField] private GameObject inventoryUI; //하단부 인벤토리 전체에 대한 오브젝트
 
-    private GameObject[] infoBoardObj = new GameObject[5]; //이미지, 제목, 서브 설명, hp수치, mp 수치
-    private GameObject[] diceBoardObj = new GameObject[7]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object
+    [SerializeField] private GameObject[] infoBoardObj = new GameObject[5]; //이미지, 제목, 서브 설명, hp수치, mp 수치
+    [SerializeField] private GameObject[] diceBoardObj = new GameObject[7]; //주사위 각 면에 대한 이미지 처리를 위해 사용될 object itemUI_board_diceBoard_diceBtn_(number)
+    [SerializeField] private GameObject[] skillBoardObjInit = new GameObject[14];
     private GameObject[,] skillBoardObj = new GameObject[2,7]; //스킬에 대한 이미지 처리를 위해 사용될 object 뒤줄은 메인이미지,제목,설명,필요주사위4개 순으로 index를 갖는다.
-    private GameObject[] equipBoardObj = new GameObject[6]; //취득 아이템에 대한 이미지 처리를 위해 사용될 object
+    [SerializeField] private GameObject[] equipBoardObj = new GameObject[6]; //취득 아이템에 대한 이미지 처리를 위해 사용될 object
 
-    private GameObject bagBtnObj;
+    [SerializeField]private GameObject bagBtnObj; //item_btn
 
-    private GameObject [] descObj = new GameObject[4];
+    [SerializeField] private GameObject mainCamera;
+    [SerializeField] private GameObject[] itemBoxInitPointInit = new GameObject[12]; //obj_inventory_box_(number)
+    private Vector3[] itemBoxInitPoint = new Vector3[12];
+
+    [SerializeField] private GameObject [] descObj = new GameObject[4]; //obj_ui_item_Desc_ board/logo/name/desc
 
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
@@ -246,8 +252,8 @@ public class itemManager : MonoBehaviour
         Character playerB = CharacterManager.Instance.getCharacter(dragCharacterEndNum);
         CharacterManager.Instance.setCharacter(dragCharacterStartNum, playerB);
         CharacterManager.Instance.setCharacter(dragCharacterEndNum, playerA);
-            AdventureManager.Instance.resetDice();
-            dragCharacterStartNum = -1;
+        AdventureManager.Instance.resetDice();
+        dragCharacterStartNum = -1;
         dragCharacterEndNum = -1;
         updateCharacterUIBtn();
         setUpAnimator();
@@ -767,7 +773,7 @@ public class itemManager : MonoBehaviour
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
             {
                 characterSelectIdx = i;
-                click_characterInfoType_selectButton(i);
+                click_characterInfoType_selectButton(curSelectCharacterInfoType);
                 changeAlpha(CharacterUIArr[i], 0.0f);
                 break;
             }
@@ -808,88 +814,45 @@ public class itemManager : MonoBehaviour
 
     }
 
-    GameObject mainCamera;
-    private Vector3[] itemBoxInitPoint = new Vector3[12];
+    
     // Start is called before the first frame update
     void Start()
     {
-        mainCamera = GameObject.Find("Main Camera");
         curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
         curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
         curSelectCharacterInfoType = 0;
 
-        for (int i=0;i<5;i++)
+        for (int i = 0; i < 5; i++)
         {
             itemList[i] = new List<Item>();
         }
 
         itemReaderList = CSVReader.Read<ItemReader>("Item");    //csv 읽고 해당 Item을 타입에 맞춰 넣는 모습
-        for (int i=0;i<itemReaderList.Count;i++)
+        for (int i = 0; i < itemReaderList.Count; i++)
         {
             itemList[itemReaderList[i].type].Add(new Item(itemReaderList[i]));
         }
 
-        characterBoardState[0] = GameObject.Find("itemUI_board_infoBoard");
-        characterBoardState[1] = GameObject.Find("itemUI_board_diceBoard");
-        characterBoardState[2] = GameObject.Find("itemUI_board_skillBoard");
-        characterBoardState[3] = GameObject.Find("itemUI_board_itemBoard");
-        characterBoardState[4] = GameObject.Find("itemUI_board_exitBoard");
 
-        //battle phase시 아이템 선택 제거
-        bagBtnObj = GameObject.Find("item_btn");
 
-        //캐릭터 정보 칸을 위한 object 받기
-        infoBoardObj[0] = GameObject.Find("board_info_characterImage");
-        infoBoardObj[1] = GameObject.Find("board_info_characterName");
-        infoBoardObj[2] = GameObject.Find("board_info_subExp");
-        infoBoardObj[3] = GameObject.Find("board_info_HPVal");
-        infoBoardObj[4] = GameObject.Find("board_info_MPVal");
+        for (int i = 0; i < 4; i++) {
+            CharacterStandArr[i] = CharacterStandArrInit[i].GetComponent<Animator>();
+            CharacterStandArr[i].Play("Idle");
+        }
 
-        CharacterUIArr[0] = GameObject.Find("obj_itemUI_characterBtn_0");
-        CharacterUIArr[1] = GameObject.Find("obj_itemUI_characterBtn_1");
-        CharacterUIArr[2] = GameObject.Find("obj_itemUI_characterBtn_2");
-        CharacterUIArr[3] = GameObject.Find("obj_itemUI_characterBtn_3");
-
-        CharacterStandArr[0] = GameObject.Find("obj_itemUI_character_0").GetComponent<Animator>();
-        CharacterStandArr[1] = GameObject.Find("obj_itemUI_character_1").GetComponent<Animator>();
-        CharacterStandArr[2] = GameObject.Find("obj_itemUI_character_2").GetComponent<Animator>();
-        CharacterStandArr[3] = GameObject.Find("obj_itemUI_character_3").GetComponent<Animator>();
-
-        CharacterStandArr[0].Play("Idle");
-        CharacterStandArr[1].Play("Idle");
-        CharacterStandArr[2].Play("Idle");
-        CharacterStandArr[3].Play("Idle");
-
-        inventoryUI = GameObject.Find("obj_inventory");
         for (int i = 0; i < 11; i++)
         {
             for(int j=0;j<5;j++) ItemExistArr[j, i] = false; //아이템 없다는 것을 초기화를 통해 배정
-            inventoryUIArr[i] = GameObject.Find("obj_inventory_" + i.ToString()); //inventory 오브젝트 설정
-
-            itemBoxInitPoint[i] = GameObject.Find("obj_inventory_box_" + i.ToString()).transform.position;
-
+            itemBoxInitPoint[i] = itemBoxInitPointInit[i].transform.position;
         }
-        itemBoxInitPoint[11] = GameObject.Find("obj_inventory_box_11").transform.position;
-        for (int i = 0; i < 6; i++)
-        {
-            diceBoardObj[i] = GameObject.Find("itemUI_board_diceBoard_diceBtn_" + i.ToString()); //inventory 오브젝트 설정
-        }
-        diceBoardObj[6] = GameObject.Find("itemUI_board_diceInfo");
 
+        itemBoxInitPoint[11] = itemBoxInitPointInit[11].transform.position;
+    
 
-
-        for (int i=0;i<2;i++)
-        {
-            skillBoardObj[i,0] = GameObject.Find("board_skill_skillImage_" + i.ToString());
-            skillBoardObj[i,1] = GameObject.Find("board_skill_skillTitle_" + i.ToString());
-            skillBoardObj[i,2] = GameObject.Find("board_skill_skillInfo_" + i.ToString());
-            for (int j=0;j<4;j++) {
-                skillBoardObj[i, j+3] = GameObject.Find("board_skill_needDice_" + i.ToString() + "_" + j.ToString());
+        for (int i=0;i<2;i++){
+            for (int j=0;j<7;j++) {
+                skillBoardObj[i, j] = skillBoardObjInit[i * 7 + j];
             }
-            
-            equipBoardObj[0 + i * 3] = GameObject.Find("board_equip_equipImage_" + i.ToString());
-            equipBoardObj[1 + i * 3] = GameObject.Find("board_equip_equipTitle_" + i.ToString());
-            equipBoardObj[2 + i * 3] = GameObject.Find("board_equip_equipInfo_" + i.ToString());
         }
 
         for (int i = 1; i < 5; i++)
@@ -899,10 +862,6 @@ public class itemManager : MonoBehaviour
 
         setUpAnimator();
         
-        descObj[0] = GameObject.Find("obj_ui_item_Desc_board");
-        descObj[1] = GameObject.Find("obj_ui_item_Desc_logo");
-        descObj[2] = GameObject.Find("obj_ui_item_Desc_name");
-        descObj[3] = GameObject.Find("obj_ui_item_Desc_desc");
         descObj[0].SetActive(false);
         /*
         for (int i = 0; i < 10; i++)

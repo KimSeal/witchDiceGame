@@ -12583,7 +12583,7 @@ GameObject:
   - component: {fileID: 79938286}
   - component: {fileID: 79938289}
   m_Layer: 0
-  m_Name: obj_enemyCharacterHp_0 (3)
+  m_Name: obj_lobbyName_library
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18961,7 +18961,7 @@ GameObject:
   - component: {fileID: 92859821}
   - component: {fileID: 92859822}
   m_Layer: 0
-  m_Name: board_skill_needDice_1_2
+  m_Name: board_skillDesc_needDice_1_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20244,6 +20244,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a19c5f35f44eb9c42a7e93f0b660665e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BtnArr:
+  - {fileID: 206135796}
+  - {fileID: 206135796}
+  - {fileID: 1159672903}
+  - {fileID: 1808441809}
+  - {fileID: 1738248006}
+  - {fileID: 1504427773}
+  - {fileID: 1555101462}
+  - {fileID: 1705735338}
+  - {fileID: 1530647713}
+  - {fileID: 1088913092}
+  - {fileID: 348474729}
+  - {fileID: 1206621580}
+  - {fileID: 1660097574}
+  curPowerDesc: {fileID: 1776964331}
+  curPowerDescInfo: {fileID: 909369321}
+  curPowerArr:
+  - {fileID: 1069457941}
+  - {fileID: 1433319365}
+  buyUI:
+  - {fileID: 1346803079}
+  - {fileID: 138232758}
+  - {fileID: 1366273319}
+  buyButton:
+  - {fileID: 438679059}
+  - {fileID: 1681695383}
   Owl: {fileID: 1175814533}
 --- !u!1 &127221257
 GameObject:
@@ -26973,6 +26999,7 @@ MonoBehaviour:
   - {fileID: 879895007}
   - {fileID: 79938284}
   - {fileID: 1801252850}
+  clickAndImageChange: {fileID: 903614740}
 --- !u!4 &158560131
 Transform:
   m_ObjectHideFlags: 0
@@ -27015,7 +27042,7 @@ GameObject:
   - component: {fileID: 160738039}
   - component: {fileID: 160738040}
   m_Layer: 0
-  m_Name: board_skill_needDice_1_3
+  m_Name: board_skillDesc_needDice_1_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34830,7 +34857,7 @@ GameObject:
   - component: {fileID: 222361903}
   - component: {fileID: 222361902}
   m_Layer: 0
-  m_Name: obj_life_back (1)
+  m_Name: obj_library_moneyBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35424,7 +35451,7 @@ GameObject:
   - component: {fileID: 251301568}
   - component: {fileID: 251301569}
   m_Layer: 0
-  m_Name: board_skill_needDice_0_3
+  m_Name: board_skillDesc_needDice_0_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49769,6 +49796,24 @@ MonoBehaviour:
   clickState: 0
   clickMonster: -1
   clickSelf: -1
+  fireObject: {fileID: 206178260}
+  battleFireObject:
+  - {fileID: 1686881991}
+  - {fileID: 1563584497}
+  - {fileID: 2100817812}
+  - {fileID: 451814002}
+  - {fileID: 374733498}
+  - {fileID: 360098401}
+  - {fileID: 653797579}
+  - {fileID: 1276642815}
+  - {fileID: 964627852}
+  - {fileID: 154773732}
+  - {fileID: 1850474460}
+  - {fileID: 349281333}
+  - {fileID: 31695225}
+  - {fileID: 884122795}
+  - {fileID: 40833522}
+  - {fileID: 930368106}
   myDiceUI:
   - {fileID: 836776345}
   - {fileID: 1963772629}
@@ -49780,17 +49825,155 @@ MonoBehaviour:
   - {fileID: 2063355535}
   - {fileID: 2104171801}
   diceUIChk:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1965385151}
+  - {fileID: 480393586}
+  - {fileID: 1864722700}
+  - {fileID: 1748038064}
+  - {fileID: 1243097620}
+  - {fileID: 2046346136}
+  - {fileID: 1337580906}
+  - {fileID: 1360924285}
+  diceUIChain:
+  - {fileID: 1658937848}
+  - {fileID: 1056551347}
+  - {fileID: 1550544701}
+  - {fileID: 760991113}
+  - {fileID: 1010267383}
+  - {fileID: 1138366729}
+  myDiceStateUI:
+  - {fileID: 1996109350}
+  - {fileID: 630556582}
+  - {fileID: 335560639}
+  - {fileID: 1889733904}
+  enemyDiceStateUI:
+  - {fileID: 2041921835}
+  - {fileID: 873510551}
+  - {fileID: 798587840}
+  - {fileID: 1740493905}
+  characterUI: {fileID: 429960991}
   diceFullUI: {fileID: 597290865}
+  diceArrowSet:
+  - {fileID: 91784123}
+  - {fileID: 1305992403}
+  - {fileID: 304732533}
+  - {fileID: 940005887}
+  - {fileID: 1023933978}
+  - {fileID: 1576946140}
+  - {fileID: 537879800}
+  - {fileID: 1648408788}
+  myCharacterObjUI:
+  - {fileID: 69328723}
+  - {fileID: 153323674}
+  - {fileID: 2016468444}
+  - {fileID: 836984451}
+  myCharacterObjUIAnim:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myCharacterShadowObjUI:
+  - {fileID: 86968537}
+  - {fileID: 1162277830}
+  - {fileID: 1355826691}
+  - {fileID: 914734887}
+  myCharacterObjEntityUI:
+  - {fileID: 766686925}
+  - {fileID: 139883916}
+  - {fileID: 1153374388}
+  - {fileID: 2035142714}
+  enemyCharacterObjUI:
+  - {fileID: 1512405240}
+  - {fileID: 1180827516}
+  - {fileID: 1198420961}
+  - {fileID: 1711749994}
+  enemyCharacterShadowObjUI:
+  - {fileID: 1017533930}
+  - {fileID: 346043507}
+  - {fileID: 1926405160}
+  - {fileID: 1741536397}
+  enemyCharacterObjEntityUI:
+  - {fileID: 2069615448}
+  - {fileID: 2112235647}
+  - {fileID: 1255075887}
+  - {fileID: 110133377}
   specialTextManager: {fileID: 754824313}
+  resultObj_all: {fileID: 393326554}
+  resultExitBtn: {fileID: 1492259998}
+  resultObjInit:
+  - {fileID: 649040721}
+  - {fileID: 185963311}
+  - {fileID: 2074771802}
+  - {fileID: 1110381458}
+  - {fileID: 862592840}
+  - {fileID: 1292354931}
+  - {fileID: 1799432987}
+  - {fileID: 1645591430}
+  - {fileID: 183355586}
+  - {fileID: 450712130}
+  - {fileID: 1992945339}
+  - {fileID: 747355842}
   curPhase: -1
+  witchPowerObj:
+  - {fileID: 1669191939}
+  - {fileID: 1039226144}
+  - {fileID: 1366574697}
+  backGroundObj:
+  - {fileID: 1567098985}
+  - {fileID: 1513334565}
+  - {fileID: 528828306}
+  - {fileID: 1069752803}
+  - {fileID: 1394048885}
+  diceArrow:
+  - {fileID: 1088342118}
+  - {fileID: 1622971454}
+  - {fileID: 734342898}
+  - {fileID: 232737907}
+  - {fileID: 355584910}
+  - {fileID: 362534185}
+  - {fileID: 419948405}
+  - {fileID: 1710203704}
+  myHpUI:
+  - {fileID: 1248504074}
+  - {fileID: 520370546}
+  - {fileID: 822155308}
+  - {fileID: 413416863}
+  enemyHpUI:
+  - {fileID: 173044972}
+  - {fileID: 866765517}
+  - {fileID: 173561564}
+  - {fileID: 874582909}
+  battleTextObj: {fileID: 500459151}
+  battleDescBox: {fileID: 380049373}
+  battleDescBoxName: {fileID: 976221899}
+  battleDescBoxInfo: {fileID: 2040436289}
+  battleDescBoxCharacter: {fileID: 1310115758}
+  faceDescInit:
+  - {fileID: 20107129}
+  - {fileID: 550414456}
+  - {fileID: 2034296186}
+  - {fileID: 2084191446}
+  - {fileID: 179989951}
+  - {fileID: 951560466}
+  - {fileID: 413152624}
+  - {fileID: 1472661313}
+  diceDescBox: {fileID: 796516603}
+  diceDesc:
+  - {fileID: 316111864}
+  - {fileID: 602124877}
+  - {fileID: 559303632}
+  - {fileID: 26338847}
+  - {fileID: 1068601458}
+  - {fileID: 748213756}
+  skillDescBox: {fileID: 1389806802}
+  skillDescBox_title:
+  - {fileID: 1252738513}
+  - {fileID: 188939598}
+  skillDescBox_info:
+  - {fileID: 892214882}
+  - {fileID: 665016352}
+  skillDescBox_image:
+  - {fileID: 1755358928}
+  - {fileID: 135019761}
   skillDescBox_dice_0:
   - {fileID: 846547287}
   - {fileID: 2012054726}
@@ -49801,9 +49984,46 @@ MonoBehaviour:
   - {fileID: 423413982}
   - {fileID: 92859820}
   - {fileID: 160738038}
+  equipDescBox: {fileID: 1422445596}
+  equipDescBox_title:
+  - {fileID: 402412440}
+  - {fileID: 485692514}
+  equipDescBox_info:
+  - {fileID: 787004864}
+  - {fileID: 706900454}
+  equipDescBox_image:
+  - {fileID: 1921707195}
+  - {fileID: 1013717596}
   giveUpBtn: {fileID: 1345126367}
   battleBagBtn: {fileID: 386159704}
+  skillSelectUI:
+  - {fileID: 2134966579}
+  - {fileID: 462517892}
+  - {fileID: 1314177051}
+  - {fileID: 619127397}
+  - {fileID: 1676736661}
+  - {fileID: 787447802}
+  - {fileID: 1416091613}
+  - {fileID: 1096861192}
+  - {fileID: 1666568434}
+  skillSelectDescUI:
+  - {fileID: 555873822}
+  - {fileID: 925437180}
+  - {fileID: 2004536612}
+  - {fileID: 139165245}
+  - {fileID: 1592940705}
+  - {fileID: 704765}
+  - {fileID: 1203107098}
   infoBtn: {fileID: 792043743}
+  battleTargetUI:
+  - {fileID: 650859924}
+  - {fileID: 950936969}
+  - {fileID: 441268070}
+  - {fileID: 1505015819}
+  - {fileID: 1991435788}
+  - {fileID: 298217702}
+  - {fileID: 797808357}
+  - {fileID: 249837992}
 --- !u!1 &362534185
 GameObject:
   m_ObjectHideFlags: 0
@@ -58745,7 +58965,7 @@ GameObject:
   - component: {fileID: 423413983}
   - component: {fileID: 423413984}
   m_Layer: 0
-  m_Name: board_skill_needDice_1_1
+  m_Name: board_skillDesc_needDice_1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59363,7 +59583,7 @@ GameObject:
   - component: {fileID: 438679061}
   - component: {fileID: 438679064}
   m_Layer: 0
-  m_Name: spr_ui_library_yesBtn
+  m_Name: obj_ui_library_yesBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72460,7 +72680,7 @@ GameObject:
   - component: {fileID: 618918274}
   - component: {fileID: 618918275}
   m_Layer: 0
-  m_Name: board_skill_needDice_1_0
+  m_Name: board_skillDesc_needDice_1_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79674,6 +79894,91 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effObj: {fileID: 2081603705384473503, guid: f440e13eb36377f44943531ada932f29, type: 3}
+  characterBoardState:
+  - {fileID: 1804659580}
+  - {fileID: 934292101}
+  - {fileID: 972112485}
+  - {fileID: 112807367}
+  - {fileID: 1779774765}
+  CharacterUIArr:
+  - {fileID: 1699660468}
+  - {fileID: 2039504920}
+  - {fileID: 301576340}
+  - {fileID: 1404377532}
+  CharacterStandArrInit:
+  - {fileID: 569550009}
+  - {fileID: 1039755394}
+  - {fileID: 1441082207}
+  - {fileID: 1691485896}
+  inventoryUIArr:
+  - {fileID: 1603527721}
+  - {fileID: 1236243167}
+  - {fileID: 94378838}
+  - {fileID: 778888637}
+  - {fileID: 1034496381}
+  - {fileID: 1617969847}
+  - {fileID: 419847210}
+  - {fileID: 1572462056}
+  - {fileID: 861788967}
+  - {fileID: 710568623}
+  - {fileID: 1584615684}
+  inventoryUI: {fileID: 869481087}
+  infoBoardObj:
+  - {fileID: 1261759291}
+  - {fileID: 415834268}
+  - {fileID: 1743615233}
+  - {fileID: 1648100863}
+  - {fileID: 1678666236}
+  diceBoardObj:
+  - {fileID: 596273877}
+  - {fileID: 1438130907}
+  - {fileID: 87701772}
+  - {fileID: 2063306155}
+  - {fileID: 486015246}
+  - {fileID: 1503044417}
+  - {fileID: 2041838272}
+  skillBoardObjInit:
+  - {fileID: 178412763}
+  - {fileID: 1696776622}
+  - {fileID: 937964946}
+  - {fileID: 712643201}
+  - {fileID: 1977140997}
+  - {fileID: 109336481}
+  - {fileID: 1882633798}
+  - {fileID: 1863716214}
+  - {fileID: 1963872839}
+  - {fileID: 15724237}
+  - {fileID: 1075543412}
+  - {fileID: 209770437}
+  - {fileID: 186327160}
+  - {fileID: 1954365008}
+  equipBoardObj:
+  - {fileID: 882973210}
+  - {fileID: 66469150}
+  - {fileID: 23895724}
+  - {fileID: 658756045}
+  - {fileID: 544015580}
+  - {fileID: 454249379}
+  bagBtnObj: {fileID: 1877058833}
+  mainCamera: {fileID: 519420028}
+  itemBoxInitPointInit:
+  - {fileID: 186530723}
+  - {fileID: 231295224}
+  - {fileID: 358416039}
+  - {fileID: 735769177}
+  - {fileID: 2073017297}
+  - {fileID: 646435149}
+  - {fileID: 372572580}
+  - {fileID: 270009258}
+  - {fileID: 768480103}
+  - {fileID: 423962879}
+  - {fileID: 922094518}
+  - {fileID: 1679502858}
+  descObj:
+  - {fileID: 713190763}
+  - {fileID: 1058112567}
+  - {fileID: 1516901511}
+  - {fileID: 971793411}
   changeDiceEff: {fileID: 2081603705384473503, guid: 3b94cc63ead36f1419cdd668bddfc75d, type: 3}
 --- !u!1 &697555878
 GameObject:
@@ -80431,6 +80736,16 @@ MonoBehaviour:
   clickState: 0
   clickMonster: -1
   clickSelf: -1
+  fireObject: {fileID: 0}
+  battleFireObject:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   myDiceUI:
   - {fileID: 0}
   - {fileID: 0}
@@ -80450,9 +80765,147 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  diceUIChain:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myDiceStateUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyDiceStateUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  characterUI: {fileID: 0}
   diceFullUI: {fileID: 0}
+  diceArrowSet:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myCharacterObjUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myCharacterObjUIAnim:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myCharacterShadowObjUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myCharacterObjEntityUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyCharacterObjUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyCharacterShadowObjUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyCharacterObjEntityUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   specialTextManager: {fileID: 0}
+  resultObj_all: {fileID: 0}
+  resultExitBtn: {fileID: 0}
+  resultObjInit:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   curPhase: -1
+  witchPowerObj:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  backGroundObj:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  diceArrow:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myHpUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyHpUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  battleTextObj: {fileID: 0}
+  battleDescBox: {fileID: 0}
+  battleDescBoxName: {fileID: 0}
+  battleDescBoxInfo: {fileID: 0}
+  battleDescBoxCharacter: {fileID: 0}
+  faceDescInit:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  diceDescBox: {fileID: 0}
+  diceDesc:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  skillDescBox: {fileID: 0}
+  skillDescBox_title:
+  - {fileID: 0}
+  - {fileID: 0}
+  skillDescBox_info:
+  - {fileID: 0}
+  - {fileID: 0}
+  skillDescBox_image:
+  - {fileID: 0}
+  - {fileID: 0}
   skillDescBox_dice_0:
   - {fileID: 0}
   - {fileID: 0}
@@ -80463,9 +80916,46 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  equipDescBox: {fileID: 0}
+  equipDescBox_title:
+  - {fileID: 0}
+  - {fileID: 0}
+  equipDescBox_info:
+  - {fileID: 0}
+  - {fileID: 0}
+  equipDescBox_image:
+  - {fileID: 0}
+  - {fileID: 0}
   giveUpBtn: {fileID: 0}
   battleBagBtn: {fileID: 0}
+  skillSelectUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  skillSelectDescUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   infoBtn: {fileID: 0}
+  battleTargetUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!212 &710481192
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -86563,7 +87053,7 @@ GameObject:
   - component: {fileID: 846547288}
   - component: {fileID: 846547289}
   m_Layer: 0
-  m_Name: board_skill_needDice_0_0
+  m_Name: board_skillDesc_needDice_0_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88252,7 +88742,7 @@ GameObject:
   - component: {fileID: 879895009}
   - component: {fileID: 879895012}
   m_Layer: 0
-  m_Name: obj_enemyCharacterHp_0 (4)
+  m_Name: obj_lobbyName_home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101267,7 +101757,7 @@ GameObject:
   - component: {fileID: 948814210}
   - component: {fileID: 948814211}
   m_Layer: 0
-  m_Name: spr_ui_library_curPower
+  m_Name: obj_ui_library_curPower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -153674,7 +154164,7 @@ GameObject:
   - component: {fileID: 1681695385}
   - component: {fileID: 1681695388}
   m_Layer: 0
-  m_Name: spr_ui_library_noBtn
+  m_Name: obj_ui_library_noBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160698,7 +161188,7 @@ GameObject:
   - component: {fileID: 1714674363}
   - component: {fileID: 1714674362}
   m_Layer: 0
-  m_Name: obj_life_back (1)
+  m_Name: obj_adventureMoneyBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161627,7 +162117,7 @@ GameObject:
   - component: {fileID: 1742831917}
   - component: {fileID: 1742831916}
   m_Layer: 0
-  m_Name: adventure_dice_0 (1)
+  m_Name: obj_adventureReady_characterFace_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161994,7 +162484,7 @@ GameObject:
   - component: {fileID: 1744355366}
   - component: {fileID: 1744355367}
   m_Layer: 0
-  m_Name: board_skill_needDice_0_2
+  m_Name: board_skillDesc_needDice_0_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -168716,7 +169206,7 @@ GameObject:
   - component: {fileID: 1801252852}
   - component: {fileID: 1801252855}
   m_Layer: 0
-  m_Name: obj_enemyCharacterHp_0 (5)
+  m_Name: obj_lobbyName_town
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -176274,7 +176764,7 @@ GameObject:
   - component: {fileID: 1878943720}
   - component: {fileID: 1878943719}
   m_Layer: 0
-  m_Name: obj_life_back (1)
+  m_Name: obj_adventureStartBtn_back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -180851,7 +181341,7 @@ GameObject:
   - component: {fileID: 2012054727}
   - component: {fileID: 2012054728}
   m_Layer: 0
-  m_Name: board_skill_needDice_0_1
+  m_Name: board_skillDesc_needDice_0_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -182969,6 +183459,61 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   diceRollEff: {fileID: 587083212400032754, guid: cb2c4f34418ad9c43871fc0ece915558, type: 3}
+  descObj:
+  - {fileID: 2135182893}
+  - {fileID: 392768545}
+  - {fileID: 1884279935}
+  - {fileID: 80870516}
+  balpanLoad: {fileID: 1684214717}
+  balpanScreen: {fileID: 579309741}
+  balpanArrow: {fileID: 2100648785}
+  balpanObj:
+  - {fileID: 754194394}
+  - {fileID: 644601018}
+  - {fileID: 349688977}
+  - {fileID: 1084579041}
+  - {fileID: 994454143}
+  - {fileID: 1772844205}
+  - {fileID: 1427121874}
+  stageInfo: {fileID: 1223453114}
+  selectInfo: {fileID: 917318496}
+  selectImage: {fileID: 649093545}
+  diceObject:
+  - {fileID: 151249351}
+  - {fileID: 1631816060}
+  - {fileID: 937596154}
+  - {fileID: 570663501}
+  resultObj: {fileID: 374773381}
+  resultObjArr:
+  - {fileID: 139469147}
+  - {fileID: 1682030860}
+  - {fileID: 218620529}
+  - {fileID: 488955956}
+  mainCamera: {fileID: 519420028}
+  adventureBackground: {fileID: 916985567}
+  adventureNPC: {fileID: 1193130898}
+  adventureBackBoard: {fileID: 2050125906}
+  watchNumObject:
+  - {fileID: 386347511}
+  - {fileID: 553554085}
+  - {fileID: 2144923853}
+  - {fileID: 1580217355}
+  - {fileID: 697555878}
+  - {fileID: 378088981}
+  nextBtnObj: {fileID: 93265823}
+  standObj: {fileID: 14438318}
+  diceBtnFireInit: {fileID: 1573583388}
+  lifeObj: {fileID: 468547840}
+  lifeObj_back: {fileID: 2135448407}
+  storeEntityObj: {fileID: 1054466509}
+  storeImageObj: {fileID: 295076534}
+  moneyTextInit: {fileID: 994252623}
+  storePriceObjInit: {fileID: 1673378575}
+  storeCheckImageObjInit: {fileID: 1426099071}
+  storeCheckPriceObjInit: {fileID: 765016273}
+  storeCheckEntityObj: {fileID: 1126656214}
+  storeCheckButtonYes: {fileID: 562516688}
+  storeCheckButtonNo: {fileID: 209744491}
   loadEnd: 1
   giveUpBtn: {fileID: 1027858841}
   giveUpBoard: {fileID: 448891306}
@@ -184805,7 +185350,7 @@ GameObject:
   - component: {fileID: 2087615306}
   - component: {fileID: 2087615309}
   m_Layer: 0
-  m_Name: obj_enemyCharacterHp_0 (2)
+  m_Name: obj_lobbyName_adventure
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

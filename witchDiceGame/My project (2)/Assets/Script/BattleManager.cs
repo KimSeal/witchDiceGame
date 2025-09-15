@@ -40,7 +40,10 @@ public class BattleManager : MonoBehaviour
     public int clickMonster = -1;
     public int clickSelf = -1;
 
+    [SerializeField]
     private GameObject fireObject;
+    [SerializeField]
+    private GameObject[] battleFireObject = new GameObject[16];
     //phase 흐름을 위한 시스템
     //private int battlePhaseState = 0;
 
@@ -73,39 +76,49 @@ public class BattleManager : MonoBehaviour
     //UI 테스트
     public GameObject[] myDiceUI = new GameObject[4];
     public GameObject[] enemyDiceUI = new GameObject[4];
-    public GameObject[] diceUIChk = new GameObject[8];
-    private GameObject[] diceUIChain = new GameObject[6];
+    [SerializeField] private GameObject[] diceUIChk = new GameObject[8]; // obj_skill_Chk_(number)
+    [SerializeField] private GameObject[] diceUIChain = new GameObject[6]; // obj_ my/enemyChain_ number
 
+
+    [SerializeField] private GameObject[] myDiceStateUI = new GameObject[4];
+    [SerializeField] private GameObject[] enemyDiceStateUI = new GameObject[4];
     private Animator[] myDiceStateAnim = new Animator[4];
     private Animator[] enemyDiceStateAnim = new Animator[4];
 
-    private GameObject characterUI;
+    [SerializeField] private GameObject characterUI; // characterUI
     public GameObject diceFullUI;
-    private GameObject[] diceArrowSet = new GameObject[8];
 
-    private GameObject[] myCharacterObjUI = new GameObject[4];
-    private Animator[] myCharacterObjUIAnim = new Animator[4];
+    [SerializeField]
+    public GameObject[] diceArrowSet = new GameObject[8]; //arrowSet_(number)
+
+    [SerializeField]
+    public GameObject[] myCharacterObjUI = new GameObject[4];
+    public Animator[] myCharacterObjUIAnim = new Animator[4];
+
+    [SerializeField]
     private GameObject[] myCharacterShadowObjUI = new GameObject[4];
+    [SerializeField]
     private GameObject[] myCharacterObjEntityUI = new GameObject[4];
     private ParticleSystem[,] myFireObj = new ParticleSystem[4, 2];
 
-    private GameObject[] enemyCharacterObjUI = new GameObject[4];
+    [SerializeField] private GameObject[] enemyCharacterObjUI = new GameObject[4];
     private Animator[] enemyCharacterObjUIAnim = new Animator[4];
-    private GameObject[] enemyCharacterShadowObjUI = new GameObject[4];
-    private GameObject[] enemyCharacterObjEntityUI = new GameObject[4];
+    [SerializeField] private GameObject[] enemyCharacterShadowObjUI = new GameObject[4];
+    [SerializeField] private GameObject[] enemyCharacterObjEntityUI = new GameObject[4];
     private ParticleSystem[,] enemyFireObj = new ParticleSystem[4, 2];
 
     private int[] myCharacterAtkReady = { 0,0,0,0};
     private int[] enemyCharacterAtkReady = { 0, 0, 0, 0 };
 
     [SerializeField]
-    public GameObject specialTextManager; 
+    public GameObject specialTextManager;
 
     // 타겟팅시 일시정지를 위한 코루틴 저장함수.
     //private IEnumerator battleTimer = null;
 
-    private GameObject resultObj_all;
-    private GameObject resultExitBtn;
+    [SerializeField] private GameObject resultObj_all; //bosang_ui
+    [SerializeField] private GameObject resultExitBtn;//obj_itemUI_battleEndBtn
+    [SerializeField] private GameObject[] resultObjInit = new GameObject[12]; //obj_resultUI _board, _itemLogo, _itemName, _itemDesc + (number)
     private GameObject[,] resultObj = new GameObject[3,4];
     private Item[] resultItem = new Item[3];
 
@@ -125,10 +138,11 @@ public class BattleManager : MonoBehaviour
     private int currentMoveUI = 0;
     private int currentLightUI = 0;
 
-    private GameObject[] witchPowerObj = new GameObject[3];
-    private GameObject[] backGroundObj = new GameObject[5];
+    [SerializeField] private GameObject[] witchPowerObj = new GameObject[3]; //obj_backGround_field witchPower_button_left witchPower_button_right
+    [SerializeField] private GameObject[] backGroundObj = new GameObject[5]; //obj_backGround_ field, witch_witchPowerSelect, backGround, witch_skillSelect_body, witch_skillSelect_face
     private int[] witchPowerWaitTurn = { 0, 0, 0 };
-    private GameObject[] diceArrow = new GameObject[8];
+    [SerializeField]
+    public GameObject[] diceArrow = new GameObject[8]; //obj_battleDice_arrow_(number)
 
     private int[] clickedDice = new int[2];
     
@@ -139,39 +153,39 @@ public class BattleManager : MonoBehaviour
 
 
     //주사위 밑에 HP UI
-    private GameObject[] myHpUI = new GameObject[4];
-    private GameObject[] enemyHpUI = new GameObject[4];
+    [SerializeField] private GameObject[] myHpUI = new GameObject[4];
+    [SerializeField] private GameObject[] enemyHpUI = new GameObject[4];
 
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
-    private GameObject battleTextObj;
+    [SerializeField] private GameObject battleTextObj;
 
-    GameObject battleDescBox;
-    GameObject battleDescBoxName;
-    GameObject battleDescBoxInfo;
-    GameObject battleDescBoxCharacter;
+    [SerializeField] private GameObject battleDescBox; //board_descBoard
+    [SerializeField] private GameObject battleDescBoxName; // board_battle_Info_name
+    [SerializeField] private GameObject battleDescBoxInfo; //board_battle_info_value
+    [SerializeField] private GameObject battleDescBoxCharacter;//board_battle_Info_character
+    [SerializeField] private GameObject[] faceDescInit = new GameObject[8];
     GameObject[,] faceDesc = new GameObject[2, 4];
 
-    GameObject diceDescBox;
-    GameObject[] diceDesc = new GameObject[6];
+    [SerializeField] private GameObject diceDescBox; //ui_battle_board_dice
+    [SerializeField] private GameObject[] diceDesc = new GameObject[6];
 
     private int[] myDiceState = { 0, 0, 0, 0 };
     private int[] enemyDiceState = { 0, 0, 0, 0 };
 
     //스킬 설명을 위해 준비된 칸
-    GameObject skillDescBox;
-    GameObject[] skillDescBox_title = new GameObject[2];
-    GameObject[] skillDescBox_info = new GameObject[2];
-    GameObject[] skillDescBox_image = new GameObject[2];
-    [SerializeField]
-    public GameObject[] skillDescBox_dice_0 = new GameObject[4];
+    [SerializeField] private GameObject skillDescBox; //ui_battle_board_skill
+    [SerializeField] private GameObject[] skillDescBox_title = new GameObject[2]; //board_skillDesc_skillTitle_(number)
+    [SerializeField] private GameObject[] skillDescBox_info = new GameObject[2]; //board_skillDesc_skillInfo_(number)
+    [SerializeField] private GameObject[] skillDescBox_image = new GameObject[2]; //board_skillDesc_skillImage_(number)
+    [SerializeField] public GameObject[] skillDescBox_dice_0 = new GameObject[4]; //board_skill
 
     [SerializeField]
     public GameObject[] skillDescBox_dice_1 = new GameObject[4];
 
-    GameObject equipDescBox;
-    GameObject[] equipDescBox_title = new GameObject[2];
-    GameObject[] equipDescBox_info = new GameObject[2];
-    GameObject[] equipDescBox_image = new GameObject[2];
+    [SerializeField] private GameObject equipDescBox; ////ui_battle_board_equip
+    [SerializeField] private GameObject[] equipDescBox_title = new GameObject[2]; //board_equipDesc_equipTitle_(number)
+    [SerializeField] private GameObject[] equipDescBox_info = new GameObject[2]; //board_equipDesc_equipInfo_(number)
+    [SerializeField] private GameObject[] equipDescBox_image = new GameObject[2]; //board_equipDesc_equipImage_(number)
 
 
     [SerializeField]
@@ -1669,8 +1683,10 @@ public class BattleManager : MonoBehaviour
 
     // Character Skill Select Start (Phase 3 - Character Skill Select)///
 
-    private GameObject[] skillSelectUI = new GameObject[9];
-    private GameObject[] skillSelectDescUI = new GameObject[7];
+    [SerializeField]
+    public GameObject[] skillSelectUI = new GameObject[9]; //obj_skillSelect_(i)
+    [SerializeField]
+    public GameObject[] skillSelectDescUI = new GameObject[7]; // battle_skill_skillImage_selected, battle_skill_selected_exp, battle_skill_needDice_selected_(0-4), battle_skill_selected_title
 
     private int curClickSkill = -1; //마지막으로 클릭한 스킬 정보를 저장한다. 저장형식은 characterIdx * 10 + skillIdx의 형태를 띈다. 선택된게 없으면 -1을 갖는다.
 
@@ -3435,51 +3451,24 @@ public class BattleManager : MonoBehaviour
         characterInfoOpenAble = true;
         getLoseChk = false;
 
-
-        fireObject = GameObject.Find("obj_battle_fire");
         //초반 turn 화살표 지우기
         for (int i = 0;i<8;i++) {
-            skillSelectUI[i] = GameObject.Find("obj_skillSelect_" + i.ToString());
-            
-            diceArrowSet[i] = GameObject.Find("arrowSet_" + i.ToString());
-            diceUIChk[i] = GameObject.Find("obj_skillChk_" + i.ToString());
             diceArrowSet[i].SetActive(false);
-        }
-        //
-        for (int i = 0; i < 8; i++)
-        {
-            diceArrow[i] = GameObject.Find("obj_battleDice_arrow_" + i.ToString());
             diceArrowAnimationControl(i, false);
         }    
 
-
-
-        skillSelectDescUI[0] = GameObject.Find("battle_skill_skillImage_selected"); //스킬 이미지
-        skillSelectDescUI[1] = GameObject.Find("battle_skill_selected_exp"); //텍스트
-        skillSelectDescUI[6] = GameObject.Find("battle_skill_selected_title"); //스킬 명
         for (int i=0;i<4;i++)
         {
             myCharacterSwing[i] = 0;
             enemyCharacterSwing[i] = 0;
             myCharacterPunch[i] = 0;
             enemyCharacterPunch[i] = 0;
-            for (int j = 0; j < 2; j++)
-            {
-                myFireObj[i, j] = GameObject.Find("obj_myCharacter_fire_" + i.ToString() + j.ToString()).GetComponent<ParticleSystem>();
-                myFireObj[i, j].Stop();
-                enemyFireObj[i, j] = GameObject.Find("obj_enemyCharacter_fire_" + i.ToString() + j.ToString()).GetComponent<ParticleSystem>();
-                enemyFireObj[i, j].Stop();
+            for (int j = 0; j < 2; j++) {
+                myFireObj[i, j] = battleFireObject[i*2+j].GetComponent<ParticleSystem>();               myFireObj[i, j].Stop();
+                enemyFireObj[i, j] = battleFireObject[i * 2 + j + 8].GetComponent<ParticleSystem>(); enemyFireObj[i, j].Stop();
             }
-            myDiceStateAnim[i] = GameObject.Find("obj_myDiceState_" + i.ToString()).GetComponent<Animator>();
-            enemyDiceStateAnim[i] = GameObject.Find("obj_enemyDiceState_" + (i+4).ToString()).GetComponent<Animator>();
-
-            skillSelectDescUI[i+2] = GameObject.Find("battle_skill_needDice_selected_" + i.ToString()); //스킬에 필요한 주사위 종류
-
-            myCharacterObjEntityUI[i] = GameObject.Find("obj_myCharacter_entity_" + i.ToString());
-            enemyCharacterObjEntityUI[i] = GameObject.Find("obj_enemyCharacter_entity_" + i.ToString());
-
-            myCharacterObjUI[i] = GameObject.Find("obj_myCharacter_" + i.ToString());
-            enemyCharacterObjUI[i] = GameObject.Find("obj_enemyCharacter_" + i.ToString());
+            myDiceStateAnim[i] = myDiceStateUI[i].GetComponent<Animator>();
+            enemyDiceStateAnim[i] = enemyDiceStateUI[i].GetComponent<Animator>();
 
             myCharacterPosition[i] = myCharacterObjEntityUI[i].transform.position;
             enemyCharacterPosition[i] = enemyCharacterObjEntityUI[i].transform.position;
@@ -3487,81 +3476,15 @@ public class BattleManager : MonoBehaviour
             myCharacterObjUIAnim[i] = myCharacterObjUI[i].GetComponent<Animator>();
             enemyCharacterObjUIAnim[i] = enemyCharacterObjUI[i].GetComponent<Animator>();
 
-            myCharacterShadowObjUI[i] = GameObject.Find("obj_myBattleShadow_" + i.ToString());
-            enemyCharacterShadowObjUI[i] = GameObject.Find("obj_enemyBattleShadow_" + i.ToString());
-
             myCharacterInitPosition[i] = myCharacterObjEntityUI[i].transform.position;
             enemyCharacterInitPosition[i] = enemyCharacterObjEntityUI[i].transform.position;
-
         }
-
-        resultObj_all = GameObject.Find("bosang_ui");
-        resultExitBtn = GameObject.Find("obj_itemUI_battleEndBtn");
-        for (int i=0;i<3;i++)
-        {
-            resultObj[i, 0] = GameObject.Find("obj_resultUI_board_" + i.ToString());
-            resultObj[i, 1] = GameObject.Find("obj_resultUI_itemLogo_" + i.ToString());
-            resultObj[i, 2] = GameObject.Find("obj_resultUI_itemName_" + i.ToString());
-            resultObj[i, 3] = GameObject.Find("obj_resultUI_itemDesc_" + i.ToString());
-
-            diceUIChain[i] = GameObject.Find("obj_myChain_" + i.ToString());
-            diceUIChain[i+3] = GameObject.Find("obj_enemyChain_" + i.ToString());
-        }
-
-        characterUI = GameObject.Find("CharacterUI");
-        skillSelectUI[8] = GameObject.Find("skillSelectUI");
-
-        witchPowerObj[0] = GameObject.Find("obj_witchPower");
-        witchPowerObj[1] = GameObject.Find("witchPower_button_left");
-        witchPowerObj[2] = GameObject.Find("witchPower_button_right");
-
-        backGroundObj[0] = GameObject.Find("obj_backGround_field");
-        backGroundObj[1] = GameObject.Find("obj_backGround_witch_witchPowerSelect");
-        backGroundObj[2] = GameObject.Find("obj_backGround_backGround");
-        backGroundObj[3] = GameObject.Find("obj_backGround_witch_skillSelect_body");
-        backGroundObj[4] = GameObject.Find("obj_backGround_witch_skillSelect_face");
-
-        // Hp 관련 UI, targeting을 위한 object find 
-        for (int i = 0; i < 4; i++)
-        {
-            enemyHpUI[i] = GameObject.Find("obj_enemyCharacterHp_" + i.ToString());
-            myHpUI[i] = GameObject.Find("obj_myCharacterHp_" + i.ToString());
-            battleTargetUI[i] = GameObject.Find("obj_battleTarget_" + i.ToString());
-            battleTargetUI[i + 4] = GameObject.Find("obj_battleTarget_" + (i + 4).ToString());
-        }
-
-        battleTextObj = GameObject.Find("obj_battleText");
         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
-        battleTextObj = GameObject.Find("obj_battleText");
+        for (int i=0;i<3; i++)  for (int j = 0; j < 4; j++) resultObj[i, j] = resultObjInit[i*4 + j];
+        // Hp 관련 UI, targeting을 위한 object find 
+        for (int i = 0; i < 2; i++) for (int j = 0; j < 4; j++) faceDesc[i, j] = faceDescInit[i * 4 + j];
 
-        
-        battleDescBox = GameObject.Find("board_descBoard");
-        battleDescBoxCharacter = GameObject.Find("board_battle_Info_character");
-        battleDescBoxName = GameObject.Find("board_battle_Info_name");
-        battleDescBoxInfo = GameObject.Find("board_battle_Info_value");
-        skillDescBox = GameObject.Find("ui_battle_board_skill");
-        equipDescBox = GameObject.Find("ui_battle_board_equip");
-        diceDescBox = GameObject.Find("ui_battle_board_dice");
-        for (int i=0;i<2;i++)
-        { 
-            skillDescBox_title[i] = GameObject.Find("board_skillDesc_skillTitle_" + i.ToString());
-            skillDescBox_info[i] = GameObject.Find("board_skillDesc_skillInfo_" + i.ToString());
-            skillDescBox_image[i] = GameObject.Find("board_skillDesc_skillImage_" + i.ToString());
-
-            equipDescBox_title[i] = GameObject.Find("board_equipDesc_equipTitle_" + i.ToString());
-            equipDescBox_info[i] = GameObject.Find("board_equipDesc_equipInfo_" + i.ToString());
-            equipDescBox_image[i] = GameObject.Find("board_equipDesc_equipImage_" + i.ToString());
-
-            for (int j=0;j<4;j++) {
-                faceDesc[i, j] = GameObject.Find("board_skillDesc_faceImage_" + (i * 4 + j).ToString());
-                //skillDescBox_dice[i, j] = GameObject.Find("board_skill_needDice_"+i.ToString() +"_"+j.ToString());
-            }
-        }
-        for (int i=0;i<6;i++)
-        {
-            diceDesc[i] = GameObject.Find("board_skillDesc_dice_" + i.ToString());
-        }
         //주사위 정보로 먼저 ui 출력
         curSelectInfo = 0;
         diceDescBox.SetActive(true);
@@ -3690,9 +3613,6 @@ public class BattleManager : MonoBehaviour
                         enemyCharacterAtkReady[i] = 0;
                     }
                 }
-
-
-
             }
         }
     }
@@ -3798,7 +3718,7 @@ public class BattleManager : MonoBehaviour
 
     }
     */
-    private GameObject[] battleTargetUI = new GameObject[8];
+    [SerializeField]private GameObject[] battleTargetUI = new GameObject[8];
 
     private void updateInfoUIFaceUpdate() //battle ui에서 얼굴 업데이트
     {
