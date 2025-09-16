@@ -28,12 +28,12 @@ public class TalkManager : MonoBehaviour
             return instance;
         }
     }
-    private GameObject entity;
-    private GameObject[] characterImage = new GameObject[4];
-    private GameObject characterName;
-    private GameObject characterTalk;
-    private GameObject[] talkImage = new GameObject[2];
-    private GameObject background;
+    [SerializeField] private GameObject entity;//ui_communicate
+    [SerializeField] private GameObject[] characterImage = new GameObject[4]; //ui_communicate_character_(number)
+    [SerializeField] private GameObject characterName; //ui_communicate_name
+    [SerializeField] private GameObject characterTalk;//ui_communicate_talk
+    [SerializeField] private GameObject[] talkImage = new GameObject[2]; //ui_communicate_image_front/back
+    [SerializeField] private GameObject background;
     private List<TalkReader> talkList = new List<TalkReader>();
     private List<DescReader> descList = new List<DescReader>();
     private Material[] material = new Material[4];
@@ -136,18 +136,18 @@ public class TalkManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            characterImage[i] = GameObject.Find("ui_communicate_character_" + i.ToString());
+            //characterImage[i] = GameObject.Find("ui_communicate_character_" + i.ToString());
             material[i] = characterImage[i].GetComponent<Image>().material;
         }
-        characterName = GameObject.Find("ui_communicate_name");
-        characterTalk = GameObject.Find("ui_communicate_talk");
-        talkImage[0] = GameObject.Find("ui_communicate_image_front");
-        talkImage[1] = GameObject.Find("ui_communicate_image_back");
+        //characterName = GameObject.Find("ui_communicate_name");
+        //characterTalk = GameObject.Find("ui_communicate_talk");
+        //talkImage[0] = GameObject.Find("ui_communicate_image_front");
+        //talkImage[1] = GameObject.Find("ui_communicate_image_back");
 
         talkImage[0].SetActive(false);
         talkImage[1].SetActive(false);
 
-        background = GameObject.Find("ui_communicate_background");
+        //background = GameObject.Find("ui_communicate_background");
         entity.SetActive(false);
     }
 

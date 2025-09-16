@@ -35553,6 +35553,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d4076ae1559a934d9bddc420ba42c10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entity: {fileID: 1350955399}
+  characterImage:
+  - {fileID: 1397489850}
+  - {fileID: 1810391560}
+  - {fileID: 1645455117}
+  - {fileID: 2044960800}
+  characterName: {fileID: 963101637}
+  characterTalk: {fileID: 1507537042}
+  talkImage:
+  - {fileID: 1629477855}
+  - {fileID: 1017295168}
+  background: {fileID: 1784995644}
 --- !u!4 &261610759
 Transform:
   m_ObjectHideFlags: 0
