@@ -132,22 +132,11 @@ public class TalkManager : MonoBehaviour
         }
 
         for (int i=0;i<lightingArr.Length;i++){ lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
-        entity = GameObject.Find("ui_communicate");
 
-        for (int i = 0; i < 4; i++)
-        {
-            //characterImage[i] = GameObject.Find("ui_communicate_character_" + i.ToString());
-            material[i] = characterImage[i].GetComponent<Image>().material;
-        }
-        //characterName = GameObject.Find("ui_communicate_name");
-        //characterTalk = GameObject.Find("ui_communicate_talk");
-        //talkImage[0] = GameObject.Find("ui_communicate_image_front");
-        //talkImage[1] = GameObject.Find("ui_communicate_image_back");
+        for (int i = 0; i < 4; i++) material[i] = characterImage[i].GetComponent<Image>().material; 
 
         talkImage[0].SetActive(false);
         talkImage[1].SetActive(false);
-
-        //background = GameObject.Find("ui_communicate_background");
         entity.SetActive(false);
     }
 
