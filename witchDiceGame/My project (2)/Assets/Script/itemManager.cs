@@ -863,6 +863,8 @@ public class itemManager : MonoBehaviour
         setUpAnimator();
         
         descObj[0].SetActive(false);
+
+        
         /*
         for (int i = 0; i < 10; i++)
         {
@@ -1047,10 +1049,6 @@ public class itemManager : MonoBehaviour
                 returnVal = new passiveReturn(true, "none", item.getVal(4)); break;
         }
 
-        Debug.Log("Item Chk - after Man");
-        Debug.Log(item.getIdx());
-        Debug.Log(returnVal.used);
-        Debug.Log(returnVal.cal);
         return returnVal;
     }
 

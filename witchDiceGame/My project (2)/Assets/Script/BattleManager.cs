@@ -313,7 +313,7 @@ public class BattleManager : MonoBehaviour
             }
             else {
                 skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
-                skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = "아직 몬스터의 스킬을 본적이 없습니다.";
+                skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(17);
                 skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = "Not Found";
                 for (int diceIdx = 0; diceIdx < 4; diceIdx++)
                 {
@@ -2616,28 +2616,31 @@ public class BattleManager : MonoBehaviour
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                     GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                     SoundManager_Sfx.Instance.playSound(0);
-                    for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
-                    {
-                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                    if (tempPassiveReturn.cal != "none") { 
+                        for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
                         {
-                            battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
-                                takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                            + "</size>";
-                        }
-                        yield return new WaitForSeconds(activeTime / 5.0f);
-                    }
-                    for (int fontSizeIdx = 10; fontSizeIdx > 0; fontSizeIdx--)
-                    {
-                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
-                        {
-                            battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
-                            takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                        + "</size>";
+                            if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                            {
+                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                                    takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                                + "</size>";
+                            }
                             yield return new WaitForSeconds(activeTime / 5.0f);
                         }
+                        for (int fontSizeIdx = 10; fontSizeIdx > 0; fontSizeIdx--)
+                        {
+                            if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                            {
+                               battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                                takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                            + "</size>";
+                                yield return new WaitForSeconds(activeTime / 5.0f);
+                            }
+                        }
+                        yield return new WaitForSeconds(activeTime);
+
+                        activeTime /= 1.5f;
                     }
-                    yield return new WaitForSeconds(activeTime);
-                    activeTime /= 1.5f;
                 }
             }
         }
@@ -2657,7 +2660,10 @@ public class BattleManager : MonoBehaviour
                 {
                     if (tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
                     {
-                        if (tempPassiveReturn.cal != "none") specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
+                        if (tempPassiveReturn.cal != "none")
+                        {
+                            specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
+                        }
                         //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                         GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                         effectChk[passiveItemIdx] = true;

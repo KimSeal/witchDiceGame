@@ -995,6 +995,7 @@ public class AdventureManager : MonoBehaviour
 
                     BattleManager.Instance.changeBossPhase(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType());
                     updateCharacterFace();
+                    for (int i = 0; i < 4; i++) CharacterManager.Instance.emptyEnemyCharacter(i);
                     for (int i = 0; i < 4; i++)
                     {
                         //마지막 전투에서의 캐릭터 정보를 확인
