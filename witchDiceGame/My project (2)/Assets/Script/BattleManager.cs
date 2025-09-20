@@ -249,8 +249,10 @@ public class BattleManager : MonoBehaviour
     int bossPhase = 0;
     public void changeBossPhase(int a)
     {
-        if(a == 100) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
-        if (a == 101) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
+
+        if (a == 100) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
+        else if (a == 101) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
+        else bossPhase = 0;
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
     {

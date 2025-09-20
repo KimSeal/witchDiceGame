@@ -467,6 +467,7 @@ public class AdventureManager : MonoBehaviour
         {
             adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
+
         int EndPoint = adventureEventArr.Length - 1;
 
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
@@ -986,7 +987,7 @@ public class AdventureManager : MonoBehaviour
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         giveUpBtnAble(true);
                     }
-
+                    
                     SoundManager_Main.Instance.stopSound(2);
                     SoundManager_Main.Instance.playSound(5);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
