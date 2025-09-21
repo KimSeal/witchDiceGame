@@ -151,6 +151,7 @@ public class AdventureManager : MonoBehaviour
         addAdventureMoney(0);
         CharacterManager.Instance.setTurotialCharacterSet(); //캐릭터는 주인공 혼자만
         itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
+        useFairDice = false;
 
         StartCoroutine(tutorial_Coroutine());
     }
@@ -231,14 +232,14 @@ public class AdventureManager : MonoBehaviour
                 
                 SoundManager_Sfx.Instance.playSound(7);
                 shakeObject(storeCheckEntityObj);
-                storeCheckPriceObj.text = "더 넣을 공간이 없어요!";
+                storeCheckPriceObj.text = TalkManager.Instance.getDesc(19);
             }
         }
         else
         {
             shakeObject(storeCheckEntityObj);
             SoundManager_Sfx.Instance.playSound(7);
-            storeCheckPriceObj.text = "돈이 부족해요!";
+            storeCheckPriceObj.text = TalkManager.Instance.getDesc(20);
         }
     }
     public void updateStore() //가게 이미지 업데이트
@@ -287,8 +288,8 @@ public class AdventureManager : MonoBehaviour
 
             Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
             storeCheckImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
-            storeCheckPriceObj.text = "가격 : " + storeItemArr[storeIdx, 2].ToString() +
-                    "\n현재 금액" + adventureMoney.ToString() + " -> " + (adventureMoney - storeItemArr[storeIdx, 2]).ToString();
+            storeCheckPriceObj.text = TalkManager.Instance.getDesc(10) + " : " + storeItemArr[storeIdx, 2].ToString() +
+                    "\n" + TalkManager.Instance.getDesc(11) + adventureMoney.ToString() + " -> " + (adventureMoney - storeItemArr[storeIdx, 2]).ToString();
         }
     }
     public void closeTryBuyItem()
@@ -1475,9 +1476,12 @@ public class AdventureManager : MonoBehaviour
             //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
             Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
             SoundManager_Sfx.Instance.playSound(0);
+
+            if (tutorialVal >= 1 && tutorialVal <= 4) { selectDiceNum = 1; }
+            else {selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx); }
             nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
-            nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
-            selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
+            nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/"+ selectDiceNum.ToString());
+            
             rerollChk = false;
         }
         else
@@ -1488,6 +1492,10 @@ public class AdventureManager : MonoBehaviour
     }
     public void clickDice(int characterIdx)
     {
+
+        if (tutorialVal == 4 && resultObj.activeSelf == true) { 
+            fullUI.showFull(22);
+        }
         if (!clickAble) return;
         
         if (descObj[0].activeSelf == true) hoverOutItem();
@@ -1516,9 +1524,16 @@ public class AdventureManager : MonoBehaviour
                     //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
                     Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
                     SoundManager_Sfx.Instance.playSound(0);
+
+                    Debug.Log("tutorialVal : " + tutorialVal.ToString());
+                    if (tutorialVal >= 1 && tutorialVal <= 4) { selectDiceNum = 1; }
+                    else selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
+
                     nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, CharacterManager.Instance.getDiceDir(characterIdx) * -90);
-                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
-                    selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
+                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + selectDiceNum.ToString());
+
+//                    nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterIdx).ToString());
+
                     rerollChk = true;
                 }
                 else {
@@ -1581,12 +1596,10 @@ public class AdventureManager : MonoBehaviour
                 resultItemArr[1, 0] == -99999 && resultItemArr[1, 1] == -99999 &&
                 resultItemArr[2, 0] == -99999 && resultItemArr[2, 1] == -99999 &&
                 resultItemArr[3, 0] == -99999 && resultItemArr[3, 1] == -99999 ) {
-                
-                
             }
             else {
                 tutorialChk = false;
-                fullUI.showFull(2);
+                if(resultObj.activeSelf == true) fullUI.showFull(2);
             } 
         }
         if (tutorialChk) //튜토리얼에서 문제 없는 경우.
@@ -1617,10 +1630,17 @@ public class AdventureManager : MonoBehaviour
         }
     }
     public bool curCanvasItemCanvas = false;
+    public bool useFairDice = false;
+    public void setUseFairDice(bool input) {
+        useFairDice=input;
+    }
     public void exitUpgradeCanvas()
     {
-        
-        if (!itemManager.Instance.getItemBoxMove())
+        if (tutorialVal == 5 && !useFairDice)
+        {
+            fullUI.showFull(23);
+        }
+        else if (!itemManager.Instance.getItemBoxMove())
         {
             curCanvasItemCanvas = false;
             SoundManager_Sfx.Instance.playSound(0); 

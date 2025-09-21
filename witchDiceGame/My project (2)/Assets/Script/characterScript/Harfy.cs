@@ -40,14 +40,18 @@ public class Harfy : Character
         }
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1)
         {
+            Debug.Log("target, diceNum, and targetDiceNum");
+            Debug.Log(sendSkillPacket.targetIdx[0]);
+            Debug.Log(sendSkillPacket.diceNum[0]);
+            Debug.Log(BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]));
             //타겟이 있고, 주사위 숫자가 같으면 강한 공격!
-            if (sendSkillPacket.targetIdx[0] == -999 || sendSkillPacket.diceNum[0] != BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]))
+            if (sendSkillPacket.targetIdx[0] != -999 && sendSkillPacket.diceNum[0] == BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]))
             {
                 packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.phyAtk, 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
             }
             else
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0]*10, 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
             }
             packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 0, 0, 3)); //본인 특수 변수를 0으로 만든다.
         }

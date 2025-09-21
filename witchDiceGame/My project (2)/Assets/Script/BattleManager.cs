@@ -1981,7 +1981,7 @@ public class BattleManager : MonoBehaviour
         if (characterIdx >= 4 && characterIdx < 8 && !jsonDataManager.Instance.getMonsterSkill(enemyCharacter[characterIdx - 4].getDestiny().DestinyIdx, skillIdx))
         {
             skillSelectDescUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
-            skillSelectDescUI[1].GetComponent<TextMeshPro>().text = "아직 몬스터의 스킬을 본적이 없습니다.";
+            skillSelectDescUI[1].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(17);
             skillSelectDescUI[6].GetComponent<TextMeshPro>().text = "Not Found";
         }
         else

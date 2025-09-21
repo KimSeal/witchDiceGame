@@ -67,6 +67,8 @@ public class itemManager : MonoBehaviour
     [SerializeField]
     public GameObject effObj;
 
+    [SerializeField]
+    public GameObject getOutButton;
 
     public List<Item>[] itemList = new List<Item>[5];
     public List<ItemReader> itemReaderList = new List<ItemReader>();
@@ -526,6 +528,7 @@ public class itemManager : MonoBehaviour
             {
                 characterBoardState[i].SetActive(true);
                 characterBoard_update(idx);
+                
             }
             else characterBoardState[i].SetActive(false);
         }
@@ -588,6 +591,10 @@ public class itemManager : MonoBehaviour
                 equipBoardObj[i * 3 + 1].GetComponent<TextMeshPro>().text = temp.getItemName();
                 equipBoardObj[i * 3 + 2].GetComponent<TextMeshPro>().text = temp.getContent();
             }
+        }
+        else if (idx == 4)//getOut Button
+        {
+            getOutButton.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(18);
         }
     }
 
@@ -655,11 +662,13 @@ public class itemManager : MonoBehaviour
     }
     public void setTutorialInitDice()
     {
-        for (int i=0;i<6;i++) {
-            CharacterManager.Instance.changeDice(0, i, 1);
-            //diceBoardObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/1");
-        }
-        
+        CharacterManager.Instance.changeDice(0, 0, 1);
+        CharacterManager.Instance.changeDice(0, 1, 1);
+        CharacterManager.Instance.changeDice(0, 2, 1);
+        CharacterManager.Instance.changeDice(0, 3, 2);
+        CharacterManager.Instance.changeDice(0, 4, 2);
+        CharacterManager.Instance.changeDice(0, 5, 3);
+        //for(int i=0;i<6;i++) CharacterManager.Instance.changeDice(0, i, 6);
     }
     public void click_dice_changeNum(int idx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
@@ -676,6 +685,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx == 8)
             { //현재 선택한 캐릭터에 대해 보통 주사위로 변경
+                AdventureManager.Instance.setUseFairDice(true);
                 for (int i = 0; i < 6; i++) changeDice(i, i + 1);
             }
             else if (itemIdx == 9)

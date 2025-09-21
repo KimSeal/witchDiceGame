@@ -31,7 +31,7 @@ public class jsonDataManager : MonoBehaviour
     }
     // Start is called before the first frame update
     private PlayerPlayData playerPlayData;
-    private int[] witchPowerMoney = {0, 0, 0, 5000, 1000, 2000, 5000, 1000, 2000, 5000, 1000, 2000, 5000 };
+    private int[] witchPowerMoney = {0, 0, 0, 500, 100, 200, 500, 100, 200, 500, 100, 200, 500 };
     private string jsonFileName = "playerData2.json";
     void Start()
     {

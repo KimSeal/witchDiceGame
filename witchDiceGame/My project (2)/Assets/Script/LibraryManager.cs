@@ -88,12 +88,12 @@ public class LibraryManager : MonoBehaviour
         {
             shakeObject(buyUI[0]);
             SoundManager_Sfx.Instance.playSound(7);
-            buyUI[2].GetComponent<TextMeshPro>().text = "You have this!";
+            buyUI[2].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(21);
         }
         else if (buyChk == 2) {
             shakeObject(buyUI[0]);
             SoundManager_Sfx.Instance.playSound(7);
-            buyUI[2].GetComponent<TextMeshPro>().text = "You need To more money!";
+            buyUI[2].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(20);
         }
     }
     public void noBuyPower()
