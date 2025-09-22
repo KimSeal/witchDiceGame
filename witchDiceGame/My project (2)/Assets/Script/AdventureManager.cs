@@ -165,7 +165,16 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    public void mainPlayButton()
+    [SerializeField]
+    public GameObject tutorialUI;
+    [SerializeField]
+    public GameObject tutorialUIText;
+    public void clickPlay()
+    {
+        tutorialUI.SetActive(true);
+        tutorialUIText.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(24);
+    }
+    public void mainPlayButton(bool input)
     {
         storyLineErrorChk();
         //TalkManager.Instance.startTalk(21) ; //시작 말하기 테스트
@@ -173,7 +182,7 @@ public class AdventureManager : MonoBehaviour
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
         //if (false) {
-        if (!jsonDataManager.Instance.getTutorialDid()) {
+        if (input) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
             tutorialStart();            
         }
@@ -183,6 +192,7 @@ public class AdventureManager : MonoBehaviour
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
             //SoundManager_Main.Instance.playSound(7);
         }
+        tutorialUI.SetActive(false);
     }
     public void mainExitButton()
     {
@@ -380,6 +390,8 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tutorialUI.SetActive(false);
+
         lastCharacter[0] = -99999;
         lastCharacter[1] = -99999;
         lastCharacter[2] = -99999;

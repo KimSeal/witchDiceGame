@@ -1038,6 +1038,7 @@ public class BattleManager : MonoBehaviour
         startBattlePhase();
         itemManager.Instance.enterBattlePhase();
         do {
+            infoBtn.GetComponent<BoxCollider2D>().enabled = true;
             yield return new WaitUntil(() => phaseMoveChk(1));
             StartCoroutine(diceThrowPhase());
             yield return new WaitUntil(() => phaseMoveChk(2));
@@ -3387,7 +3388,7 @@ public class BattleManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
-                setEnemyCharacter(1, 10013);
+                setEnemyCharacter(0, 10013);
             }
             
 
