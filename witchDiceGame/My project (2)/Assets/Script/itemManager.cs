@@ -875,7 +875,7 @@ public class itemManager : MonoBehaviour
         descObj[0].SetActive(false);
 
         
-        /*
+        
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -893,19 +893,19 @@ public class itemManager : MonoBehaviour
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i+1]);
         }
-        ItemArr[3, 0] = new Item(itemList[3][1]);
+        ItemArr[3, 0] = new Item(itemList[3][2]);
         ItemArr[3, 1] = new Item(itemList[3][8]);
-        ItemArr[3, 2] = new Item(itemList[3][3]);
-        ItemArr[3, 3] = new Item(itemList[3][2]);
+        ItemArr[3, 2] = new Item(itemList[3][7]);
+        ItemArr[3, 3] = new Item(itemList[3][10]);
         ItemArr[3, 4] = new Item(itemList[3][11]);
         ItemArr[3, 5] = new Item(itemList[3][12]);
         ItemArr[3, 6] = new Item(itemList[3][22]);
         ItemExistArr[3, 7] = true;
-        ItemArr[3, 7] = new Item(itemList[3][30]);
+        ItemArr[3, 7] = new Item(itemList[3][23]);
         ItemExistArr[3, 8] = true;
-        ItemArr[3, 8] = new Item(itemList[3][31]);
+        ItemArr[3, 8] = new Item(itemList[3][12]);
         ItemExistArr[3, 9] = true;
-        ItemArr[3, 9] = new Item(itemList[3][33]);
+        ItemArr[3, 9] = new Item(itemList[3][22]);
  
 
         for (int i = 0; i < 10; i++)
@@ -920,7 +920,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
-        */
+        
         updateInventory();
     }
 
