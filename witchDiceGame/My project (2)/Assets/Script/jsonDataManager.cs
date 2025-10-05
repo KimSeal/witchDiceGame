@@ -35,12 +35,20 @@ public class jsonDataManager : MonoBehaviour
     private string jsonFileName = "playerData2.json";
     void Start()
     {
-        string fileName = Path.Combine(Application.dataPath, jsonFileName);
+        string fileName = Path.Combine(Application.persistentDataPath, jsonFileName);
+        string preFileName = Path.Combine(Application.dataPath, jsonFileName);
 
-        if (!File.Exists(fileName)) { 
+        if (!File.Exists(fileName))
+        {
             playerPlayData = new PlayerPlayData();
-            SavePlayerDataToJson(); 
+            if (File.Exists(preFileName))
+            {
+                LoadPlayerFromJson_pre();
+                
+            }
+            SavePlayerDataToJson();
         }
+        else 
         LoadPlayerFromJson();
         BattleManager.Instance.takeJsonWitchPower();
 
@@ -51,15 +59,33 @@ public class jsonDataManager : MonoBehaviour
         libraryMoneyDesc.GetComponent<TextMeshPro>().text = "$ "+ a.ToString();
     }
 
-    public void SavePlayerDataToJson()
+    public void SavePlayerDataToJson_pre()
     {
         string jsonData = JsonUtility.ToJson(playerPlayData);
         string path = Path.Combine(Application.dataPath, jsonFileName);
         File.WriteAllText(path, jsonData);
     }
-    public void LoadPlayerFromJson()
+    public void SavePlayerDataToJson()
+    {
+        string jsonData = JsonUtility.ToJson(playerPlayData);
+        string path = Path.Combine(Application.persistentDataPath, jsonFileName);
+        File.WriteAllText(path, jsonData);
+    }
+    public void LoadPlayerFromJson_pre()
     {
         string fileName = Path.Combine(Application.dataPath, jsonFileName);
+        if (File.Exists(fileName))
+        {
+            string jsonFromFile = File.ReadAllText(fileName);
+            PlayerPlayData temp = JsonUtility.FromJson<PlayerPlayData>(jsonFromFile);
+            playerPlayData = new PlayerPlayData(temp);
+        }
+        SoundManager_Main.Instance.setBackgroundVolume(getBackgroundVol());
+        SoundManager_Sfx.Instance.setSFXVolume(getSFXVol());
+    }
+    public void LoadPlayerFromJson()
+    {
+        string fileName = Path.Combine(Application.persistentDataPath, jsonFileName);
         if (File.Exists(fileName)) {
             string jsonFromFile = File.ReadAllText(fileName);
             PlayerPlayData temp = JsonUtility.FromJson<PlayerPlayData>(jsonFromFile);
