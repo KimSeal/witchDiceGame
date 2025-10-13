@@ -30,6 +30,8 @@ public class Slime : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1) //고블린의 두번째 스킬이 호출된 경우
         {
+            Debug.Log(sendSkillPacket.diceNum[0]);
+            Debug.Log(sendSkillPacket.diceNum[1]);
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * sendSkillPacket.diceNum[1], 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
         }
 

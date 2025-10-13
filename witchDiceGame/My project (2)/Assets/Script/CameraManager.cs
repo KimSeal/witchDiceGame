@@ -185,7 +185,7 @@ public class CameraManager : MonoBehaviour
                 {
                     loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = " X 5\n\n( special stage clear bonus! )";
+                    partGet.text = " X 5\n\n( special bonus for stage clear! )";
                 }
                 characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
             }

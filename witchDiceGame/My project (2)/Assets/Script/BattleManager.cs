@@ -3046,7 +3046,7 @@ public class BattleManager : MonoBehaviour
                         makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
 
                         //스킬에 대한 공격용 Packet 생성
-                        makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum() - 1);
+                        makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum());
                         sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         
                         takeSkillPacketArr.Clear();

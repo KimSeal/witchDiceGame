@@ -41,6 +41,7 @@ public class jsonDataManager : MonoBehaviour
         if (!File.Exists(fileName))
         {
             playerPlayData = new PlayerPlayData();
+            SoundManager_Main.Instance.setBackgroundVolume(1.0f);
             if (File.Exists(preFileName))
             {
                 LoadPlayerFromJson_pre();
@@ -52,6 +53,9 @@ public class jsonDataManager : MonoBehaviour
         LoadPlayerFromJson();
         BattleManager.Instance.takeJsonWitchPower();
 
+        optionManager.Instance.changeOption(1);
+        optionManager.Instance.changeOption(2);
+        optionManager.Instance.changeOption(0);
         libraryMoneyDesc = GameObject.Find("obj_library_money");
     }
     public void changeMoney(int a)
