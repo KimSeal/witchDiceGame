@@ -144,6 +144,7 @@ public class TalkManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        float yDefault = -20f;
         if (entity.activeSelf)
         {
             //투명도 조정
@@ -185,13 +186,13 @@ public class TalkManager : MonoBehaviour
 
                     characterImage[i].GetComponent<RectTransform>().localPosition += new Vector3(0, jumpSpd[i], 0);
                     jumpSpd[i] -= 0.5f;
-                    if (characterImage[i].GetComponent<RectTransform>().localPosition.y < 0) {
-                        characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, 0, characterImage[i].GetComponent<RectTransform>().localPosition.z);
+                    if (characterImage[i].GetComponent<RectTransform>().localPosition.y < yDefault) {
+                        characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, yDefault, characterImage[i].GetComponent<RectTransform>().localPosition.z);
                         jumpChk[i]--;
                         jumpSpd[i] = 0;
                     }
                 }
-                else characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, 0, characterImage[i].GetComponent<RectTransform>().localPosition.z);
+                else characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, yDefault, characterImage[i].GetComponent<RectTransform>().localPosition.z);
             }
         }
     }
