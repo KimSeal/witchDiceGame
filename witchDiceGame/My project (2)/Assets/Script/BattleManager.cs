@@ -262,6 +262,16 @@ public class BattleManager : MonoBehaviour
         a -= 4;
         return enemyDiceNum[a];
     }
+    public int getDiceTake(int a)
+    {
+        if (a < 4) return myDiceTake[a];
+        a -= 4;
+        return enemyDiceTake[a];
+    }
+    public string getSkillName(int skillIdx)
+    {
+        return myCharacter[skillIdx / 10].skillUse(skillIdx % 10).getSkillName();
+    }
 
     int curSelectInfo = 0;
     int hoverCharacterIdx = -1;
@@ -744,6 +754,8 @@ public class BattleManager : MonoBehaviour
     }
     private bool MakeMyAttackSet(bool onlyChk, int characterIdx, int skillSelIdx, int selDiceIdx)
     {
+        if (myCharacter[characterIdx] == null || myDice[selDiceIdx] == null) return false;
+
         Skill skill = myCharacter[characterIdx].skillUse(skillSelIdx);
         List<int> liveCharacterList = new List<int>();
         for (int i = selDiceIdx; i < 4; i++)
@@ -1520,7 +1532,7 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-    private void setCurClickSkill(int input) {
+    public void setCurClickSkill(int input) {
         curClickSkill = input;
         upDownManager.Instance.clickSkill(curClickSkill);
     }
@@ -1791,6 +1803,7 @@ public class BattleManager : MonoBehaviour
             }
             if (myCharacter[characterIdx] != null && myCharacter[characterIdx].getCurState() == 0)
             {
+                /*    기존 코드. 좀더 유저 친화적으로 변경하기 위해 제거.
                 //현재 선택된게 없는 경우.
                 if (curClickSkill == -1)
                 {
@@ -1865,7 +1878,21 @@ public class BattleManager : MonoBehaviour
                         SoundManager_Sfx.Instance.playSound(0);
                     }
                 }
-
+                */
+                shakeObject(skillSelectUI[characterIdx * 2 + skillIdx]);
+                StartCoroutine(makeDark(skillSelectUI[characterIdx * 2 + skillIdx], 0.7f));
+                for (int diceIdx = 0; diceIdx < 4; diceIdx++)
+                {
+                    if (MakeMyAttackSet(true, input / 10, input % 10, diceIdx))
+                    {
+                        //스킬 배치 가능한 곳이 흔들림.
+                        hoverRotateAble(myDiceUI[diceIdx], 1, true);
+                        shakeObject(myDiceUI[diceIdx]);
+                    }
+                }
+                setCurClickSkill(input);
+                makeSkillCommand(characterIdx, skillIdx);
+                SoundManager_Sfx.Instance.playSound(0);
             }
 
             for (int i = 0; i < 4; i++) //이미 스킬이 있는 경우는 해제할 수 있어야 하므로
@@ -1925,8 +1952,6 @@ public class BattleManager : MonoBehaviour
                 StartCoroutine(makeBright(skillSelectUI[(deleteSkill / 10) * 2 + (deleteSkill % 10)], 0.0f));
                 mySkillUsed[(deleteSkill / 10), (deleteSkill % 10)] = false;
 
-                //deleteSkillCommand();
-
                 //종료 후에 스킬을 가지고 있는 곳들은 댓을때 확대가 가능하도록.
                 for (int i = 0; i < 4; i++)
                 {
@@ -1942,8 +1967,21 @@ public class BattleManager : MonoBehaviour
                 Skill useSkill = myCharacter[characterIdx].skillUse(skillIdx);
                 int needDiceNum = useSkill.getNeedDiceNum();
                 //가능한지 확인
-                if (MakeMyAttackSet(false, characterIdx, skillIdx, diceIdx))
-                {   //가능한 경우 주사위의 ui를 업데이트
+                if (MakeMyAttackSet(true, characterIdx, skillIdx, diceIdx))
+                {   //가능한 경우 중복 스킬 제거, 배치, 주사위의 ui 업데이트
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (myDiceTake[i] == curClickSkill)
+                        {
+                            shakeObject(myDiceUI[i]);
+                            diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            if (i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");//연결 체인도 제거
+                                                                                                                                                               //myDiceTake[i] = -999;
+                            myDiceChange(i, 0, -999);
+                        }
+                    }
+                    MakeMyAttackSet(false, characterIdx, skillIdx, diceIdx);
                     updateMyDiceUI();
                     mySkillUsed[characterIdx, skillIdx] = true;
                 }
@@ -1954,7 +1992,7 @@ public class BattleManager : MonoBehaviour
                     Debug.Log("It can't! - wrong Dice Problem");
                 }
                 shakeObject(skillSelectUI[characterIdx * 2 + skillIdx]);
-                setCurClickSkill(-1);
+                //setCurClickSkill(-1);
                 for (int i = 0; i < 4; i++)
                 {
                     if (myDiceTake[i] != -999) hoverRotateAble(myDiceUI[i], 1, true);
@@ -1963,7 +2001,7 @@ public class BattleManager : MonoBehaviour
             }
             //주사위에 할당된 스킬도 클릭된 스킬도 없다면 아무것도 하지 않는다.
 
-
+            upDownManager.Instance.updateBigDice();
         }
     }
 
@@ -2528,8 +2566,11 @@ public class BattleManager : MonoBehaviour
             //해당 스킬 도트 비활성화
             skillSelectUI[idx * 2].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
             skillSelectUI[idx * 2 + 1].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
-            skillSelectUI[idx * 2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            skillSelectUI[idx * 2 + 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            //skillSelectUI[idx * 2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            //skillSelectUI[idx * 2 + 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+
+            upDownManager.Instance.skillIconUpdate(idx * 2, "none");
+            upDownManager.Instance.skillIconUpdate(idx * 2 + 1, "none");
 
             for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
             {
@@ -3913,14 +3954,17 @@ public class BattleManager : MonoBehaviour
                 {
                     if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + myCharacter[i].getSkillName(j)) != null)
                     {
-                        skillSelectUI[i * 2 + j].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + myCharacter[i].getSkillName(j));
+                        upDownManager.Instance.skillIconUpdate(i * 2 + j, myCharacter[i].getSkillName(j));
                     }
                     else
                     {
-                        skillSelectUI[i * 2 + j].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                        upDownManager.Instance.skillIconUpdate(i * 2 + j, "noImage");
                     }
                 }
-                else { skillSelectUI[i * 2 + j].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); }
+                else
+                {
+                    upDownManager.Instance.skillIconUpdate(i * 2 + j, "none");
+                }
             }
         }
 

@@ -120,27 +120,37 @@ public class itemManager : MonoBehaviour
     //string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     [SerializeField]
     public GameObject changeDiceEff;
+
+    public Item getCurItem(int idx)
+    {
+        return ItemArr[curSelectItemType, idx];
+    }
+    public int getCurSelectItemType()
+    {
+        return curSelectItemType;
+    }
     public void hoverInItem(int idx)
     {
         if (idx == 11) {
             if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
-            descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
-            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            descObj[2].GetComponent<TextMeshPro>().text = "Delete Box";
-            descObj[3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(8);//"아이템을 선택 후 이곳을 클릭하면\n아이템을 버릴 수 있습니다.";
+            upDownManager.Instance.updateUpperHoverBar(1, null);
         }
         else if (ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 해당 아이템으로 변경
         {
+            upDownManager.Instance.updateUpperHoverBar(0,ItemArr[curSelectItemType, idx] );
+            /*
             if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
             Item hoverItem = ItemArr[curSelectItemType, idx];
             descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
             descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[curSelectItemType] + "ItemSprite/spr_item_" + typeArr[curSelectItemType] + "_" + hoverItem.getItemName());
             descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
             descObj[3].GetComponent<TextMeshPro>().text = typeArr2[curSelectItemType] + "\n" + hoverItem.getContent();
-
+            */
         }
         else
         {
+            upDownManager.Instance.updateUpperHoverBar(0, null);
+            /*
             if (descObj[0].activeSelf == true)
             {
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
@@ -148,15 +158,18 @@ public class itemManager : MonoBehaviour
                 descObj[3].GetComponent<TextMeshPro>().text = "";
                 descObj[0].SetActive(false);
             }
-
+            */
         }
     }
     public void hoverOutItem(int idx)
     {
+        upDownManager.Instance.updateUpperHoverBar(0, null);
+        /*
         descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         descObj[2].GetComponent<TextMeshPro>().text = "";
         descObj[3].GetComponent<TextMeshPro>().text = "";
         if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+        */
     }
     public int getItemListCount(int idx)
     {
@@ -193,17 +206,21 @@ public class itemManager : MonoBehaviour
 
     public void turnOffItemCollider_item()
     {
+        /*
         for (int i=0;i<11;i++)
         {
             inventoryUIArr[i].GetComponent<BoxCollider2D>().enabled = false;
         }
+        */
     }
     public void turnOnItemCollider_item()
     {
+        /*
         for (int i = 0; i < 11; i++)
         {
             inventoryUIArr[i].GetComponent<BoxCollider2D>().enabled = true;
         }
+        */
     }
     public void turnOffCharacterCollider_item()
     {
@@ -432,7 +449,7 @@ public class itemManager : MonoBehaviour
 
                 if (curSelectItemIndex == idx)
                 {// 이미 자신이 선택한 아이템인 경우 해제
-                    changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+                    //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
                     curSelectItemIndex = -1;
 
                 }
@@ -440,7 +457,7 @@ public class itemManager : MonoBehaviour
                 {
                     if (curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
                     curSelectItemIndex = idx;
-                    changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
+                    //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
                     if (curSelectItemType == 0) { 
                         click_characterInfoType_selectButton(0);
                         GameObject temp = Instantiate(effObj, infoBoardObj[0].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
@@ -467,7 +484,7 @@ public class itemManager : MonoBehaviour
             {
                 if (curSelectItemIndex != -1)
                 {
-                    changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+                    //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
                 }
                 curSelectItemIndex = -1;
             }
@@ -508,7 +525,7 @@ public class itemManager : MonoBehaviour
             curSelectItemType = idx; //타입 변경   
             for (int i=0;i < 11;i++)
             {
-                changeAlpha(inventoryUIArr[i], 0.0f);
+                //changeAlpha(inventoryUIArr[i], 0.0f);
             }
             updateInventory();
         }
@@ -737,8 +754,9 @@ public class itemManager : MonoBehaviour
 
     private void useItem()
     {
-        changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-        inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+        upDownManager.Instance.updateUpperItem(curSelectItemIndex, -1, "0");
+        //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         ItemArr[curSelectItemType, curSelectItemIndex] = null;
         ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
         curSelectItemIndex = -1;
@@ -761,12 +779,14 @@ public class itemManager : MonoBehaviour
         {
             if (ItemExistArr[curSelectItemType, i]) //아이템이 있는 경우 해당 아이템으로 변경
             {
-                inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/"+ typeArr[curSelectItemType]+"ItemSprite/spr_item_" + typeArr[curSelectItemType]+
-                    "_" + ItemArr[curSelectItemType, i].getItemName());
+                upDownManager.Instance.updateUpperItem(i, curSelectItemType, ItemArr[curSelectItemType, i].getItemName());
+                //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/"+ typeArr[curSelectItemType]+"ItemSprite/spr_item_" + typeArr[curSelectItemType]+
+                //    "_" + ItemArr[curSelectItemType, i].getItemName());
             }
             else
             {
-                inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                upDownManager.Instance.updateUpperItem(i, -1, "0");
+                //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];
         }
@@ -875,7 +895,7 @@ public class itemManager : MonoBehaviour
         descObj[0].SetActive(false);
 
         
-        /*
+        
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -920,7 +940,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
-        */
+        
         updateInventory();
     }
 
@@ -932,7 +952,8 @@ public class itemManager : MonoBehaviour
 
     public Vector3 getItemInventoryPosition(int idx)
     {
-        return inventoryUIArr[idx].transform.position;
+        return new Vector3(0,0,0);
+        //return inventoryUIArr[idx].transform.position;
     }
     public void setUpAnimator()
     {
