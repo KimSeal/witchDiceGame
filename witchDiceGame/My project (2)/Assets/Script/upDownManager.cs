@@ -30,16 +30,26 @@ public class upDownManager : MonoBehaviour
 
     [SerializeField]
     public GameObject backBlack;
-    public GameObject bigDiceEntity;
-    public GameObject[] bigDiceButton = new GameObject[4];
-    public GameObject[] bigDiceOutline = new GameObject[4];
-    public GameObject[] bigDiceState = new GameObject[4];
-    public GameObject[] bigDiceChain = new GameObject[3];
+    public GameObject bigDiceSkillEntity;
+    public GameObject[] bigDiceSkillButton = new GameObject[4];
+    public GameObject[] bigDiceSkillOutline = new GameObject[4];
+    public GameObject[] bigDiceSkillState = new GameObject[4];
+    public GameObject[] bigDiceSkillChain = new GameObject[3];
 
-    private int lockState = 0;
+    [SerializeField]
+    public GameObject bigDicePowerEntity;
+    public GameObject[] bigDicePowerButton = new GameObject[8];
+    public GameObject[] bigDicePowerOutline = new GameObject[8];
+    public GameObject[] bigDicePowerState = new GameObject[8];
+    public GameObject[] bigDicePowerChain = new GameObject[3];
+    public GameObject bigDicePowerCancleObj;
+
+    private int lockState = 0; //0 : free  1: underbar hover  2: upperbar hover 3: battleMode  4: witchPower 
     private int curSkill = -1;
     private int curItemIdx = -1;
     private int curItemType = 0;
+
+
 
     private static upDownManager instance = null;
 
@@ -70,7 +80,7 @@ public class upDownManager : MonoBehaviour
     void Start()
     {
         backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
-        bigDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
+        bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
     }
 
     // Update is called once per frame
@@ -78,6 +88,8 @@ public class upDownManager : MonoBehaviour
     {
         moveBattleUI(moveArrY[0], underHoverBar[0]);
         moveBattleUI(moveArrY[1], upperHoverBar[0]);
+
+
     }
 
     //underBar, upperBar
@@ -88,21 +100,21 @@ public class upDownManager : MonoBehaviour
     }
     //off, on
     private float[,] moveConstY = {
-        {9f, 215f},
+        {-5f, 225f},
         { 55f, 168f}
     };
 
-    public void hoverInBigDice(int idx)
+    public void hoverInBigDiceSkill(int idx)
     {
         if (BattleManager.Instance.getCharacter(idx) != null)
         {
-            bigDiceOutline[idx].GetComponent<Image>().sprite
+            bigDiceSkillOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         }
     }
-    public void hoverOutBigDice(int idx)
+    public void hoverOutBigDiceSkill(int idx)
     {
-        bigDiceOutline[idx].GetComponent<Image>().sprite
+        bigDiceSkillOutline[idx].GetComponent<Image>().sprite
              = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
 
@@ -175,6 +187,13 @@ public class upDownManager : MonoBehaviour
         }
     }
 
+    public void battleStart()
+    {
+        BattleManager.Instance.setCurClickSkill(-1);
+        lockState = 3;
+        BattleManager.Instance.updateMoveUI(3);
+        BattleManager.Instance.moveToBattlePhase();
+    }
 
     public void hoverInUnderBarSkill(int idx)
     {
@@ -216,6 +235,9 @@ public class upDownManager : MonoBehaviour
 
     public void clickSkill(int input)
     {
+        //전투 중에는 추가 잠금 불가능하게
+        if (input != -1 && lockState == 3) return;
+
         deleteOtherLock(1);
         for (int idx = 0;idx< 8;idx++) {
             underSkillOutline[idx].GetComponent<Image>().sprite
@@ -226,15 +248,15 @@ public class upDownManager : MonoBehaviour
         {
             //deleteOtherLock(1);
             backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
-            bigDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
+            bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUnderBarSkill(curSkill);
             lockState = 1; //클릭시 현재 스킬에 대한 설명으로 고정.
-            updateBigDice();
+            updateBigDiceSkill();
         }
         else {
             backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
-            bigDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
-            updateBigDice();
+            bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
+            updateBigDiceSkill();
             lockState = 0;
             hoverOutUnderBarSkill(0);
         }
@@ -251,10 +273,17 @@ public class upDownManager : MonoBehaviour
         if (lockState == 2) {
             clickItem(-1);
         }
+        if (lockState == 4) {
+            bigDicePowerCancleObj.SetActive(false);
+            clickEnterPower(-1);
+        }
     }
 
     public void clickItem(int input)
     {
+        //전투 중에는 추가 잠금 불가능하게
+        if (input != -1 && lockState == 3) return;
+
         deleteOtherLock(2);
         for (int idx = 0; idx < upperItemOutline.Length; idx++)
         {
@@ -267,10 +296,10 @@ public class upDownManager : MonoBehaviour
             //deleteOtherLock(2);
            // curItemIdx = input;
             backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
-            //bigDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
+            //bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUpperBar(input);
             lockState = 2; //클릭시 현재 스킬에 대한 설명으로 고정.
-            //updateBigDice();
+            //updatebigDiceSkill();
         }
         else {
             backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
@@ -281,6 +310,38 @@ public class upDownManager : MonoBehaviour
             
         }
     }
+
+    public void clickBigDicePower(int idx)
+    {
+        BattleManager.Instance.select_witchPower_Dice(idx);
+    }
+    public void clickEnterPower(int input)
+    {
+        //전투 중에는 추가 잠금 불가능하게
+        if (input != -1 && lockState == 3) return;
+
+        deleteOtherLock(4);
+
+        if (input != -1)
+        {
+            //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            BattleManager.Instance.updateMoveUI(4);
+            BattleManager.Instance.witchPowerPhase();
+            bigDicePowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 60f, 0f);
+            bigDicePowerCancleObj.SetActive(true);
+            lockState = 4; //클릭시 현재 스킬에 대한 설명으로 고정.
+            updateBigDicePower();
+        }
+        else
+        {
+            BattleManager.Instance.deleteWitchPowerUI();
+            //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDicePowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            lockState = 0;
+            BattleManager.Instance.updateMoveUI(0);
+        }
+    }
+
 
     public void clickItemTypeButton(int idx)
     {
@@ -355,17 +416,17 @@ public class upDownManager : MonoBehaviour
             upperHoverBarDesc.text = item.getContent();
         }
     }
-    public void updateBigDice()
+    public void updateBigDiceSkill()
     {
         for (int i=0;i<4;i++)
         {
-            if(BattleManager.Instance.getDiceNum(i) >0 && BattleManager.Instance.getDiceNum(i)<=6) bigDiceButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
-            else bigDiceButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
+            if(BattleManager.Instance.getDiceNum(i) >0 && BattleManager.Instance.getDiceNum(i)<=6) bigDiceSkillButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
+            else bigDiceSkillButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
 
 
             if (BattleManager.Instance.getDiceTake(i) != -999)
             {
-                bigDiceButton[i].GetComponent<Image>().sprite =
+                bigDiceSkillButton[i].GetComponent<Image>().sprite =
                     Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + BattleManager.Instance.getSkillName(BattleManager.Instance.getDiceTake(i)));
 
                 string strTemp = "";
@@ -374,26 +435,26 @@ public class upDownManager : MonoBehaviour
                 
                 if (i != 0 && BattleManager.Instance.getDiceTake(i) == BattleManager.Instance.getDiceTake(i - 1))
                 {
-                    bigDiceChain[i - 1].GetComponent<Image>().sprite =
+                    bigDiceSkillChain[i - 1].GetComponent<Image>().sprite =
                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/dice_skillChk_" + strTemp + "_chain");
                     strTemp += "_sub";
                 }
                 else if(i != 0 && BattleManager.Instance.getDiceTake(i) != BattleManager.Instance.getDiceTake(i - 1))
                 {
-                    bigDiceChain[i - 1].GetComponent<Image>().sprite =
+                    bigDiceSkillChain[i - 1].GetComponent<Image>().sprite =
                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                 }
 
-                bigDiceState[i].GetComponent<Image>().sprite =
+                bigDiceSkillState[i].GetComponent<Image>().sprite =
                     Resources.Load<Sprite>("sprite/TestSprite/diceImage/dice_skillChk_" + strTemp);
             }
             else {
-                bigDiceState[i].GetComponent<Image>().sprite =
+                bigDiceSkillState[i].GetComponent<Image>().sprite =
                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
 
                 if (i != 0)
                 {
-                    bigDiceChain[i - 1].GetComponent<Image>().sprite =
+                    bigDiceSkillChain[i - 1].GetComponent<Image>().sprite =
                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                 }
 
@@ -401,6 +462,97 @@ public class upDownManager : MonoBehaviour
 
         }
     }
+
+    public void updateBigDicePower()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
+            else bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
+
+
+            if (BattleManager.Instance.getDiceTake(i) != -999)
+            {
+
+                string strTemp = "";
+                if (BattleManager.Instance.getDiceTake(i) % 10 == 0) strTemp += "up_"; else strTemp += "down_";
+                strTemp += (BattleManager.Instance.getDiceTake(i) / 10 + 1).ToString();
+
+                if (i != 0 && BattleManager.Instance.getDiceTake(i) == BattleManager.Instance.getDiceTake(i - 1))
+                {
+                    bigDicePowerChain[i - 1].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/dice_skillChk_" + strTemp + "_chain");
+                    strTemp += "_sub";
+                }
+                else if (i != 0 && BattleManager.Instance.getDiceTake(i) != BattleManager.Instance.getDiceTake(i - 1))
+                {
+                    bigDicePowerChain[i - 1].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+
+                bigDicePowerState[i].GetComponent<Image>().sprite =
+                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/dice_skillChk_" + strTemp);
+            }
+            else
+            {
+                bigDicePowerState[i].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+
+                if (i != 0)
+                {
+                    bigDicePowerChain[i - 1].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+
+            }
+
+        }
+
+        for (int i = 4; i < 8; i++)
+        {
+            if (BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
+            else bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
+
+
+            if (BattleManager.Instance.getDiceTake(i) != -999)
+            {
+                string strTemp = "";
+                if (BattleManager.Instance.getDiceTake(i) % 10 == 0) strTemp += "up_"; else strTemp += "down_";
+                strTemp += (BattleManager.Instance.getDiceTake(i) / 10 + 1).ToString();
+
+                if (i != 4 && BattleManager.Instance.getDiceTake(i) == BattleManager.Instance.getDiceTake(i - 1))
+                {
+                    bigDicePowerChain[i - 1].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/dice_skillChk_" + strTemp + "_chain");
+                    strTemp += "_sub";
+                }
+                else if (i != 4 && BattleManager.Instance.getDiceTake(i) != BattleManager.Instance.getDiceTake(i - 1))
+                {
+                    bigDicePowerChain[i - 1].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+
+                bigDicePowerState[i].GetComponent<Image>().sprite =
+                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/dice_skillChk_" + strTemp);
+            }
+            else
+            {
+                bigDicePowerState[i].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+
+                if (i != 4)
+                {
+                    bigDicePowerChain[i - 1].GetComponent<Image>().sprite =
+                   Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+                }
+
+            }
+
+        }
+
+
+    }
+
     private void moveBattleUI(float inputY, GameObject gameObjTemp)
     {
         Vector3 destination = new Vector3(gameObjTemp.GetComponent<RectTransform>().anchoredPosition.x, inputY, 0);
