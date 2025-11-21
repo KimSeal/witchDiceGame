@@ -32,6 +32,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] private GameObject[] characterImage = new GameObject[4]; //ui_communicate_character_(number)
     [SerializeField] private GameObject characterName; //ui_communicate_name
     [SerializeField] private GameObject characterTalk;//ui_communicate_talk
+    [SerializeField] private GameObject characterTalkBack; 
     [SerializeField] private GameObject[] talkImage = new GameObject[2]; //ui_communicate_image_front/back
     [SerializeField] private GameObject background;
     private List<TalkReader> talkList = new List<TalkReader>();
@@ -40,7 +41,10 @@ public class TalkManager : MonoBehaviour
     private int curIdx = 0;
     private int initIdx = -1;
     //private int curLight = 0;
+
     private bool talkingChk = false;
+    private bool descChk = false;
+    private string descString = "";
 
     private List<int> listIdx = new List<int>();
     private int[] lightingArr = new int[4];
@@ -57,7 +61,23 @@ public class TalkManager : MonoBehaviour
     private int[] jumpChk = { 0, 0, 0, 0 };
     private float[] jumpSpd = { 0, 0, 0, 0 };
 
+    
+
     private bool libraryEntry = false;
+
+    public void setDescString(string str) {
+        if (str == "")
+        {
+            descString = "";
+            changeTalkState(1, false);
+        }
+        else
+        {
+            descString = str;
+            changeTalkState(1, true);
+        }
+    }
+
     private void setPoint(TalkReader talkReader){
         pointArr[0] = new Vector3(talkReader.characterLeftestX, 0, 0);
         pointArr[1] = new Vector3(talkReader.characterLeftX, 0, 0);
@@ -101,101 +121,117 @@ public class TalkManager : MonoBehaviour
         
     }
 
+    public void clickDescBox()
+    {
+        if (talkingChk)
+        {
+            goToNextTalk();
+        }
+        else
+        {
+            AdventureManager.Instance.clickDice(-1);
+        }
+    }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            characterTalkBack.SetActive(false);
+            libraryEntry = false;
+            talkList = CSVReader.Read<TalkReader>("Talk_2");
+            for (int i = 0; i < talkList.Count; i++)
+            {
+                talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
+                talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN);
+                talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP);
+            }
+            descList = CSVReader.Read<DescReader>("Desc");
+            for (int i = 0; i < descList.Count; i++)
+            {
+                descList[i].KR = SpecialTextChange(descList[i].KR);
+                descList[i].EN = SpecialTextChange(descList[i].EN);
+                descList[i].JP = SpecialTextChange(descList[i].JP);
+            }
+
+            initIdx = -1;
+
+            for (int i = 0; i < talkList.Count; i++)
+            {
+                if (talkList[i].talkIdx != initIdx)
+                {
+                    initIdx = talkList[i].talkIdx;
+                    listIdx.Add(i);
+                }
+            }
+
+            for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
+
+            for (int i = 0; i < 4; i++) material[i] = characterImage[i].GetComponent<Image>().material;
+
+            talkImage[0].SetActive(false);
+            talkImage[1].SetActive(false);
+            entity.SetActive(false);
+        }
+
+        bool jumpFlag = false;
+        // Update is called once per frame
+        void FixedUpdate()
+        {
+            float yDefault = -20f;
+            if (entity.activeSelf)
+            {
+                //투명도 조정
+                for (int i = 0; i < characterImage.Length; i++)
+                {
+                    if (lightingArr[i] != '0')
+                    {
+                        if (material[i].GetFloat("_Transparency") > 0.0f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
+                        else material[i].SetFloat("_Transparency", 0.0f);
+                    }
+                    else
+                    {
+                        if (material[i].GetFloat("_Transparency") < 0.7f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") + 0.1f);
+                        else material[i].SetFloat("_Transparency", 0.7f);
+                    }
+                }
+                jumpFlag = false;
+                //움직임 조정
+                for (int i = 0; i < 4; i++)
+                {
+                    if (characterImage[i].activeSelf && characterMoveVal[i] > 0.1f)
+                    {
+                        characterMoveVal[i] -= 0.1f;
+                        if (characterMoveVal[i] > 0.0f)
+                        {
+                            characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f).x,
+                                characterImage[i].GetComponent<RectTransform>().localPosition.y, characterImage[i].GetComponent<RectTransform>().localPosition.z);
+                        }
+                    }
+                    if (jumpChk[i] > 0)
+                    {
+                        if (jumpChk[i] % 2 == 0)
+                        {
+                            jumpSpd[i] = 4;
+                            jumpChk[i]--;
+
+                            if (!jumpFlag) { SoundManager_Sfx.Instance.playSound(19); jumpFlag = true; }
+
+                        }
+
+                        characterImage[i].GetComponent<RectTransform>().localPosition += new Vector3(0, jumpSpd[i], 0);
+                        jumpSpd[i] -= 0.5f;
+                        if (characterImage[i].GetComponent<RectTransform>().localPosition.y < yDefault)
+                        {
+                            characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, yDefault, characterImage[i].GetComponent<RectTransform>().localPosition.z);
+                            jumpChk[i]--;
+                            jumpSpd[i] = 0;
+                        }
+                    }
+                    else characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, yDefault, characterImage[i].GetComponent<RectTransform>().localPosition.z);
+                }
+            }
+        }
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        libraryEntry = false;
-        talkList = CSVReader.Read<TalkReader>("Talk_2");
-        for (int i = 0; i < talkList.Count; i++)
-        {
-            talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
-            talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN); 
-            talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP); 
-        }
-        descList = CSVReader.Read<DescReader>("Desc");
-        for (int i=0;i<descList.Count;i++) {
-            descList[i].KR = SpecialTextChange(descList[i].KR);
-            descList[i].EN = SpecialTextChange(descList[i].EN);
-            descList[i].JP = SpecialTextChange(descList[i].JP);
-        }
-
-        initIdx = -1;
-        
-        for (int i = 0; i < talkList.Count; i++)
-        {
-            if(talkList[i].talkIdx != initIdx)
-            {
-                initIdx = talkList[i].talkIdx;
-                listIdx.Add(i);
-            }
-        }
-
-        for (int i=0;i<lightingArr.Length;i++){ lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
-
-        for (int i = 0; i < 4; i++) material[i] = characterImage[i].GetComponent<Image>().material; 
-
-        talkImage[0].SetActive(false);
-        talkImage[1].SetActive(false);
-        entity.SetActive(false);
-    }
-
-    bool jumpFlag = false;
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        float yDefault = -20f;
-        if (entity.activeSelf)
-        {
-            //투명도 조정
-            for (int i = 0; i < characterImage.Length; i++)
-            {
-                if (lightingArr[i] != '0')
-                {
-                    if (material[i].GetFloat("_Transparency") > 0.0f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
-                    else material[i].SetFloat("_Transparency", 0.0f);
-                }
-                else
-                {
-                    if (material[i].GetFloat("_Transparency") < 0.7f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") + 0.1f);
-                    else material[i].SetFloat("_Transparency", 0.7f);
-                }
-            }
-            jumpFlag = false;
-            //움직임 조정
-            for (int i = 0; i < 4; i++)
-            {
-                if (characterImage[i].activeSelf && characterMoveVal[i] > 0.1f) {
-                    characterMoveVal[i] -= 0.1f;
-                    if (characterMoveVal[i] > 0.0f)
-                    {
-                        characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(Vector3.Lerp(characterImage[i].GetComponent<RectTransform>().localPosition, pointArr[i], 0.1f).x,
-                            characterImage[i].GetComponent<RectTransform>().localPosition.y, characterImage[i].GetComponent<RectTransform>().localPosition.z);
-                    }
-                }
-                if (jumpChk[i] > 0  )
-                {
-                    if(jumpChk[i] % 2 == 0)
-                    {
-                        jumpSpd[i] = 4;
-                        jumpChk[i]--;
-
-                        if(!jumpFlag){ SoundManager_Sfx.Instance.playSound(19); jumpFlag = true; }
-                        
-                    }
-
-                    characterImage[i].GetComponent<RectTransform>().localPosition += new Vector3(0, jumpSpd[i], 0);
-                    jumpSpd[i] -= 0.5f;
-                    if (characterImage[i].GetComponent<RectTransform>().localPosition.y < yDefault) {
-                        characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, yDefault, characterImage[i].GetComponent<RectTransform>().localPosition.z);
-                        jumpChk[i]--;
-                        jumpSpd[i] = 0;
-                    }
-                }
-                else characterImage[i].GetComponent<RectTransform>().localPosition = new Vector3(characterImage[i].GetComponent<RectTransform>().localPosition.x, yDefault, characterImage[i].GetComponent<RectTransform>().localPosition.z);
-            }
-        }
-    }
 
     private int preSound = 0;
 
@@ -206,19 +242,42 @@ public class TalkManager : MonoBehaviour
         if (jsonDataManager.Instance.getLanguage() == 2) return descList[idx].JP;
         return descList[idx].EN;
     }
+
+    public void changeTalkState(int opt, bool onOff)
+    {
+        if (opt == 0) {
+            talkingChk = onOff;
+        }
+        if (opt == 1) {
+            descChk = onOff;
+        }
+
+        if (talkingChk) { //대화 필요
+            characterTalkBack.SetActive(true);
+        }
+        else if(descChk) // 설명만
+        {
+            characterTalkBack.SetActive(true);
+            characterTalk.GetComponent<TextMeshProUGUI>().text = descString;
+        }
+        else //text 필요 없음. 
+        {
+            characterTalkBack.SetActive(false);
+        }
+    }
     public void startTalk(int a)
     {
 
         if (!talkingChk)
         {
-            
             entity.SetActive(true);
 
             curIdx = listIdx[a];
             setCharacterName(talkList[a]);
             setPreCharacterName();
 
-            talkingChk = true;
+            changeTalkState(0, true);
+
             for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; }
 
             setPoint(talkList[curIdx]);
@@ -351,8 +410,10 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
-            if(preSound >=0)SoundManager_Main.Instance.stopSound(preSound);
-            for (int i = 0; i < characterImage.Length; i++) {
+            changeTalkState(0, true);
+            if (preSound >= 0) SoundManager_Main.Instance.stopSound(preSound);
+            for (int i = 0; i < characterImage.Length; i++)
+            {
                 characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_characterEmpty");
                 material[i].SetFloat("_Transparency", 0.7f);
             }
@@ -360,7 +421,7 @@ public class TalkManager : MonoBehaviour
             characterName.GetComponent<TextMeshProUGUI>().text = "";
             characterTalk.GetComponent<TextMeshProUGUI>().text = "";
             entity.SetActive(false);
-            talkingChk = false;
+            changeTalkState(0, false);
         }
     }
     public bool getTalkChk()

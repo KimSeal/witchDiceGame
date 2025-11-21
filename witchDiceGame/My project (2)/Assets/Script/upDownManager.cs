@@ -93,14 +93,14 @@ public class upDownManager : MonoBehaviour
     }
 
     //underBar, upperBar
-    private float[] moveArrY = { 9f, 215f,};
+    private float[] moveArrY = { -2f, 225f,};
 
     private void onOffUI(int idx, int opt) {
         moveArrY[idx] = moveConstY[opt, idx];
     }
     //off, on
     private float[,] moveConstY = {
-        {-5f, 225f},
+        {-2f, 225f},
         { 55f, 168f}
     };
 
