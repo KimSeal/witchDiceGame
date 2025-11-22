@@ -72,6 +72,7 @@ public class AdventureManager : MonoBehaviour
 
     [SerializeField] private GameObject adventureBackground, adventureNPC, adventureBackBoard; //ui_adventure Back_0/ NPC_0 / backBoard
     [SerializeField] private GameObject[] watchNumObject = new GameObject[6]; //obj_adventureBtn_selectBtn_(number)
+    [SerializeField] public GameObject watchNumObjectEntity; //obj_adventureBtn_selectBtn
 
     [SerializeField]
     public GameObject[] characterObj = new GameObject[4];
@@ -670,8 +671,22 @@ public class AdventureManager : MonoBehaviour
         }
         if(!onOff) giveUpBoard.SetActive(false);
     }
+    private void meetDiceEvent(bool onOff)
+    {
+        eventWatchTrigger = onOff;
+        changeSelectNum(0);
+
+        if (onOff) {
+            watchNumObjectEntity.transform.position = new Vector3(9f - 500f, -43f, 0f);
+        }
+        else
+        {
+            watchNumObjectEntity.transform.position = new Vector3(9f - 500f, 134f, 0f);
+        }
+    }
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
+        meetDiceEvent(false);
         diceEntity.SetActive(false);
         rerollBtn.SetActive(false);
         gameOverAtBattle = false;
@@ -878,8 +893,8 @@ public class AdventureManager : MonoBehaviour
                 //float tempMoveVal = 1.0f;
                 float timeVal = 0.0f;
                 while(timeVal < 1.0f) {
-                    adventureBackground.transform.localPosition = new Vector3(32f + 0.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 16.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
-                    adventureBackBoard.transform.localPosition = new Vector3(32f + 8.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 8.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    adventureBackground.transform.localPosition = new Vector3(32f + 0.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 7.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    adventureBackBoard.transform.localPosition = new Vector3(32f + 8.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), -1.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
                     timeVal += 0.05f;
                     yield return new WaitForSeconds(0.01f);
                 }
@@ -889,11 +904,11 @@ public class AdventureManager : MonoBehaviour
 
                 curDiceEvent = new adventureEvent(adventureEventList[stageNum][adventureEventArr[stageIdx]]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
                 if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
-                    eventWatchTrigger = true;
+                    meetDiceEvent(true);
                 }
                 else
                 {
-                    eventWatchTrigger = false;
+                    meetDiceEvent(false);
                 }
                 //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText(); //선택지 텍스트 변경
                 //eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
@@ -915,8 +930,8 @@ public class AdventureManager : MonoBehaviour
                 float amountTemp = 2.0f;
                 while (timeVal < 1.0f)
                 {
-                    adventureBackground.transform.localPosition = new Vector3(32f + 0.0f + (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 16.0f - (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 0f);
-                    adventureBackBoard.transform.localPosition = new Vector3(32f + 8.0f - (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 8.0f + (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    adventureBackground.transform.localPosition = new Vector3(32f + 0.0f + (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 7.0f - (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 0f);
+                    adventureBackBoard.transform.localPosition = new Vector3(32f + 8.0f - (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), -1.0f + (amountTemp * Mathf.Sin(timeVal * Mathf.PI)), 0f);
                     timeVal += 0.02f;
                     amountTemp -= 0.04f;
                     yield return new WaitForSeconds(0.01f);
@@ -949,7 +964,7 @@ public class AdventureManager : MonoBehaviour
                 }
 
                 adventureBackground.GetComponent<hoverRotate>().shakeStart(10.0f);
-                eventWatchTrigger = false;
+                meetDiceEvent(false);
                 for (int i = 0; i < 6; i++)
                 {
                     watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
@@ -1467,12 +1482,30 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
+    public void hoverInChangeSelectNumByDice(int idx)
+    {
+        if (idx == -1) changeSelectNum(0);
+        else
+        {
+            if (CharacterManager.Instance.getCharacter(idx) != null && CharacterManager.Instance.getCharacterState(idx) == 0)
+            {
+                changeSelectNum(CharacterManager.Instance.getDiceNum(idx));
+            }
+        }
+        
+    }
     public void changeSelectNum(int inputNum)
     { //현재 아래 방향이 상승
         if (eventWatchTrigger)
         {
 
             if (inputNum == 0) {
+
+                for (int i = 0; i < 6; i++)
+                {
+                    watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+                }
+
                 TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
                 //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText();
             }
@@ -1480,8 +1513,15 @@ public class AdventureManager : MonoBehaviour
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    if (i + 1 == inputNum) watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
-                    else watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                    if (i + 1 == inputNum)
+                    {
+                        watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+                        //watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                    }
+                    else {
+                        watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+                        //watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                    }
                 }
                 eventWatchNum = inputNum - 1;
                 TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());
