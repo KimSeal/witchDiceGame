@@ -44,6 +44,11 @@ public class upDownManager : MonoBehaviour
     public GameObject[] bigDicePowerChain = new GameObject[3];
     public GameObject bigDicePowerCancleObj;
 
+    [SerializeField]
+    public GameObject characterSprite;
+    public GameObject characterOrigin;
+
+
     private int lockState = 0; //0 : free  1: underbar hover  2: upperbar hover 3: battleMode  4: witchPower 
     private int curSkill = -1;
     private int curItemIdx = -1;
@@ -89,8 +94,12 @@ public class upDownManager : MonoBehaviour
         moveBattleUI(moveArrY[0], underHoverBar[0]);
         moveBattleUI(moveArrY[1], upperHoverBar[0]);
 
-
+        characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
+        
+        // characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<SpriteRenderer>().bounds.size.x, GetComponent<SpriteRenderer>().bounds.size.y);
     }
+
+
 
     //underBar, upperBar
     private float[] moveArrY = { -2f, 225f,};
