@@ -99,6 +99,28 @@ public class itemManager : MonoBehaviour
 
     [SerializeField] private GameObject [] descObj = new GameObject[4]; //obj_ui_item_Desc_ board/logo/name/desc
 
+
+
+    [SerializeField]
+    public GameObject characterUIEntity;
+    public GameObject characterSprite;
+    public GameObject characterOrigin;
+    public TextMeshProUGUI characterName;
+    public TextMeshProUGUI[] characterHp;
+    public TextMeshProUGUI characterAtk;
+    public GameObject[] characterDice = new GameObject[6];
+    public GameObject[] characterSkill = new GameObject[2];
+    public GameObject[] characterEquip = new GameObject[2];
+    public GameObject[] characterDiceOutline = new GameObject[6];
+    public GameObject[] characterSkillOutline = new GameObject[2];
+    public GameObject[] characterEquipOutline = new GameObject[2];
+    public GameObject characterDescImage;
+    public TextMeshProUGUI characterDescTitle;
+    public TextMeshProUGUI characterDescText;
+    public GameObject[] characterDescDice = new GameObject[4];
+
+
+
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
 
@@ -121,6 +143,10 @@ public class itemManager : MonoBehaviour
     [SerializeField]
     public GameObject changeDiceEff;
 
+    private void FixedUpdate()
+    {
+        characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
+    }
     public Item getCurItem(int idx)
     {
         return ItemArr[curSelectItemType, idx];
@@ -455,7 +481,7 @@ public class itemManager : MonoBehaviour
                 }
                 else //다른 경우 선택한 대상으로 변경
                 {
-                    if (curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
+                    //if (curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
                     curSelectItemIndex = idx;
                     //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
                     if (curSelectItemType == 0) { 
@@ -500,7 +526,7 @@ public class itemManager : MonoBehaviour
             useItem();
         }
     }
-
+     
     public void click_selectCharacter(int idx) //캐릭터 선택
     {
         if(CharacterManager.Instance.getCharacterState(idx) == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
@@ -544,74 +570,124 @@ public class itemManager : MonoBehaviour
             if (i == idx)
             {
                 characterBoardState[i].SetActive(true);
-                characterBoard_update(idx);
+                //characterBoard_update(idx);
                 
             }
             else characterBoardState[i].SetActive(false);
         }
     }
-    private void characterBoard_update(int idx) //board 변경시 업데이트를 하기 위한 함수. character board 변경이나 character idx가 변경될 경우 사용하게 된다.
+    public void click_Character(int idx)
+    {
+        if (idx == -1) {//character UI delete 
+            characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
+        }
+        else if (CharacterManager.Instance.getCharacter(idx) != null && CharacterManager.Instance.getCharacterState(idx) == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
+        {
+            characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 89f, 0f);
+            characterSelectIdx = idx;
+            characterBoard_update();
+        }
+    }
+    public void characterBoard_update() //board 변경시 업데이트를 하기 위한 함수. character board 변경이나 character idx가 변경될 경우 사용하게 된다.
     {
         Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
         if (tempCharacter == null || tempCharacter.getCurState() != 0) {
             return;
         }
-        if (idx == 0) //개인 정보
-        {
-            
 
-            if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face") != null)
-            {
-                infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
-            }
-            else { infoBoardObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
-            infoBoardObj[1].GetComponent<TextMeshPro>().text = tempCharacter.getName();
-            infoBoardObj[3].GetComponent<TextMeshPro>().text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
-            infoBoardObj[4].GetComponent<TextMeshPro>().text = tempCharacter.getPhyAtk().ToString();//tempCharacter.getMp().ToString() + "/" + tempCharacter.getMaxMp().ToString(); //이후 Mp로 수정할것
-        }
-        else if (idx == 1) // 주사위
+        characterName.text = tempCharacter.getName();
+        for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
+        characterAtk.text = tempCharacter.getPhyAtk().ToString();
+        characterOrigin.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + tempCharacter.getName() + "/animator_" + tempCharacter.getName());
+        //주사위 업데이트
+        for (int i = 0; i < 6; i++)
         {
-            for (int i = 0; i < 6; i++)
-            {
-                diceBoardObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterSelectIdx, i).ToString());
-            }
+            characterDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterSelectIdx, i).ToString());
         }
-        else if (idx == 2) //skill
+        //스킬, 장비 이미지 업데이트
+        Skill tempSkill;
+        for (int i = 0; i < 2; i++)
         {
-            Skill temp;
-            for (int i=0;i<2;i++)
-            {
-                temp = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
-                if(Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName()) == null)
-                {
-                    skillBoardObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                }
-                else
-                {
-                    skillBoardObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName());
-                }
-                
-                skillBoardObj[i, 1].GetComponent<TextMeshPro>().text = temp.getSkillName();
-                skillBoardObj[i, 2].GetComponent<TextMeshPro>().text = temp.getCommand();
-                for (int j=0;j<4; j++) {
-                    skillBoardObj[i, j + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
-                }
-            }
+            tempSkill = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
+            characterSkill[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + tempSkill.getSkillName());
         }
-        else if (idx == 3) // item(equip)
+        Item tempItem;
+        for (int i = 0; i < 2; i++)
         {
-            Item temp;
-            for (int i = 0; i < 2; i++)
-            {
-                temp = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
-                equipBoardObj[i*3 + 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + temp.getItemName());
-                equipBoardObj[i * 3 + 1].GetComponent<TextMeshPro>().text = temp.getItemName();
-                equipBoardObj[i * 3 + 2].GetComponent<TextMeshPro>().text = temp.getContent();
-            }
+            tempItem = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
+            characterEquip[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + tempItem.getItemName());
         }
-        else if (idx == 4)//getOut Button
+    }
+
+    public void hoverInDice(int i)
+    {
+        characterDiceOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+
+    public void hoverInSkill(int i)
+    {
+        Skill temp;
+        temp = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
+        if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName()) == null)
         {
-            getOutButton.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(18);
+            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            //skillBoardObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        }
+        else
+        {
+            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName());
+            //skillBoardObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName());
+        }
+        characterSkillOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        characterDescTitle.text = temp.getSkillName();
+        characterDescText.text = temp.getCommand();
+        for (int j = 0; j < 4; j++)
+        {
+            Debug.Log("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
+            characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
+        }
+    }
+    public void hoverInEquip(int i)
+    {
+        Item temp;
+
+        temp = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
+
+        characterEquipOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+
+        characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + temp.getItemName());
+        characterDescTitle.text = temp.getItemName();
+        characterDescText.text = temp.getContent();
+        for (int j = 0; j < 4; j++)
+        {
+            characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
+        }
+
+    }
+    public void hoverOutDesc()
+    {
+        for (int i=0;i<6;i++)
+        {
+            characterDiceOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        for(int i = 0; i < 2; i++)
+        {
+            characterSkillOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            characterEquipOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+
+        characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        characterDescTitle.text = "";
+        characterDescText.text = "";
+        for (int j = 0; j < 4; j++)
+        {
+            characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
         }
     }
 
@@ -808,7 +884,7 @@ public class itemManager : MonoBehaviour
                 break;
             }
         }
-        characterBoard_update(0);
+        //characterBoard_update(0);
     }
     public void click_upgradeCanvas_start()
     {
