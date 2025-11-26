@@ -21,15 +21,39 @@ public class upDownManager : MonoBehaviour
     public TextMeshProUGUI[] underSkillDiceDescText = new TextMeshProUGUI[4];
 
     [SerializeField]
+    public GameObject backBlackItem;
     public GameObject[] upperItemButton = new GameObject[12];
     public GameObject[] upperItemOutline = new GameObject[12];
+
+    public GameObject bigDiceItemCharacterEntity;
+    public GameObject[] bigDiceItemCharacterButton = new GameObject[4];
+    public GameObject[] bigDiceItemCharacterOutline = new GameObject[4];
+    public GameObject bigDiceItemCharacterInfo;
+    public TextMeshProUGUI bigDiceItemCharacterHpText;
+    public TextMeshProUGUI bigDiceItemCharacterArmorText;
+    public TextMeshProUGUI bigDiceItemCharacterAtkText;
+    public TextMeshProUGUI bigDiceItemCharacterVal0Text;
+    public TextMeshProUGUI bigDiceItemCharacterVal1Text;
+
+    public GameObject bigDiceItemCharacterDiceEntity;
+    public GameObject[] bigDiceItemCharacterDiceButton = new GameObject[6];
+    public GameObject[] bigDiceItemCharacterDiceOutline = new GameObject[6];
+
+    public GameObject bigDiceItemCharacterEquipEntity;
+    public GameObject[] bigDiceItemCharacterEquipButton = new GameObject[2];
+    public GameObject[] bigDiceItemCharacterEquipOutline = new GameObject[2];
+
+    private int itemSelectDepth = 0;
 
     [SerializeField]
     public GameObject[] upperItemTypeButton = new GameObject[4];
     public GameObject[] upperItemTypeOutline = new GameObject[4];
 
+
+
+
     [SerializeField]
-    public GameObject backBlack;
+    public GameObject backBlackSkill;
     public GameObject bigDiceSkillEntity;
     public GameObject[] bigDiceSkillButton = new GameObject[4];
     public GameObject[] bigDiceSkillOutline = new GameObject[4];
@@ -44,13 +68,16 @@ public class upDownManager : MonoBehaviour
     public GameObject[] bigDicePowerChain = new GameObject[3];
     public GameObject bigDicePowerCancleObj;
 
-    
+    [SerializeField]
+    public GameObject characterEntity;
+    public GameObject[] underCharacterButton = new GameObject[4];
+    public GameObject[] underCharacterOutline = new GameObject[4];
 
     private int lockState = 0; //0 : free  1: underbar hover  2: upperbar hover 3: battleMode  4: witchPower 
     private int curSkill = -1;
     private int curItemIdx = -1;
     private int curItemType = 0;
-
+    private int curCharacterIdx = -1;
 
 
     private static upDownManager instance = null;
@@ -81,8 +108,10 @@ public class upDownManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+        backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+        backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
         bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
+        hoverInItemTypeButton(curItemType);
     }
 
     // Update is called once per frame
@@ -90,16 +119,13 @@ public class upDownManager : MonoBehaviour
     {
         moveBattleUI(moveArrY[0], underHoverBar[0]);
         moveBattleUI(moveArrY[1], upperHoverBar[0]);
-
-        
-        
         // characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<SpriteRenderer>().bounds.size.x, GetComponent<SpriteRenderer>().bounds.size.y);
     }
 
 
 
     //underBar, upperBar
-    private float[] moveArrY = { -2f, 225f,};
+    private float[] moveArrY = { -2f, 225f, };
 
     private void onOffUI(int idx, int opt) {
         moveArrY[idx] = moveConstY[opt, idx];
@@ -109,6 +135,63 @@ public class upDownManager : MonoBehaviour
         {-2f, 225f},
         { 55f, 168f}
     };
+
+    public Character getCharacter(int idx)
+    {
+        if(!AdventureManager.Instance.getBattleEventTrigger()) return CharacterManager.Instance.getCharacter(idx);
+        else return BattleManager.Instance.getCharacter(idx);
+    }
+    public bool getCharacterExist(int idx)
+    {
+        return (getCharacter(idx) != null && getCharacter(idx).getCurState() == 0);
+    }
+    public void hoverInBigDiceItemCharacter(int idx)
+    {
+        if (getCharacterExist(idx))
+        {
+            bigDiceItemCharacterOutline[idx].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+            updateBigDiceItemCharacter(idx);
+        }
+
+    }
+    public void hoverOutBigDiceItemCharacter()
+    {
+        for (int idx = 0; idx < 4; idx++) {
+            if (curCharacterIdx != idx)
+            {
+                bigDiceItemCharacterOutline[idx].GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+            else
+            {
+                bigDiceItemCharacterOutline[idx].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+            }
+        }
+        updateBigDiceItemCharacter(curCharacterIdx);
+    }
+    public void hoverInBigDiceItemDice(int idx)
+    {
+        bigDiceItemCharacterDiceOutline[idx].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+    public void hoverOutBigDiceItemDice(int idx)
+    {
+        bigDiceItemCharacterDiceOutline[idx].GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+
+    public void hoverInBigDiceItemEquip(int idx)
+    {
+        bigDiceItemCharacterEquipOutline[idx].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+    public void hoverOutBigDiceItemEquip(int idx)
+    {
+        bigDiceItemCharacterEquipOutline[idx].GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
 
     public void hoverInBigDiceSkill(int idx)
     {
@@ -126,9 +209,9 @@ public class upDownManager : MonoBehaviour
 
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" }; //item type string 
     string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
-    public void updateUpperItem(int idx, int typeIdx, string name)
+    public void updateUpperItem(bool deleteChk, int idx, int typeIdx, string name)
     {
-        if (typeIdx == -1)
+        if (deleteChk)
         {
             upperItemButton[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         }
@@ -140,11 +223,12 @@ public class upDownManager : MonoBehaviour
     }
     public void updateUpperItemOutline(int idx, bool onOff)
     {
-        
+
     }
 
     public void hoverInUpperBar(int idx) {
-        if (idx == 11 || itemManager.Instance.getCurItem(idx) != null)
+        if(true)
+        //if (idx == 11 || itemManager.Instance.getCurItem(idx) != null)
         {
             upperItemOutline[idx].GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
@@ -162,11 +246,16 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutUpperBar(int idx)
     {
-        if(curItemIdx != idx)
+        if (curItemIdx != idx)
         {
             upperItemOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
-            if(curItemIdx != -1)itemManager.Instance.hoverInItem(curItemIdx);
+            if (curItemIdx != -1) itemManager.Instance.hoverInItem(curItemIdx);
+            else
+            {
+                updateUpperHoverBar(0, null);
+            }
+
         }
         if (lockState != 2)
         {
@@ -179,18 +268,46 @@ public class upDownManager : MonoBehaviour
         }
     }
 
-    public void hoverInSkillTypeButton(int idx)
+    public void hoverInCharacterButton(int idx)
+    {
+        underCharacterOutline[idx].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+    public void hoverOutCharacterButton(int idx)
+    {
+        if (curCharacterIdx != idx)
+        {
+            underCharacterOutline[idx].GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+    }
+
+    public void clickCharacterButton(int input)
+    {
+        if (AdventureManager.Instance.getBattleEventTrigger())
+        {
+            curCharacterIdx = itemManager.Instance.click_Character_battle(input);
+        }
+        else
+        {
+            curCharacterIdx = itemManager.Instance.click_Character(input);
+        }
+    }
+
+    public void hoverInItemTypeButton(int idx)
     {
         upperItemTypeOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+
     }
-    public void hoverOutSkillTypeButton(int idx)
+    public void hoverOutItemTypeButton(int idx)
     {
         if (curItemType != idx)
         {
             upperItemTypeOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
+        
     }
 
     public void battleStart()
@@ -227,11 +344,11 @@ public class upDownManager : MonoBehaviour
         {
             underSkillOutline[idx].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
-            if(curSkill != -1)BattleManager.Instance.makeSkillCommand(curSkill / 2, curSkill % 2);
+            if (curSkill != -1) BattleManager.Instance.makeSkillCommand(curSkill / 2, curSkill % 2);
         }
-        if (lockState != 1) { 
+        if (lockState != 1) {
             onOffUI(0, 0);
-            
+
             if (lockState == 0) //고정 상태가 아니라면, 뒤에거도 움직여줄 것.
             {
                 BattleManager.Instance.updateMoveUI(0);
@@ -245,29 +362,30 @@ public class upDownManager : MonoBehaviour
         if (input != -1 && lockState == 3) return;
 
         deleteOtherLock(1);
-        for (int idx = 0;idx< 8;idx++) {
+        for (int idx = 0; idx < 8; idx++) {
             underSkillOutline[idx].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
-        curSkill = (input /10)*2 + input%10;
+        curSkill = (input / 10) * 2 + input % 10;
         if (input != -1)
         {
             //deleteOtherLock(1);
-            backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
             bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUnderBarSkill(curSkill);
             lockState = 1; //클릭시 현재 스킬에 대한 설명으로 고정.
             updateBigDiceSkill();
         }
         else {
-            backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
             bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
             updateBigDiceSkill();
             lockState = 0;
             hoverOutUnderBarSkill(0);
         }
-        
+
     }
+
 
     public void deleteOtherLock(int tryLock)
     {
@@ -296,25 +414,236 @@ public class upDownManager : MonoBehaviour
             upperItemOutline[idx].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
-        curItemIdx = input;
+        
         if (input != -1)
         {
+            curItemIdx = input;
+
+            if (itemSelectDepth == 0)
+            {
+                curCharacterIdx = -1;
+            }
+            hoverOutBigDiceItemCharacter();
+            
             //deleteOtherLock(2);
-           // curItemIdx = input;
-            backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            // curItemIdx = input;
+            backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            if (itemSelectDepth == 0) bigDiceItemUpdateByDepth(1);
             //bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUpperBar(input);
             lockState = 2; //클릭시 현재 스킬에 대한 설명으로 고정.
             //updatebigDiceSkill();
         }
         else {
-            backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
-            lockState = 0;
-            curItemIdx = input;
-            hoverOutUpperBar(0);
+            if (itemSelectDepth == 1) {
+                curItemIdx = -1;
+                backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+                bigDiceItemUpdateByDepth(0);
+                lockState = 0;
+                curItemIdx = input;
+                hoverOutUpperBar(0);
+            }
+            else if(itemSelectDepth == 2) {
+                bigDiceItemUpdateByDepth(1);
+            }
             //itemManager.Instance.hoverOutItem(input);
-            
+
         }
+        Debug.Log(curItemIdx);
+    }
+
+    public void clickBigDiceItemCharacter(int idx)
+    {
+        if (getCharacterExist(idx))
+        {
+            curCharacterIdx = idx;
+            if (curItemType == 0)
+            {
+                itemManager.Instance.useConsumeItem(curCharacterIdx, curItemType, curItemIdx);//click_info_useItem();
+
+                bigDiceItemUpdateByDepth(1);
+                clickItem(curItemIdx);
+            }
+            else if (curItemType == 1)
+            {
+                bigDiceItemUpdateByDepth(2);
+            }
+            else if (curItemType == 2)
+            {
+                bigDiceItemUpdateByDepth(2);
+            }
+            hoverOutBigDiceItemCharacter();
+        }
+    }
+    public void clickBigDiceItemCharacterDice(int idx)
+    {
+        if (curItemIdx == -1 && curCharacterIdx != -1 && !getCharacterExist(curCharacterIdx)) return; // 선택된게 없으면 캔슬.
+
+        for (int i = 0; i < upperItemOutline.Length; i++)
+        {
+            upperItemOutline[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        itemManager.Instance.click_dice_changeNum(curCharacterIdx, idx, curItemIdx); // 아이템 사용.
+        updateBigDiceItemCharacter(curCharacterIdx);
+        if(curItemIdx != -1) clickItem(curItemIdx);
+    }
+
+    public void clickBigDiceItemCharacterEquip(int idx)
+    {
+        if (curItemIdx == -1 && curCharacterIdx != -1 && !getCharacterExist(curCharacterIdx)) return; // 선택된게 없으면 캔슬.
+
+        for (int i = 0; i < upperItemOutline.Length; i++)
+        {
+            upperItemOutline[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        itemManager.Instance.click_equip_changeNum(curCharacterIdx, curItemIdx, idx);
+        updateBigDiceItemCharacter(curCharacterIdx);
+        if(curItemIdx != -1)clickItem(curItemIdx);
+    }
+
+    public void updateBigDiceItemCharacter(int characterIdx)
+    {
+        if (characterIdx == -1)
+        {
+            bigDiceItemCharacterHpText.text = "";
+            bigDiceItemCharacterArmorText.text = "";
+            bigDiceItemCharacterAtkText.text = "";
+            bigDiceItemCharacterVal0Text.text = "";
+            bigDiceItemCharacterVal1Text.text = "";
+            //character Face
+            for (int i = 0; i < 4; i++)
+            {
+                Character tempCharacter = getCharacter(i);
+                if (tempCharacter == null || tempCharacter.getCurState() != 0)
+                {
+                    bigDiceItemCharacterButton[i].GetComponent<Image>().sprite 
+                        = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+                }
+                else
+                {
+                    bigDiceItemCharacterButton[i].GetComponent<Image>().sprite
+                        = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
+                }
+            }
+
+            //character dice
+            for (int i = 0; i < 6; i++)
+            {
+                bigDiceItemCharacterDiceButton[i].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+
+            //character Equip
+            for (int i = 0; i < 2; i++)
+            {
+                bigDiceItemCharacterEquipButton[i].GetComponent<Image>().sprite =
+                    Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+            return;
+        }
+
+        if (getCharacterExist(characterIdx))
+        {
+            //character info
+            bigDiceItemCharacterHpText.text = getCharacter(characterIdx).getHp().ToString() + " / "
+                + getCharacter(characterIdx).getMaxHp().ToString();
+            bigDiceItemCharacterArmorText.text = "0";
+            bigDiceItemCharacterAtkText.text = getCharacter(characterIdx).getPhyAtk().ToString();
+
+            //character dice
+            for (int i = 0; i < 6; i++)
+            {
+
+                bigDiceItemCharacterDiceButton[i].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + getCharacter(characterIdx).getDice(i).ToString());
+            }
+
+            //character Equip
+            Item tempItem;
+            for (int i = 0; i < 2; i++)
+            {
+                tempItem = getCharacter(characterIdx).getItem(i);
+                bigDiceItemCharacterEquipButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + tempItem.getItemName());
+            }
+        }
+        else
+        {
+            bigDiceItemCharacterHpText.text = "";
+            bigDiceItemCharacterArmorText.text = "";
+            bigDiceItemCharacterAtkText.text = "";
+            bigDiceItemCharacterVal0Text.text = "";
+            bigDiceItemCharacterVal1Text.text = "";
+            //character Face
+            for (int i = 0; i < 4; i++)
+            {
+                if (getCharacterExist(i))
+                {
+                    bigDiceItemCharacterButton[i].GetComponent<Image>().sprite
+                        = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + getCharacter(i).getName() + "_face");
+                }
+                else
+                {
+                    bigDiceItemCharacterButton[i].GetComponent<Image>().sprite
+                         = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+                }
+            }
+
+            //character dice
+            for (int i = 0; i < 6; i++)
+            {
+                bigDiceItemCharacterDiceButton[i].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+
+            //character Equip
+            for (int i = 0; i < 2; i++)
+            {
+                bigDiceItemCharacterEquipButton[i].GetComponent<Image>().sprite =
+                    Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+        }
+
+    }
+    public void bigDiceItemUpdateByDepth(int depth)
+    {
+        itemSelectDepth = depth;
+        if (depth == 0)
+        {
+            backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDiceItemCharacterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDiceItemCharacterDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDiceItemCharacterEquipEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDiceItemCharacterInfo.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+        }
+        else if (depth == 1)
+        {
+            backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            bigDiceItemCharacterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            bigDiceItemCharacterDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDiceItemCharacterEquipEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            bigDiceItemCharacterInfo.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 100f, 0f);
+        }
+        else if (depth == 2)
+        {
+            backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            bigDiceItemCharacterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            bigDiceItemCharacterInfo.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+            if (curItemType == 1)
+            {
+                bigDiceItemCharacterDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 100f, 0f);
+                bigDiceItemCharacterEquipEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+                
+            }
+            if (curItemType == 2)
+            {
+                bigDiceItemCharacterDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+                bigDiceItemCharacterEquipEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 100f, 0f);
+                
+            }
+        }
+        updateBigDiceItemCharacter(curCharacterIdx);
     }
 
     public void clickBigDicePower(int idx)
@@ -356,9 +685,42 @@ public class upDownManager : MonoBehaviour
             upperItemTypeOutline[i].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
-        hoverInSkillTypeButton(idx);
+        for (int i=0;i<upperItemOutline.Length;i++)
+        {
+            upperItemOutline[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        hoverInItemTypeButton(idx);
+
+        if (curItemType != idx) {
+            updateUpperHoverBar(0, null);
+        }
+
         curItemType = idx;
-        deleteOtherLock(0);
+        curItemIdx = -1;
+
+        
+        //deleteOtherLock(0);
+
+        //item use ui랑 호환 맞추기.
+        if (curItemType == 3) //passive
+        {
+            bigDiceItemUpdateByDepth(0);
+        }
+        else if (itemSelectDepth == 0 || itemSelectDepth == 1)
+        {
+            bigDiceItemUpdateByDepth(itemSelectDepth);
+        }
+        else if(itemSelectDepth == 2){
+            if (curItemType == 0) { //consume
+                bigDiceItemUpdateByDepth(1);
+            }
+            else //dice or equip
+            {
+                bigDiceItemUpdateByDepth(itemSelectDepth);
+            }
+        }
+
         itemManager.Instance.click_itemType_selectButton(idx);
     }
 

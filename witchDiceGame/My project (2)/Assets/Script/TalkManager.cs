@@ -136,7 +136,7 @@ public class TalkManager : MonoBehaviour
         // Start is called before the first frame update
         void Start()
         {
-            characterTalkBack.SetActive(false);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -75f, 0f);
             libraryEntry = false;
             talkList = CSVReader.Read<TalkReader>("Talk_2");
             for (int i = 0; i < talkList.Count; i++)
@@ -253,16 +253,16 @@ public class TalkManager : MonoBehaviour
         }
 
         if (talkingChk) { //대화 필요
-            characterTalkBack.SetActive(true);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 2f, 0f);
         }
         else if(descChk) // 설명만
         {
-            characterTalkBack.SetActive(true);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 2f, 0f);
             characterTalk.GetComponent<TextMeshProUGUI>().text = descString;
         }
         else //text 필요 없음. 
         {
-            characterTalkBack.SetActive(false);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -75f, 0f);
         }
     }
     public void startTalk(int a)

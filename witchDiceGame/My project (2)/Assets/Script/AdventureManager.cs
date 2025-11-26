@@ -1625,11 +1625,12 @@ public class AdventureManager : MonoBehaviour
         
         if (descObj[0].activeSelf == true) hoverOutItem();
 
+        
         if (characterIdx == -1 && battleEventTrigger && selectDiceCharacterIdx >= 0) {
             TalkManager.Instance.setDescString("");
             enterBattleCanvas();
         }
-
+        
         if (characterIdx == -1 && eventEndClick )
         {
             SoundManager_Sfx.Instance.playSound(7);
@@ -1835,7 +1836,10 @@ public class AdventureManager : MonoBehaviour
         return false;
     }
 
-
+    public bool getBattleEventTrigger()
+    {
+        return battleEventTrigger;
+    }
 
 
     public int getWitchPower(int idx)

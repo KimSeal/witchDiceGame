@@ -124,7 +124,7 @@ public class itemManager : MonoBehaviour
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
 
-    private int characterSelectIdx = 0;//현재 선택된 캐릭터의 idx
+    private int characterSelectIdx = -1;//현재 선택된 캐릭터의 idx
     private int curSelectCharacterInfoType = 0; //현재 선택한 캐릭터 정보 창 종류
 
     private bool itemBoxMove = false;
@@ -464,7 +464,14 @@ public class itemManager : MonoBehaviour
         }
         updateInventory();
     }
-
+    public void setCurSelectItemType(int idx)
+    {
+        curSelectItemType = idx;
+    }
+    public void setCurSelectItemIndex(int idx)
+    {
+        curSelectItemIndex = idx;
+    }
 
     public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우
     {
@@ -576,21 +583,59 @@ public class itemManager : MonoBehaviour
             else characterBoardState[i].SetActive(false);
         }
     }
-    public void click_Character(int idx)
+    public int click_Character(int idx)
     {
+        if (idx == characterSelectIdx) {
+            idx = -1;
+        }
+        characterSelectIdx = idx;
+        Debug.Log(idx);
         if (idx == -1) {//character UI delete 
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
         }
         else if (CharacterManager.Instance.getCharacter(idx) != null && CharacterManager.Instance.getCharacterState(idx) == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
         {
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 89f, 0f);
-            characterSelectIdx = idx;
             characterBoard_update();
         }
+        else
+        {
+            characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
+            idx = -1;
+        }
+        return characterSelectIdx;
+    }
+    public int click_Character_battle(int idx)
+    {
+        if (idx == characterSelectIdx)
+        {
+            idx = -1;
+        }
+        characterSelectIdx = idx;
+        Debug.Log(idx);
+        if (idx == -1)
+        {//character UI delete 
+            characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
+        }
+        else if (BattleManager.Instance.getCharacter(idx) != null && BattleManager.Instance.getCharacter(idx).getCurState() == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
+        {
+            characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 89f, 0f);
+            characterBoard_update();
+        }
+        else
+        {
+            characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
+            idx = -1;
+        }
+        return characterSelectIdx;
     }
     public void characterBoard_update() //board 변경시 업데이트를 하기 위한 함수. character board 변경이나 character idx가 변경될 경우 사용하게 된다.
     {
         Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
+        if (AdventureManager.Instance.getBattleEventTrigger()) {
+            tempCharacter = BattleManager.Instance.getCharacter(characterSelectIdx);
+        }
+
         if (tempCharacter == null || tempCharacter.getCurState() != 0) {
             return;
         }
@@ -605,17 +650,13 @@ public class itemManager : MonoBehaviour
             characterDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterSelectIdx, i).ToString());
         }
         //스킬, 장비 이미지 업데이트
-        Skill tempSkill;
         for (int i = 0; i < 2; i++)
         {
-            tempSkill = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
-            characterSkill[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + tempSkill.getSkillName());
+            characterSkill[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + tempCharacter.getSkillName(i));
         }
-        Item tempItem;
         for (int i = 0; i < 2; i++)
         {
-            tempItem = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
-            characterEquip[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + tempItem.getItemName());
+            characterEquip[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + tempCharacter.getItem(i).getItemName());
         }
     }
 
@@ -690,13 +731,36 @@ public class itemManager : MonoBehaviour
             characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
         }
     }
+    public bool getItemUseAble(int characterIdx, int itemType, int itemIdx)
+    {
+        if(CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacterState(characterIdx) != 0 ||
+            itemIdx == -1 || ItemArr[itemType, itemIdx] == null || !ItemExistArr[itemType, itemIdx])
+        {
+            return false;
+        }
+        return true;
+    }
+    public void useConsumeItem(int characterIdx, int itemType, int itemIdx)
+    {
+        if (getItemUseAble(characterIdx, itemType, itemIdx))
+        {
+            useItemToUpgrade(characterIdx, itemIdx);
+            SoundManager_Sfx.Instance.playSound(2);
+            useItem(itemType, itemIdx);
+            //click_characterInfoType_selectButton(0);
+        }
+        else
+        {
+            SoundManager_Sfx.Instance.playSound(7);
+        }
+    }
 
     public void click_info_useItem()
     {
-        if (curSelectItemType == 0 && curSelectItemIndex != -1 && characterSelectIdx >=0 && CharacterManager.Instance.getCharacter(characterSelectIdx) != null)
+        if (curSelectItemType == 0 && curSelectItemIndex != -1 && characterSelectIdx >=0 )
         {
             //CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
-            useItemToUpgrade();
+            //useItemToUpgrade();
             SoundManager_Sfx.Instance.playSound(2);
             useItem();
             click_characterInfoType_selectButton(0);
@@ -708,40 +772,41 @@ public class itemManager : MonoBehaviour
        
     }
 
-    public void useItemToUpgrade()
+    public void useItemToUpgrade(int characterIdx, int itemIdx)
     {
-        Item useItem = ItemArr[0, curSelectItemIndex];
+        Item useItem = ItemArr[0, itemIdx];
         int useItemIdx = useItem.getIdx();
         //단일
         if (useItemIdx == 0 || useItemIdx == 1 || useItemIdx == 2 || useItemIdx == 5 || useItemIdx == 6 || useItemIdx == 13 || useItemIdx == 14){
-            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
         }
         if (useItemIdx == 3 || useItemIdx == 4 || useItemIdx == 7 || useItemIdx == 8) // 2개의 stat에 대하여 업그레이드
         {
-            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
-            CharacterManager.Instance.CharacterUpgrade(characterSelectIdx, ItemArr[0, curSelectItemIndex].getVal(2), ItemArr[0, curSelectItemIndex].getVal(3));
+            CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
+            CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
         }
         if (useItemIdx == 9 || useItemIdx == 10 || useItemIdx == 15) { //모든 캐릭터에 대하여 1개 stat 업그레이드
-            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0) CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
+            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0) CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
         }
         if (useItemIdx == 11 || useItemIdx == 12){ //모든 캐릭터에 대하여 1개 stat 업그레이드
             for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0){
-                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, curSelectItemIndex].getVal(0), ItemArr[0, curSelectItemIndex].getVal(1));
-                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, curSelectItemIndex].getVal(2), ItemArr[0, curSelectItemIndex].getVal(3));
+                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
+                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
             }
         }
     }
 
-    private void changeDice(int idx, int number)
+    private void changeDice(int characterIdx, int idx, int number)
     {
         if (number < 1) number = 1;
         if (number > 6) number = 6;
         SoundManager_Sfx.Instance.playSound(1);
-        CharacterManager.Instance.changeDice(characterSelectIdx, idx, number);
+        CharacterManager.Instance.changeDice(characterIdx, idx, number);
             diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
             Instantiate(changeDiceEff, diceBoardObj[idx].transform.position, new Quaternion(0, 0, 0, 0));
         
     }
+    /*
     private void changeDice(int characterIdx, int idx, int number)
     {
         if (number < 1) number = 1;
@@ -753,6 +818,7 @@ public class itemManager : MonoBehaviour
                 diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
         }
     }
+    */
     public void setTutorialInitDice()
     {
         CharacterManager.Instance.changeDice(0, 0, 1);
@@ -763,23 +829,23 @@ public class itemManager : MonoBehaviour
         CharacterManager.Instance.changeDice(0, 5, 3);
         //for(int i=0;i<6;i++) CharacterManager.Instance.changeDice(0, i, 6);
     }
-    public void click_dice_changeNum(int idx) //
+    public void click_dice_changeNum(int characterIdx, int idx,int itemBagIdx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
-        if (curSelectItemType == 1 && curSelectItemIndex != -1) {
-            int itemIdx = ItemArr[1, curSelectItemIndex].getIdx();
+        if (itemBagIdx != -1 && idx != -1 && ItemArr[1, itemBagIdx] != null && ItemExistArr[1, itemBagIdx]) {
+            int itemIdx = ItemArr[1, itemBagIdx].getIdx();
 
             if (itemIdx == 1)
             { //랜덤한 숫자로 변경 
-                changeDice(idx, Random.Range(1, 7));
+                changeDice(characterIdx, idx, Random.Range(1, 7));
             }
             else if (itemIdx >= 2 && itemIdx <= 7) //해당 숫자로 변경
             {
-                changeDice(idx, ItemArr[1, curSelectItemIndex].getVal(0));
+                changeDice(characterIdx, idx, ItemArr[1, itemBagIdx].getVal(0));
             }
             else if (itemIdx == 8)
             { //현재 선택한 캐릭터에 대해 보통 주사위로 변경
                 AdventureManager.Instance.setUseFairDice(true);
-                for (int i = 0; i < 6; i++) changeDice(i, i + 1);
+                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, i + 1);
             }
             else if (itemIdx == 9)
             {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
@@ -787,7 +853,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx == 10)
             {
-                for (int i = 0; i < 6; i++) changeDice(i, Random.Range(1, 7));
+                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, Random.Range(1, 7));
             }
             else if (itemIdx == 11)
             { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
@@ -796,42 +862,52 @@ public class itemManager : MonoBehaviour
             else if (itemIdx == 12)
             {
                 int tempRandom = Random.Range(1, 7);
-                for (int i = 0; i < 6; i++) changeDice(i, tempRandom);
+                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, tempRandom);
             }
             else if (itemIdx >= 13 && itemIdx <= 18)
             {
-                for (int i = 0; i < 6; i++) changeDice(i, itemIdx - 12);
+                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, itemIdx - 12);
             }
-            else if (itemIdx == 19) changeDice(idx, CharacterManager.Instance.getDiceNum(characterSelectIdx, idx) +1);
-            else if (itemIdx == 20) changeDice(idx, CharacterManager.Instance.getDiceNum(characterSelectIdx, idx) - 1);
-            else if (itemIdx == 21) for (int i = 0; i < 6; i++) changeDice(i, CharacterManager.Instance.getDiceNum(characterSelectIdx, i) + 1);
-            else if (itemIdx == 22) for (int i = 0; i < 6; i++) changeDice(i, CharacterManager.Instance.getDiceNum(characterSelectIdx, i) - 1);
+            else if (itemIdx == 19) changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) +1);
+            else if (itemIdx == 20) changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) - 1);
+            else if (itemIdx == 21) for (int i = 0; i < 6; i++) changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) + 1);
+            else if (itemIdx == 22) for (int i = 0; i < 6; i++) changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) - 1);
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
-            useItem();
+            useItem(1, itemBagIdx);
 
         }
     }
 
-    public void click_equip_changeNum(int idx) //
+    
+    public void click_equip_changeNum(int characterIdx, int itemBagIdx, int idx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
-        if (curSelectItemType == 2 && curSelectItemIndex != -1)
+        if (itemBagIdx != -1&& idx != -1 && ItemArr[2, itemBagIdx] != null && ItemExistArr[2, itemBagIdx]) 
         {
-            CharacterManager.Instance.changeEquip(characterSelectIdx, idx, 2, ItemArr[2, curSelectItemIndex].getIdx());
+            CharacterManager.Instance.changeEquip(characterIdx, idx, 2, ItemArr[2, itemBagIdx].getIdx());
 
-            equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, curSelectItemIndex].getItemName().ToString());
-            equipBoardObj[idx * 3 + 1].GetComponent<TextMeshPro>().text = ItemArr[2, curSelectItemIndex].getItemName();
-            equipBoardObj[idx * 3 + 2].GetComponent<TextMeshPro>().text = ItemArr[2, curSelectItemIndex].getContent();
+            //equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, itemBagIdx].getItemName().ToString());
+            //equipBoardObj[idx * 3 + 1].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getItemName();
+            //equipBoardObj[idx * 3 + 2].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getContent();
 
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
-            useItem();
-
+            useItem(2, itemBagIdx);
         }
     }
+    private void useItem(int itemIdx)
+    {
+        //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
+        upDownManager.Instance.updateUpperItem(true, itemIdx, -1, "0");
+        //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        ItemArr[curSelectItemType, itemIdx] = null;
+        ItemExistArr[curSelectItemType, itemIdx] = false;
 
+        setUpAnimator();
+
+    }
     private void useItem()
     {
         //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-        upDownManager.Instance.updateUpperItem(curSelectItemIndex, -1, "0");
+        upDownManager.Instance.updateUpperItem(true, curSelectItemIndex, -1, "0");
         //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         ItemArr[curSelectItemType, curSelectItemIndex] = null;
         ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
@@ -839,6 +915,13 @@ public class itemManager : MonoBehaviour
 
         setUpAnimator();
 
+    }
+    public void useItem(int itemType, int itemIdx)
+    {
+        upDownManager.Instance.updateUpperItem(true, itemIdx, itemType, "0");
+        //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+        ItemArr[itemType, itemIdx] = null;
+        ItemExistArr[itemType, itemIdx] = false;
     }
 
     public Item getItem(int itemType, int itemIndex)
@@ -855,13 +938,13 @@ public class itemManager : MonoBehaviour
         {
             if (ItemExistArr[curSelectItemType, i]) //아이템이 있는 경우 해당 아이템으로 변경
             {
-                upDownManager.Instance.updateUpperItem(i, curSelectItemType, ItemArr[curSelectItemType, i].getItemName());
+                upDownManager.Instance.updateUpperItem(false, i, curSelectItemType, ItemArr[curSelectItemType, i].getItemName());
                 //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/"+ typeArr[curSelectItemType]+"ItemSprite/spr_item_" + typeArr[curSelectItemType]+
                 //    "_" + ItemArr[curSelectItemType, i].getItemName());
             }
             else
             {
-                upDownManager.Instance.updateUpperItem(i, -1, "0");
+                upDownManager.Instance.updateUpperItem(true, i, -1, "0");
                 //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];

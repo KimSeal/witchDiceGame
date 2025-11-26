@@ -202,6 +202,15 @@ public class BattleManager : MonoBehaviour
     public GameObject upperUI;
 
 
+    public void hoverInCharacter(int idx)
+    {   myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+    }
+
+    public void hoverOutCharacter(int idx)
+    {
+        myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+    }
+
     public void useGiveUpBtn()
     {
         if (giveUpChk)

@@ -298,6 +298,7 @@ public class CharacterManager : MonoBehaviour
     }
     public Character getCharacter(int idx)
     {
+        if(idx<0) return null;
         return myCharacter[idx];
     }
 
