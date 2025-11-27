@@ -203,12 +203,20 @@ public class BattleManager : MonoBehaviour
 
 
     public void hoverInCharacter(int idx)
-    {   myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+    {
+        Debug.Log("hoverIn");
+        if(idx<4) myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+        else enemyCharacterObjUI[idx-4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
     }
 
     public void hoverOutCharacter(int idx)
     {
-        myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        Debug.Log("hoverOut");
+        for (int i = 0; i < 4; i++)
+        {
+            enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+            myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        }
     }
 
     public void useGiveUpBtn()
@@ -1079,6 +1087,14 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
             //페이즈가 1로 돌아가지 않았다면(승패 결정) 전투 종료로 반복문 탈출.
         } while (curPhase == 1);
+
+        setCurClickSkill(-1);
+        deleteSkillCommand();
+
+        //정면 보는 마녀
+        updateMoveUI(0);
+        upDownManager.Instance.resetUI();
+
     }
 
     //DiceThrow Phase  Start (phase 1- dice throw start)//
@@ -1569,8 +1585,6 @@ public class BattleManager : MonoBehaviour
             if (enemyDiceTake[i] != -999) hoverRotateAble(enemyDiceUI[i], 1, true);
             else hoverRotateAble(enemyDiceUI[i], 1, false);
 
-            StartCoroutine(makeBright(myCharacterObjUI[i], 0.0f));
-            StartCoroutine(makeBright(enemyCharacterObjUI[i], 0.0f));
         }
         if (AdventureManager.Instance.getTutorial() == 1)
         {

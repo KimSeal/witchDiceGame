@@ -262,7 +262,7 @@ public abstract class Character
         return skillUse(selNum).getVal(idx);
     }
 
-
+    
     public int getSkillIdx(int num)
     {
         //return destiny.getSkillIdx(skillIdx[num]);

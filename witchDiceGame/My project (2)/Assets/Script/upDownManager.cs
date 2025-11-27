@@ -15,6 +15,7 @@ public class upDownManager : MonoBehaviour
     public TextMeshProUGUI upperHoverBarTitle, upperHoverBarDesc; // Title, desc
 
     [SerializeField]
+    public GameObject underSkillEntity;
     public GameObject[] underSkillButton = new GameObject[8];
     public GameObject[] underSkillOutline = new GameObject[8];
     public GameObject[] underSkillDiceDescImage = new GameObject[4];
@@ -73,12 +74,28 @@ public class upDownManager : MonoBehaviour
     public GameObject[] underCharacterButton = new GameObject[4];
     public GameObject[] underCharacterOutline = new GameObject[4];
 
+    [SerializeField]
+    public GameObject deleteChkEntity;
+    public GameObject deleteBtnInit;
+    public GameObject deleteBtnInitOutline;
+    public GameObject[] deleteBtn = new GameObject[2];
+    public GameObject[] deleteOutline = new GameObject[2];
+    public TextMeshProUGUI deleteText;
+
+    [SerializeField]
+    public GameObject changeChkEntity;
+    public GameObject changeBtnInit;
+    public GameObject changeBtnInitOutline;
+    public GameObject[] changeBtn = new GameObject[4];
+    public GameObject[] changeOutline = new GameObject[4];
+
     private int lockState = 0; //0 : free  1: underbar hover  2: upperbar hover 3: battleMode  4: witchPower 
     private int curSkill = -1;
     private int curItemIdx = -1;
     private int curItemType = 0;
     private int curCharacterIdx = -1;
 
+    private int curUnderBarOption = 0;
 
     private static upDownManager instance = null;
 
@@ -111,7 +128,11 @@ public class upDownManager : MonoBehaviour
         backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
         backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
         bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
+        bigDicePowerCancleObj.SetActive(false);
         hoverInItemTypeButton(curItemType);
+        cancleChangeBtn();
+        cancleDeleteBtn();
+        changeOption(0, false);
     }
 
     // Update is called once per frame
@@ -122,7 +143,12 @@ public class upDownManager : MonoBehaviour
         // characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<SpriteRenderer>().bounds.size.x, GetComponent<SpriteRenderer>().bounds.size.y);
     }
 
-
+    public void resetUI()
+    {
+        clickItem(-1);
+        clickItem(-1);
+        clickCharacterButton(-1);
+    }
 
     //underBar, upperBar
     private float[] moveArrY = { -2f, 225f, };
@@ -138,13 +164,153 @@ public class upDownManager : MonoBehaviour
 
     public Character getCharacter(int idx)
     {
-        if(!AdventureManager.Instance.getBattleEventTrigger()) return CharacterManager.Instance.getCharacter(idx);
+        if (!AdventureManager.Instance.getBattleEventChk()) return CharacterManager.Instance.getCharacter(idx);
         else return BattleManager.Instance.getCharacter(idx);
     }
     public bool getCharacterExist(int idx)
     {
         return (getCharacter(idx) != null && getCharacter(idx).getCurState() == 0);
     }
+    #region
+    public void cancleChangeBtn()
+    {
+        changeChkEntity.SetActive(false);
+    }
+
+    public void hoverInChangeBtn(int i)
+    {
+        changeOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+
+    public void hoverOutChangeBtn(int input)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (curCharacterIdx != i)
+            {
+                changeOutline[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+            else
+            {
+                changeOutline[i].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+            }
+        }
+    }
+
+    public void clickChangeBtn(int i)
+    {
+        changeChkEntity.SetActive(false);
+        if (i != -1)
+        {
+            itemManager.Instance.swapCharacter(curCharacterIdx, i);
+            clickCharacterButton(i);
+            clickChangeInitBtn();
+        }
+    }
+
+    public void hoverInChangeInitBtn()
+    {
+        changeBtnInitOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+
+    public void hoverOutChangeInitBtn()
+    {
+        changeBtnInitOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+    public void clickChangeInitBtn()
+    {
+
+        changeChkEntity.SetActive(true);
+        for (int characterSelectIdx = 0; characterSelectIdx < 4; characterSelectIdx++)
+        {
+            Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
+            if (tempCharacter == null || tempCharacter.getCurState() != 0)
+            {
+                changeBtn[characterSelectIdx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+            }
+            else
+            {
+                if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face") != null)
+                {
+                    changeBtn[characterSelectIdx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
+                }
+                else { changeBtn[characterSelectIdx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
+            }
+        }
+        hoverOutChangeBtn(0);
+    }
+
+
+    public void hoverInDeleteBtn(int i)
+    {
+        deleteOutline[i].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI");
+
+    }
+    public void hoverOutDeleteBtn()
+    {
+        deleteOutline[0].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        deleteOutline[1].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+
+    public void clickDeleteBtn()
+    {
+        itemManager.Instance.deleteCharacter();
+        hoverOutDeleteBtn();
+        cancleDeleteBtn();
+        clickCharacterButton(-1);
+    }
+    public void cancleDeleteBtn()
+    {
+        deleteChkEntity.SetActive(false);
+    }
+
+    public void hoverInDeleteInitBtn()
+    {
+        deleteBtnInitOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+    public void hoverOutDeleteInitBtn()
+    {
+        deleteBtnInitOutline.GetComponent<Image>().sprite
+             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+
+    public void clickDeleteInitBtn()
+    {
+        deleteChkEntity.SetActive(true);
+        hoverOutDeleteBtn();
+    }
+    #endregion
+
+    public bool[] optionOnOff = { false, false, false }; 
+    // 0 : non
+    // 1 : skillUI
+    // 2 : characterUI
+
+    public void changeOption(int i, bool onOff)
+    {
+        optionOnOff[i] = onOff;
+
+        underSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
+        characterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
+
+        if (optionOnOff[2]) { //characterSelect UI
+            characterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+            return;
+        }
+        if(optionOnOff[1]){ //skillSelectUI
+            underSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+        }
+    }
+
     public void hoverInBigDiceItemCharacter(int idx)
     {
         if (getCharacterExist(idx))
@@ -273,25 +439,63 @@ public class upDownManager : MonoBehaviour
         underCharacterOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
     }
-    public void hoverOutCharacterButton(int idx)
+    public void hoverOutCharacterButton()
     {
-        if (curCharacterIdx != idx)
-        {
-            underCharacterOutline[idx].GetComponent<Image>().sprite
-           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        for (int idx=0;idx<4;idx++) {
+            if (curCharacterIdx != idx)
+            {
+                underCharacterOutline[idx].GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
         }
     }
 
     public void clickCharacterButton(int input)
     {
-        if (AdventureManager.Instance.getBattleEventTrigger())
+        Debug.Log("clickCharacter");
+        Debug.Log(input);
+        for (int i = 0; i < 4; i++)
         {
-            curCharacterIdx = itemManager.Instance.click_Character_battle(input);
+            Character tempCharacter = getCharacter(i);
+            if (tempCharacter == null || tempCharacter.getCurState() != 0)
+            {
+                underCharacterButton[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
+            }
+            else
+            {
+                underCharacterButton[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
+            }
+        }
+
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            //if (curCharacterIdx != -1 && getCharacterExist(curCharacterIdx))
+            //{
+                Debug.Log("click character acting battle!");
+                curCharacterIdx = itemManager.Instance.click_Character_battle(input);
+                BattleManager.Instance.hoverOutCharacter(0);
+            //}
         }
         else
         {
-            curCharacterIdx = itemManager.Instance.click_Character(input);
+            //if (curCharacterIdx != -1 && getCharacterExist(curCharacterIdx))
+            //{
+                curCharacterIdx = itemManager.Instance.click_Character(input);
+            //}
         }
+        AdventureManager.Instance.updateAdventureDice();
+
+        if (curCharacterIdx == -1)
+        {
+            changeOption(2, false);
+        }
+        else {
+            changeOption(2, true);
+            hoverOutCharacterButton();
+        }
+        Debug.Log(curCharacterIdx);
     }
 
     public void hoverInItemTypeButton(int idx)
@@ -312,6 +516,8 @@ public class upDownManager : MonoBehaviour
 
     public void battleStart()
     {
+        clickItem(-1);
+        clickItem(-1);
         BattleManager.Instance.setCurClickSkill(-1);
         lockState = 3;
         BattleManager.Instance.updateMoveUI(3);
@@ -398,8 +604,15 @@ public class upDownManager : MonoBehaviour
             clickItem(-1);
         }
         if (lockState == 4) {
-            bigDicePowerCancleObj.SetActive(false);
+            
             clickEnterPower(-1);
+        }
+    }
+
+    public void clickTrashButton()
+    {
+        if (curItemIdx > 0) {
+            itemManager.Instance.useItem(curItemType, curItemIdx);
         }
     }
 
@@ -505,6 +718,8 @@ public class upDownManager : MonoBehaviour
 
     public void updateBigDiceItemCharacter(int characterIdx)
     {
+        Debug.Log("cur Character : ");
+        Debug.Log(characterIdx);
         if (characterIdx == -1)
         {
             bigDiceItemCharacterHpText.text = "";
@@ -669,6 +884,7 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
+            bigDicePowerCancleObj.SetActive(false);
             BattleManager.Instance.deleteWitchPowerUI();
             //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
             bigDicePowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);

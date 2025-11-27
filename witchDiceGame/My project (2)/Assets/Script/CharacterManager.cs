@@ -140,7 +140,20 @@ public class CharacterManager : MonoBehaviour
     {
         if (diceNum > 6) diceNum = 6;
         if (diceNum < 1) diceNum = 1;
-        myCharacter[characterIdx].changeDiceNum(diceIdx, diceNum);
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+            {
+                BattleManager.Instance.getCharacter(characterIdx).changeDiceNum(diceIdx, diceNum);
+            }
+        }
+        else
+        {
+            if (getCharacter(characterIdx) != null && getCharacterState(characterIdx) == 0)
+            {
+                myCharacter[characterIdx].changeDiceNum(diceIdx, diceNum);
+            }
+        }
     }
 
     public void throwDice(int characterIdx)
@@ -150,7 +163,20 @@ public class CharacterManager : MonoBehaviour
 
     public void changeEquip(int characterIdx, int itemNum, int itemType, int itemIdx)
     {
-        myCharacter[characterIdx].changeEquip(itemNum, itemType, itemIdx);
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+            {
+                BattleManager.Instance.getCharacter(characterIdx).changeEquip(itemNum, itemType, itemIdx);
+            }
+        }
+        else
+        {
+            if (myCharacter[characterIdx] != null && myCharacter[characterIdx].getCurState() == 0)
+            {
+                myCharacter[characterIdx].changeEquip(itemNum, itemType, itemIdx);
+            }
+        }
     }
 
     public void character_reset()
@@ -348,8 +374,14 @@ public class CharacterManager : MonoBehaviour
     }
     public void CharacterUpgrade(int idx, int type, int val)
     {
-        
-        if(val >= 0) myCharacter[idx].upGrade(type, val);
-        else myCharacter[idx].downGrade(type, val);
+        if (!AdventureManager.Instance.getBattleEventChk()) {
+            if (val >= 0) myCharacter[idx].upGrade(type, val);
+            else myCharacter[idx].downGrade(type, val);
+        }
+        else
+        {
+            if (val >= 0) BattleManager.Instance.getCharacter(idx).upGrade(type, val);
+            else BattleManager.Instance.getCharacter(idx).downGrade(type, val);
+        }
     }
 }

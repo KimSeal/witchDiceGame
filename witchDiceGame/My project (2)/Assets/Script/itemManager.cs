@@ -306,6 +306,18 @@ public class itemManager : MonoBehaviour
         updateCharacterBar();
         }
     }
+    public void swapCharacter(int idx, int idx2)
+    {
+            Character playerA = CharacterManager.Instance.getCharacter(idx);
+            Character playerB = CharacterManager.Instance.getCharacter(idx2);
+            CharacterManager.Instance.setCharacter(idx, playerB);
+            CharacterManager.Instance.setCharacter(idx2, playerA);
+            AdventureManager.Instance.resetDice();
+            updateCharacterUIBtn();
+            setUpAnimator();
+            //click_characterInfoType_selectButton(curSelectCharacterInfoType);
+            updateCharacterBar();
+    }
 
     public void deleteCharacter()
     {
@@ -585,9 +597,6 @@ public class itemManager : MonoBehaviour
     }
     public int click_Character(int idx)
     {
-        if (idx == characterSelectIdx) {
-            idx = -1;
-        }
         characterSelectIdx = idx;
         Debug.Log(idx);
         if (idx == -1) {//character UI delete 
@@ -601,16 +610,12 @@ public class itemManager : MonoBehaviour
         else
         {
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
-            idx = -1;
+            characterSelectIdx = -1;
         }
         return characterSelectIdx;
     }
     public int click_Character_battle(int idx)
     {
-        if (idx == characterSelectIdx)
-        {
-            idx = -1;
-        }
         characterSelectIdx = idx;
         Debug.Log(idx);
         if (idx == -1)
@@ -619,21 +624,26 @@ public class itemManager : MonoBehaviour
         }
         else if (BattleManager.Instance.getCharacter(idx) != null && BattleManager.Instance.getCharacter(idx).getCurState() == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
         {
+            Debug.Log("???");
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 89f, 0f);
             characterBoard_update();
         }
         else
         {
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
-            idx = -1;
+            characterSelectIdx = -1;
         }
         return characterSelectIdx;
     }
     public void characterBoard_update() //board 변경시 업데이트를 하기 위한 함수. character board 변경이나 character idx가 변경될 경우 사용하게 된다.
     {
-        Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
-        if (AdventureManager.Instance.getBattleEventTrigger()) {
+        Character tempCharacter;
+        if (AdventureManager.Instance.getBattleEventChk()) {
             tempCharacter = BattleManager.Instance.getCharacter(characterSelectIdx);
+        }
+        else
+        {
+            tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
         }
 
         if (tempCharacter == null || tempCharacter.getCurState() != 0) {
@@ -647,7 +657,7 @@ public class itemManager : MonoBehaviour
         //주사위 업데이트
         for (int i = 0; i < 6; i++)
         {
-            characterDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(characterSelectIdx, i).ToString());
+            characterDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + tempCharacter.getDice(i).ToString());
         }
         //스킬, 장비 이미지 업데이트
         for (int i = 0; i < 2; i++)
@@ -669,7 +679,16 @@ public class itemManager : MonoBehaviour
     public void hoverInSkill(int i)
     {
         Skill temp;
-        temp = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
+        
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            temp = BattleManager.Instance.getCharacter(characterSelectIdx).skillUse(i);
+        }
+        else
+        {
+            temp = CharacterManager.Instance.getCharacterSkill(characterSelectIdx, i);
+        }
+
         if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + temp.getSkillName()) == null)
         {
             characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
@@ -693,8 +712,15 @@ public class itemManager : MonoBehaviour
     public void hoverInEquip(int i)
     {
         Item temp;
-
-        temp = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            temp = BattleManager.Instance.getCharacter(characterSelectIdx).getItem(i);
+        }
+        else
+        {
+            temp = CharacterManager.Instance.getCharacterItem(characterSelectIdx, i);
+        }
+        
 
         characterEquipOutline[i].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
@@ -849,7 +875,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx == 9)
             {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
-                for (int chIdx = 0; chIdx < 4; chIdx++) if (CharacterManager.Instance.getCharacterState(chIdx) == 0) for (int i = 0; i < 6; i++) changeDice(chIdx, i, i + 1);
+                for (int chIdx = 0; chIdx < 4; chIdx++) for (int i = 0; i < 6; i++) changeDice(chIdx, i, i + 1);
             }
             else if (itemIdx == 10)
             {
@@ -857,7 +883,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx == 11)
             { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
-                for (int chIdx = 0; chIdx < 4; chIdx++) if (CharacterManager.Instance.getCharacterState(chIdx) == 0) for (int i = 0; i < 6; i++) changeDice(chIdx, i, Random.Range(1, 7));
+                for (int chIdx = 0; chIdx < 4; chIdx++) for (int i = 0; i < 6; i++) changeDice(chIdx, i, Random.Range(1, 7));
             }
             else if (itemIdx == 12)
             {
@@ -868,10 +894,80 @@ public class itemManager : MonoBehaviour
             {
                 for (int i = 0; i < 6; i++) changeDice(characterIdx, i, itemIdx - 12);
             }
-            else if (itemIdx == 19) changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) +1);
-            else if (itemIdx == 20) changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) - 1);
-            else if (itemIdx == 21) for (int i = 0; i < 6; i++) changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) + 1);
-            else if (itemIdx == 22) for (int i = 0; i < 6; i++) changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) - 1);
+            else if (itemIdx == 19)
+            {
+                if (!AdventureManager.Instance.getBattleEventChk())
+                {
+                    if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                    {
+                        changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) + 1);
+                    }
+                }
+                else
+                {
+                    if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                    {
+                        changeDice(characterIdx, idx, BattleManager.Instance.getCharacter(characterIdx).getDice(idx) + 1);
+                    }
+                }
+            }
+            else if (itemIdx == 20)
+            {
+                if (!AdventureManager.Instance.getBattleEventChk())
+                {
+                    if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                    {
+                        changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) - 1);
+                    }
+                }
+                else
+                {
+                    if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                    {
+                        changeDice(characterIdx, idx, BattleManager.Instance.getCharacter(characterIdx).getDice(idx) - 1);
+                    }
+                }
+            }
+            else if (itemIdx == 21)
+            {
+                for (int i=0;i<6;i++)
+                {
+                    if (!AdventureManager.Instance.getBattleEventChk())
+                    {
+                        if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                        {
+                            changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) + 1);
+                        }
+                    }
+                    else
+                    {
+                        if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                        {
+                            changeDice(characterIdx, i, BattleManager.Instance.getCharacter(characterIdx).getDice(i) + 1);
+                        }
+                    }
+                }
+            }
+            else if (itemIdx == 22)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (!AdventureManager.Instance.getBattleEventChk())
+                    {
+                        if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                        {
+                            changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) - 1);
+                        }
+                    }
+                    else
+                    {
+                        if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+                        {
+                            changeDice(characterIdx, i, BattleManager.Instance.getCharacter(characterIdx).getDice(i) - 1);
+                        }
+                    }
+                }
+            }
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
             useItem(1, itemBagIdx);
 

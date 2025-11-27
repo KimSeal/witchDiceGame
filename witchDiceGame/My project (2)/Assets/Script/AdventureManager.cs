@@ -1614,6 +1614,22 @@ public class AdventureManager : MonoBehaviour
             }
         }
     }
+    public void updateAdventureDice()
+    {
+        if (!diceEntity.activeSelf) return;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0)
+            {
+                diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
+            }
+            else
+            {
+                diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+        }
+    }
 
     public void clickDice(int characterIdx)
     {
@@ -1748,6 +1764,7 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.startTalk(11);
                     }
                     itemManager.Instance.flipItemBox(0, 0);
+
                     curCanvasIsAdventure = false;
 
                     itemManager.Instance.click_upgradeCanvas_start();
@@ -1794,9 +1811,10 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
-                   
+                    upDownManager.Instance.changeOption(1, true);
                     gameOverChk = false;
                     curCanvasIsAdventure = false;
+                    upDownManager.Instance.resetUI();
                     BattleManager.Instance.startBattle_fromAdventure();
                     CameraManager.Instance.updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
                    // mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
@@ -1820,7 +1838,12 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
+                    upDownManager.Instance.changeOption(1, false);
                     curCanvasIsAdventure = true;
+                    
+                    upDownManager.Instance.deleteOtherLock(0);
+                    upDownManager.Instance.resetUI();
+
                     battleEventTrigger = false;
                     if (!win)
                     {
@@ -1836,9 +1859,9 @@ public class AdventureManager : MonoBehaviour
         return false;
     }
 
-    public bool getBattleEventTrigger()
+    public bool getBattleEventChk()
     {
-        return battleEventTrigger;
+        return !(curCanvasIsAdventure);// battleEventTrigger;
     }
 
 
