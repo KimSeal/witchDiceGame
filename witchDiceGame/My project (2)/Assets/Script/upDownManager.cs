@@ -213,6 +213,10 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInChangeInitBtn()
     {
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            return;
+        }
         changeBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
     }
@@ -224,7 +228,9 @@ public class upDownManager : MonoBehaviour
     }
     public void clickChangeInitBtn()
     {
-
+        if (AdventureManager.Instance.getBattleEventChk()) {
+            return;
+        }
         changeChkEntity.SetActive(true);
         for (int characterSelectIdx = 0; characterSelectIdx < 4; characterSelectIdx++)
         {
@@ -248,6 +254,10 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInDeleteBtn(int i)
     {
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            return;
+        }
         deleteOutline[i].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI");
 
@@ -262,6 +272,7 @@ public class upDownManager : MonoBehaviour
 
     public void clickDeleteBtn()
     {
+        
         itemManager.Instance.deleteCharacter();
         hoverOutDeleteBtn();
         cancleDeleteBtn();
@@ -274,6 +285,10 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInDeleteInitBtn()
     {
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            return;
+        }
         deleteBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
     }
@@ -285,6 +300,10 @@ public class upDownManager : MonoBehaviour
 
     public void clickDeleteInitBtn()
     {
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            return;
+        }
         deleteChkEntity.SetActive(true);
         hoverOutDeleteBtn();
     }
@@ -471,19 +490,25 @@ public class upDownManager : MonoBehaviour
 
         if (AdventureManager.Instance.getBattleEventChk())
         {
-            //if (curCharacterIdx != -1 && getCharacterExist(curCharacterIdx))
-            //{
-                Debug.Log("click character acting battle!");
-                curCharacterIdx = itemManager.Instance.click_Character_battle(input);
-                BattleManager.Instance.hoverOutCharacter(0);
-            //}
+            changeBtnInit.GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn_off");
+            deleteBtnInit.GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn_off");
+
+            Debug.Log("click character acting battle!");
+            curCharacterIdx = itemManager.Instance.click_Character_battle(input);
+            BattleManager.Instance.hoverOutCharacter(0);
+
         }
         else
         {
-            //if (curCharacterIdx != -1 && getCharacterExist(curCharacterIdx))
-            //{
-                curCharacterIdx = itemManager.Instance.click_Character(input);
-            //}
+            changeBtnInit.GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn");
+            deleteBtnInit.GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+
+            curCharacterIdx = itemManager.Instance.click_Character(input);
+           
         }
         AdventureManager.Instance.updateAdventureDice();
 

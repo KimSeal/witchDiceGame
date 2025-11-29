@@ -123,6 +123,7 @@ public class TalkManager : MonoBehaviour
 
     public void clickDescBox()
     {
+        Debug.Log("click talk Box!");
         if (talkingChk)
         {
             goToNextTalk();

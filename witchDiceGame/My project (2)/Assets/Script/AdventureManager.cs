@@ -1565,6 +1565,16 @@ public class AdventureManager : MonoBehaviour
  
         balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
+        {
+            if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+            {
+                selectDiceCharacterIdx = characterIdx;
+                standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back");
+                break;
+                
+            }
+        }
     }
     public bool rerollChk = false;
     [SerializeField]
