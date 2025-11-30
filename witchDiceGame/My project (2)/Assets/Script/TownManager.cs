@@ -86,7 +86,7 @@ public class TownManager : MonoBehaviour
         shakeTownText(i);
 
         if (i == 0) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
-        if (i == 1) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
+        if (i == 1) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_homeNew_on");
         if (i == 2) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_library_on");
         if (i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
     }

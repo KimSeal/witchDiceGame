@@ -1066,9 +1066,11 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator startPhaseManage()
     {
+        upDownManager.Instance.setItemTypeButtonLock(false);
         startBattlePhase();
         itemManager.Instance.enterBattlePhase();
         do {
+            
             infoBtn.GetComponent<BoxCollider2D>().enabled = true;
             yield return new WaitUntil(() => phaseMoveChk(1));
             StartCoroutine(diceThrowPhase());
@@ -1082,12 +1084,14 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => phaseMoveChk(5));
             StartCoroutine(battlePhase());
             yield return new WaitUntil(() => phaseMoveChk(6));
+            upDownManager.Instance.setItemTypeButtonLock(false);
             StartCoroutine(endPhase());
 
             yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
             //페이즈가 1로 돌아가지 않았다면(승패 결정) 전투 종료로 반복문 탈출.
         } while (curPhase == 1);
 
+        upDownManager.Instance.setItemTypeButtonLock(false);
         setCurClickSkill(-1);
         deleteSkillCommand();
 
@@ -1828,6 +1832,9 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            upDownManager.Instance.clickItemTypeButton(3);
+            upDownManager.Instance.setItemTypeButtonLock(true);
+
             battleBagBtn.GetComponent<CircleCollider2D>().enabled = false;
             for (int i = 0; i < 4; i++)
             {

@@ -47,10 +47,13 @@ public class upDownManager : MonoBehaviour
     private int itemSelectDepth = 0;
 
     [SerializeField]
+    public GameObject upperItemTypeInitButton;
+    public GameObject upperItemTypeInitOutline;
+    public GameObject upperItemTypeEntity;
     public GameObject[] upperItemTypeButton = new GameObject[4];
     public GameObject[] upperItemTypeOutline = new GameObject[4];
-
-
+    public bool itemTypeOnOff = false;
+    public bool itemTypeButtonLock = false;
 
 
     [SerializeField]
@@ -133,6 +136,7 @@ public class upDownManager : MonoBehaviour
         cancleChangeBtn();
         cancleDeleteBtn();
         changeOption(0, false);
+        itemTypeButtonLock = false;
     }
 
     // Update is called once per frame
@@ -175,6 +179,43 @@ public class upDownManager : MonoBehaviour
     public void cancleChangeBtn()
     {
         changeChkEntity.SetActive(false);
+    }
+
+    public void setItemTypeButtonLock(bool onOff)
+    {
+        itemTypeButtonLock = onOff;
+    }
+
+    public void hoverInUpperItemTypeInit()
+    {
+        upperItemTypeInitOutline.GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+    public void hoverOutUpperItemTypeInit() {
+        upperItemTypeInitOutline.GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+
+    public void clickUpperItemTypeInit()
+    {
+        if (itemTypeButtonLock)
+        {
+            Debug.Log("why?");
+            return;
+        }
+
+        itemTypeOnOff = !itemTypeOnOff;
+        if (itemTypeOnOff)
+        {
+            upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-108f, 0f, 0f);
+        }
+        else
+        {
+            upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-108f, 200f, 0f);
+        }
+
+            
+
     }
 
     public void hoverInChangeBtn(int i)
@@ -926,7 +967,7 @@ public class upDownManager : MonoBehaviour
             upperItemTypeOutline[i].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
-        for (int i=0;i<upperItemOutline.Length;i++)
+        for (int i = 0; i < upperItemOutline.Length; i++)
         {
             upperItemOutline[i].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
@@ -940,7 +981,18 @@ public class upDownManager : MonoBehaviour
         curItemType = idx;
         curItemIdx = -1;
 
-        
+        if (curItemType == 0) upperItemTypeInitButton.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_consume");
+        if (curItemType == 1) upperItemTypeInitButton.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_dice");
+        if (curItemType == 2) upperItemTypeInitButton.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_equip");
+        if (curItemType == 3) upperItemTypeInitButton.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_passive");
+
+        itemTypeOnOff = false;
+        upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-108f, 200f, 0f);
+
         //deleteOtherLock(0);
 
         //item use ui랑 호환 맞추기.
