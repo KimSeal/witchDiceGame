@@ -57,6 +57,7 @@ public class LibraryManager : MonoBehaviour
     {
         gameObjectTemp.GetComponent<hoverRotate>().shakeStart();
     }
+    /*
     private void makeDarkBtn(int i) {
         Material material = BtnArr[i].GetComponent<SpriteRenderer>().material;
         material.SetFloat("_Transparency", 0.7f);
@@ -66,6 +67,7 @@ public class LibraryManager : MonoBehaviour
         Material material = BtnArr[i].GetComponent<SpriteRenderer>().material;
         material.SetFloat("_Transparency", 0.0f);
     }
+    */
     private string[] powerType = { "reroll", "turn", "add", "sub"};
     private string[] targetType = { "my", "enemy", "any" };
 
@@ -104,7 +106,7 @@ public class LibraryManager : MonoBehaviour
     }
     public void tryBuyPower(int idx)
     {
-        if (jsonDataManager.Instance.checkWitchPower(idx) != 0) {
+        //if (jsonDataManager.Instance.checkWitchPower(idx) != 0) {
             buyPowerVal = idx;
             
             //buyUI[0].SetActive(true);
@@ -112,7 +114,7 @@ public class LibraryManager : MonoBehaviour
             buyUI[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(idx - 1) / 3] + "_" + targetType[(idx - 1) % 3]);
             buyUI[2].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(10) + " : " + jsonDataManager.Instance.getPowerPrice(idx).ToString() +
                 "\n" + TalkManager.Instance.getDesc(11) + " : " + jsonDataManager.Instance.getMoney().ToString() + " -> " + (jsonDataManager.Instance.getMoney() - jsonDataManager.Instance.getPowerPrice(idx)).ToString();
-        } 
+        //} 
     }
     //보유 여부 확인후 Lock인지 아닌지 바꾸기
     private void drawPowerByLock(int power)
@@ -128,72 +130,44 @@ public class LibraryManager : MonoBehaviour
     //현재 선택한 능력 반영 함수
     private void drawSelectPower(int idx, int power) //
     {
-        Debug.Log("draw point, man");
-        Debug.Log(idx + "/" + power);
+        string witchStr = "";
         if (idx == -1)
         {
-            if (power == 0)
-            {
-                curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
-            }
-            else
-            {
-                curPowerDesc.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
-            }
-            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[power].PowerName + "\n";
+            witchStr = witchPowerInfoList[power].PowerName + "\n";
 
-            if(jsonDataManager.Instance.getLanguage() == 0) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[power].KR;
-            else if (jsonDataManager.Instance.getLanguage() == 1) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[power].EN;
-            else if (jsonDataManager.Instance.getLanguage() == 2) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[power].JP;
+            if(jsonDataManager.Instance.getLanguage() == 0) witchStr+= witchPowerInfoList[power].KR;
+            else if (jsonDataManager.Instance.getLanguage() == 1) witchStr += witchPowerInfoList[power].EN;
+            else if (jsonDataManager.Instance.getLanguage() == 2) witchStr += witchPowerInfoList[power].JP;
         }
         else
         {
-            if (power == 0) curPowerArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
-            else curPowerArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
-            curPowerDescInfo.GetComponent<TextMeshPro>().text = witchPowerInfoList[0].PowerName + "\n";
+            witchStr = witchPowerInfoList[0].PowerName + "\n";
 
-            if (jsonDataManager.Instance.getLanguage() == 0) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].KR;
-            else if (jsonDataManager.Instance.getLanguage() == 1) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].EN;
-            else if (jsonDataManager.Instance.getLanguage() == 2) curPowerDescInfo.GetComponent<TextMeshPro>().text += witchPowerInfoList[0].JP;
+            if (jsonDataManager.Instance.getLanguage() == 0) witchStr += witchPowerInfoList[0].KR;
+            else if (jsonDataManager.Instance.getLanguage() == 1) witchStr += witchPowerInfoList[0].EN;
+            else if (jsonDataManager.Instance.getLanguage() == 2) witchStr += witchPowerInfoList[0].JP;
         }
 
-        curPowerDescInfo.GetComponent<TextMeshPro>().text = TalkManager.Instance.SpecialTextChange(curPowerDescInfo.GetComponent<TextMeshPro>().text);
-    }
-
-    public void hoverInCurPower(int i)
-    {
-        if (curWitchPower[i] != -1)
-        {
-            Material material = curPowerArr[i - 1].GetComponent<SpriteRenderer>().material;
-            material.SetFloat("_Transparency", 0.7f);
-            drawSelectPower(-1, curWitchPower[i]);
-            curPowerArr[i-1].GetComponent<hoverRotate>().expandStart();
-        }
-    }
-    public void hoverOutCurPower(int i)
-    {
-        if (curWitchPower[i] != -1) {
-            Material material = curPowerArr[i - 1].GetComponent<SpriteRenderer>().material;
-            material.SetFloat("_Transparency", 0.0f);
-            drawSelectPower(-1, 0);
-            curPowerArr[i - 1].GetComponent<hoverRotate>().expandEnd();
-        }
+        witchStr = TalkManager.Instance.SpecialTextChange(witchStr);
+        TalkManager.Instance.setDescString(witchStr);
     }
 
     public void hoverInBtn(int i)
     {
         drawSelectPower(-1, i);
-        makeDarkBtn(i);
+        //makeDarkBtn(i);
         
     }
     public void hoverOutBtn(int i)
     {
-        
-        drawSelectPower(-1, 0);
+        TalkManager.Instance.setDescString("");
+        //drawSelectPower(-1, 0);
+        /*
         if (curWitchPower[1] != i && curWitchPower[2] != i)
         {
             makeBrightBtn(i);
         }
+        */
     }
 
     private void makeBuyUI()
@@ -231,62 +205,10 @@ public class LibraryManager : MonoBehaviour
         
     }
 
-    public void clickCurWitchPower(int idx)
-    {
-        //이미 배치된 파워 해제용
-        if (curWitchPower[idx] != -1)
-        {
-            SoundManager_Sfx.Instance.playSound(7);
-            clickWitchPower(curWitchPower[idx]);
-            shakeObject(curPowerArr[idx - 1]);
-        }
-    }
     public void clickWitchPower(int input)
     {
-        int chk = jsonDataManager.Instance.checkWitchPower(input);
         shakeObject(BtnArr[input]);
-        if (chk == 0) //가지고 있는 경우
-        {
-            for (int idx = 1; idx < curWitchPower.Length; idx++)
-            {
-                if (curWitchPower[idx] == input)
-                {
-                    SoundManager_Sfx.Instance.playSound(7);
-                    //이미 사용중인 거 선택시 해제
-                    Debug.Log("make empty about current box");
-                    hoverOutCurPower(idx);
-                    curWitchPower[idx] = -1;
-                    shakeObject(curPowerArr[idx - 1]);
-                    //해제된 부분에 대해 hover, shake 없애기
-                    //hoverRotateAble(curPowerArr[idx-1], 1, false);
-                    //hoverRotateAble(curPowerArr[idx-1], 2, false);
-
-                    makeBrightBtn(input);
-                    drawSelectPower(idx - 1, 0);
-                    return;
-                }
-            }
-            //배틀 매니져에 선택 세팅하기
-            for (int idx = 1; idx < curWitchPower.Length; idx++)
-            {
-                
-                //mainCamera.GetComponent<CameraShake>().updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-                if (curWitchPower[idx] == -1)
-                {
-                    SoundManager_Sfx.Instance.playSound(4);
-                    CameraManager.Instance.VibrateForeTime(0.1f);
-                    shakeObject(curPowerArr[idx - 1]);
-                    curWitchPower[idx] = input;
-                    //해제된 부분에 대해 hover, shake 없애기
-                    //hoverRotateAble(curPowerArr[idx-1], 1, true);
-                    //hoverRotateAble(curPowerArr[idx-1], 2, true);
-                    makeDarkBtn(input);
-                    drawSelectPower(idx - 1, input);
-                    return;
-                }
-            }
-        }
-        else
+        if (jsonDataManager.Instance.checkWitchPower(input) != 0)
         {
             SoundManager_Sfx.Instance.playSound(0);
             tryBuyPower(input);
@@ -319,8 +241,8 @@ public class LibraryManager : MonoBehaviour
         {
             curWitchPower[i] = BattleManager.Instance.getWitchPower(i);
             
-            drawSelectPower(i-1, curWitchPower[i]);
-            makeDarkBtn(curWitchPower[i]);
+            //drawSelectPower(i-1, curWitchPower[i]);
+            //makeDarkBtn(curWitchPower[i]);
         }
         for (int i=1;i<BtnArr.Length;i++)
         {
