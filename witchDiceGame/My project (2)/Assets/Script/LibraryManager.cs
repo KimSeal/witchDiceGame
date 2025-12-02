@@ -6,7 +6,6 @@ using TMPro;
 public class LibraryManager : MonoBehaviour
 {
     private static LibraryManager instance = null;
-    private int[] curWitchPower = new int[3];
     [SerializeField] private GameObject[] BtnArr = new GameObject[13];//obj_library_btn_(number)
     private Sprite[] spriteArr = new Sprite[12];
 
@@ -236,14 +235,7 @@ public class LibraryManager : MonoBehaviour
         SoundManager_Main.Instance.stopSound(0);
         SoundManager_Main.Instance.stopSound(7);
         jsonDataManager.Instance.addMoney(0);
-        //배틀 매니져에서 받아오기
-        for (int i = 1; i < curWitchPower.Length; i++)
-        {
-            curWitchPower[i] = BattleManager.Instance.getWitchPower(i);
-            
-            //drawSelectPower(i-1, curWitchPower[i]);
-            //makeDarkBtn(curWitchPower[i]);
-        }
+
         for (int i=1;i<BtnArr.Length;i++)
         {
             drawPowerByLock(i);
@@ -254,21 +246,13 @@ public class LibraryManager : MonoBehaviour
     }
     public void exitLibrary() {
         //둘다 선택이 되었을 경우에만 나갈 수 있도록
-        if (curWitchPower[1] != -1 && curWitchPower[2] != -1)
-        {
-            //배틀 메니져에 선택 세팅하기
-            BattleManager.Instance.setWitchPower(1, curWitchPower[1]);
-            BattleManager.Instance.setWitchPower(2, curWitchPower[2]);
+
+
             if(savePreScreen == 0) TownManager.Instance.backToTownUI();
             if (savePreScreen == 1) AdventureReadyManager.Instance.enterAdventureReady();
             SoundManager_Main.Instance.stopSound(1);
-            jsonDataManager.Instance.changeWitchPower(curWitchPower[1], curWitchPower[2]);
             //buyUI[0].SetActive(false);
             deleteBuyUI();
-        }
-        else //지금은 못나가게 하는 게 다지만, 기존 마녀 능력 유지하는거 공지 화면과 함께 나갈껀지 물어보고, 그래도 나간다 그러면 이전 마녀능력으로 돌리기
-        {
-            fullUI.showFull(7);
-        }
+
     }
 }

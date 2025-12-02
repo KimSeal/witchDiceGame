@@ -6,6 +6,9 @@ using TMPro;
 using AnimatedBattleText.Examples;
 public class BattleManager : MonoBehaviour
 {
+
+    
+
     [SerializeField]
     public Sprite[] diceSprite = new Sprite[6];
     [SerializeField]
@@ -88,9 +91,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject characterUI; // characterUI
     public GameObject diceFullUI;
 
+    /*
     [SerializeField]
     public GameObject[] diceArrowSet = new GameObject[8]; //arrowSet_(number)
-
+    */
     [SerializeField]
     public GameObject[] myCharacterObjUI = new GameObject[4];
     public Animator[] myCharacterObjUIAnim = new Animator[4];
@@ -139,8 +143,10 @@ public class BattleManager : MonoBehaviour
     private int currentLightUI = 0;
 
     [SerializeField] private GameObject[] witchPowerObj = new GameObject[3]; //obj_backGround_field witchPower_button_left witchPower_button_right
+    [SerializeField] public GameObject witchPowerSelectObjEntity;
+    [SerializeField] public GameObject[] witchPowerSelectObj = new GameObject[7];
+    [SerializeField] public GameObject[] witchPowerSelectObjOutline = new GameObject[7];
     [SerializeField] private GameObject[] backGroundObj = new GameObject[5]; //obj_backGround_ field, witch_witchPowerSelect, backGround, witch_skillSelect_body, witch_skillSelect_face
-    private int[] witchPowerWaitTurn = { 0, 0, 0 };
     
     //[SerializeField]
     //public GameObject[] diceArrow = new GameObject[8]; //obj_battleDice_arrow_(number)
@@ -1268,7 +1274,9 @@ public class BattleManager : MonoBehaviour
             witchPowerObj[0].SetActive(true);
             witchPowerObj[1].SetActive(true);
             witchPowerObj[2].SetActive(true);
-            witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
+            witchPowerSelectObjEntity.SetActive(true);
+            hoverInWitchPowerNum(1);
+            //witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
             for (int i = 0; i < 3; i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 30, witchPowerObj[i].transform.position.z);
 
             /*
@@ -1285,87 +1293,69 @@ public class BattleManager : MonoBehaviour
         //}
     }
 
-    public int getWitchPower(int idx)
+    public void hoverInWitchPowerNum(int idx)
     {
-        return witchPowerIdx[idx];
+        if (false) //챕터상 아직 쓸 수 없는 경우 통과 
+        {
+            return;
+        }
+        for (int i=0;i<7;i++)
+        {
+            witchPowerSelectObjOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        witchPowerSelectObjOutline[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerNum/spr_witchPowerSelectNum_outline");
+
+        witchPowerClickState = 6;
+        int witchPowerTemp = idx;
+        int diceNum = 6;
+        if (witchPowerTemp >= 0 && witchPowerTemp <= 3) diceNum = 1; // 능력이 reroll0, reroll, add, sub, 이어서 주사위 하나만 쓰는 경우
+        if (witchPowerTemp == 4 || witchPowerTemp == 5) diceNum = 2; // 능력이 swap, copy 여서 주사위 2개를 쓰는 경우
+        if (witchPowerTemp == 6) diceNum = 1; //능력이 모두 바꾸기라서 주사위 하나만 쓰는 경우.
+
+        clickedDice[0] = -1;
+        clickedDice[1] = -1;
+
+        witchPowerClickState = diceNum;
+        witchPowerState = idx;
+        witchPowerObj[0].GetComponent<Animator>().Play(witchPowerTemp.ToString());
     }
-    public void setWitchPower(int idx, int witchPower)
+    public void hoverOutWitchPowerNum()
     {
-        witchPowerIdx[idx] = witchPower;
+        
     }
 
 
-    private int[] witchPowerIdx = new int[3]; //현재 선택된 마녀 파워 Idx
     //마녀 파워 선택 (좌우)
     public void witchPowerState_Change(int dir)
     {
         SoundManager_Sfx.Instance.playSound(0);
 
-            shakeObject(witchPowerObj[0]);
-            shakeObject(witchPowerObj[dir + 1]);
+        shakeObject(witchPowerObj[0]);
+        shakeObject(witchPowerObj[dir + 1]);
+        witchPowerClickState = 6;
 
-
-            if (dir == 1)
+        if (dir == 1)
+        {
+            do
             {
                 witchPowerState++;
-                if (witchPowerState > 2) witchPowerState = 0;
-            }
-            else if(dir == -1)
+                if (witchPowerState > 6) witchPowerState = 0;
+                hoverInWitchPowerNum(witchPowerState);
+            } while (witchPowerClickState == 6);
+
+        }
+        else if(dir == -1)
+        {
+            do
             {
                 witchPowerState--;
-                if (witchPowerState < 0) witchPowerState = 2;
-            }
-
-            witchPowerClickState = 6;
-            int witchPowerTemp = witchPowerIdx[witchPowerState];
-            int diceNum = 6;
-            if (witchPowerTemp == 0) diceNum = 0; //능력을 사용하지 않는 경우
-            if (witchPowerTemp >= 1 && witchPowerTemp <= 3) diceNum = 1; // 능력이 reroll이어서 주사위 하나만 쓰는 경우
-            if (witchPowerTemp >= 4 && witchPowerTemp <= 6) diceNum = 1; // 능력이 turn이어서 주사위 하나만 쓰는 경우
-            if (witchPowerTemp >= 7 && witchPowerTemp <= 9) diceNum = 1; // 능력이 add1이어서 주사위 하나만 쓰는 경우
-            if (witchPowerTemp >= 10 && witchPowerTemp <= 12) diceNum = 1; // 능력이 sub1이어서 주사위 하나만 쓰는 경우
-            clickedDice[0] = -1;
-            clickedDice[1] = -1;
-            witchPowerClickState = diceNum;
-
-            if (witchPowerState == 0)
-            {
-                Debug.Log(witchPowerIdx[witchPowerState]);
-                witchPowerObj[0].GetComponent<Animator>().Play("0");
-                //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse"); 
-            }
-            else
-            {
-                Debug.Log(witchPowerIdx[witchPowerState]);
-                witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[witchPowerState].ToString());
-                //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn"); 
-            }
-
-            /*
-                //테스트를 위한 turn 능력이미지
-                //턴 소모해야 해서 아직 못쓰는 경우
-                if (witchPowerWaitTurn[witchPowerState] != 0) {
-                    witchPowerObj[0].GetComponent<Animator>().Play("cantUse_turn" + witchPowerWaitTurn[witchPowerState].ToString());
-                }
-                else if (witchPowerState == 0)
-                {
-                    witchPowerObj[0].GetComponent<Animator>().Play("0");
-                    //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse"); 
-                }
-                else if (witchPowerState == 1)
-                {
-                    witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[1].ToString());
-                    //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn"); 
-                }
-                else if (witchPowerState == 2)
-                {
-                    witchPowerObj[0].GetComponent<Animator>().Play(witchPowerIdx[2].ToString());
-                    //witchPowerUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_turn_blue"); 
-                }
-            */
-        
+                if (witchPowerState < 0) witchPowerState = 6;
+                hoverInWitchPowerNum(witchPowerState);
+            } while (witchPowerClickState == 6);
+        }
     }
 
+    public int[] needJewel = {0, 1, 2, 2, 2, 3, 1};
     //주사위 고르기. 마녀 스킬 추가되면 여기서 작업할것
     public void select_witchPower_Dice(int idx) {
         if (witchPowerClickState == 2) { //다중 선택일 경우, 다음거 선택할수 있도록 설정.
@@ -1379,73 +1369,78 @@ public class BattleManager : MonoBehaviour
         }
 
         clickedDice[0] = idx;
-        int witchPowerTemp = witchPowerIdx[witchPowerState];
+        int witchPowerTemp = witchPowerState;
 
         Debug.Log("use Witch Power : " + witchPowerTemp.ToString());
-        if (witchPowerTemp != 0) //능력 사용시만
-        {
-            if (witchPowerTemp >= 1 && witchPowerTemp <= 3) //reroll 스킬 사용시 
-            {
-                rerollDice(clickedDice[0]);
-            }
-            if (witchPowerTemp >= 4 && witchPowerTemp <= 6) //turn 스킬 사용시 
-            {
-                //turn은 제거 예정.
-                //diceArrowSet[clickedDice[0]].SetActive(true); //해당 주사위 화살표 활성화
-                //yield return new WaitUntil(() => witchPowerClickState == -1);
-                //diceArrowSet[clickedDice[0]].SetActive(false);
-            }
-            if (witchPowerTemp >= 7 && witchPowerTemp <= 9) //add 스킬 사용시 
-            {
-                addDice(clickedDice[0], true);
-            }
-            if (witchPowerTemp >= 10 && witchPowerTemp <= 12) //sub 스킬 사용시 
-            {
-                addDice(clickedDice[0], false);
-            }
-
-            //스킬 사용되었으니 변경 값에 대하여 이펙트 생성
-            for (int i = 0; i < 2; i++)
-            {
-                if (clickedDice[i] >= 0 && clickedDice[i] <= 3)
-                {
-                    Instantiate(diceRollEff, myDiceUI[clickedDice[i]].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
-                    SoundManager_Sfx.Instance.playSound(2);
-                }
-                if (clickedDice[i] >= 4 && clickedDice[i] <= 7)
-                {
-                    Instantiate(diceRollEff, enemyDiceUI[clickedDice[i] - 4].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
-                    SoundManager_Sfx.Instance.playSound(2);
-                }
-            }
-            //yield return new WaitForSeconds(1f);
-
-            GameObject witchPowerDestroyObj = Instantiate(hitEff, witchPowerObj[0].transform.position, Quaternion.Euler(0, 0, 0));
-            witchPowerDestroyObj.GetComponent<Animator>().Play("witchPowerDestroy");
-
-            //바뀐 아군 주사위 스킬 배치 변경
-            for (int clickIdx = 0; clickIdx < 2; clickIdx++) {
-                if (clickedDice[clickIdx] != -1 && clickedDice[clickIdx] >= 0 && clickedDice[clickIdx] < 4)
-                {
-                    int skillTemp = myDiceTake[clickedDice[clickIdx]];
-                    for (int i = 0; i < 4; i++) if (myDiceTake[i] == skillTemp) myDiceTake[i] = -999;
-                }
-            }
-
-            MakeEnemyAttackSet();
-            upDownManager.Instance.updateBigDicePower();
-            updateMyDiceUI();
-            updateEnemyDiceUI();
-
-            //setCurClickSkill(-1);
-
-            clickedDice[0] = -1;
-            clickedDice[1] = -1;
+        if (needJewel[witchPowerTemp] > AdventureManager.Instance.getAdventureJewel()) {
+            //마녀 능력 값이 부족한 경우
+            fullUI.showFull(0);
+            return;
         }
-            //주사위 선택 종료시 버튼 이동
-            //직관성을 위해 나눔
 
-                //다음 페이즈로 넘어가는 부분
+        AdventureManager.Instance.addMoney(1, needJewel[witchPowerTemp] * -1);
+        
+        if (witchPowerTemp == 0) //reroll 스킬 사용시 
+        {
+            rerollDice(clickedDice[0]);
+        }
+        if (witchPowerTemp == 1) //reroll 스킬 사용시 
+        {
+            rerollDice(clickedDice[0]);
+        }
+        if (witchPowerTemp == 2) //add 스킬 사용시 
+        {
+            addDice(clickedDice[0], true);
+        }
+        if (witchPowerTemp == 3) //sub 스킬 사용시 
+        {
+            addDice(clickedDice[0], false);
+        }
+
+        //스킬 사용되었으니 변경 값에 대하여 이펙트 생성
+        for (int i = 0; i < 2; i++)
+        {
+            if (clickedDice[i] >= 0 && clickedDice[i] <= 3)
+            {
+                Instantiate(diceRollEff, myDiceUI[clickedDice[i]].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                SoundManager_Sfx.Instance.playSound(2);
+            }
+            if (clickedDice[i] >= 4 && clickedDice[i] <= 7)
+            {
+                Instantiate(diceRollEff, enemyDiceUI[clickedDice[i] - 4].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+                SoundManager_Sfx.Instance.playSound(2);
+            }
+        }
+        //yield return new WaitForSeconds(1f);
+
+        GameObject witchPowerDestroyObj = Instantiate(hitEff, witchPowerObj[0].transform.position, Quaternion.Euler(0, 0, 0));
+        witchPowerDestroyObj.GetComponent<Animator>().Play("witchPowerDestroy");
+
+        //바뀐 아군 주사위 스킬 배치 변경
+        for (int clickIdx = 0; clickIdx < 2; clickIdx++)
+        {
+            if (clickedDice[clickIdx] != -1 && clickedDice[clickIdx] >= 0 && clickedDice[clickIdx] < 4)
+            {
+                int skillTemp = myDiceTake[clickedDice[clickIdx]];
+                for (int i = 0; i < 4; i++) if (myDiceTake[i] == skillTemp) myDiceTake[i] = -999;
+            }
+        }
+
+        MakeEnemyAttackSet();
+        upDownManager.Instance.updateBigDicePower();
+        updateMyDiceUI();
+        updateEnemyDiceUI();
+
+        //setCurClickSkill(-1);
+
+        clickedDice[0] = -1;
+        clickedDice[1] = -1;
+
+        //주사위 선택 종료시 버튼 이동
+        //직관성을 위해 나눔
+
+        //다음 페이즈로 넘어가는 부분
+
 
     }
     public void setCurClickSkill(int input) {
@@ -1507,6 +1502,7 @@ public class BattleManager : MonoBehaviour
         }
         witchPowerClickState = -1;
     }
+    //turn Dice는 직관성 문제로 인해 제거됨.
     public void turnDice(int input)
     {
         int idx = input / 10;
@@ -1551,6 +1547,7 @@ public class BattleManager : MonoBehaviour
             witchPowerObj[0].SetActive(false);
             witchPowerObj[1].SetActive(false);
             witchPowerObj[2].SetActive(false);
+        witchPowerSelectObjEntity.SetActive(false);
     }
     //마녀 좌우 선택 UI 천천히 생성
 
@@ -2318,11 +2315,11 @@ public class BattleManager : MonoBehaviour
 
             int moneyTemp = enemyCharacter[idx].getMoney();
             moneyTemp = Random.Range(moneyTemp - (moneyTemp * 2 / 5), moneyTemp + (moneyTemp * 2 / 5));
-            AdventureManager.Instance.addAdventureMoney(moneyTemp);
+            AdventureManager.Instance.addMoney(0,moneyTemp);
             for (int i = 0; i < moneyTemp; i++)
             {
-                Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-
+                GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                temp.GetComponent<coinMove>().changeDest(2);
             }
 
             updateEnemyDiceUI();
@@ -3007,11 +3004,6 @@ public class BattleManager : MonoBehaviour
         if (AdventureManager.Instance.getTutorial() == 1) AdventureManager.Instance.setTutorial(2);
         if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
 
-        for (int i = 0; i < witchPowerWaitTurn.Length; i++)
-        {
-            if (witchPowerWaitTurn[i] > 0) witchPowerWaitTurn[i]--;
-        }
-
 
         //아군 전멸
         if (result == 2 || giveUpChk)
@@ -3204,11 +3196,6 @@ public class BattleManager : MonoBehaviour
         characterInfoOpenAble = true;
         getLoseChk = false;
 
-        //초반 turn 화살표 지우기
-        for (int i = 0; i < 8; i++) {
-            diceArrowSet[i].SetActive(false);
-            //diceArrowAnimationControl(i, false);
-        }
 
         for (int i = 0; i < 4; i++)
         {
@@ -3246,9 +3233,7 @@ public class BattleManager : MonoBehaviour
 
         curPhase = 0;
         //마녀 능력 임시 배치
-        witchPowerIdx[0] = 0;
-        //witchPowerIdx[1] = 1;
-        //witchPowerIdx[2] = 2;
+        witchPowerState = 1;
     }
 
     private float[] myCharacterPunch = { 0, 0, 0, 0 };
@@ -3260,11 +3245,6 @@ public class BattleManager : MonoBehaviour
 
     private bool adventureStartChk = false;
 
-    public void takeJsonWitchPower() //json에서 받은 파일 받아오기
-    {
-        witchPowerIdx[1] = jsonDataManager.Instance.getCurWitchPower(0);
-        witchPowerIdx[2] = jsonDataManager.Instance.getCurWitchPower(1);
-    }
     // Update is called once per frame
     private float swingDescVal(float a)
     {
@@ -3293,7 +3273,7 @@ public class BattleManager : MonoBehaviour
         { 45f, -23f, 0f, -13f, -475f, 0f, 132f},
         {6f, -30f, 0f, -18f, -475f, 0f, 115f},
         { 60f, 15f, 0f, 20f, -475f, 0f, 100f},
-        { 40f, -22f, 0f,-22f, -475f, 0f, 50f},
+        { 42f, -26f, 0f,-22f, -475f, 0f, 50f},
         { -130f, -150f, 0f, -90f, -125f, 0f, -250f}
     };
     //field, witchbody(powerSelect), background, witchbody(default), witchface
@@ -3500,9 +3480,6 @@ public class BattleManager : MonoBehaviour
         giveUpChk = true; //전투 시작시에는 항복 꺼두기
         useGiveUpBtn(); 
         
-        for (int i = 0; i < witchPowerWaitTurn.Length; i++) { 
-            witchPowerWaitTurn[i] = 0;
-        }
         for (int i = 0; i < 8; i++) {
            // diceArrowAnimationControl(i, false);
         }
@@ -3745,7 +3722,7 @@ public class BattleManager : MonoBehaviour
         witchPowerObj[0].SetActive(false);
         witchPowerObj[1].SetActive(false);
         witchPowerObj[2].SetActive(false);
-
+        witchPowerSelectObjEntity.SetActive(false);
         updateHp();
         InitSetOfEnemySkill();
         updateInfoUIFaceUpdate();

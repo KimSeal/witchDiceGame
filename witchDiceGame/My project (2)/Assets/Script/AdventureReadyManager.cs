@@ -51,8 +51,6 @@ public class AdventureReadyManager : MonoBehaviour
     public void enterAdventureReady()
     {
         SoundManager_Main.Instance.playSound(7);
-        drawSelectPower(0, BattleManager.Instance.getWitchPower(1));
-        drawSelectPower(1, BattleManager.Instance.getWitchPower(2));
         CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.cameraPointZ()));
         //SoundManager_Main.Instance.playSound(1);
     }
@@ -84,9 +82,4 @@ public class AdventureReadyManager : MonoBehaviour
     private string[] powerType = { "reroll", "turn", "add", "sub" };
     private string[] targetType = { "my", "enemy", "any" };
 
-    private void drawSelectPower(int idx, int power) //
-    {
-        if (power == 0) witchPowerObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_nothing");
-        else witchPowerObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_witchUI_" + powerType[(power - 1) / 3] + "_" + targetType[(power - 1) % 3]);
-    }
 }

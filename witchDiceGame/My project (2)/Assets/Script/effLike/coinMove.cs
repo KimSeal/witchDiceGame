@@ -13,6 +13,7 @@ public class coinMove : MonoBehaviour
     float lastTime = 0;
     Vector3 dest;
     int destBag = 0;
+    [SerializeField] GameObject[] arrivePoint = new GameObject[4];
     // Start is called before the first frame update
     void Start()
     {
@@ -41,24 +42,28 @@ public class coinMove : MonoBehaviour
         {
             transform.position = Vector2.Lerp(transform.position, dest, lastTime);
             lastTime += 0.02f;
-            if (lastTime >= 1.0f) phase = 2;
+            if (lastTime >= 0.7f) phase = 2;
         }
         else if (phase == 2)
         {
             BattleManager.Instance.shakeBag();
+            if (destBag == 0 || destBag == 2) upDownManager.Instance.addGold(1);
+            else if (destBag == 1 || destBag == 3) upDownManager.Instance.addJewel(1);
+
             Destroy(gameObject);
         }
     }
 
     public void changeDest(int i)
     {
-        destBag = i;
+        destBag = i; //0 : adventure Gold, 1 : adventure Witch Power 2: battle Gold 3: battle WitchPower 
+        if (i == 1 || i == 3) GetComponent<Animator>().Play("jewel");
     }
     public void changeDestTrue(int i)
     {
-        GameObject bagPoint;
-        if (i == 0) bagPoint = GameObject.Find("obj_battle_btn_itemInfo");  //배틀일때
-        else bagPoint = GameObject.Find("obj_btn_bag"); //adventure일때
-        dest = bagPoint.transform.position;
+        if (i == 0) dest = new Vector3(-682, 79, 0);
+        if (i == 1) dest = new Vector3(-682, 62, 0);
+        if (i == 2) dest = new Vector3(-182, 79, 0);
+        if (i == 3) dest = new Vector3(-182, 62, 0);
     }
 }

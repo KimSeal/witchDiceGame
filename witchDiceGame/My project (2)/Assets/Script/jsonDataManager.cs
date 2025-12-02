@@ -51,7 +51,7 @@ public class jsonDataManager : MonoBehaviour
         }
         else 
         LoadPlayerFromJson();
-        BattleManager.Instance.takeJsonWitchPower();
+
 
         optionManager.Instance.changeOption(1);
         optionManager.Instance.changeOption(2);

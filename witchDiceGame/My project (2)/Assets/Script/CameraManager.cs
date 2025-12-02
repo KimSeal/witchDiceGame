@@ -164,7 +164,7 @@ public class CameraManager : MonoBehaviour
     bool loseChk = false;
     public void resultScreenActive(int caseVal)
     {
-        int updateMoney = AdventureManager.Instance.getAdventureMoney();
+        int updateMoney = AdventureManager.Instance.getAdventureGold();
         money.text = "$" + updateMoney.ToString(); //돈 관련 텍스트 업데이트;
         if (caseVal == 2) updateMoney *= 5;
         if (caseVal == 2) money.text += " X 5";

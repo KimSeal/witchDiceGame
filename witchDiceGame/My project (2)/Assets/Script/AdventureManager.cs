@@ -6,7 +6,18 @@ using TMPro;
 
 public class AdventureManager : MonoBehaviour
 {
-
+    public int adventureJewelMax = 10;
+    public int adventureJewel = 5;
+    public int getAdventureJewel()
+    {
+        return adventureJewel;
+    }
+    public void addWitchPowerCount(int val)
+    {
+        adventureJewel += val;
+        if (adventureJewel < 0) adventureJewel = 0;
+        if (adventureJewel > adventureJewelMax) adventureJewel = adventureJewelMax;
+    }
 
     private static AdventureManager instance = null;
     private void Awake()
@@ -95,7 +106,8 @@ public class AdventureManager : MonoBehaviour
     private bool clickAble = false;
 
     //상점에 대한 데이터
-    private int adventureMoney = 0;
+    private int adventureGold = 0;
+    
     private TextMeshPro moneyText;
     private int[,] storeItemArr = new int[4, 3]; //4개의 아이템이 배치, 각각 type, index(아이템 고유번호), 가격이 저장될 예정 
 
@@ -162,8 +174,8 @@ public class AdventureManager : MonoBehaviour
     }
     public void tutorialStart()
     {
-        adventureMoney = 0;
-        addAdventureMoney(0);
+        adventureGold = 0;
+        addMoney(0, 0);
         CharacterManager.Instance.setTurotialCharacterSet(); //캐릭터는 주인공 혼자만
         itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
         useFairDice = false;
@@ -227,23 +239,25 @@ public class AdventureManager : MonoBehaviour
 
     }
     #region
-    public int getAdventureMoney()
+    public int getAdventureGold()
     {
-        return this.adventureMoney;
+        return this.adventureGold;
     }
+    /*
     public void addAdventureMoney(int money) {
-        adventureMoney += money;
+        
         moneyText.text = "$  " + adventureMoney.ToString();
     }
+    */
     public void buyItem()
     {
         if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) return; //비어있을 경우 아예 아무것도 없게
-        if (adventureMoney >= storeItemArr[storeIdx, 2]) {
+        if (adventureGold >= storeItemArr[storeIdx, 2]) {
             int buyResult = itemManager.Instance.getItemResult(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
             if (buyResult == 0) //정상작동의 경우
             {
                 SoundManager_Sfx.Instance.playSound(4);
-                addAdventureMoney(storeItemArr[storeIdx, 2] * -1);
+                addMoney(0,storeItemArr[storeIdx, 2] * -1);
                 storeItemArr[storeIdx, 0] = -99999;
                 storeItemArr[storeIdx, 1] = -99999;
                 storeItemArr[storeIdx, 2] = -99999;
@@ -314,7 +328,7 @@ public class AdventureManager : MonoBehaviour
             Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
             storeCheckImageObj.sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
             storeCheckPriceObj.text = TalkManager.Instance.getDesc(10) + " : " + storeItemArr[storeIdx, 2].ToString() +
-                    "\n" + TalkManager.Instance.getDesc(11) + adventureMoney.ToString() + " -> " + (adventureMoney - storeItemArr[storeIdx, 2]).ToString();
+                    "\n" + TalkManager.Instance.getDesc(11) + adventureGold.ToString() + " -> " + (adventureGold - storeItemArr[storeIdx, 2]).ToString();
         }
     }
     public void closeTryBuyItem()
@@ -543,9 +557,9 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
-        
-        adventureMoney = 0;
-        addAdventureMoney(0);
+
+        adventureGold = 0;
+        addMoney(0,0);
         CharacterManager.Instance.setTestCharacterSet();
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
@@ -686,6 +700,11 @@ public class AdventureManager : MonoBehaviour
     }
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
+        adventureGold = 10;
+        adventureJewelMax = 10;
+        adventureJewel = 5;
+        upDownManager.Instance.setInit(adventureGold, adventureJewel);
+
         meetDiceEvent(false);
         diceEntity.SetActive(false);
         rerollBtn.SetActive(false);
@@ -693,7 +712,7 @@ public class AdventureManager : MonoBehaviour
         giveUpBtnAble(false);
         gameOverChk = false;
         stageNum = stageNumTemp;
-        addAdventureMoney(0);
+        addMoney(0,0);
 
         //시작시 이미지 없애기
         selectDiceCharacterIdx = -1;
@@ -1256,7 +1275,7 @@ public class AdventureManager : MonoBehaviour
                     storeEntityObj.SetActive(false);
                 }
             }
-            //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.camraPointZ()));
+            addMoney(1, 2);
         }
         if (gameOverChk) //게임오버로 왔을 경우.
         {
@@ -1368,11 +1387,37 @@ public class AdventureManager : MonoBehaviour
             }
 
             TownManager.Instance.backToTownUI();
-            
-            adventureMoney = 0;
-            addAdventureMoney(0);
+
+            adventureGold = 0;
+            addMoney(0,0);
         }
         
+    }
+
+    [SerializeField]
+    public GameObject coinEff;
+
+    public void addMoney(int opt, int val) { //opt  0: gold 1: jewel
+        if (opt == 0) {
+            adventureGold += val;
+            if (val < 0) upDownManager.Instance.addGold(val);
+            for (int i = 0; i < val; i++)
+            {
+                GameObject temp = Instantiate(coinEff, new Vector3(-400f,0f,0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                temp.GetComponent<coinMove>().changeDest(0);
+            }
+        }
+        else if(opt == 1) {
+            adventureJewel += val;
+            if (val < 0) upDownManager.Instance.addJewel(val);
+            for (int i = 0; i < val; i++)
+            {
+                GameObject temp = Instantiate(coinEff, new Vector3(-400f, 0f, 0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                temp.GetComponent<coinMove>().changeDest(1);
+            }
+        }
+
+
     }
 
     public void giveUpAdventure()

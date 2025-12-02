@@ -7,6 +7,14 @@ using TMPro;
 public class upDownManager : MonoBehaviour
 {
     [SerializeField]
+    public GameObject goldEntity;
+    public TextMeshProUGUI goldText;
+    public GameObject jewelEntity;
+    public TextMeshProUGUI jewelText;
+    public int gold;
+    public int jewel;
+    
+    [SerializeField]
     public GameObject[] underHoverBar = new GameObject[6]; //entity, picture, dice 0-3
     public TextMeshProUGUI underHoverBarTitle, underHoverBarDesc; // Title, desc
 
@@ -144,6 +152,23 @@ public class upDownManager : MonoBehaviour
     {
         moveBattleUI(moveArrY[0], underHoverBar[0]);
         moveBattleUI(moveArrY[1], upperHoverBar[0]);
+
+        /*
+        if (goldEventActive) goldEventCount = 300;
+        if (witchEventActive) witchEventCount = 300;
+
+        if (goldEventCount > 0) {
+            goldEventCount -= 2;
+            if (goldEventCount > 141) { goldEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 418f, 0f); }
+            else { goldEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(goldEventCount - 141f, 418f, 0f); }
+        }
+        if (witchEventCount > 0)
+        {
+            witchEventCount-= 2;
+            if (witchEventCount > 141) { witchPowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 436f, 0f); }
+            else { witchPowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(witchEventCount - 141f, 436f, 0f); }
+        }
+        */
         // characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<SpriteRenderer>().bounds.size.x, GetComponent<SpriteRenderer>().bounds.size.y);
     }
 
@@ -194,6 +219,30 @@ public class upDownManager : MonoBehaviour
     public void hoverOutUpperItemTypeInit() {
         upperItemTypeInitOutline.GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+
+    public void addGold(int a)
+    {
+        gold += a;
+        int goldTemp = gold;
+        if (gold < 0) goldTemp = 0;
+        goldText.text = goldTemp.ToString();
+    }
+
+    public void addJewel(int a)
+    {
+        jewel += a;
+        int jewelTemp = jewel;
+        if(jewel<0) jewelTemp = 0;
+        jewelText.text = jewelTemp.ToString();
+    }
+
+    public void setInit(int goldVal, int jewelVal)
+    {
+        gold = goldVal;
+        jewel = jewelVal;
+        goldText.text = gold.ToString();
+        jewelText.text = jewel.ToString();
     }
 
     public void clickUpperItemTypeInit()
