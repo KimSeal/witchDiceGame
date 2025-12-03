@@ -773,7 +773,7 @@ public class AdventureManager : MonoBehaviour
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
 
-            balpanLoad.transform.position = new Vector3(balpanLoad.transform.position.x, 18, balpanLoad.transform.position.z);
+            balpanLoad.transform.position = new Vector3(balpanLoad.transform.position.x, -300f, balpanLoad.transform.position.z);
             balpanLoad.GetComponent<Animator>().Play("On");
             loadEnd = false;
             clickAble = false; // 주사위 클릭 못하게
