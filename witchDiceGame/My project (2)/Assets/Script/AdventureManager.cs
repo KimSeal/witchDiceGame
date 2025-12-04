@@ -47,7 +47,9 @@ public class AdventureManager : MonoBehaviour
 
     [SerializeField] private GameObject[] descObj = new GameObject[4]; // obj_ui_adventure_item_Desc_ board/logo/name/desc
     [SerializeField] private GameObject balpanLoad,balpanScreen, balpanArrow; // obj_adventure_diceBoard_load, obj_adventure_diceBoard, obj_balpan_arrow
-    [SerializeField] private GameObject[] balpanObj = new GameObject[7]; //obj_balpan_(number)
+    [SerializeField] private GameObject[] balpanObj = new GameObject[10]; //obj_balpan_(number)
+    [SerializeField] public GameObject[] balpanUpDownButton = new GameObject[2];
+    [SerializeField] public GameObject balpanCurPointText;
 
     private int stageNum = 0; //몇번째 스테이지인지 받는다.
     private int stageIdx = 0; //이번 스테이지에서 몇번째 맵인지(1-1 1-2의 개념) 
@@ -507,7 +509,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 3;//i; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -568,6 +570,7 @@ public class AdventureManager : MonoBehaviour
         //지금은 시작 버튼 누르면 바로 시작
         StartCoroutine(phase_Manage_Coroutine(1));
     }
+    /*
     public void setBalpan(int stageIdx) //이벤트 끝나고 발판 나올수 있도록 하는거
     {
         for (int i=0;i<7;i++) {
@@ -588,15 +591,18 @@ public class AdventureManager : MonoBehaviour
         }
         balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 0, balpanScreen.transform.position.z);
     }
+    */
     public void clearBalpan()// 발판 이벤트 끝나고 발판 화면 치우기
     {
         balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 300, balpanScreen.transform.position.z);
         balpanArrow.transform.position = new Vector3(balpanArrow.transform.position.x, 300, balpanArrow.transform.position.z);
-        balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+        //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+        /*
         for (int i = 0; i < 7; i++)
         {
             balpanObj[i].transform.position = new Vector3(balpanObj[i].transform.position.x, -300, balpanObj[i].transform.position.z);
         }
+        */
     }
 
     private int eventIndexReturn() //어떤 이벤트가 나올지 이후 지정할 필요가 있다. 현재는 0번째 이벤트밖에 나오지 않지만, 나중에는 해당 스테이지에 해당된 랜덤한 이벤트가 나오도록 해야함.
@@ -698,6 +704,58 @@ public class AdventureManager : MonoBehaviour
             watchNumObjectEntity.transform.position = new Vector3(9f - 500f, 134f, 0f);
         }
     }
+
+    public int adventureBalpanPointTemp = 0;
+
+    public void hoverInBalpanUpDownButton(int idx) {
+        hoverOutBalpanUpDownButton();
+        balpanUpDownButton[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+    }
+    public void hoverOutBalpanUpDownButton() {
+        balpanUpDownButton[0].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        balpanUpDownButton[1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+    }
+
+    public void clickBalpanUpDownButton(int dir)
+    {
+        Debug.Log("click");
+        if (stageIdx + adventureBalpanPointTemp + dir >= -1 &&
+            stageIdx + adventureBalpanPointTemp + dir < adventureEventArr.Length) {
+            adventureBalpanPointTemp += dir;
+        }
+
+
+        for (int i = 0; i < balpanObj.Length; i++)
+        {
+            //shakeObject(balpanObj[i]);
+            if (stageIdx + adventureBalpanPointTemp + i - 2 < -1)
+            {
+                balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            }
+            else if (stageIdx + adventureBalpanPointTemp + i - 2 == -1) // 스테이지 시작지점인 경우
+            {
+                balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_empty");
+                SoundManager_Sfx.Instance.playSound(3);
+            }
+            else if (stageIdx + adventureBalpanPointTemp + i - 2 >= adventureEventArr.Length) //넘어가는 경우는 출력하지 않는다
+            {
+                balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            }
+            else
+            {
+                balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventList[stageNum][adventureEventArr[stageIdx + adventureBalpanPointTemp +i - 2]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
+                SoundManager_Sfx.Instance.playSound(3);
+            }
+        }
+        if (adventureBalpanPointTemp * -1 + 2 >= 0 && adventureBalpanPointTemp * -1 + 2 < 10){
+            balpanArrow.transform.position = balpanObj[adventureBalpanPointTemp * -1 + 2].transform.position;
+        }
+        else
+        {
+            balpanArrow.transform.position = new Vector3(0f, -300f, 0f);
+        }
+    }
+
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
         adventureGold = 10;
@@ -773,44 +831,44 @@ public class AdventureManager : MonoBehaviour
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
 
-            balpanLoad.transform.position = new Vector3(balpanLoad.transform.position.x, -300f, balpanLoad.transform.position.z);
-            balpanLoad.GetComponent<Animator>().Play("On");
+            for(int i=0;i<balpanObj.Length;i++) balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+            balpanScreen.GetComponent<Animator>().Play("Open");
+            hoverOutBalpanUpDownButton();
+            balpanUpDownButton[0].SetActive(false);
+            balpanUpDownButton[1].SetActive(false);
+            balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 0, balpanScreen.transform.position.z);
             loadEnd = false;
             clickAble = false; // 주사위 클릭 못하게
             clickAbleObjSet(nextBtnObj, false, 1);
 
-
             yield return new WaitUntil(() => loadEnd);
-            balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 18, balpanScreen.transform.position.z);
 
+            adventureBalpanPointTemp = 0;
             //발판 이벤트를 위한 이펙트
             //setBalpan(stageIdx);
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < balpanObj.Length; i++)
             {
                 shakeObject(balpanObj[i]);
-                if (stageIdx + i == -1) // 스테이지 시작지점인 경우
+                Debug.Log(i.ToString() + " : " + (stageIdx + i - 2).ToString());
+                if (stageIdx + i - 2 < -1) {
+                    balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                }
+                else if (stageIdx + i - 2 == -1) // 스테이지 시작지점인 경우
                 {
-                    balpanObj[i].transform.position = new Vector3(-620 + (i * 40), 8.2f, balpanObj[i].transform.position.z);
-                    balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_start");
-                    GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-                    temp_0.GetComponent<Animator>().Play("balpanCreate");
-                    shakeObject(temp_0);
+                    balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_empty");
                     SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.2f);
                 }
-                else if (stageIdx + i >= adventureEventArr.Length) //넘어가는 경우는 출력하지 않는다
+                else if (stageIdx + i - 2 >= adventureEventArr.Length) //넘어가는 경우는 출력하지 않는다
                 {
-                    balpanObj[i].transform.position = new Vector3(balpanObj[i].transform.position.x, -300, balpanObj[i].transform.position.z);
+                    balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                    //balpanObj[i].transform.position = new Vector3(balpanObj[i].transform.position.x, -300, balpanObj[i].transform.position.z);
                 }
                 else
                 {
-                    balpanObj[i].transform.position = new Vector3(-620 + (i * 40), -1 * 10 + adventureEventArr_Y[stageIdx + i] * 10 + 8.2f, balpanObj[i].transform.position.z); //현재 위치에 해당하는 위치로 발판 이동.
-
-                    balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/spr_balpan_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
-
-                    GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-                    temp_0.GetComponent<Animator>().Play("balpanCreate");
-                    shakeObject(temp_0);
+                    Debug.Log("hello it me");
+                    balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i-2]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
                     SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.2f);
                 }
@@ -820,11 +878,16 @@ public class AdventureManager : MonoBehaviour
                 if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
                 { shakeObject(diceObject[i]); }
             }
+            /*
             if (selectDiceCharacterIdx != -1 && CharacterManager.Instance.getCharacterState(selectDiceCharacterIdx) == 0)
             {
                 balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx));
             }
-            balpanArrow.transform.position = balpanObj[0].transform.position; //+ new Vector3(0, 8, 0);
+            */
+            balpanUpDownButton[0].SetActive(true);
+            balpanUpDownButton[1].SetActive(true);
+
+            balpanArrow.transform.position = balpanObj[2].transform.position; //+ new Vector3(0, 8, 0);
             clickAble = true;
             clickAbleObjSet(nextBtnObj, true, 1);
             //나아갈수 있다는 것을 주사위에 표시
@@ -868,18 +931,22 @@ public class AdventureManager : MonoBehaviour
                 //stageIdx += selectDiceNum; //stage발판 이동
             }
 
+            while (adventureBalpanPointTemp != 0)
+            {
+                if (adventureBalpanPointTemp > 0) clickBalpanUpDownButton(-1);
+                if (adventureBalpanPointTemp < 0) clickBalpanUpDownButton(1);
+                yield return new WaitForSeconds(0.1f);
+            }
+
             for (int i=0;i<moveCount;i++)
             {
-                GameObject temp_0 = Instantiate(diceRollEff, balpanObj[i + 1].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-                temp_0.GetComponent<Animator>().Play("balpanTouch");
                 SoundManager_Sfx.Instance.playSound(4);
-                shakeObject(temp_0);
-                shakeObject(balpanObj[i+1]);
-                balpanArrow.transform.position = balpanObj[i + 1].transform.position;// + new Vector3(0,8,0);
+                shakeObject(balpanObj[i+1 + 2]);
+                balpanArrow.transform.position = balpanObj[i + 1 + 2].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
-                    balpanArrow.GetComponent<Animator>().Play("Hit");
+                    //balpanArrow.GetComponent<Animator>().Play("Hit");
                     break;
                 }
                 yield return new WaitForSeconds(0.2f);
@@ -887,7 +954,8 @@ public class AdventureManager : MonoBehaviour
             }
             yield return new WaitForSeconds(1.2f);
 
-            balpanLoad.GetComponent<Animator>().Play("Off");
+            //balpanLoad.GetComponent<Animator>().Play("Off");
+            balpanScreen.GetComponent<Animator>().Play("Close");
             loadEnd = false;
             yield return new WaitUntil(() => loadEnd);
             clearBalpan();
@@ -1024,8 +1092,8 @@ public class AdventureManager : MonoBehaviour
 
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).downGrade(i, curDiceEventPacket.getVal(i)) == 1)
                         { //약화 효과로 인해 죽어버릴 경우
-                            balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
-                            balpanArrow.GetComponent<Animator>().Play("arrowAnim");
+                            //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+                            //balpanArrow.GetComponent<Animator>().Play("arrowAnim");
 
                             selectDiceCharacterIdx = -1;
                             resetDice();
@@ -1090,8 +1158,8 @@ public class AdventureManager : MonoBehaviour
                         else CharacterManager.Instance.emptyEnemyCharacter(i);
 
                         
-                        balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
-                        balpanArrow.GetComponent<Animator>().Play("arrowAnim");
+                        //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+                        //balpanArrow.GetComponent<Animator>().Play("arrowAnim");
                     }
                     /*
                     hoverRotateAble(battleBtn, 2, true);
@@ -1608,7 +1676,7 @@ public class AdventureManager : MonoBehaviour
         }
         hoverOutCharacterDice(0);
  
-        balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
+        //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
         {
