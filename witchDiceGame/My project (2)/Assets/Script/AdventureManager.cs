@@ -1839,16 +1839,16 @@ public class AdventureManager : MonoBehaviour
     public void hoverInCharacterDice(int characterIdx)
     {
         for(int i = 0; i < 4; i++) {
-            if(characterIdx != i && selectDiceCharacterIdx != i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
-            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            if(characterIdx != i && selectDiceCharacterIdx != i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 0);
+            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
         }
     }
     public void hoverOutCharacterDice(int characterIdx)
     {
         for (int i = 0; i < 4; i++)
         {
-            if(selectDiceCharacterIdx == i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            if(selectDiceCharacterIdx == i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 0);
+            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
         }
     }
 
