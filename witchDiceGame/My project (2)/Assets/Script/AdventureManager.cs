@@ -67,6 +67,7 @@ public class AdventureManager : MonoBehaviour
     [SerializeField] private GameObject selectImage; //adventure_selectDice
     private GameObject[] textObject = new GameObject[2]; // 주사위 굴렸을때 결과를 처리하기 위해 사용한다. 
     [SerializeField] private GameObject[] diceObject = new GameObject[4]; //adventure_dice_(number)
+    [SerializeField] private GameObject[] diceOutline = new GameObject[4];
 
     [SerializeField] private GameObject resultObj; //obj_adventureResuilt
     [SerializeField] private GameObject[] resultObjArr = new GameObject[4]; //obj_adventureResult_Item_(number)
@@ -1836,19 +1837,34 @@ public class AdventureManager : MonoBehaviour
             }
         }
     } 
-    public void hoverInCharacterDice(int characterIdx)
+
+
+public void hoverInCharacterDice(int characterIdx)
     {
         for(int i = 0; i < 4; i++) {
-            if(characterIdx != i && selectDiceCharacterIdx != i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 0);
-            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
+            if (characterIdx == i && CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0) {
+                diceOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+            }
+            else
+            {
+                diceOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+            /*
+            if (characterIdx != i && selectDiceCharacterIdx != i ) diceOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            else diceOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+            */
+            /*
+                if(characterIdx != i && selectDiceCharacterIdx != i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 0);
+                else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
+            */
         }
     }
     public void hoverOutCharacterDice(int characterIdx)
     {
         for (int i = 0; i < 4; i++)
         {
-            if(selectDiceCharacterIdx == i) diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 0);
-            else diceObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
+            if(selectDiceCharacterIdx == i) diceOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+            else diceOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
     }
 
