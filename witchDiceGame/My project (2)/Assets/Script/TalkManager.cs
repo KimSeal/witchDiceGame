@@ -46,6 +46,8 @@ public class TalkManager : MonoBehaviour
     private bool descChk = false;
     private string descString = "";
 
+    private bool descClickLock = false;
+
     private List<int> listIdx = new List<int>();
     private int[] lightingArr = new int[4];
     private int[] preLightingArr = new int[4];
@@ -65,7 +67,13 @@ public class TalkManager : MonoBehaviour
 
     private bool libraryEntry = false;
 
+    public void setDescClickLock(bool hello)
+    {
+        descClickLock = hello;
+    }
+
     public void setDescString(string str) {
+
         if (str == "")
         {
             descString = "";
@@ -73,6 +81,15 @@ public class TalkManager : MonoBehaviour
         }
         else
         {
+            if (descClickLock)
+            {
+                characterTalkBack.GetComponent<Image>().color = new Color(48f, 38f, 38f);
+                characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(255f, 255f, 255f);
+            }
+            else {
+                characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+                characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
+            }
             descString = str;
             changeTalkState(1, true);
         }
@@ -130,7 +147,10 @@ public class TalkManager : MonoBehaviour
         }
         else
         {
-            AdventureManager.Instance.clickDice(-1);
+            if (!descClickLock)
+            {
+                AdventureManager.Instance.clickDice(-1);
+            }
         }
     }
 
@@ -254,10 +274,24 @@ public class TalkManager : MonoBehaviour
         }
 
         if (talkingChk) { //대화 필요
+            
+
+            characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+            characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
             characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 2f, 0f);
         }
         else if(descChk) // 설명만
         {
+            if (descClickLock)
+            {
+                characterTalkBack.GetComponent<Image>().color = new Color(48f/255f, 38f/255f, 38f/255f);
+                characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(255f, 255f, 255f);
+            }
+            else
+            {
+                characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+                characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
+            }
             characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 2f, 0f);
             characterTalk.GetComponent<TextMeshProUGUI>().text = descString;
         }
@@ -271,6 +305,9 @@ public class TalkManager : MonoBehaviour
 
         if (!talkingChk)
         {
+            characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
+            characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
+
             entity.SetActive(true);
 
             curIdx = listIdx[a];

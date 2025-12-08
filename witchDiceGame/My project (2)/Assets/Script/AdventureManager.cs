@@ -895,6 +895,10 @@ public class AdventureManager : MonoBehaviour
             nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
             nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(1));
+            
+
             diceBtnFire.Play();
             if (tutorialVal == 1) { 
                 TalkManager.Instance.startTalk(4);
@@ -903,6 +907,10 @@ public class AdventureManager : MonoBehaviour
 
             makeAdventureDice();
             yield return new WaitUntil(() => selectDiceNum > 0);
+
+            TalkManager.Instance.setDescClickLock(false);
+            TalkManager.Instance.setDescString("");
+
             diceEntity.SetActive(false);
             /*
             rerollBtn.SetActive(true);

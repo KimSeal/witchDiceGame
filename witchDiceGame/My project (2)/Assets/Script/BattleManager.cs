@@ -2374,7 +2374,8 @@ public class BattleManager : MonoBehaviour
                     effectChk[passiveItemIdx] = true;
                     if (tempPassiveReturn.cal != "none") specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
-                    GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
+                    upDownManager.Instance.activePassiveItem(passiveItemIdx);
+                    //GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                     SoundManager_Sfx.Instance.playSound(0);
                     if (tempPassiveReturn.cal != "none") {
                         for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
@@ -2425,7 +2426,8 @@ public class BattleManager : MonoBehaviour
                             specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                         }
                         //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
-                        GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
+                        upDownManager.Instance.activePassiveItem(passiveItemIdx);
+                        //GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                         effectChk[passiveItemIdx] = true;
                     }
                 }

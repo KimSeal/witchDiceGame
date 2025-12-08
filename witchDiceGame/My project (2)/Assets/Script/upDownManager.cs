@@ -31,6 +31,8 @@ public class upDownManager : MonoBehaviour
 
     [SerializeField]
     public GameObject backBlackItem;
+    public GameObject[] upperItemEff = new GameObject[12];
+    public GameObject[] upperItemEffOrigin = new GameObject[12];
     public GameObject[] upperItemButton = new GameObject[12];
     public GameObject[] upperItemOutline = new GameObject[12];
 
@@ -153,6 +155,9 @@ public class upDownManager : MonoBehaviour
         moveBattleUI(moveArrY[0], underHoverBar[0]);
         moveBattleUI(moveArrY[1], upperHoverBar[0]);
 
+        for (int i = 0; i < 12; i++) {
+            upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+        }
         /*
         if (goldEventActive) goldEventCount = 300;
         if (witchEventActive) witchEventCount = 300;
@@ -172,6 +177,10 @@ public class upDownManager : MonoBehaviour
         // characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<SpriteRenderer>().bounds.size.x, GetComponent<SpriteRenderer>().bounds.size.y);
     }
 
+    public void activePassiveItem(int itemIdx)
+    {
+        upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active");
+    }
     public void resetUI()
     {
         clickItem(-1);
