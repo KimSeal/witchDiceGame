@@ -30,6 +30,12 @@ public class upDownManager : MonoBehaviour
     public TextMeshProUGUI[] underSkillDiceDescText = new TextMeshProUGUI[4];
 
     [SerializeField]
+    public GameObject underTownEntity;
+    public GameObject[] underTownButton = new GameObject[8];
+    public GameObject[] underTownOutline = new GameObject[8];
+    public int curTownIdx = 0;
+
+    [SerializeField]
     public GameObject backBlackItem;
     public GameObject[] upperItemEff = new GameObject[12];
     public GameObject[] upperItemEffOrigin = new GameObject[12];
@@ -147,6 +153,7 @@ public class upDownManager : MonoBehaviour
         cancleDeleteBtn();
         changeOption(0, false);
         itemTypeButtonLock = false;
+        curTownIdx = 7;
     }
 
     // Update is called once per frame
@@ -199,6 +206,48 @@ public class upDownManager : MonoBehaviour
         {-2f, 225f},
         { 55f, 168f}
     };
+
+    public string[] townName = {"Tower", "Home", "Library", "Town", "5", "6", "7", "Hill"};
+    
+    public void hoverInUnderTownButton(int idx)
+    {
+        underTownOutline[idx].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        TownManager.Instance.hoverInUIBtn(idx);
+        skillDescUpdate("noImage", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
+        onOffUI(0, 1);
+    }
+    public void hoverOutUnderTownButton()
+    {
+        for (int i=0;i<underTownButton.Length;i++) {
+            underTownOutline[i].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        underTownOutline[curTownIdx].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+
+        TownManager.Instance.hoverOutUIBtn();
+        skillDescUpdate("noImage", 0, 0, 0, 0, "", "");
+        onOffUI(0, 0);
+    }
+
+    public void activeTownUI(bool input) {
+        hoverOutUnderTownButton();
+        if (input) {
+            underTownEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+        }
+        else
+        {
+            underTownEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
+        }
+    }
+
+    public void clickUnderTownButton(int idx)
+    {
+        curTownIdx = idx;
+        TownManager.Instance.clickTownUI(idx);
+        hoverOutUnderTownButton();
+    }
 
     public Character getCharacter(int idx)
     {

@@ -35,6 +35,8 @@ public class TownManager : MonoBehaviour
 
     [SerializeField]GameObject clickAndImageChange;
 
+    public bool townActive = false;
+
     private void shakeTownText(int idx)
     {
         townText[idx].GetComponent<hoverRotate>().shakeStart();
@@ -79,11 +81,14 @@ public class TownManager : MonoBehaviour
             fullUI.showFull(6);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
+        if (i == 7) {
+            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
+        }
     }
     public void hoverInUIBtn(int i)
     {
         //0 : 타워 1 : 집 2: 도서관 3: 마을
-        shakeTownText(i);
+        //shakeTownText(i);
 
         if (i == 0) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
         if (i == 1) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_homeNew_on");
@@ -100,6 +105,7 @@ public class TownManager : MonoBehaviour
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.playSound(7);
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
+        setTownActive(true);
         
     }
     public void backToMain()
@@ -108,10 +114,21 @@ public class TownManager : MonoBehaviour
         CameraManager.Instance.updateInitPosition(new Vector3(-1500f, -500f, CameraManager.Instance.cameraPointZ()));
         SoundManager_Main.Instance.stopSound(7);
         SoundManager_Main.Instance.playSound(0);
+        setTownActive(false);
+    }
+    public void setTownActive(bool idx)
+    {
+        townActive = idx;
+        upDownManager.Instance.activeTownUI(townActive);
+    }
+    public bool getTownActive()
+    {
+        return townActive;
     }
     // Start is called before the first frame update
     void Start()
     {
+        setTownActive(false);
         //Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);

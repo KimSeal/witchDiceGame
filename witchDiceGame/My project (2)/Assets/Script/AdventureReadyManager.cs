@@ -46,6 +46,7 @@ public class AdventureReadyManager : MonoBehaviour
     {
         SoundManager_Main.Instance.stopSound(7);
         SoundManager_Sfx.Instance.playSound(0);
+        TownManager.Instance.setTownActive(false);
         AdventureManager.Instance.startAdventure();
     }
     public void enterAdventureReady()
