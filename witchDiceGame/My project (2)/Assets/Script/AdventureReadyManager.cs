@@ -7,6 +7,9 @@ public class AdventureReadyManager : MonoBehaviour
 
     private static AdventureReadyManager instance = null;
     private GameObject[] witchPowerObj = new GameObject[2];
+    [SerializeField]
+    public GameObject[] enterCharacterObj = new GameObject[2];
+    private float[] enterCharacterMove = new float[2];
     private void Awake()
     {
 
@@ -34,6 +37,8 @@ public class AdventureReadyManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        enterCharacterMove[0] = 200f;
+        enterCharacterMove[1] = 200f;
         for(int i=0;i<2;i++) witchPowerObj[i] = GameObject.Find("obj_adventureReady_witchPower_Select_" +i.ToString());
     }
 
@@ -42,8 +47,25 @@ public class AdventureReadyManager : MonoBehaviour
     {
         
     }
+
+    private void FixedUpdate(){
+        if (enterCharacterMove[0] < 200f)
+        {
+            enterCharacterMove[0] += 2.5f;
+            enterCharacterObj[0].GetComponent<Transform>().position = new Vector3(-1185 + enterCharacterMove[0], -530 + 12 * Mathf.Abs(Mathf.Sin((enterCharacterMove[0]/50) * Mathf.PI)), 0f);
+        }
+
+        if (enterCharacterMove[1] < 200)
+        {
+            enterCharacterMove[1] += 2.5f;
+            enterCharacterObj[1].GetComponent<Transform>().position = new Vector3(-1260 + enterCharacterMove[1], -530 + 12 * Mathf.Abs(Mathf.Sin((enterCharacterMove[1] / 50) * Mathf.PI)), 0f);
+        }
+    }
+
+
     public void startAdventure()
     {
+        
         SoundManager_Main.Instance.stopSound(7);
         SoundManager_Sfx.Instance.playSound(0);
         TownManager.Instance.setTownActive(false);
@@ -51,6 +73,8 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void enterAdventureReady()
     {
+        enterCharacterMove[0] = 0;
+        enterCharacterMove[1] = -20;
         SoundManager_Main.Instance.playSound(7);
         CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.cameraPointZ()));
         //SoundManager_Main.Instance.playSound(1);

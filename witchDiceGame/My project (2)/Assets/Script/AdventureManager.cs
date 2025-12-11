@@ -179,6 +179,8 @@ public class AdventureManager : MonoBehaviour
     {
         adventureGold = 0;
         addMoney(0, 0);
+        upDownManager.Instance.setInit(0, 0);
+
         CharacterManager.Instance.setTurotialCharacterSet(); //캐릭터는 주인공 혼자만
         itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
         useFairDice = false;
@@ -694,9 +696,10 @@ public class AdventureManager : MonoBehaviour
     }
     private void meetDiceEvent(bool onOff)
     {
+        
         eventWatchTrigger = onOff;
         changeSelectNum(0);
-
+        TalkManager.Instance.setDescClickLock(onOff);
         if (onOff) {
             watchNumObjectEntity.transform.position = new Vector3(9f - 500f, -43f, 0f);
         }
@@ -757,6 +760,17 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
+    private void diceSelectInit()
+    {
+        
+        selectDiceCharacterIdx = -1;
+        for (int diceIdx = 0; diceIdx < 4; diceIdx++)
+        {
+            hoverOutCharacterDice(diceIdx);
+            hoverInChangeSelectNumByDice(-1);
+            diceObject[diceIdx].GetComponent<hoverRotate>().expandEnd();
+        }
+    }
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
         adventureGold = 10;
@@ -833,7 +847,8 @@ public class AdventureManager : MonoBehaviour
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
 
             for(int i=0;i<balpanObj.Length;i++) balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-
+            diceSelectInit();
+            
             balpanScreen.GetComponent<Animator>().Play("Open");
             hoverOutBalpanUpDownButton();
             balpanUpDownButton[0].SetActive(false);
@@ -887,7 +902,8 @@ public class AdventureManager : MonoBehaviour
             */
             balpanUpDownButton[0].SetActive(true);
             balpanUpDownButton[1].SetActive(true);
-
+            balpanCurPointText.GetComponent<TextMeshPro>().text = stageIdx.ToString() + " / " + adventureEventArr.Length.ToString();
+            if (stageIdx == -1) balpanCurPointText.GetComponent<TextMeshPro>().text = "START!";
             balpanArrow.transform.position = balpanObj[2].transform.position; //+ new Vector3(0, 8, 0);
             clickAble = true;
             clickAbleObjSet(nextBtnObj, true, 1);
@@ -907,6 +923,10 @@ public class AdventureManager : MonoBehaviour
 
             makeAdventureDice();
             yield return new WaitUntil(() => selectDiceNum > 0);
+
+            hoverOutBalpanUpDownButton();
+            balpanUpDownButton[0].SetActive(false);
+            balpanUpDownButton[1].SetActive(false);
 
             TalkManager.Instance.setDescClickLock(false);
             TalkManager.Instance.setDescString("");
@@ -953,6 +973,8 @@ public class AdventureManager : MonoBehaviour
                 shakeObject(balpanObj[i+1 + 2]);
                 balpanArrow.transform.position = balpanObj[i + 1 + 2].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
+                balpanCurPointText.GetComponent<TextMeshPro>().text = stageIdx.ToString() + " / " + adventureEventArr.Length.ToString();
+                
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
                     //balpanArrow.GetComponent<Animator>().Play("Hit");
@@ -963,16 +985,19 @@ public class AdventureManager : MonoBehaviour
             }
             yield return new WaitForSeconds(1.2f);
 
+
             //balpanLoad.GetComponent<Animator>().Play("Off");
+
+            
+            balpanArrow.transform.position = new Vector3(balpanArrow.transform.position.x, 300, balpanArrow.transform.position.z);
+            for (int i = 0; i < balpanObj.Length; i++) balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             balpanScreen.GetComponent<Animator>().Play("Close");
             loadEnd = false;
+            Debug.Log("chk0");
             yield return new WaitUntil(() => loadEnd);
             clearBalpan();
 
-            yield return new WaitForSeconds(0.75f);
-
             //발판 이벤트 종료 
-
             stageInfo.GetComponent<TextMeshPro>().text = "";//(stageIdx+1).ToString() + " / " + adventureEventList[stageNum].Count.ToString(); //초기화
             updateCharacterFace();
 
@@ -1000,6 +1025,7 @@ public class AdventureManager : MonoBehaviour
 
                 curDiceEvent = new adventureEvent(adventureEventList[stageNum][adventureEventArr[stageIdx]]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
                 if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
+
                     meetDiceEvent(true);
                 }
                 else
@@ -1043,7 +1069,9 @@ public class AdventureManager : MonoBehaviour
                 }
                 else if (curDiceEvent.getEventType() == 6)//고를 수 있는 상태로 변경
                 {
+                    
                     diceBtnFire.Play();
+                    diceSelectInit();
                     makeAdventureDice();
                     selectDiceNum = -1;
                 }
@@ -1075,6 +1103,7 @@ public class AdventureManager : MonoBehaviour
 
                 if (curDiceEvent.getEventType() == 6) //주사위를 굴리는 이벤트일 경우, 주사위 결과 반영해 NPC 스프라이트 변경
                 {
+                    
                     curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_" + curDiceEventPacket.getSpriteIndex());
 
@@ -1478,11 +1507,14 @@ public class AdventureManager : MonoBehaviour
         if (opt == 0) {
             adventureGold += val;
             if (val < 0) upDownManager.Instance.addGold(val);
+            /*
             for (int i = 0; i < val; i++)
             {
                 GameObject temp = Instantiate(coinEff, new Vector3(-400f,0f,0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(0);
             }
+            */
+            Debug.Log("adventureMoney : " + adventureGold.ToString());
         }
         else if(opt == 1) {
             adventureJewel += val;
@@ -1730,6 +1762,7 @@ public class AdventureManager : MonoBehaviour
     public GameObject diceEntity;
     public void makeAdventureDice()
     {
+
         diceEntity.SetActive(true);
         SoundManager_Sfx.Instance.playSound(0);
         for (int i = 0; i < 4; i++)
@@ -1737,7 +1770,10 @@ public class AdventureManager : MonoBehaviour
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0)
             {
                 CharacterManager.Instance.throwDice(i);
-                Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                int temp = Random.Range(0, 4) * 90;
+                Debug.Log("temp : " + temp.ToString());
+                Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp)); //사용된 아이템에 대해 effect
+                //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
                 diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
             }
             else

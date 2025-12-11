@@ -377,6 +377,7 @@ public class upDownManager : MonoBehaviour
     public void clickChangeInitBtn()
     {
         if (AdventureManager.Instance.getBattleEventChk()) {
+
             return;
         }
         changeChkEntity.SetActive(true);
@@ -407,7 +408,7 @@ public class upDownManager : MonoBehaviour
             return;
         }
         deleteOutline[i].GetComponent<Image>().sprite
-            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI");
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_yesBtn_outline");
 
     }
     public void hoverOutDeleteBtn()
@@ -1048,6 +1049,7 @@ public class upDownManager : MonoBehaviour
         if (input != -1)
         {
             //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
+            hoverOutBigDicePowerButton();
             BattleManager.Instance.updateMoveUI(4);
             BattleManager.Instance.witchPowerPhase();
             bigDicePowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 60f, 0f);
@@ -1229,6 +1231,17 @@ public class upDownManager : MonoBehaviour
             }
 
         }
+    }
+
+    public void hoverInBigDicePowerButton(int i)
+    {
+        if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+        {
+            bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        }
+    }
+    public void hoverOutBigDicePowerButton() {
+        for(int i=0;i<8;i++) bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
 
     public void updateBigDicePower()

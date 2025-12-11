@@ -654,6 +654,7 @@ public class itemManager : MonoBehaviour
         for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
         characterAtk.text = tempCharacter.getPhyAtk().ToString();
         characterOrigin.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + tempCharacter.getName() + "/animator_" + tempCharacter.getName());
+        characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
         //주사위 업데이트
         for (int i = 0; i < 6; i++)
         {

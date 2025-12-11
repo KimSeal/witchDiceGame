@@ -2977,17 +2977,17 @@ public class BattleManager : MonoBehaviour
         //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
         //else
         {
-            resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + resultItem[i].getRare());
+            resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/140/spr_selectUI_board_" + resultItem[i].getRare() + "_140");
         }
 
         resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
         resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
         resultObj[i, 3].GetComponent<TextMeshPro>().text = typeArr2[resultItem[i].getType()] + "\n\n" + resultItem[i].getContent();
     }
-    public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f); }
+    public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1f); }
     // printRandomResult(i, true);}
     public void pointExitRandomResult(int i) {
-        resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 0f);
     }
     //printRandomResult(i, false); }
 
@@ -3072,19 +3072,7 @@ public class BattleManager : MonoBehaviour
                     enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
                 }
 
-                CharacterManager.Instance.character_reset();
-                for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
-                {
-                    if (myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0) { //만약 부활캐릭터이면서 해당 캐릭터가 죽은 경우
-                        myCharacter[i].setHp(1);
-                    }
-
-                    if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
-                    if (myCharacter[i].getCharacter_battle().getOriginIdx() >= 0 && myCharacter[i].getCharacter_battle().getOriginIdx() <= 3)
-                    {
-                        CharacterManager.Instance.character_battleEnd_deepCopy(myCharacter[i].getCharacter_battle().getOriginIdx(), myCharacter[i]);
-                    }
-                }
+               
                 //보상 나와있으면 캐릭터 창 끌수 있도록
                 if (characterInfoOpen) {
                     clickCharacterInfoBox();
@@ -3103,7 +3091,34 @@ public class BattleManager : MonoBehaviour
                     resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
                 }
                 bosang_click = true;
+
+
+                setCurClickSkill(-1);
+                deleteSkillCommand();
+
+                //정면 보는 마녀
+
+
+                updateMoveUI(0);
+
+
                 yield return new WaitUntil(() => !bosang_click);
+
+                CharacterManager.Instance.character_reset();
+                for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
+                {
+                    if (myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0)
+                    { //만약 부활캐릭터이면서 해당 캐릭터가 죽은 경우
+                        myCharacter[i].setHp(1);
+                    }
+
+                    if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
+                    if (myCharacter[i].getCharacter_battle().getOriginIdx() >= 0 && myCharacter[i].getCharacter_battle().getOriginIdx() <= 3)
+                    {
+                        CharacterManager.Instance.character_battleEnd_deepCopy(myCharacter[i].getCharacter_battle().getOriginIdx(), myCharacter[i]);
+                    }
+                }
+
                 while (!AdventureManager.Instance.exitBattleCanvas(true))
                 {
                     yield return new WaitForSeconds(0.5f);
