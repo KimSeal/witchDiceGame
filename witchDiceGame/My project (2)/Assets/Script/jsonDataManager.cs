@@ -7,7 +7,6 @@ public class jsonDataManager : MonoBehaviour
 {
 
     private static jsonDataManager instance = null;
-    private GameObject libraryMoneyDesc;
     private void Awake()
     {
         if (null == instance)
@@ -56,11 +55,11 @@ public class jsonDataManager : MonoBehaviour
         optionManager.Instance.changeOption(1);
         optionManager.Instance.changeOption(2);
         optionManager.Instance.changeOption(0);
-        libraryMoneyDesc = GameObject.Find("obj_library_money");
+
     }
     public void changeMoney(int a)
     {
-        libraryMoneyDesc.GetComponent<TextMeshPro>().text = "$ "+ a.ToString();
+        //libraryMoneyDesc.GetComponent<TextMeshPro>().text = "$ "+ a.ToString();
     }
 
     public void SavePlayerDataToJson_pre()
@@ -323,6 +322,14 @@ public class jsonDataManager : MonoBehaviour
         this.playerPlayData.setLanguage(lan);
         SavePlayerDataToJson();
     }
+    public int getCharacterSelect(int idx)
+    {
+        return this.playerPlayData.getCharacterSelect(idx);
+    }
+    public void setCharacterSelect(int idx, int val) { 
+        this.playerPlayData.setCharacterSelect(idx, val);
+        SavePlayerDataToJson();
+    }
 
     public class PlayerPlayData
     {
@@ -347,7 +354,13 @@ public class jsonDataManager : MonoBehaviour
         public bool firstGetCharacterPart = false;
         public int[] chapterDid = new int[6];
         public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
+        public int[] characterSelect = new int[2];
 
+        public void setCharacterSelect(int idx, int val)
+        {
+            characterSelect[idx] = val;
+        }
+        public int getCharacterSelect(int idx) { return characterSelect[idx]; }
 
         public void setBackgroundVol(float input) {  backgroundVolume = input;}
         public float getBackgroundVol(){ return backgroundVolume; }
@@ -410,6 +423,7 @@ public class jsonDataManager : MonoBehaviour
             firstGetCharacterPart = false;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = 0;
             for (int i = 0; i < 3; i++) chapter1Read[i] = 0;
+            characterSelect[0] = 0; characterSelect[1] = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -446,6 +460,9 @@ public class jsonDataManager : MonoBehaviour
             this.language = playerPlayerData.language;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = playerPlayerData.chapterDid[i];
             for (int i = 0; i < 3; i++) chapter1Read[i] = playerPlayerData.chapter1Read[i];
+
+            characterSelect[0] = playerPlayerData.characterSelect[0]; 
+            characterSelect[1] = playerPlayerData.characterSelect[1];
         }
         public bool getFirstGetCharacterPart()
         {

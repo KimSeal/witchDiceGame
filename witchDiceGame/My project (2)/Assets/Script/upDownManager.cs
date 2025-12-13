@@ -198,7 +198,7 @@ public class upDownManager : MonoBehaviour
     //underBar, upperBar
     private float[] moveArrY = { -2f, 225f, };
 
-    private void onOffUI(int idx, int opt) {
+    public void onOffUI(int idx, int opt) {
         moveArrY[idx] = moveConstY[opt, idx];
     }
     //off, on

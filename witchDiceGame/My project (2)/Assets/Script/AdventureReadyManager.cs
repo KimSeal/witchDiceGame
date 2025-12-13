@@ -73,6 +73,10 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void enterAdventureReady()
     {
+        
+        enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(0)).getName() + "_back");
+        enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(1)).getName() + "_back");
+        if(jsonDataManager.Instance.getCharacterSelect(0) == 0) enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         enterCharacterMove[0] = 0;
         enterCharacterMove[1] = -20;
         SoundManager_Main.Instance.playSound(7);
