@@ -27716,7 +27716,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 20
+  m_text: 20/30
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 020f72a1e29ea5a4ea385febbab4bf26, type: 2}
   m_sharedMaterial: {fileID: -4103265914808059418, guid: 020f72a1e29ea5a4ea385febbab4bf26, type: 2}
@@ -224153,8 +224153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enterCharacterObj:
-  - {fileID: 855339882}
   - {fileID: 1731059490}
+  - {fileID: 855339882}
 --- !u!1 &1666568434
 GameObject:
   m_ObjectHideFlags: 0
@@ -262930,9 +262930,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: START!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 020f72a1e29ea5a4ea385febbab4bf26, type: 2}
   m_sharedMaterial: {fileID: -4103265914808059418, guid: 020f72a1e29ea5a4ea385febbab4bf26, type: 2}

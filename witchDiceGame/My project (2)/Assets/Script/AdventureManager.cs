@@ -866,7 +866,6 @@ public class AdventureManager : MonoBehaviour
             for (int i = 0; i < balpanObj.Length; i++)
             {
                 shakeObject(balpanObj[i]);
-                Debug.Log(i.ToString() + " : " + (stageIdx + i - 2).ToString());
                 if (stageIdx + i - 2 < -1) {
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                 }
@@ -902,7 +901,7 @@ public class AdventureManager : MonoBehaviour
             */
             balpanUpDownButton[0].SetActive(true);
             balpanUpDownButton[1].SetActive(true);
-            balpanCurPointText.GetComponent<TextMeshPro>().text = stageIdx.ToString() + " / " + adventureEventArr.Length.ToString();
+            balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length + 1).ToString();
             if (stageIdx == -1) balpanCurPointText.GetComponent<TextMeshPro>().text = "START!";
             balpanArrow.transform.position = balpanObj[2].transform.position; //+ new Vector3(0, 8, 0);
             clickAble = true;

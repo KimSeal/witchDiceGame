@@ -145,6 +145,7 @@ public class LibraryManager : MonoBehaviour
             if (idx == 0 && curCharacterIdx == 0) //만약 두번째 캐릭터에게 주인공운명을 입힐 경우, 불가능.
             {
                 curCharacterSelectIdx[idx] = 0;
+                jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
                 hoverInCurCharacter(idx);
                 curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
                 return;

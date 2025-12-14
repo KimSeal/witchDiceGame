@@ -794,6 +794,9 @@ public class upDownManager : MonoBehaviour
     {
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
+        if (curItemType == 3) {
+            return;
+        }
 
         deleteOtherLock(2);
         for (int idx = 0; idx < upperItemOutline.Length; idx++)
@@ -1071,6 +1074,11 @@ public class upDownManager : MonoBehaviour
 
     public void clickItemTypeButton(int idx)
     {
+
+        if (idx == 3) {
+            clickItem(-1);
+            clickItem(-1);
+        }
         for (int i = 0; i < upperItemTypeOutline.Length; i++)
         {
             upperItemTypeOutline[i].GetComponent<Image>().sprite
