@@ -785,7 +785,7 @@ public class upDownManager : MonoBehaviour
 
     public void clickTrashButton()
     {
-        if (curItemIdx > 0) {
+        if (curItemIdx >= 0) {
             itemManager.Instance.useItem(curItemType, curItemIdx);
         }
     }
@@ -794,10 +794,11 @@ public class upDownManager : MonoBehaviour
     {
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
+        /*
         if (curItemType == 3) {
             return;
         }
-
+        */
         deleteOtherLock(2);
         for (int idx = 0; idx < upperItemOutline.Length; idx++)
         {
@@ -847,6 +848,9 @@ public class upDownManager : MonoBehaviour
         if (getCharacterExist(idx))
         {
             curCharacterIdx = idx;
+            if (curItemType == 3) {
+                return;
+            }
             if (curItemType == 0)
             {
                 itemManager.Instance.useConsumeItem(curCharacterIdx, curItemType, curItemIdx);//click_info_useItem();
@@ -1074,11 +1078,12 @@ public class upDownManager : MonoBehaviour
 
     public void clickItemTypeButton(int idx)
     {
-
+        /*
         if (idx == 3) {
             clickItem(-1);
             clickItem(-1);
         }
+        */
         for (int i = 0; i < upperItemTypeOutline.Length; i++)
         {
             upperItemTypeOutline[i].GetComponent<Image>().sprite
@@ -1113,16 +1118,17 @@ public class upDownManager : MonoBehaviour
         //deleteOtherLock(0);
 
         //item use ui랑 호환 맞추기.
+        /*
         if (curItemType == 3) //passive
         {
             bigDiceItemUpdateByDepth(0);
         }
-        else if (itemSelectDepth == 0 || itemSelectDepth == 1)
+        else */if (itemSelectDepth == 0 || itemSelectDepth == 1)
         {
             bigDiceItemUpdateByDepth(itemSelectDepth);
         }
         else if(itemSelectDepth == 2){
-            if (curItemType == 0) { //consume
+            if (curItemType == 0 || curItemType == 3) { //consume or passive
                 bigDiceItemUpdateByDepth(1);
             }
             else //dice or equip

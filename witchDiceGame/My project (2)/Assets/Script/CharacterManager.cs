@@ -94,8 +94,12 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(1);
         emptyMyCharacter(2);
         emptyMyCharacter(3);
-        setCharacter(0, 0);
-        myCharacter[0].setReviveUnit(true);
+        if (jsonDataManager.Instance.getCharacterSelect(0) != 0)
+        {
+            setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
+        }
+        setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
+        myCharacter[2].setReviveUnit(true);
         //setCharacter(1, 1);
         //setCharacter(2, 2);
         //setCharacter(3, 3);
