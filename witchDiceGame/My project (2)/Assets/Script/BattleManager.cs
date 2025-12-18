@@ -606,7 +606,7 @@ public class BattleManager : MonoBehaviour
 
     #endregion  
 
-    private void updateHp()
+    public void updateHp()
     {
         for (int i = 0; i < 4; i++)
         {

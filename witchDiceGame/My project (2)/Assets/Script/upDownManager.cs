@@ -792,6 +792,7 @@ public class upDownManager : MonoBehaviour
 
     public void clickItem(int input)
     {
+        clickCharacterButton(-1);
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
         /*
@@ -867,6 +868,7 @@ public class upDownManager : MonoBehaviour
                 bigDiceItemUpdateByDepth(2);
             }
             hoverOutBigDiceItemCharacter();
+            BattleManager.Instance.updateHp();
         }
     }
     public void clickBigDiceItemCharacterDice(int idx)

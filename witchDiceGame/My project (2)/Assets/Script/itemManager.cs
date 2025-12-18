@@ -457,7 +457,7 @@ public class itemManager : MonoBehaviour
     }
     public void enterBattlePhase()
     {
-        click_itemType_selectButton(3);
+        //click_itemType_selectButton(3);
         bagBtnObj.SetActive(false);
     }
     public void endOfBattlePhase()
