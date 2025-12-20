@@ -972,7 +972,7 @@ public class AdventureManager : MonoBehaviour
                 shakeObject(balpanObj[i+1 + 2]);
                 balpanArrow.transform.position = balpanObj[i + 1 + 2].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
-                balpanCurPointText.GetComponent<TextMeshPro>().text = stageIdx.ToString() + " / " + adventureEventArr.Length.ToString();
+                balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length + 1).ToString();
                 
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
