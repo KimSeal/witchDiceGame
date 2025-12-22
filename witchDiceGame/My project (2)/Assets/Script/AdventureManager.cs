@@ -920,7 +920,7 @@ public class AdventureManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
 
-            makeAdventureDice();
+            makeAdventureDice(0);
             yield return new WaitUntil(() => selectDiceNum > 0);
 
             hoverOutBalpanUpDownButton();
@@ -1071,7 +1071,7 @@ public class AdventureManager : MonoBehaviour
                     
                     diceBtnFire.Play();
                     diceSelectInit();
-                    makeAdventureDice();
+                    makeAdventureDice(0);
                     selectDiceNum = -1;
                 }
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
@@ -1518,11 +1518,13 @@ public class AdventureManager : MonoBehaviour
         else if(opt == 1) {
             adventureJewel += val;
             if (val < 0) upDownManager.Instance.addJewel(val);
+            /*
             for (int i = 0; i < val; i++)
             {
                 GameObject temp = Instantiate(coinEff, new Vector3(-400f, 0f, 0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(1);
             }
+            */
         }
 
 
@@ -1759,8 +1761,16 @@ public class AdventureManager : MonoBehaviour
     }
 
     public GameObject diceEntity;
-    public void makeAdventureDice()
+    public void makeAdventureDice(int cost)
     {
+        Debug.Log(adventureJewel);
+        if (adventureJewel < cost) {
+            return;
+        }
+        else
+        {
+            addMoney(1, -1 * cost);
+        }
 
         diceEntity.SetActive(true);
         SoundManager_Sfx.Instance.playSound(0);

@@ -291,7 +291,6 @@ public class upDownManager : MonoBehaviour
     {
         jewel += a;
         int jewelTemp = jewel;
-        if(jewel<0) jewelTemp = 0;
         jewelText.text = jewelTemp.ToString();
     }
 
