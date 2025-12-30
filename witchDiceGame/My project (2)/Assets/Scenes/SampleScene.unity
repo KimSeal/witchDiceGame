@@ -43778,7 +43778,7 @@ GameObject:
   - component: {fileID: 264683361}
   - component: {fileID: 264683365}
   m_Layer: 0
-  m_Name: obj_enemyDice_4 (1)
+  m_Name: obj_witchHatButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60337,6 +60337,7 @@ MonoBehaviour:
   - {fileID: 1740493905}
   characterUI: {fileID: 429960991}
   diceFullUI: {fileID: 597290865}
+  witchHatButton: {fileID: 264683359}
   myCharacterObjUI:
   - {fileID: 69328723}
   - {fileID: 153323674}
@@ -115198,6 +115199,7 @@ MonoBehaviour:
   - {fileID: 0}
   characterUI: {fileID: 0}
   diceFullUI: {fileID: 0}
+  witchHatButton: {fileID: 0}
   myCharacterObjUI:
   - {fileID: 0}
   - {fileID: 0}

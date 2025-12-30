@@ -90,6 +90,7 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField] private GameObject characterUI; // characterUI
     public GameObject diceFullUI;
+    public GameObject witchHatButton;
 
     /*
     [SerializeField]
@@ -1072,6 +1073,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator startPhaseManage()
     {
+        witchHatButton.SetActive(false);
         upDownManager.Instance.setItemTypeButtonLock(false);
         startBattlePhase();
         itemManager.Instance.enterBattlePhase();
@@ -1238,7 +1240,7 @@ public class BattleManager : MonoBehaviour
                     }
                 }
             }
-
+            witchHatButton.SetActive(true);
             //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
             MakeEnemyAttackSet();
             updateEnemyDiceUI();
@@ -1831,7 +1833,7 @@ public class BattleManager : MonoBehaviour
         {
             upDownManager.Instance.clickItemTypeButton(3);
             upDownManager.Instance.setItemTypeButtonLock(true);
-
+            witchHatButton.SetActive(false);
             battleBagBtn.GetComponent<CircleCollider2D>().enabled = false;
             for (int i = 0; i < 4; i++)
             {
