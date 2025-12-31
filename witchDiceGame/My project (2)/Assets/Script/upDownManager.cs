@@ -207,14 +207,26 @@ public class upDownManager : MonoBehaviour
         { 55f, 168f}
     };
 
-    public string[] townName = {"Tower", "Home", "Library", "Town", "5", "6", "7", "Hill"};
+    public string[] townName = {"Tower", "Home", "Library", "Market Street", "???", "???", "???", "Hill"};
     
     public void hoverInUnderTownButton(int idx)
     {
+        if (idx == 0 || idx == 1 || idx == 7 ||
+            (idx == 2 && jsonDataManager.Instance.getChapterDid(0) == 1) // chapter1 clear
+            ) {
+            
+            skillDescUpdate("noImage", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
+            underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + townName[idx]);
+        }
+        else
+        {
+            skillDescUpdate("noImage", 0, 0, 0, 0,"???", TalkManager.Instance.getDesc(38));
+            underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + "lock");
+        }
+        Debug.Log("eswliafhlisaf");
         underTownOutline[idx].GetComponent<Image>().sprite
-                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         TownManager.Instance.hoverInUIBtn(idx);
-        skillDescUpdate("noImage", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
         onOffUI(0, 1);
     }
     public void hoverOutUnderTownButton()
@@ -245,9 +257,12 @@ public class upDownManager : MonoBehaviour
     public void clickUnderTownButton(int idx)
     {
         //SoundManager_Main.Instance.stopSound();
-        curTownIdx = idx;
-        TownManager.Instance.clickTownUI(idx);
-        hoverOutUnderTownButton();
+        //if (idx == 0 || idx == 1 || idx == 2 || idx == 7)
+        //{
+            curTownIdx = idx;
+            TownManager.Instance.clickTownUI(idx);
+            hoverOutUnderTownButton();
+        //}
     }
 
     public Character getCharacter(int idx)

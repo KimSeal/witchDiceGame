@@ -35,6 +35,9 @@ public class TalkManager : MonoBehaviour
     [SerializeField] private GameObject characterTalkBack; 
     [SerializeField] private GameObject[] talkImage = new GameObject[2]; //ui_communicate_image_front/back
     [SerializeField] private GameObject background;
+
+    [SerializeField] public GameObject talkClickButton;
+    [SerializeField] public GameObject talkClickButtonOriginal;
     private List<TalkReader> talkList = new List<TalkReader>();
     private List<DescReader> descList = new List<DescReader>();
     private Material[] material = new Material[4];
@@ -63,6 +66,7 @@ public class TalkManager : MonoBehaviour
     private int[] jumpChk = { 0, 0, 0, 0 };
     private float[] jumpSpd = { 0, 0, 0, 0 };
 
+    private bool titleScreen = true;
     
 
     private bool libraryEntry = false;
@@ -137,6 +141,10 @@ public class TalkManager : MonoBehaviour
         }
         
     }
+    public void titleClick()
+    {
+        if(titleScreen) TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(39));
+    }
 
     public void clickDescBox()
     {
@@ -144,6 +152,11 @@ public class TalkManager : MonoBehaviour
         if (talkingChk)
         {
             goToNextTalk();
+        }
+        else if (titleScreen) {
+            AdventureManager.Instance.clickPlay();
+            titleScreen = false;
+            setDescString("");
         }
         else
         {
@@ -192,12 +205,17 @@ public class TalkManager : MonoBehaviour
             talkImage[0].SetActive(false);
             talkImage[1].SetActive(false);
             entity.SetActive(false);
+
+            titleScreen = true;
+            
         }
 
         bool jumpFlag = false;
         // Update is called once per frame
         void FixedUpdate()
         {
+
+            talkClickButton.GetComponent<Image>().sprite = talkClickButtonOriginal.GetComponent<SpriteRenderer>().sprite;
             float yDefault = -20f;
             if (entity.activeSelf)
             {

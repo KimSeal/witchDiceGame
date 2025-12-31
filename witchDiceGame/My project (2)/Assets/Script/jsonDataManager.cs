@@ -56,6 +56,8 @@ public class jsonDataManager : MonoBehaviour
         optionManager.Instance.changeOption(2);
         optionManager.Instance.changeOption(0);
 
+        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(39));
+
     }
     public void changeMoney(int a)
     {
