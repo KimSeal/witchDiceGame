@@ -873,7 +873,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_empty");
                     SoundManager_Sfx.Instance.playSound(3);
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.1f);
                 }
                 else if (stageIdx + i - 2 >= adventureEventArr.Length) //넘어가는 경우는 출력하지 않는다
                 {
@@ -885,7 +885,7 @@ public class AdventureManager : MonoBehaviour
                     Debug.Log("hello it me");
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i-2]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
                     SoundManager_Sfx.Instance.playSound(3);
-                    yield return new WaitForSeconds(0.2f);
+                    yield return new WaitForSeconds(0.08f);
                 }
             }
             for (int i = 0; i < 4; i++)
@@ -963,7 +963,7 @@ public class AdventureManager : MonoBehaviour
             {
                 if (adventureBalpanPointTemp > 0) clickBalpanUpDownButton(-1);
                 if (adventureBalpanPointTemp < 0) clickBalpanUpDownButton(1);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.01f);
             }
 
             for (int i=0;i<moveCount;i++)
@@ -979,7 +979,7 @@ public class AdventureManager : MonoBehaviour
                     //balpanArrow.GetComponent<Animator>().Play("Hit");
                     break;
                 }
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds((0.5f / moveCount));
                 
             }
             yield return new WaitForSeconds(1.2f);
@@ -1493,8 +1493,10 @@ public class AdventureManager : MonoBehaviour
 
             TownManager.Instance.backToTownUI();
 
+            adventureJewel =  0;
             adventureGold = 0;
             addMoney(0,0);
+            addMoney(1, 0);
         }
         
     }

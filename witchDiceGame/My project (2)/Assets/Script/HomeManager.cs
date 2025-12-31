@@ -152,9 +152,9 @@ public class HomeManager : MonoBehaviour
         chapterIdx[2] = 2;
         //CameraManager.Instance.zoomEvent();
         CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -1000f, CameraManager.Instance.cameraPointZ()));
-        SoundManager_Main.Instance.playSound(homeSoundIdx);
-        SoundManager_Main.Instance.stopSound(0);
-        SoundManager_Main.Instance.stopSound(7);
+        //SoundManager_Main.Instance.playSound(homeSoundIdx);
+        //SoundManager_Main.Instance.stopSound(0);
+        //SoundManager_Main.Instance.stopSound(7);
         updateJewelImage();
     }
     

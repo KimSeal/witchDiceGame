@@ -35,7 +35,11 @@ public class TownManager : MonoBehaviour
 
     [SerializeField]GameObject clickAndImageChange;
 
+    public int curTownIdx = 0;
+    public int[] townSound = new int[8];
     public bool townActive = false;
+
+
 
     private void shakeTownText(int idx)
     {
@@ -43,8 +47,9 @@ public class TownManager : MonoBehaviour
     }
     public void clickTownUI(int i)
     {
+        int curTownTemp2 = curTownIdx;
         SoundManager_Sfx.Instance.playSound(0);
-        //0 : 타워 1 : 집 2: 도서관 3: 마을
+        //0 : 타워 1 : 집 2: 도서관 3: 마을  7: 로비
         if (i == 0)
         {
             if (!jsonDataManager.Instance.getTowerMeet())
@@ -54,11 +59,13 @@ public class TownManager : MonoBehaviour
             }
             for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
             AdventureReadyManager.Instance.enterAdventureReady();
+            curTownIdx = 0;
             // clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
         }
         if (i == 1)
         {
             HomeManager.Instance.enterHome();
+            curTownIdx = 1;
             //SoundManager_Main.Instance.stopSound(7);
             //fullUI.showFull("데모에선 막힌 구간입니다!\n본편을 기대해주세요!");
             //clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_home_on");
@@ -73,7 +80,7 @@ public class TownManager : MonoBehaviour
             for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
             LibraryManager.Instance.enterLibrary(0);
-            SoundManager_Main.Instance.stopSound(0);
+            curTownIdx = 2;
         }
         if (i == 3)
         {
@@ -83,6 +90,16 @@ public class TownManager : MonoBehaviour
         }
         if (i == 7) {
             CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
+            curTownIdx = 7;
+        }
+        Debug.Log("hello it me");
+        Debug.Log(curTownTemp2);
+        Debug.Log(townSound[curTownTemp2]);
+        Debug.Log(curTownIdx);
+        Debug.Log(townSound[curTownIdx]);
+        if (townSound[curTownIdx] != townSound[curTownTemp2]) {
+            SoundManager_Main.Instance.stopSound(townSound[curTownTemp2]);
+            SoundManager_Main.Instance.playSound(townSound[curTownIdx]);
         }
     }
     public void hoverInUIBtn(int i)
@@ -128,6 +145,10 @@ public class TownManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        curTownIdx = 7;
+        townSound[0] = 7; townSound[1] = 1; townSound[2] = 1; townSound[3] = 7;
+        townSound[4] = 7; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;
+        townSound[7] = 7;
         setTownActive(false);
         //Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);

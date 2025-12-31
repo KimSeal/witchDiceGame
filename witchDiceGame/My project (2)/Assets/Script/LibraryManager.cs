@@ -217,9 +217,9 @@ public class LibraryManager : MonoBehaviour
     {
         
         CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
-        SoundManager_Main.Instance.playSound(1);
-        SoundManager_Main.Instance.stopSound(0);
-        SoundManager_Main.Instance.stopSound(7);
+        //SoundManager_Main.Instance.playSound(1);
+        //SoundManager_Main.Instance.stopSound(0);
+        //SoundManager_Main.Instance.stopSound(7);
         jsonDataManager.Instance.addMoney(0);
         curCharacterBigIdx = 0;
         curCharacterIdx = -1;

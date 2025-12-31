@@ -244,6 +244,7 @@ public class upDownManager : MonoBehaviour
 
     public void clickUnderTownButton(int idx)
     {
+        //SoundManager_Main.Instance.stopSound();
         curTownIdx = idx;
         TownManager.Instance.clickTownUI(idx);
         hoverOutUnderTownButton();

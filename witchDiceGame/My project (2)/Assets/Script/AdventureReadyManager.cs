@@ -79,9 +79,7 @@ public class AdventureReadyManager : MonoBehaviour
         if(jsonDataManager.Instance.getCharacterSelect(0) == 0) enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         enterCharacterMove[0] = 0;
         enterCharacterMove[1] = -20;
-        SoundManager_Main.Instance.playSound(7);
         CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.cameraPointZ()));
-        //SoundManager_Main.Instance.playSound(1);
     }
     public void exitAdventureReady() {
         TownManager.Instance.backToTownUI();
