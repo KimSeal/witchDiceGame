@@ -192,9 +192,11 @@ public class AdventureManager : MonoBehaviour
     }
     private void storyLineErrorChk() //챕터스토리를 보다가 끊고 다시 들어온 경우 임시 대처.(본걸로 처리)
     {
+        /*
         for (int i = 0; i < 3; i++) {
             if (jsonDataManager.Instance.getChapterRead(1, i) == 1) jsonDataManager.Instance.setChapterRead(1, i);
         }
+        */
     }
 
     [SerializeField]
@@ -921,6 +923,13 @@ public class AdventureManager : MonoBehaviour
             } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
 
             makeAdventureDice(0);
+
+            if (tutorialVal == 1)
+            {
+                TalkManager.Instance.startTalk(34);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+
             yield return new WaitUntil(() => selectDiceNum > 0);
 
             hoverOutBalpanUpDownButton();
@@ -1467,7 +1476,7 @@ public class AdventureManager : MonoBehaviour
             adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/adventureBoard_2");
             adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-
+            /*
             if(jsonDataManager.Instance.getChapterRead(1,0) == 1) //만약 1스테이지 중간 보스를 무찔렀는 경우.
             {
                 TalkManager.Instance.startTalk(23); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1490,7 +1499,7 @@ public class AdventureManager : MonoBehaviour
                 TalkManager.Instance.startTalk(19); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 jsonDataManager.Instance.setChapterRead(1, 2);
             }
-
+            */
             TownManager.Instance.backToTownUI();
 
             adventureJewel =  0;

@@ -17,7 +17,7 @@ public class HomeManager : MonoBehaviour
     public GameObject[] jewel2 = new GameObject[3];
 
     [SerializeField]
-    public Sprite [] jewelSprite = new Sprite[6];
+    public Sprite[] jewelSprite = new Sprite[6];
 
     [SerializeField]
     public GameObject textBox;
@@ -35,8 +35,12 @@ public class HomeManager : MonoBehaviour
     private TextMeshPro textBoxText;
     private List<DescReader> homeNPCText = new List<DescReader>();
 
-    private int[] chapterIdx = {6, 1, 2};
-    private int[] chapter1Talk = { 24, 27, 30 };
+    private int[] chapterIdx = { 6, 1, 2 };
+    private int[,] chapterTalkBefore = { { 0,0,0}, { 23, 26, 29 }, { 0, 0, 0 } };
+    private int[,] chapterTalk = { { 0,0,0},{ 24, 27, 30 }, { 0, 0, 0 } };
+    private int[,] chapterTalkAfter = { { 0,0,0},{ 25, 28, 31 }, { 0,0,0} };
+    private int[] chapterClear = { 0,19,0 };
+
     private int homeSoundIdx = 1;
     private float textBoxTimer = 0f;
     private void Awake()
@@ -114,19 +118,60 @@ public class HomeManager : MonoBehaviour
     }
     IEnumerator jewelTalk(int talkIdx)
     {
+        Debug.Log("Item is false 0 ");
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
         TalkManager.Instance.startTalk(talkIdx);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        Debug.Log("Item is false 2");
         FadeUIScript.fadeIn();
         SoundManager_Main.Instance.playSound(homeSoundIdx);
     }
+
+    IEnumerator jewelTalk(int chapterNum, int detailIdx)
+    {
+        Debug.Log("Item is true 0 ");
+        SoundManager_Main.Instance.stopSound(homeSoundIdx);
+
+        TalkManager.Instance.startTalk(chapterTalkBefore[chapterNum, detailIdx]);
+        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        Debug.Log("Item is true 1 ");
+        TalkManager.Instance.startTalk(chapterTalk[chapterNum, detailIdx]);
+        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        Debug.Log("Item is true 2 ");
+        TalkManager.Instance.startTalk(chapterTalkAfter[chapterNum, detailIdx]);
+        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        Debug.Log("Item is true 3 ");
+        if (detailIdx == 2) {
+            TalkManager.Instance.startTalk(chapterClear[chapterNum]);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        }
+
+        FadeUIScript.fadeIn();
+        SoundManager_Main.Instance.playSound(homeSoundIdx);
+    }
+
+
     public void clickJewel(int num)
     {
-        if (num >= 3 && num < 6) { // 데모에선 1챕터만 봐야하니 다른거 막아두기
-            int chapterNum = chapterIdx[num / 3];
+        if (num >= 0 && num < 3) { // 데모에선 1챕터만 봐야하니 다른거 막아두기
+            int chapterNum = 1;//chapterIdx[num / 3];
             int detailIdx = num % 3;
+            Debug.Log("jewel test");
+            Debug.Log(jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx));
             if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
-                StartCoroutine(jewelTalk(chapter1Talk[detailIdx]));
+                StartCoroutine(jewelTalk(chapterTalk[chapterNum,detailIdx]));
+            }
+            else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 1)
+            {//스토리 진행된 부분이라면 틀어주기.
+                if (detailIdx > 0 && jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx - 1) < 2) //이전 스토리를 읽지 않았다면 읽을 수 없도록.
+                {
+                    fullUI.showFull(50);
+                }
+                else
+                {
+                    StartCoroutine(jewelTalk(chapterNum, detailIdx));
+                    jsonDataManager.Instance.setChapterRead(chapterNum, detailIdx);
+                }
             }
             else
             {
@@ -162,7 +207,7 @@ public class HomeManager : MonoBehaviour
     {
         for (int i=0;i<3;i++)
         {
-            if (jsonDataManager.Instance.getChapterRead(1, i) == 2) { jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2*i]; }
+            if (jsonDataManager.Instance.getChapterRead(1, i) >= 1) { jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2*i]; }
             else { jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2 * i + 1]; };
         }
     }

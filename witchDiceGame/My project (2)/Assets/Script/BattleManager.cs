@@ -91,6 +91,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject characterUI; // characterUI
     public GameObject diceFullUI;
     public GameObject witchHatButton;
+    public GameObject[] witchPowerSelectButton = new GameObject[7];
 
     /*
     [SerializeField]
@@ -1265,7 +1266,22 @@ public class BattleManager : MonoBehaviour
         if (AdventureManager.Instance.getTutorial() == 1 || AdventureManager.Instance.getTutorial() == 2) { curPhase = 3; }
         else
         {
-        */ 
+        */
+
+        for (int i=0;i<7;i++)
+        {
+            if (i != 0 && i <= 3) //나중에 챕터별 unlock 추가 필요
+            {
+                witchPowerSelectButton[i].GetComponent<SpriteRenderer>().sprite =
+                    Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerNum/spr_witchPowerSelectNum_" + i.ToString());
+            }
+            else
+            {
+                witchPowerSelectButton[i].GetComponent<SpriteRenderer>().sprite =
+                    Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerNum/spr_witchPowerSelectNum_lock");
+            }
+        }
+
         for(int i=0;i<4;i++)
         {
             myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
@@ -1288,16 +1304,19 @@ public class BattleManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             }
             */
-            witchPowerState = 0;
+            witchPowerState = 1;
             witchPowerClickState = -1;
 
             witchPowerState_Change(0);
         //}
     }
-
+    public int getCurWitchPower()
+    {
+        return witchPowerState;
+    }
     public void hoverInWitchPowerNum(int idx)
     {
-        if (false) //챕터상 아직 쓸 수 없는 경우 통과 
+        if (!(idx == 1 || ((idx==2||idx == 3) && jsonDataManager.Instance.getChapterRead(1, 2) == 2))) //챕터상 아직 쓸 수 없는 경우 통과 
         {
             return;
         }
@@ -1341,7 +1360,7 @@ public class BattleManager : MonoBehaviour
             do
             {
                 witchPowerState++;
-                if (witchPowerState > 6) witchPowerState = 0;
+                if (witchPowerState > 3) witchPowerState = 1;
                 hoverInWitchPowerNum(witchPowerState);
             } while (witchPowerClickState == 6);
 
@@ -1351,7 +1370,7 @@ public class BattleManager : MonoBehaviour
             do
             {
                 witchPowerState--;
-                if (witchPowerState < 0) witchPowerState = 6;
+                if (witchPowerState < 1) witchPowerState = 3;
                 hoverInWitchPowerNum(witchPowerState);
             } while (witchPowerClickState == 6);
         }

@@ -207,6 +207,40 @@ public class upDownManager : MonoBehaviour
         { 55f, 168f}
     };
 
+    public void hoverInWitchHatButton()
+    {
+        skillDescUpdate("noImage", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(40));
+        underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
+        onOffUI(0, 1);
+    }
+    public void hoverOutWitchHatButton()
+    {
+        skillDescUpdate("noImage", 0, 0, 0, 0, "", "");
+        onOffUI(0, 0);
+    }
+
+    public void hoverInAdventureWitchPowerButton()
+    {
+        skillDescUpdate("noImage", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(48));
+        underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
+        onOffUI(0, 1);
+    }
+    public void hoverOutAdventureWitchPowerButton()
+    {
+        skillDescUpdate("noImage", 0, 0, 0, 0, "", "");
+        onOffUI(0, 0);
+    }
+    public void hoverInWitchPowerButton()
+    {
+        updateUpperHoverBarPower(BattleManager.Instance.getCurWitchPower());
+        onOffUI(1, 1);
+    }
+    public void hoverOutWitchPowerButton()
+    {
+        updateUpperHoverBar(0, null);
+        onOffUI(1, 0);
+    }
+
     public string[] townName = {"Tower", "Home", "Library", "Market Street", "???", "???", "???", "Hill"};
     
     public void hoverInUnderTownButton(int idx)
@@ -223,7 +257,6 @@ public class upDownManager : MonoBehaviour
             skillDescUpdate("noImage", 0, 0, 0, 0,"???", TalkManager.Instance.getDesc(38));
             underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + "lock");
         }
-        Debug.Log("eswliafhlisaf");
         underTownOutline[idx].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         TownManager.Instance.hoverInUIBtn(idx);
@@ -254,15 +287,28 @@ public class upDownManager : MonoBehaviour
         }
     }
 
+    public bool townCondition(int idx)
+    {
+        if (idx == 0 || idx == 1 || idx == 7) {
+            return true;
+        }
+        if (idx == 2 && jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
+            return true;
+        }
+        return false;
+    }
     public void clickUnderTownButton(int idx)
     {
-        //SoundManager_Main.Instance.stopSound();
-        //if (idx == 0 || idx == 1 || idx == 2 || idx == 7)
-        //{
+        if (townCondition(idx))
+        {
             curTownIdx = idx;
             TownManager.Instance.clickTownUI(idx);
             hoverOutUnderTownButton();
-        //}
+        }
+        else
+        {
+            fullUI.showFull(6);
+        }
     }
 
     public Character getCharacter(int idx)
@@ -1194,6 +1240,13 @@ public class upDownManager : MonoBehaviour
     {
         underSkillButton[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + str);
     }
+    public string[] powerName = { "Reroll Origin", "Reroll", "Add", "Sub"};
+    public void updateUpperHoverBarPower(int powerIdx)
+    {
+        upperHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerSmall/spr_witchPowerSmall_" + powerName[powerIdx]);
+        upperHoverBarTitle.text = powerName[powerIdx];
+        upperHoverBarDesc.text = TalkManager.Instance.getDesc(41 + powerIdx);
+    }
     public void updateUpperHoverBar(int option, Item item)
     {
         if(option == 1) // delete Bar
@@ -1268,11 +1321,17 @@ public class upDownManager : MonoBehaviour
     {
         if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
         {
+            hoverInWitchPowerButton();
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         }
     }
-    public void hoverOutBigDicePowerButton() {
-        for(int i=0;i<8;i++) bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    public void hoverOutBigDicePowerButton()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            hoverOutWitchPowerButton();
+            bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
     }
 
     public void updateBigDicePower()
