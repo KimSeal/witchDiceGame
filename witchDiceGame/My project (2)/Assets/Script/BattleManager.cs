@@ -1257,6 +1257,12 @@ public class BattleManager : MonoBehaviour
 
     private int witchPowerClickState = -1; //현재 마녀 능력 사용에 필요한 dice 수를 담는다 
 
+    public bool witchPowerAble(int powerIdx)
+    {
+        if (powerIdx == 1) return true;
+        if ((powerIdx == 2 || powerIdx == 3) && jsonDataManager.Instance.getChapterRead(1, 2) ==2 ) return true;
+        return false;
+    }
     //witch Power 선택 시작!
     public void witchPowerPhase()
     {
@@ -1270,7 +1276,7 @@ public class BattleManager : MonoBehaviour
 
         for (int i=0;i<7;i++)
         {
-            if (i != 0 && i <= 3) //나중에 챕터별 unlock 추가 필요
+            if (witchPowerAble(i)) //나중에 챕터별 unlock 추가 필요
             {
                 witchPowerSelectButton[i].GetComponent<SpriteRenderer>().sprite =
                     Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerNum/spr_witchPowerSelectNum_" + i.ToString());
@@ -1316,7 +1322,7 @@ public class BattleManager : MonoBehaviour
     }
     public void hoverInWitchPowerNum(int idx)
     {
-        if (!(idx == 1 || ((idx==2||idx == 3) && jsonDataManager.Instance.getChapterRead(1, 2) == 2))) //챕터상 아직 쓸 수 없는 경우 통과 
+        if (!witchPowerAble(idx)) //챕터상 아직 쓸 수 없는 경우 통과 
         {
             return;
         }
@@ -1360,9 +1366,9 @@ public class BattleManager : MonoBehaviour
             do
             {
                 witchPowerState++;
-                if (witchPowerState > 3) witchPowerState = 1;
+                if (witchPowerState > 6) witchPowerState = 0;
                 hoverInWitchPowerNum(witchPowerState);
-            } while (witchPowerClickState == 6);
+            } while (!witchPowerAble(witchPowerState));
 
         }
         else if(dir == -1)
@@ -1370,9 +1376,9 @@ public class BattleManager : MonoBehaviour
             do
             {
                 witchPowerState--;
-                if (witchPowerState < 1) witchPowerState = 3;
+                if (witchPowerState < 0) witchPowerState = 6;
                 hoverInWitchPowerNum(witchPowerState);
-            } while (witchPowerClickState == 6);
+            } while (!witchPowerAble(witchPowerState));
         }
     }
 
