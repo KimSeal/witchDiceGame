@@ -227,6 +227,7 @@ public class itemManager : MonoBehaviour
         }
         setItem(type, emptyIdx, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
         updateInventory();
+        click_itemType_selectButton(type);
         return 0;
     }
 
@@ -771,6 +772,7 @@ public class itemManager : MonoBehaviour
     {
         if (getItemUseAble(characterIdx, itemType, itemIdx))
         {
+            if (AdventureManager.Instance.getTutorial() == 5) AdventureManager.Instance.setTutorial(6);
             useItemToUpgrade(characterIdx, itemIdx);
             SoundManager_Sfx.Instance.playSound(2);
             useItem(itemType, itemIdx);
@@ -851,16 +853,16 @@ public class itemManager : MonoBehaviour
         CharacterManager.Instance.changeDice(0, 0, 1);
         CharacterManager.Instance.changeDice(0, 1, 1);
         CharacterManager.Instance.changeDice(0, 2, 1);
-        CharacterManager.Instance.changeDice(0, 3, 2);
-        CharacterManager.Instance.changeDice(0, 4, 2);
-        CharacterManager.Instance.changeDice(0, 5, 3);
+        CharacterManager.Instance.changeDice(0, 3, 1);
+        CharacterManager.Instance.changeDice(0, 4, 1);
+        CharacterManager.Instance.changeDice(0, 5, 1);
         //for(int i=0;i<6;i++) CharacterManager.Instance.changeDice(0, i, 6);
     }
     public void click_dice_changeNum(int characterIdx, int idx,int itemBagIdx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
         if (itemBagIdx != -1 && idx != -1 && ItemArr[1, itemBagIdx] != null && ItemExistArr[1, itemBagIdx]) {
             int itemIdx = ItemArr[1, itemBagIdx].getIdx();
-
+            if (AdventureManager.Instance.getTutorial() == 12) AdventureManager.Instance.setTutorial(13);
             if (itemIdx == 1)
             { //랜덤한 숫자로 변경 
                 changeDice(characterIdx, idx, Random.Range(1, 7));

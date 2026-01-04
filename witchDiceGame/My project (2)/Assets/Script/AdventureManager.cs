@@ -54,6 +54,7 @@ public class AdventureManager : MonoBehaviour
     private int stageNum = 0; //몇번째 스테이지인지 받는다.
     private int stageIdx = 0; //이번 스테이지에서 몇번째 맵인지(1-1 1-2의 개념) 
     private int[] witchPower = new int[2];
+    [SerializeField] public GameObject witchHatButton;
 
     private int eventWatchNum = 0; //이벤트 선택지 볼때 쓰는 숫자
     private int selectDiceNum = -1; //현재 선택된 주사위
@@ -922,14 +923,28 @@ public class AdventureManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
 
+            if (tutorialVal != 0 && tutorialVal < 17) { witchHatButton.SetActive(false); }
+            else witchHatButton.SetActive(true);
+
             makeAdventureDice(0);
 
             if (tutorialVal == 1)
             {
                 TalkManager.Instance.startTalk(34);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                setTutorial(2);
             }
-            setTutorial(2);
+            if (tutorialVal == 17) {
+                TalkManager.Instance.setDescClickLock(true);
+                TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(62));
+                TalkManager.Instance.startTalk(47);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                yield return new WaitUntil(() => tutorialVal == 18);
+                TalkManager.Instance.setDescClickLock(true);
+                TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(1));
+            }
+            
 
             yield return new WaitUntil(() => selectDiceNum > 0);
 
@@ -1265,15 +1280,65 @@ public class AdventureManager : MonoBehaviour
                             else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
                         }
                     }
-                    if (tutorialVal == 4) //아이템 칸 설명을 위한 대화로 넘어가기.
+                    if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
                     {
+
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(51));
+
                         giveUpBtnAble(false);
-                        TalkManager.Instance.startTalk(10);
+                        TalkManager.Instance.startTalk(35);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         eventEndClick = true;
                         clickAble = false;
                         clickAbleObjSet(nextBtnObj, false, 1);
+
+
+                        yield return new WaitUntil(() => (resultItemArr[0, 0] == -99999 && resultItemArr[1, 0] == -99999 && resultItemArr[2, 0] == -99999 && resultItemArr[3, 0] == -99999 &&
+                                                        resultItemArr[0, 1] == -99999 && resultItemArr[1, 1] == -99999 && resultItemArr[2, 1] == -99999 && resultItemArr[3, 1] == -99999 ));
+
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(52));
+
+                        TalkManager.Instance.startTalk(36);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                        yield return new WaitUntil(() => tutorialVal == 3);
+
+                        TalkManager.Instance.startTalk(37);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(53));
+                        yield return new WaitUntil(() => tutorialVal == 4);
+                        TalkManager.Instance.setDescClickLock(false);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(54));
+                        clickAble = true;
+                        clickAbleObjSet(nextBtnObj, true, 1);
+                        giveUpBtnAble(true);
+                    }
+                    else if (tutorialVal == 4)
+                    {
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(55));
+                        eventEndClick = true;
+                        clickAble = false;
+                        clickAbleObjSet(nextBtnObj, false, 1);
+                        yield return new WaitUntil(() => (resultItemArr[0, 0] == -99999 && resultItemArr[1, 0] == -99999 && resultItemArr[2, 0] == -99999 && resultItemArr[3, 0] == -99999 &&
+                                                        resultItemArr[0, 1] == -99999 && resultItemArr[1, 1] == -99999 && resultItemArr[2, 1] == -99999 && resultItemArr[3, 1] == -99999));
+
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(56));
+                        TalkManager.Instance.startTalk(38);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         yield return new WaitUntil(() => tutorialVal == 5);
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(57));
+                        yield return new WaitUntil(() => tutorialVal == 6);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(53));
+                        yield return new WaitUntil(() => tutorialVal == 7);
+                        TalkManager.Instance.setDescClickLock(false);
+                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(54));
                         clickAble = true;
                         clickAbleObjSet(nextBtnObj, true, 1);
                         giveUpBtnAble(true);
@@ -1591,7 +1656,10 @@ public class AdventureManager : MonoBehaviour
                     SoundManager_Sfx.Instance.playSound(3);
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
                     for(int i=0;i<6;i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, Random.Range(1, 7)); // 주사위 랜덤으로 변경
-
+                    if (AdventureManager.Instance.getTutorial() != 0)
+                    {
+                        for (int i = 0; i < 6; i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, 1); // 주사위 랜덤으로 변경
+                    }
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
@@ -1783,7 +1851,12 @@ public class AdventureManager : MonoBehaviour
         {
             addMoney(1, -1 * cost);
         }
-
+        if (cost != 0) {
+            if (tutorialVal == 17)
+            {
+                tutorialVal = 18;
+            }
+        }
         diceEntity.SetActive(true);
         SoundManager_Sfx.Instance.playSound(0);
         for (int i = 0; i < 4; i++)
@@ -1822,12 +1895,11 @@ public class AdventureManager : MonoBehaviour
 
     public void clickDice(int characterIdx)
     {
-
-        if (tutorialVal == 4 && resultObj.activeSelf == true) { 
-            fullUI.showFull(22);
-        }
         if (!clickAble) return;
-        
+        if (tutorialVal == 17) {
+            fullUI.showFull(65);
+            return;
+        }
         if (descObj[0].activeSelf == true) hoverOutItem();
 
         

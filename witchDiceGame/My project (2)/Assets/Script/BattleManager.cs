@@ -1154,7 +1154,7 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(Dice_Throw_Phase());
         yield return new WaitUntil(() => diceThrowChk);
 
-
+        
         //yield return new WaitForSeconds(1f);
         curPhase = 2;
     }
@@ -1166,11 +1166,11 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 1)
         {
-            if (AdventureManager.Instance.getTutorial() == 1) {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
+            if (AdventureManager.Instance.getTutorial() == 7) {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
                 TalkManager.Instance.startTalk(5);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             }
-            else if (AdventureManager.Instance.getTutorial() == 3) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            else if (AdventureManager.Instance.getTutorial() == 11) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(7);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1241,10 +1241,16 @@ public class BattleManager : MonoBehaviour
                     }
                 }
             }
-            witchHatButton.SetActive(true);
+
+
+            if (AdventureManager.Instance.getTutorial() != 0 && AdventureManager.Instance.getTutorial() < 11) { witchHatButton.SetActive(false); }
+            else witchHatButton.SetActive(true);
             //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
             MakeEnemyAttackSet();
             updateEnemyDiceUI();
+
+           
+
             diceThrowChk = true;
         }
     }
@@ -1395,6 +1401,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        if (AdventureManager.Instance.getTutorial() == 15) AdventureManager.Instance.setTutorial(16);
         clickedDice[0] = idx;
         int witchPowerTemp = witchPowerState;
 
@@ -1614,12 +1621,68 @@ public class BattleManager : MonoBehaviour
             else hoverRotateAble(enemyDiceUI[i], 1, false);
 
         }
+
+        if (AdventureManager.Instance.getTutorial() == 7)
+        {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
+            TalkManager.Instance.startTalk(39);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 8);
+
+            TalkManager.Instance.startTalk(40);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 9);
+            TalkManager.Instance.startTalk(41);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        }
+        if (AdventureManager.Instance.getTutorial() == 11)
+        {//주사위 변경, 운명 마법 사용 관련
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(59));
+            itemManager.Instance.getItemResult(1, 8);
+            TalkManager.Instance.startTalk(43);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 12);
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(60));
+            TalkManager.Instance.startTalk(44);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 13);
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(61));
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 14);
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(62));
+            TalkManager.Instance.startTalk(45);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 15);
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(63));
+            TalkManager.Instance.startTalk(46);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 16);
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(64));
+
+            yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 17);
+            TalkManager.Instance.setDescClickLock(false);
+            TalkManager.Instance.setDescString("");
+        }
+        /*
         if (AdventureManager.Instance.getTutorial() == 1)
         {
             TalkManager.Instance.startTalk(6);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
         } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
+        */
         yield return new WaitUntil(() => currentMoveUI == 0 && currentLightUI == 0); //
     }
 
@@ -1637,6 +1700,9 @@ public class BattleManager : MonoBehaviour
             }
             if (myCharacter[characterIdx] != null && myCharacter[characterIdx].getCurState() == 0)
             {
+                if (AdventureManager.Instance.getTutorial() == 7) {
+                    AdventureManager.Instance.setTutorial(8);
+                }
                 for (int diceIdx = 0; diceIdx < 4; diceIdx++)
                 {
                     if (MakeMyAttackSet(true, input / 10, input % 10, diceIdx))
@@ -1838,6 +1904,11 @@ public class BattleManager : MonoBehaviour
     //phase넘어가기
     public void moveToBattlePhase()
     {
+        if (AdventureManager.Instance.getTutorial() == 7 ||
+            AdventureManager.Instance.getTutorial() == 8) {
+            fullUI.showFull(58);
+            return;
+        }
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
             if (!itemManager.Instance.getItemBoxOpen())
@@ -2580,7 +2651,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator battlePhase()
     {
-
+        
         clickDice_battlePhase = -999;
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
         if (curPhase == 5)
@@ -2649,7 +2720,12 @@ public class BattleManager : MonoBehaviour
 
                     StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
                     yield return new WaitUntil(() => !passiveItemChk);
-
+                    if (AdventureManager.Instance.getTutorial() == 9)
+                    {
+                        TalkManager.Instance.startTalk(42);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        AdventureManager.Instance.setTutorial(10);
+                    }
                     for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
                         int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3030,9 +3106,6 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         int result = winningCheck();
         //tutorial용 전투 종료 확인
-        if (AdventureManager.Instance.getTutorial() == 1) AdventureManager.Instance.setTutorial(2);
-        if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
-
 
         //아군 전멸
         if (result == 2 || giveUpChk)
@@ -3081,12 +3154,11 @@ public class BattleManager : MonoBehaviour
                 TalkManager.Instance.startTalk(9);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             }
-            if (bossPhase == 101 && AdventureManager.Instance.getTutorial() == 5) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            if (bossPhase == 101 ) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(12);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 bossPhase = 0;
-                AdventureManager.Instance.setTutorial(6); //튜토리얼 마지막
             }
 
             if (bossPhase == 0)
@@ -3099,13 +3171,14 @@ public class BattleManager : MonoBehaviour
                     enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
                 }
 
-               
-                //보상 나와있으면 캐릭터 창 끌수 있도록
-                if (characterInfoOpen) {
+                
+                    //보상 나와있으면 캐릭터 창 끌수 있도록
+                    if (characterInfoOpen) {
                     clickCharacterInfoBox();
                 }
                 characterInfoOpenAble = false;
-                if (!(AdventureManager.Instance.getTutorial() == 3 || AdventureManager.Instance.getTutorial() == 4))
+                bosang_click = true;
+                if (AdventureManager.Instance.getTutorial() != 10)
                 {
                     //랜덤 아이템 배정하고 출력
                     makeRandomResult();
@@ -3113,12 +3186,18 @@ public class BattleManager : MonoBehaviour
 
                     resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
                 }
+                else if (AdventureManager.Instance.getTutorial() == 10) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+                {
+                    AdventureManager.Instance.setTutorial(11);
+                    bosang_click = false;
+                }
                 else
                 {
                     resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
                 }
-                bosang_click = true;
-
+                
+                
+  
 
                 setCurClickSkill(-1);
                 deleteSkillCommand();

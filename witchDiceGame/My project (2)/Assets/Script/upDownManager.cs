@@ -705,7 +705,6 @@ public class upDownManager : MonoBehaviour
             deleteBtnInit.GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn_off");
 
-            Debug.Log("click character acting battle!");
             curCharacterIdx = itemManager.Instance.click_Character_battle(input);
             BattleManager.Instance.hoverOutCharacter(0);
 
@@ -724,9 +723,12 @@ public class upDownManager : MonoBehaviour
 
         if (curCharacterIdx == -1)
         {
+            Debug.Log("close this");
             changeOption(2, false);
+            if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
         }
         else {
+            if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
             changeOption(2, true);
             hoverOutCharacterButton();
         }
@@ -818,6 +820,7 @@ public class upDownManager : MonoBehaviour
             updateBigDiceSkill();
         }
         else {
+            if (AdventureManager.Instance.getTutorial() == 8) AdventureManager.Instance.setTutorial(9);
             backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
             bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
             updateBigDiceSkill();
@@ -846,14 +849,19 @@ public class upDownManager : MonoBehaviour
 
     public void clickTrashButton()
     {
+        if (AdventureManager.Instance.getTutorial() == 12 || AdventureManager.Instance.getTutorial() == 11) {
+            fullUI.showFull(65);
+            return;
+        }
         if (curItemIdx >= 0) {
+            if (AdventureManager.Instance.getTutorial() == 5 && curItemType == 0 && curItemIdx == 0) AdventureManager.Instance.setTutorial(6);
             itemManager.Instance.useItem(curItemType, curItemIdx);
         }
     }
 
     public void clickItem(int input)
     {
-        clickCharacterButton(-1);
+        //clickCharacterButton(-1);
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
         /*
@@ -885,6 +893,8 @@ public class upDownManager : MonoBehaviour
             //bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUpperBar(input);
             lockState = 2; //클릭시 현재 스킬에 대한 설명으로 고정.
+            if (AdventureManager.Instance.getTutorial() == 4 && input == 0 && curItemType == 0) { AdventureManager.Instance.setTutorial(5); }
+            if (AdventureManager.Instance.getTutorial() == 11 && input == 0 && curItemType == 1) AdventureManager.Instance.setTutorial(12);
             //updatebigDiceSkill();
         }
         else {
@@ -895,6 +905,7 @@ public class upDownManager : MonoBehaviour
                 lockState = 0;
                 curItemIdx = input;
                 hoverOutUpperBar(0);
+                if (AdventureManager.Instance.getTutorial() == 6) AdventureManager.Instance.setTutorial(7);
             }
             else if(itemSelectDepth == 2) {
                 bigDiceItemUpdateByDepth(1);
@@ -922,6 +933,7 @@ public class upDownManager : MonoBehaviour
             }
             else if (curItemType == 1)
             {
+                
                 bigDiceItemUpdateByDepth(2);
             }
             else if (curItemType == 2)
@@ -1070,6 +1082,7 @@ public class upDownManager : MonoBehaviour
         itemSelectDepth = depth;
         if (depth == 0)
         {
+            if (AdventureManager.Instance.getTutorial() == 13) AdventureManager.Instance.setTutorial(14);
             backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
             bigDiceItemCharacterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
             bigDiceItemCharacterDiceEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
@@ -1118,6 +1131,7 @@ public class upDownManager : MonoBehaviour
 
         if (input != -1)
         {
+            if (AdventureManager.Instance.getTutorial() == 14) AdventureManager.Instance.setTutorial(15);
             //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
             hoverOutBigDicePowerButton();
             BattleManager.Instance.updateMoveUI(4);
@@ -1129,6 +1143,8 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
+           
+            if (AdventureManager.Instance.getTutorial() == 16) AdventureManager.Instance.setTutorial(17);
             bigDicePowerCancleObj.SetActive(false);
             BattleManager.Instance.deleteWitchPowerUI();
             //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);

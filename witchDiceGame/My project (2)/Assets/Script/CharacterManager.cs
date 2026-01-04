@@ -306,6 +306,7 @@ public class CharacterManager : MonoBehaviour
         //아군
         if (characterIdx <= 10000) {
             setCharacter_destinyBase(ref myCharacter[place], characterIdx);
+            
         }
         //몬스터
         if (characterIdx > 10000) {

@@ -171,7 +171,7 @@ public class TalkManager : MonoBehaviour
         // Start is called before the first frame update
         void Start()
         {
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -75f, 0f);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
             libraryEntry = false;
             talkList = CSVReader.Read<TalkReader>("Talk_2");
             for (int i = 0; i < talkList.Count; i++)
@@ -297,7 +297,7 @@ public class TalkManager : MonoBehaviour
 
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
             characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 2f, 0f);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -550f, 0f);
         }
         else if(descChk) // 설명만
         {
@@ -311,12 +311,12 @@ public class TalkManager : MonoBehaviour
                 characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
                 characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
             }
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 2f, 0f);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -550f, 0f);
             characterTalk.GetComponent<TextMeshProUGUI>().text = descString;
         }
         else //text 필요 없음. 
         {
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -75f, 0f);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         }
     }
     public void startTalk(int a)
