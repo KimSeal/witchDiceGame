@@ -929,6 +929,7 @@ public class AdventureManager : MonoBehaviour
                 TalkManager.Instance.startTalk(34);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             }
+            setTutorial(2);
 
             yield return new WaitUntil(() => selectDiceNum > 0);
 
@@ -1933,75 +1934,13 @@ public void hoverInCharacterDice(int characterIdx)
     }
 
     //가방, 전투 페이즈 입장을 위한 함수들
-    public void enterUpgradeCanvas()
-    {
-        if (gameOverChk) return;
-        bool tutorialChk = true;
-        SoundManager_Sfx.Instance.playSound(0);
-        if (tutorialVal == 1 || tutorialVal == 2 || tutorialVal == 3) tutorialChk = false;
-        if (tutorialVal == 4)
-        {
-            if (resultObj.activeSelf == true &&
-                resultItemArr[0, 0] == -99999 && resultItemArr[0, 1] == -99999 &&
-                resultItemArr[1, 0] == -99999 && resultItemArr[1, 1] == -99999 &&
-                resultItemArr[2, 0] == -99999 && resultItemArr[2, 1] == -99999 &&
-                resultItemArr[3, 0] == -99999 && resultItemArr[3, 1] == -99999 ) {
-            }
-            else {
-                tutorialChk = false;
-                if(resultObj.activeSelf == true) fullUI.showFull(2);
-            } 
-        }
-        if (tutorialChk) //튜토리얼에서 문제 없는 경우.
-        {
-            if (!itemManager.Instance.getItemBoxMove())
-            {
-                if (itemManager.Instance.getItemBoxOpen())
-                {
-                    itemManager.Instance.flipItemBox(1, 1);
-                }
-                else
-                {
-                    if (tutorialVal == 4) {
-                        tutorialVal = 5;
-                        TalkManager.Instance.startTalk(11);
-                    }
-                    itemManager.Instance.flipItemBox(0, 0);
 
-                    curCanvasIsAdventure = false;
-
-                    itemManager.Instance.click_upgradeCanvas_start();
-                    itemManager.Instance.updateCharacterUIBtn();
-                    itemManager.Instance.setUpAnimator();
-                    curCanvasItemCanvas = true;
-                    CameraManager.Instance.updateInitPosition(new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-                    //mainCamera.transform.position = new Vector3(-1000f, mainCamera.transform.position.y, mainCamera.transform.position.z);
-                }
-            }
-        }
-    }
     public bool curCanvasItemCanvas = false;
     public bool useFairDice = false;
     public void setUseFairDice(bool input) {
         useFairDice=input;
     }
-    public void exitUpgradeCanvas()
-    {
-        if (tutorialVal == 5 && !useFairDice)
-        {
-            fullUI.showFull(23);
-        }
-        else if (!itemManager.Instance.getItemBoxMove())
-        {
-            curCanvasItemCanvas = false;
-            SoundManager_Sfx.Instance.playSound(0); 
-                curCanvasIsAdventure = true;
-                CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-                //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
-                itemManager.Instance.flipItemBox(0, 1);
 
-        }
-    }
     public void enterBattleCanvas()
     {
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우

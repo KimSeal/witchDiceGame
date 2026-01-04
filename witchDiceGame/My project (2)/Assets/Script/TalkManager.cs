@@ -149,8 +149,9 @@ public class TalkManager : MonoBehaviour
     public void clickDescBox()
     {
         Debug.Log("click talk Box!");
+        
         if (talkingChk)
-        {
+        {   
             goToNextTalk();
         }
         else if (titleScreen) {
@@ -353,14 +354,16 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
+            Debug.Log("cur idx : " + curIdx.ToString());
             SoundManager_Sfx.Instance.playSound(0);
             if (talkList[curIdx].talkIdx != talkList[curIdx + 1].talkIdx)
             {
-                
+                Debug.Log("case 1");
                 stopTalk();
             }
             else
             {
+                Debug.Log("case 2");
                 curIdx++;
                 printTalk(curIdx);
             }
@@ -459,6 +462,7 @@ public class TalkManager : MonoBehaviour
         else if (jsonDataManager.Instance.getLanguage() == 2) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextJP;
         else characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextEN;
 
+        Debug.Log(talkList[a].TextKR);
         preBackground = talkList[a].backGround;
         setPreCharacterName();
     }
@@ -466,6 +470,7 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
+            Debug.Log("case 123");
             changeTalkState(0, true);
             if (preSound >= 0) SoundManager_Main.Instance.stopSound(preSound);
             for (int i = 0; i < characterImage.Length; i++)
