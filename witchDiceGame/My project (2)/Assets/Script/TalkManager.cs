@@ -71,6 +71,8 @@ public class TalkManager : MonoBehaviour
 
     private bool libraryEntry = false;
 
+    [SerializeField] public GameObject skipButton;
+
     public void setDescClickLock(bool hello)
     {
         descClickLock = hello;
@@ -332,8 +334,8 @@ public class TalkManager : MonoBehaviour
             curIdx = listIdx[a];
             setCharacterName(talkList[a]);
             setPreCharacterName();
-
             changeTalkState(0, true);
+
 
             for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; }
 
@@ -348,6 +350,14 @@ public class TalkManager : MonoBehaviour
             if (preSound >= 0) SoundManager_Main.Instance.playSound(preSound);
             preBackground = talkList[a].backGround;
             printTalk(curIdx);
+
+            
+            if (talkList[curIdx].skipAble == 1)
+            {
+                skipButton.SetActive(true);
+            }
+            else { skipButton.SetActive(false); }
+            
         }
     }
     public void goToNextTalk()
@@ -365,6 +375,20 @@ public class TalkManager : MonoBehaviour
             {
                 Debug.Log("case 2");
                 curIdx++;
+                printTalk(curIdx);
+            }
+        }
+    }
+    public void goToPrevTalk()
+    {
+        if (talkingChk)
+        {
+            Debug.Log("cur idx : " + curIdx.ToString());
+            SoundManager_Sfx.Instance.playSound(0);
+            if (talkList[curIdx].talkIdx == talkList[curIdx - 1].talkIdx)
+            {
+                Debug.Log("case 2");
+                curIdx--;
                 printTalk(curIdx);
             }
         }
@@ -409,6 +433,8 @@ public class TalkManager : MonoBehaviour
                 characterMoveVal[i] = 0.0f;
             }
         }
+
+        Debug.Log("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
         //이미지 사용시 체크
         if (talkList[a].imagePlace == 0) { talkImage[0].SetActive(false); talkImage[1].SetActive(false); }
         else if (talkList[a].imagePlace == 1) {

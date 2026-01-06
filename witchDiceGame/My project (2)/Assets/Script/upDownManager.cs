@@ -753,6 +753,11 @@ public class upDownManager : MonoBehaviour
 
     public void battleStart()
     {
+        if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 ||
+            AdventureManager.Instance.getTutorial() == 11 || AdventureManager.Instance.getTutorial() == 12 ||
+                AdventureManager.Instance.getTutorial() == 13 || AdventureManager.Instance.getTutorial() == 14) {
+            return;
+        }
         clickItem(-1);
         clickItem(-1);
         BattleManager.Instance.setCurClickSkill(-1);
@@ -864,7 +869,11 @@ public class upDownManager : MonoBehaviour
         //clickCharacterButton(-1);
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
-        /*
+        if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 || AdventureManager.Instance.getTutorial() == 9)
+        {
+            //fullUI.showFull(65);
+            return;
+        }/*
         if (curItemType == 3) {
             return;
         }
@@ -1010,7 +1019,7 @@ public class upDownManager : MonoBehaviour
             for (int i = 0; i < 2; i++)
             {
                 bigDiceItemCharacterEquipButton[i].GetComponent<Image>().sprite =
-                    Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                     Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
             }
             return;
         }
@@ -1072,7 +1081,7 @@ public class upDownManager : MonoBehaviour
             for (int i = 0; i < 2; i++)
             {
                 bigDiceItemCharacterEquipButton[i].GetComponent<Image>().sprite =
-                    Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                     Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
             }
         }
 

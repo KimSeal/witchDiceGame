@@ -226,8 +226,9 @@ public class itemManager : MonoBehaviour
             return 1; //빈 공간이 없는 경우.
         }
         setItem(type, emptyIdx, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
+        upDownManager.Instance.clickItemTypeButton(type);
         updateInventory();
-        click_itemType_selectButton(type);
+        
         return 0;
     }
 

@@ -163,6 +163,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void setTutorial(int val)
     {
+        Debug.Log("tutorial Change " + val.ToString());
         tutorialVal = val;
     }
 
@@ -934,13 +935,14 @@ public class AdventureManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 setTutorial(2);
             }
-            if (tutorialVal == 17) {
+            if (tutorialVal == 18) {
+                tutorialVal = 19;
                 TalkManager.Instance.setDescClickLock(true);
                 TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(62));
                 TalkManager.Instance.startTalk(47);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
-                yield return new WaitUntil(() => tutorialVal == 18);
+                yield return new WaitUntil(() => tutorialVal == 20);
                 TalkManager.Instance.setDescClickLock(true);
                 TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(1));
             }
@@ -1098,6 +1100,14 @@ public class AdventureManager : MonoBehaviour
                     diceSelectInit();
                     makeAdventureDice(0);
                     selectDiceNum = -1;
+
+                    if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
+                    {
+                        giveUpBtnAble(false);
+                        TalkManager.Instance.startTalk(49);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+
                 }
                 yield return new WaitUntil(() => selectDiceNum > 0); // 주사위 쓸 영웅 선택 대기
                 diceEntity.SetActive(false);
@@ -1852,9 +1862,9 @@ public class AdventureManager : MonoBehaviour
             addMoney(1, -1 * cost);
         }
         if (cost != 0) {
-            if (tutorialVal == 17)
+            if (getTutorial() == 19)
             {
-                tutorialVal = 18;
+                setTutorial(20);
             }
         }
         diceEntity.SetActive(true);
@@ -1896,10 +1906,12 @@ public class AdventureManager : MonoBehaviour
     public void clickDice(int characterIdx)
     {
         if (!clickAble) return;
-        if (tutorialVal == 17) {
+        
+        if (tutorialVal == 19) { // 운명 마법사용때문인듯?
             fullUI.showFull(65);
             return;
         }
+        
         if (descObj[0].activeSelf == true) hoverOutItem();
 
         

@@ -118,6 +118,7 @@ public class DescReader
 public class TalkReader{
     public int talkIdx;
     public int Idx;
+    public int skipAble;
     public string characterLeft;
     public string characterLeftFace;
     public string characterRight;

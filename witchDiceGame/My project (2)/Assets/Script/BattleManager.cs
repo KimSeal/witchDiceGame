@@ -1640,7 +1640,7 @@ public class BattleManager : MonoBehaviour
         {//주사위 변경, 운명 마법 사용 관련
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(59));
-            itemManager.Instance.getItemResult(1, 8);
+            itemManager.Instance.getItemResult(1, 9);
             TalkManager.Instance.startTalk(43);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
@@ -2023,43 +2023,50 @@ public class BattleManager : MonoBehaviour
         for (int i = 0; i < clickCharacter.Length; i++) { //모든 클릭된 캐릭터 초기화
             clickCharacter[i] = -999;
         }
-        //지금 고민중인거는 죽은 캐릭터 위치 클릭가능하게 하나? -> 일단 null일때 조건문 없애놈 -> 근데 아닌거 같아서 걍 null일때 안생기게 해둠
-        if (clickAbleTeam != 2) {//아군 선택만 가능한 경우
-            for (int i = 0; i < 4; i++)
-            {
-                if (myCharacter[i] != null && myCharacter[i].getCurState() != 2) {
+        if (clickEnemyNum > 0) // chihuahua test
+        {
+            //지금 고민중인거는 죽은 캐릭터 위치 클릭가능하게 하나? -> 일단 null일때 조건문 없애놈 -> 근데 아닌거 같아서 걍 null일때 안생기게 해둠
+            if (clickAbleTeam != 2)
+            {//아군 선택만 가능한 경우
+                for (int i = 0; i < 4; i++)
+                {
+                    if (myCharacter[i] != null && myCharacter[i].getCurState() != 2)
+                    {
+                        battleTargetUI[i].SetActive(true);
+                        shakeObject(battleTargetUI[i]);
+                        battleTargetUI[i].GetComponent<Animator>().Play("Create");
+                        battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                        characterClickAble[i] = true;
+                    }
+                }
+            }
+            else if (clickAbleTeam != 1)
+            {//적군 선택만 가능한 경우
+                for (int i = 4; i < 8; i++)
+                {
+                    //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
                     battleTargetUI[i].SetActive(true);
                     shakeObject(battleTargetUI[i]);
                     battleTargetUI[i].GetComponent<Animator>().Play("Create");
                     battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                     characterClickAble[i] = true;
+                    //}  
                 }
             }
-        }
-        else if (clickAbleTeam != 1) {//적군 선택만 가능한 경우
-            for (int i = 4; i < 8; i++) {
-                //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
-                battleTargetUI[i].SetActive(true);
-                shakeObject(battleTargetUI[i]);
-                battleTargetUI[i].GetComponent<Animator>().Play("Create");
-                battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-                characterClickAble[i] = true;
-                //}  
+
+            while (characterTargetIdx < clickEnemyNum) //클릭된 캐릭터 값을 선택수만큼 배열에 저장
+            {
+                yield return new WaitUntil(() => clickCharacter[characterTargetIdx] != -999);
+                characterTargetIdx++;
+            }
+
+            //클릭하지 못하게 바꾸기
+            for (int i = 0; i < 8; i++)
+            {
+                battleTargetUI[i].SetActive(false);
+                characterClickAble[i] = false;
             }
         }
-
-        while (characterTargetIdx < clickEnemyNum) //클릭된 캐릭터 값을 선택수만큼 배열에 저장
-        {
-            yield return new WaitUntil(() => clickCharacter[characterTargetIdx] != -999);
-            characterTargetIdx++;
-        }
-
-        //클릭하지 못하게 바꾸기
-        for (int i = 0; i < 8; i++) {
-            battleTargetUI[i].SetActive(false);
-            characterClickAble[i] = false;
-        }
-
 
         //해제해버리면 밖에서 못쓰니 밖에서 해제해줘야합니다!
     }
@@ -3183,8 +3190,14 @@ public class BattleManager : MonoBehaviour
                     //랜덤 아이템 배정하고 출력
                     makeRandomResult();
                     for (int i = 0; i < 3; i++) printRandomResult(i, false);
-
                     resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
+                    if (AdventureManager.Instance.getTutorial() == 17) {
+                        TalkManager.Instance.startTalk(48);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        AdventureManager.Instance.setTutorial(18);
+                    }
+
+                    
                 }
                 else if (AdventureManager.Instance.getTutorial() == 10) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
                 {
@@ -3264,7 +3277,14 @@ public class BattleManager : MonoBehaviour
     {
 
         int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
-        if (result == 0)
+        if(i == -1)
+        {
+            SoundManager_Sfx.Instance.playSound(7);
+            resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
+
+            resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
+        }
+        else if (result == 0)
         {
             SoundManager_Sfx.Instance.playSound(4);
             resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
@@ -3277,6 +3297,7 @@ public class BattleManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(7);
         }
     }
+
     public void click_backToAdventure()
     {
 

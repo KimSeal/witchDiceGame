@@ -85,7 +85,7 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(2);
         emptyMyCharacter(3);
         setCharacter(0, 0);
-        setCharacter(1, 8);
+        setCharacter(1, 6);
         myCharacter[0].setReviveUnit(true);
     }
     public void setTestCharacterSet()
