@@ -48,11 +48,16 @@ public class LibraryManager : MonoBehaviour
         }
     }
 
-    public void hoverInCharacterSelectButton(int idx) {
+    public void hoverInCharacterSelectButton(int idx)
+    {
         Debug.Log("?");
         characterSelectOutline[idx].GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
-        updateBlackBoard(idx);
+        if (jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + 1))
+        {
+            updateBlackBoard(curCharacterBigIdx * 9 + idx);
+        }
+        else updateBlackBoard(-1);
     }
     public void hoverOutCharacterSelectButton()
     {
@@ -73,9 +78,15 @@ public class LibraryManager : MonoBehaviour
 
     public void clickCharacterSelectButton(int idx)
     {
-        if (idx == -1) curCharacterIdx = -1;
-        else curCharacterIdx = idx + curCharacterBigIdx * 9;
-        hoverOutCharacterSelectButton();
+        if (!jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + idx))
+        {
+            fullUI.showFull(66);
+        }
+        else
+        {
+            curCharacterIdx = idx + curCharacterBigIdx * 9;
+            hoverOutCharacterSelectButton();
+        }
     }
 
     public void hoverInCharacterSkill(int idx)
@@ -136,6 +147,7 @@ public class LibraryManager : MonoBehaviour
         curCharacter[0].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         curCharacter[1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         updateBlackBoard(-1);
+        hoverOutCharacterSelectButton();
     }
     public void clickCurCharacter(int idx) {
         if (curCharacterIdx != -1) {
@@ -165,15 +177,31 @@ public class LibraryManager : MonoBehaviour
     {
         for (int i = 0; i < 9; i++)
         {
-            Destiny destinyTemp = CharacterManager.Instance.getDestiny(curCharacterBigIdx * 9 + i);
-            characterSelectButton[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + destinyTemp.getName() + "_face");
-            if (curCharacterBigIdx * 9 + i == 0) {
+            if (jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + i))
+            {
+                Destiny destinyTemp = CharacterManager.Instance.getDestiny(curCharacterBigIdx * 9 + i);
+                characterSelectButton[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + destinyTemp.getName() + "_face");
+                if (curCharacterBigIdx * 9 + i == 0)
+                {
+                    characterSelectButton[i].GetComponent<SpriteRenderer>().sprite =
+                        Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
+                }
+                characterSelectButton[i].GetComponent<hoverRotate>().shakeStart();
+            }
+            else
+            {
                 characterSelectButton[i].GetComponent<SpriteRenderer>().sprite =
-                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
+                       Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face");
             }
         }
     }
 
+    public void clickNextButton(int dir)
+    {
+        if (curCharacterBigIdx == 0) curCharacterBigIdx = 1;
+        else curCharacterBigIdx = 0;
+        updateCharacterSelectImage();
+    }
     public void hoverRotateAble(GameObject gameObjectTemp, int eventType, bool onOff)
     {
         if (eventType == 0) gameObjectTemp.GetComponent<hoverRotate>().shakeAble(onOff);

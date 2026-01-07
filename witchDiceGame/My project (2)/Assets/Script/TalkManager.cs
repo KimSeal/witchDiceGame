@@ -35,6 +35,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] private GameObject characterTalkBack; 
     [SerializeField] private GameObject[] talkImage = new GameObject[2]; //ui_communicate_image_front/back
     [SerializeField] private GameObject background;
+    [SerializeField] public GameObject nameBackground;
 
     [SerializeField] public GameObject talkClickButton;
     [SerializeField] public GameObject talkClickButtonOriginal;
@@ -484,6 +485,14 @@ public class TalkManager : MonoBehaviour
 
         //언어따라 다른 text
         characterName.GetComponent<TextMeshProUGUI>().text = talkList[a].Name;
+
+        if (talkList[a].Name == "" || talkList[a].Name == " ") { 
+            nameBackground.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        else
+        {
+            nameBackground.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/spr_ui_communicate_back");
+        }
         if(jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
         else if (jsonDataManager.Instance.getLanguage() == 2) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextJP;
         else characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextEN;

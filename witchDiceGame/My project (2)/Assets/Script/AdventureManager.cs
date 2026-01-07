@@ -1204,16 +1204,24 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
+                    SoundManager_Main.Instance.stopSound(2);
                     if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && jsonDataManager.Instance.setChapterDid(0, 4))
                     { // 올빼미 선배
                         giveUpBtnAble(false);
                         TalkManager.Instance.startTalk(21);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         giveUpBtnAble(true);
+                        SoundManager_Main.Instance.playSound(17); //17 : 
                     }
-                    
-                    SoundManager_Main.Instance.stopSound(2);
-                    SoundManager_Main.Instance.playSound(5);
+                    else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
+                        adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
+                        adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101) {
+                        SoundManager_Main.Instance.playSound(18);
+                    }
+                    else
+                    {
+                        SoundManager_Main.Instance.playSound(5);
+                    }
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     BattleManager.Instance.updateBattleBackground(curDiceEventPacket.getBattleBackSprite());

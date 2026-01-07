@@ -257,6 +257,9 @@ public class CharacterManager : MonoBehaviour
                     character = new LemGol(0, destinyList[characterIdx]); break;
 
             }
+            if (!jsonDataManager.Instance.getPlayerCharacterAble(characterIdx)) {
+                jsonDataManager.Instance.setPlayerCharacterAble(characterIdx);
+            }
         }
         //¸ó½ºÅÍ
         if (characterIdx > 10000)

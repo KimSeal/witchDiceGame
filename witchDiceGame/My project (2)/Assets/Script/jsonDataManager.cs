@@ -140,6 +140,12 @@ public class jsonDataManager : MonoBehaviour
     {
         return playerPlayData.playCharacterAble[destinyIdx];
     }
+    public void setPlayerCharacterAble(int destinyIdx)
+    {
+        Debug.Log("seve character Destiny" + destinyIdx.ToString());
+        playerPlayData.playCharacterAble[destinyIdx] = true;
+        SavePlayerDataToJson();
+    }
     //마녀 능력 구매 관련
     public int checkWitchPower(int powerIdx)
     {
@@ -402,7 +408,9 @@ public class jsonDataManager : MonoBehaviour
             this.witchPower[2] = true;
             for (int i = 3; i < witchPower.Length; i++) this.witchPower[i] = false;
 
-            for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+            playCharacterAble[0] = true;
+            playCharacterToken[0] = 1;
+            for (int i = 1; i < playCharacterAble.GetLength(0); i++)
             {
                 playCharacterAble[i] = false;
                 playCharacterToken[i] = 0;
@@ -438,7 +446,9 @@ public class jsonDataManager : MonoBehaviour
             curWitchPower[0] = playerPlayerData.curWitchPower[0];
             curWitchPower[1] = playerPlayerData.curWitchPower[1];
             for (int i = 0; i < witchPower.Length; i++) this.witchPower[i] = playerPlayerData.witchPower[i];
-            for (int i = 0; i < playCharacterAble.GetLength(0); i++)
+            playCharacterAble[0] = true;
+            playCharacterToken[0] = 1;
+            for (int i = 1; i < playCharacterAble.GetLength(0); i++)
             {
                 playCharacterAble[i] = playerPlayerData.playCharacterAble[i];
                 playCharacterToken[i] = playerPlayerData.playCharacterToken[i];

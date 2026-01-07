@@ -2467,7 +2467,7 @@ public class BattleManager : MonoBehaviour
         float activeTime = 0.1f;
         passiveItemChk = true;
         bool[] effectChk = { false, false, false, false, false, false, false, false, false, false, false, false };
-
+        int conditionNum = 0;
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
         {
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
@@ -2481,7 +2481,10 @@ public class BattleManager : MonoBehaviour
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                     upDownManager.Instance.activePassiveItem(passiveItemIdx);
                     //GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
-                    SoundManager_Sfx.Instance.playSound(0);
+                    
+                    SoundManager_Sfx.Instance.playSound(55 + conditionNum);
+                    if(conditionNum < 8) conditionNum++;
+
                     if (tempPassiveReturn.cal != "none") {
                         for (int fontSizeIdx = 0; fontSizeIdx < 10; fontSizeIdx++)
                         {
@@ -2516,6 +2519,7 @@ public class BattleManager : MonoBehaviour
     private void passiveUpdateAfterClick(List<TakeSkillPacket> takeSkillPacketArr, int[] usedDiceArr, bool updateLook)
     {
         bool[] effectChk = { false, false, false, false, false, false, false, false, false, false, false, false };
+        bool itemActive = false;
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
         {
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
@@ -2526,6 +2530,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
                     {
+                        itemActive = true;
                         if (tempPassiveReturn.cal != "none")
                         {
                             specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
@@ -2538,6 +2543,7 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
+        //if (itemActive) SoundManager_Sfx.Instance.playSound(63);
     }
 
     private void makeHitEffect(int tempTargetIdx)
@@ -2631,6 +2637,12 @@ public class BattleManager : MonoBehaviour
                 float curAlpha = material.GetFloat("_Transparency");
                 material.SetFloat("_Transparency", 0.0f);
             }
+            else
+            {
+                Material material = enemyDiceUI[i].GetComponent<SpriteRenderer>().material;
+                float curAlpha = material.GetFloat("_Transparency");
+                material.SetFloat("_Transparency", 0.7f);
+            }
         }
     }
 
@@ -2674,14 +2686,14 @@ public class BattleManager : MonoBehaviour
 
                     nextSkill = myDiceTake[nextDice];
                     battleAlphaControl_My(nextSkill);
-                    clickDice_battlePhase = -998;
+                    //clickDice_battlePhase = -998;
 
-                    //diceArrowAnimationControl(nextDice, true);
+
                     fireMove(nextDice);
-                    //diceArrow[nextDice].GetComponent<Animator>().Play("yesArrow");
-                    yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
-                    battleAlphaControl_My(-1);
 
+                    //yield return new WaitUntil(() => clickDice_battlePhase == nextSkill);
+                    battleAlphaControl_My(nextSkill);
+                    battleAlphaControl_Enemy(-1);
                     //diceArrowAnimationControl(nextDice, false);
                     //diceArrow[nextDice].GetComponent<Animator>().Play("noArrow");
                     /*
@@ -2693,14 +2705,8 @@ public class BattleManager : MonoBehaviour
                     {
                         if (myDiceTake[i] == nextSkill)
                         {
-
                             usedDiceArr[usedDiceIdx] = myDiceNum[i];
                             usedDiceIdx++;
-
-                            myDiceChange(i, 0, -999);
-                            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                            diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                            if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         }
                     }
                     //스킬이 사용 코드 적히는 부분
@@ -2727,19 +2733,30 @@ public class BattleManager : MonoBehaviour
 
                     StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
                     yield return new WaitUntil(() => !passiveItemChk);
+
+
                     if (AdventureManager.Instance.getTutorial() == 9)
                     {
                         TalkManager.Instance.startTalk(42);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         AdventureManager.Instance.setTutorial(10);
                     }
+                    
+
+
                     for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
                         int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
                         //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
-
-                        StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
-                        yield return new WaitUntil(() => characterTargetIdx == curSkill.getTargetNum()); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                        if (curSkill.TargetAuto == 0)
+                        {
+                            yield return new WaitForSeconds(0.5f);
+                        }
+                        else
+                        {
+                            StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
+                            yield return new WaitUntil(() => (characterTargetIdx == curSkill.getTargetNum())); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                        }
                         characterTargetIdx = -999;
 
                         //스킬에 대한 공격용 Packet 생성
@@ -2844,9 +2861,24 @@ public class BattleManager : MonoBehaviour
                         }
 
                         battleTextObj.GetComponent<TextMeshPro>().text = "";
+                        if (curSkill.TargetAuto == 0)
+                        {
+                            yield return new WaitForSeconds(0.5f);
+                        }
 
                     }
 
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (myDiceTake[i] == nextSkill)
+                        {
+                            myDiceChange(i, 0, -999);
+                            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                            diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                        }
+                    }
+                    
                     //
                     nextSkill = 0;
 
@@ -2867,21 +2899,9 @@ public class BattleManager : MonoBehaviour
                     fireMove(nextDice + 4);
 
                     nextSkill = enemyDiceTake[nextDice];
+                    battleAlphaControl_My(-1);
                     battleAlphaControl_Enemy(nextSkill);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (enemyDiceTake[i] == nextSkill)
-                        {
-                            enemyDiceChange(i, -999);
-                            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                            if (i != 3)
-                            {
-                                diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                            }
-
-                        }
-                    }
-                    battleAlphaControl_Enemy(-1);
+                    
                     //스킬이 사용 코드 적히는 부분
                     int skillUseCharacter = nextSkill / 10;
                     int skillUseIdx = nextSkill % 10;
@@ -2994,7 +3014,20 @@ public class BattleManager : MonoBehaviour
 
                     }
                     //diceArrowAnimationControl(nextDice + 4, false);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (enemyDiceTake[i] == nextSkill)
+                        {
+                            enemyDiceChange(i, -999);
+                            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                            if (i != 3)
+                            {
+                                diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            }
 
+                        }
+                    }
+                    battleAlphaControl_Enemy(-1);
                     //
                     nextSkill = 0;
                     yield return new WaitForSeconds(1.0f);
@@ -3156,7 +3189,7 @@ public class BattleManager : MonoBehaviour
             }
 
             if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
-            if (AdventureManager.Instance.getTutorial() == 4) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
+            if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(9);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());

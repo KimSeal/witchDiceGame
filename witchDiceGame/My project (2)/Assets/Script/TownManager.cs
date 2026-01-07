@@ -92,11 +92,7 @@ public class TownManager : MonoBehaviour
             CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
             curTownIdx = 7;
         }
-        Debug.Log("hello it me");
-        Debug.Log(curTownTemp2);
-        Debug.Log(townSound[curTownTemp2]);
-        Debug.Log(curTownIdx);
-        Debug.Log(townSound[curTownIdx]);
+
         if (townSound[curTownIdx] != townSound[curTownTemp2]) {
             SoundManager_Main.Instance.stopSound(townSound[curTownTemp2]);
             SoundManager_Main.Instance.playSound(townSound[curTownIdx]);
@@ -146,7 +142,7 @@ public class TownManager : MonoBehaviour
     void Start()
     {
         curTownIdx = 7;
-        townSound[0] = 7; townSound[1] = 1; townSound[2] = 1; townSound[3] = 7;
+        townSound[0] = 7; townSound[1] = 19; townSound[2] = 20; townSound[3] = 7;
         townSound[4] = 7; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;
         townSound[7] = 7;
         setTownActive(false);

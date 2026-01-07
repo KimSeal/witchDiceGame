@@ -95,6 +95,7 @@ public class upDownManager : MonoBehaviour
 
     [SerializeField]
     public GameObject deleteChkEntity;
+    public TextMeshProUGUI deleteChkText;
     public GameObject deleteBtnInit;
     public GameObject deleteBtnInitOutline;
     public GameObject[] deleteBtn = new GameObject[2];
@@ -292,7 +293,7 @@ public class upDownManager : MonoBehaviour
         if (idx == 0 || idx == 1 || idx == 7) {
             return true;
         }
-        if (idx == 2 && jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
+        if (idx == 2) { //&& jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
             return true;
         }
         return false;
@@ -514,6 +515,7 @@ public class upDownManager : MonoBehaviour
         {
             return;
         }
+        deleteChkText.text = TalkManager.Instance.getDesc(18);
         deleteChkEntity.SetActive(true);
         hoverOutDeleteBtn();
     }
