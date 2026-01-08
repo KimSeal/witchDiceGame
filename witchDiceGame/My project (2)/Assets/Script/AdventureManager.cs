@@ -920,7 +920,7 @@ public class AdventureManager : MonoBehaviour
 
             diceBtnFire.Play();
             if (tutorialVal == 1) { 
-                TalkManager.Instance.startTalk(4);
+                TalkManager.Instance.startTalk(4); //4
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
 

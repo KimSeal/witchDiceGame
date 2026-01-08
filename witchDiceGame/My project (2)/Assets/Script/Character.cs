@@ -318,6 +318,7 @@ public abstract class Character
 
     public int getPhyAtk(){ return phyAtk; }
     public int getMagAtk() { return magAtk; }
+    public int getPhyDef() { return phyDef; }
     public int damage(int damage)
     {
         this.hp -= damage;

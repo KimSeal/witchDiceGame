@@ -107,7 +107,11 @@ public class itemManager : MonoBehaviour
     public GameObject characterOrigin;
     public TextMeshProUGUI characterName;
     public TextMeshProUGUI[] characterHp;
+    [SerializeField]
+    public GameObject characterInfoEntity;
     public TextMeshProUGUI characterAtk;
+    public TextMeshProUGUI characterMag;
+    public TextMeshProUGUI characterSpd;
     public GameObject[] characterDice = new GameObject[6];
     public GameObject[] characterSkill = new GameObject[2];
     public GameObject[] characterEquip = new GameObject[2];
@@ -652,7 +656,12 @@ public class itemManager : MonoBehaviour
             return;
         }
 
+        characterInfoEntity.SetActive(true);
         characterName.text = tempCharacter.getName();
+        characterAtk.text = tempCharacter.getPhyAtk().ToString();
+        characterMag.text = tempCharacter.getMagAtk().ToString();
+        characterSpd.text = tempCharacter.getPhyDef().ToString();
+        characterDescTitle.text = "Status";
         for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
         characterAtk.text = tempCharacter.getPhyAtk().ToString();
         characterOrigin.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + tempCharacter.getName() + "/animator_" + tempCharacter.getName());
@@ -711,6 +720,7 @@ public class itemManager : MonoBehaviour
             Debug.Log("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
             characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
         }
+        characterInfoEntity.SetActive(false);
     }
     public void hoverInEquip(int i)
     {
@@ -735,6 +745,7 @@ public class itemManager : MonoBehaviour
         {
             characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
         }
+        characterInfoEntity.SetActive(false);
 
     }
     public void hoverOutDesc()
@@ -753,12 +764,13 @@ public class itemManager : MonoBehaviour
         }
 
         characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-        characterDescTitle.text = "";
+        characterDescTitle.text = "Status";
         characterDescText.text = "";
         for (int j = 0; j < 4; j++)
         {
             characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
         }
+        characterInfoEntity.SetActive(true);
     }
     public bool getItemUseAble(int characterIdx, int itemType, int itemIdx)
     {

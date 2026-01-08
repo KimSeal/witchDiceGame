@@ -26,6 +26,7 @@ public class upDownManager : MonoBehaviour
     public GameObject underSkillEntity;
     public GameObject[] underSkillButton = new GameObject[8];
     public GameObject[] underSkillOutline = new GameObject[8];
+    public GameObject underBattleOutline;
     public GameObject[] underSkillDiceDescImage = new GameObject[4];
     public TextMeshProUGUI[] underSkillDiceDescText = new TextMeshProUGUI[4];
 
@@ -768,6 +769,16 @@ public class upDownManager : MonoBehaviour
         BattleManager.Instance.moveToBattlePhase();
     }
 
+    public void hoverInUnderBarBattle()
+    {
+        underBattleOutline.GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+    }
+    public void hoverOutUnderBarBattle()
+    {
+        underBattleOutline.GetComponent<Image>().sprite
+                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
     public void hoverInUnderBarSkill(int idx)
     {
         if (BattleManager.Instance.getCharacter(idx / 2) != null)
@@ -880,6 +891,7 @@ public class upDownManager : MonoBehaviour
             return;
         }
         */
+        clickCharacterButton(-1);
         deleteOtherLock(2);
         for (int idx = 0; idx < upperItemOutline.Length; idx++)
         {
