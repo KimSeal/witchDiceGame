@@ -47,10 +47,17 @@ public class coinMove : MonoBehaviour
         else if (phase == 2)
         {
             BattleManager.Instance.shakeBag();
-            if (destBag == 0 || destBag == 2) upDownManager.Instance.addGold(1);
-            else if (destBag == 1 || destBag == 3) upDownManager.Instance.addJewel(1);
-
-            Destroy(gameObject);
+            if (destBag == 0 || destBag == 2)
+            {
+                upDownManager.Instance.addGold(1);
+                AdventureManager.Instance.addMoney(0, 1);
+            }
+            else if (destBag == 1 || destBag == 3)
+            {
+                upDownManager.Instance.addJewel(1);
+                AdventureManager.Instance.addMoney(1, 1);
+            }
+             Destroy(gameObject);
         }
     }
 

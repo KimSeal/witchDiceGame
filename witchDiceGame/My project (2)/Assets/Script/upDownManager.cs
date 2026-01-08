@@ -754,6 +754,18 @@ public class upDownManager : MonoBehaviour
         
     }
 
+    public void clickBattleStart()
+    {
+        if (false)
+        {
+            
+        }
+        else
+        {
+            battleStart();
+        }
+    }
+
     public void battleStart()
     {
         if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 ||

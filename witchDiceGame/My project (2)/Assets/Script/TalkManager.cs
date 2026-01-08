@@ -148,7 +148,7 @@ public class TalkManager : MonoBehaviour
     {
         if(titleScreen) TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(39));
     }
-
+    
     public void clickDescBox()
     {
         Debug.Log("click talk Box!");
@@ -158,16 +158,26 @@ public class TalkManager : MonoBehaviour
             goToNextTalk();
         }
         else if (titleScreen) {
+
             AdventureManager.Instance.clickPlay();
             titleScreen = false;
             setDescString("");
         }
         else
         {
-            if (!descClickLock)
+            Debug.Log(AdventureManager.Instance.getTutorial() == 0);
+            if (AdventureManager.Instance.remainItemChk()  && AdventureManager.Instance.getTutorial() == 0 ) //튜토리얼이 아니고, 남은 게 있을 경우
             {
-                AdventureManager.Instance.clickDice(-1);
+                AdventureManager.Instance.remainItemOnOff(true);
             }
+            else
+            {
+                if (!descClickLock)
+                {
+                    AdventureManager.Instance.clickDice(-1);
+                }
+            }
+            
         }
     }
 

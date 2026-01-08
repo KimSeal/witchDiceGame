@@ -132,6 +132,10 @@ public class jsonDataManager : MonoBehaviour
         Debug.Log("buy third power! extra money :" + getMoney().ToString());
         SavePlayerDataToJson();
     }
+    public void setMoney(int money) { 
+        playerPlayData.setMoney(money);
+        SavePlayerDataToJson();
+    }
     public int getPlayerCharacterToken(int destinyIdx)
     {
         return playerPlayData.playCharacterToken[destinyIdx];
@@ -500,6 +504,10 @@ public class jsonDataManager : MonoBehaviour
         public int getMoney()
         {
             return money;
+        }
+        public void setMoney(int a) {
+            money = a;
+            jsonDataManager.Instance.changeMoney(this.money);
         }
         public void addMoney(int a)
         {

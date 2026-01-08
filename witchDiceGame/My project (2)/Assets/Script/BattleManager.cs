@@ -1213,13 +1213,13 @@ public class BattleManager : MonoBehaviour
             }
             if (myDiceState[0] != 0 || myDiceState[1] != 0 || myDiceState[2] != 0 || myDiceState[3] != 0 ||
                 enemyDiceState[0] != 0 || enemyDiceState[1] != 0 || enemyDiceState[2] != 0 || enemyDiceState[3] != 0) {
-                yield return new WaitForSeconds(1.0f);
+                yield return new WaitForSeconds(0.2f);
 
                 //주사위 상태 배치
                 for (int i = 0; i < 4; i++)
                 {
                     if (myDiceState[i] != 0) {
-                        yield return new WaitForSeconds(0.25f);
+                        yield return new WaitForSeconds(0.1f);
                         myDiceNum[i] = myDiceState[i];
                         //임시 주사위 UI 변경
                         myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].getDir() * -90);
@@ -1237,7 +1237,7 @@ public class BattleManager : MonoBehaviour
                         enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
                         enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDiceNum[i] - 1];
                         changeDiceState(i + 4, -999);
-                        yield return new WaitForSeconds(0.25f);
+                        yield return new WaitForSeconds(0.1f);
                     }
                 }
             }
@@ -2429,6 +2429,12 @@ public class BattleManager : MonoBehaviour
 
             updateEnemyDiceUI();
         }
+    }
+
+    public void makeCoin(int dest, Vector3 point)
+    {
+        GameObject temp = Instantiate(coinEff, point, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+        temp.GetComponent<coinMove>().changeDest(dest);
     }
 
 

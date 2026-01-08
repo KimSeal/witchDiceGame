@@ -6,8 +6,8 @@ using TMPro;
 
 public class AdventureManager : MonoBehaviour
 {
-    public int adventureJewelMax = 10;
-    public int adventureJewel = 5;
+    public int adventureJewelMax = 0;
+    public int adventureJewel = 0;
     public int getAdventureJewel()
     {
         return adventureJewel;
@@ -122,12 +122,45 @@ public class AdventureManager : MonoBehaviour
     private TextMeshPro storeCheckPriceObj;
     [SerializeField] private GameObject storeCheckEntityObj, storeCheckButtonYes, storeCheckButtonNo; // spr_ui_adventureStore_ yes/no Btn
 
+    [SerializeField] 
+    public GameObject itemRemainChk;
+    public TextMeshPro itemRemainText;
+
     private int storeIdx = 0;
 
     private int[] lastCharacter = new int[4];
 
     private int tutorialVal = 0;
 
+
+    public void remainItemOnOff(bool onOff)
+    {
+        itemRemainChk.SetActive(onOff);
+        if (onOff) itemRemainText.text = TalkManager.Instance.getDesc(67);
+    }
+    public void clickRemainItem()
+    {
+        resetItemResult();
+        TalkManager.Instance.clickDescBox();
+        remainItemOnOff(false);
+    }
+    public bool remainItemChk()
+    {
+        Debug.Log("chk!");
+        Debug.Log(resultObj.activeSelf);
+        for (int i=0;i<4;i++)
+        {
+            Debug.Log("/");
+            Debug.Log(resultItemArr[i, 0].ToString());
+            Debug.Log(resultItemArr[i, 1].ToString());
+        }
+        return
+            resultObj.activeSelf &&
+            !(resultItemArr[0, 0] == -99999 && resultItemArr[0, 1] == -99999 &&
+            resultItemArr[1, 0] == -99999 && resultItemArr[1, 1] == -99999 &&
+            resultItemArr[2, 0] == -99999 && resultItemArr[2, 1] == -99999 &&
+            resultItemArr[3, 0] == -99999 && resultItemArr[3, 1] == -99999);
+    }
 
     public void hoverInCharacter(int idx)
     {
@@ -169,6 +202,7 @@ public class AdventureManager : MonoBehaviour
 
     public IEnumerator tutorial_Coroutine()
     {
+        jsonDataManager.Instance.setMoney(0);
         resetDice();
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -235,7 +269,7 @@ public class AdventureManager : MonoBehaviour
 
         Application.Quit();
     }
-    void resetItemResult()
+    public void resetItemResult()
     {
         for (int i = 0; i < 4; i++)
         {
@@ -428,6 +462,10 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        remainItemOnOff(false);
+        adventureGold = jsonDataManager.Instance.getMoney();
+        addMoney(0, 0);
+
         tutorialUI.SetActive(false);
 
         lastCharacter[0] = -99999;
@@ -491,6 +529,9 @@ public class AdventureManager : MonoBehaviour
         storeCheckImageObj = storeCheckImageObjInit.GetComponent<SpriteRenderer>();
         storeCheckPriceObj = storeCheckPriceObjInit.GetComponent<TextMeshPro>();
         storeCheckEntityObj.SetActive(false);
+
+        resetItemResult();
+
     }
 
     // Update is called once per frame
@@ -567,8 +608,10 @@ public class AdventureManager : MonoBehaviour
     public void startAdventure()
     {
 
-        adventureGold = 0;
+        adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0,0);
+        adventureJewel = 0;
+        addMoney(1, 0);
         CharacterManager.Instance.setTestCharacterSet();
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
@@ -777,9 +820,12 @@ public class AdventureManager : MonoBehaviour
     }
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
-        adventureGold = 10;
-        adventureJewelMax = 10;
-        adventureJewel = 5;
+        resetItemResult();
+
+
+        adventureGold = jsonDataManager.Instance.getMoney();
+        adventureJewelMax = 9999;
+        adventureJewel = 0;
         upDownManager.Instance.setInit(adventureGold, adventureJewel);
 
         meetDiceEvent(false);
@@ -863,6 +909,7 @@ public class AdventureManager : MonoBehaviour
             clickAbleObjSet(nextBtnObj, false, 1);
 
             yield return new WaitUntil(() => loadEnd);
+            resetItemResult();
 
             adventureBalpanPointTemp = 0;
             //발판 이벤트를 위한 이펙트
@@ -886,7 +933,6 @@ public class AdventureManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("hello it me");
                     balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventList[stageNum][adventureEventArr[stageIdx + i-2]].getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
                     SoundManager_Sfx.Instance.playSound(3);
                     yield return new WaitForSeconds(0.08f);
@@ -997,6 +1043,7 @@ public class AdventureManager : MonoBehaviour
             {
                 SoundManager_Sfx.Instance.playSound(4);
                 shakeObject(balpanObj[i+1 + 2]);
+                BattleManager.Instance.makeCoin(1, balpanArrow.transform.position); //운명조각 얻기
                 balpanArrow.transform.position = balpanObj[i + 1 + 2].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
                 balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length + 1).ToString();
@@ -1463,6 +1510,8 @@ public class AdventureManager : MonoBehaviour
                     jsonDataManager.Instance.tutorialDid();
                 }
 
+                
+
 
                 if (gameOverChk == false)
                 {
@@ -1473,7 +1522,6 @@ public class AdventureManager : MonoBehaviour
                     storeEntityObj.SetActive(false);
                 }
             }
-            addMoney(1, 2);
         }
         if (gameOverChk) //게임오버로 왔을 경우.
         {
@@ -1483,21 +1531,24 @@ public class AdventureManager : MonoBehaviour
             //selectInfo.GetComponent<TextMeshPro>().text = "";
             if (demoEndChk != 0)
             { //스테이지 보스 잡은 경우 스테이지 클리어 띄우기
-                if (demoEndChk == 1) //튜토리얼 종료시
+                if (demoEndChk == 1) //올빼미 선배 전투 종료시
                 {
                     if (!jsonDataManager.Instance.getOwlBattleWin())
                     {
                         jsonDataManager.Instance.owlBattleWin();
-                        // TalkManager.Instance.startTalk(18);
-                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        TalkManager.Instance.startTalk(18);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     }
                     //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
 
                 CameraManager.Instance.resultScreenActive(2);
-
-
-
+                if (demoEndChk == 2) { //튜토리얼 종료
+                    TalkManager.Instance.startTalk(50);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
+                
+                /*
                 if (!jsonDataManager.Instance.getFirstGetCharacterPart())
                 {
                     bool newDestinyChk = false;
@@ -1513,6 +1564,7 @@ public class AdventureManager : MonoBehaviour
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     }
                 }
+                */
                 yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
 
 
@@ -1587,8 +1639,6 @@ public class AdventureManager : MonoBehaviour
             TownManager.Instance.backToTownUI();
 
             adventureJewel =  0;
-            adventureGold = 0;
-            addMoney(0,0);
             addMoney(1, 0);
         }
         

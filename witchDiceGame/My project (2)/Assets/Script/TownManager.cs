@@ -114,6 +114,8 @@ public class TownManager : MonoBehaviour
     }
     public void backToTownUI()
     {
+        upDownManager.Instance.setInit(jsonDataManager.Instance.getMoney(), 0);
+
         for (int i = 0; i < cloudObj.Length; i++) cloudObj[i].GetComponent<cloudMove>().cloudActive();
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.playSound(7);
