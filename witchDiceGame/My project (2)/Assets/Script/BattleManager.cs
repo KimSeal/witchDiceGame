@@ -842,7 +842,19 @@ public class BattleManager : MonoBehaviour
         return false;
     }
 
-
+    private bool readyBattleChk = false;
+    public bool skillEmptyChk()
+    {
+        return readyBattleChk && 
+            myDiceTake[0] == -999 &&
+            myDiceTake[1] == -999 &&
+            myDiceTake[2] == -999 &&
+            myDiceTake[3] == -999 ;
+    }
+    public void skillEmptyChkEnd()
+    {
+        readyBattleChk = false;
+    }
     public void click_dice(int diceIdx)
     {
         if (currentLightUI == 0 && currentMoveUI == 0)
@@ -1595,6 +1607,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase()
     {
+        readyBattleChk = true;
         setCurClickSkill(-1);
         deleteSkillCommand();
 
@@ -1913,6 +1926,7 @@ public class BattleManager : MonoBehaviour
         {
             if (!itemManager.Instance.getItemBoxOpen())
             {
+                readyBattleChk = false;
                 curPhase = 4;
                 itemManager.Instance.flipItemBox_BattleUI(); //넘어갈때 passive칸을 켜준다.
             }
@@ -2016,6 +2030,15 @@ public class BattleManager : MonoBehaviour
     //private bool endClickEnemy;
     private bool[] characterClickAble = new bool[8]; //스킬 타겟 설정시 클릭이 가능한지
     private int characterTargetIdx = -999;                           //지금까지 스킬 타겟팅을 위해 클릭한 character의 수
+
+    public void hoverInTarget(int idx)
+    {
+        battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+    }
+    public void hoverOutTarget(int idx)
+    {
+        battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+    }
     private IEnumerator clickEnemy_Coroutine(int clickEnemyNum, int clickAbleTeam) //clickAbleTeam은 0 : 아군 대상 / 1: 적군대상 / 2 : 전체 대상을 의미한다.
     { //캐릭터 클릭을 위한 코루틴(입력된 갯수만큼 반복될 예정)
         characterTargetIdx = 0;   //character인덱스 초기화
@@ -2044,13 +2067,16 @@ public class BattleManager : MonoBehaviour
             {//적군 선택만 가능한 경우
                 for (int i = 4; i < 8; i++)
                 {
-                    //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
-                    battleTargetUI[i].SetActive(true);
-                    shakeObject(battleTargetUI[i]);
-                    battleTargetUI[i].GetComponent<Animator>().Play("Create");
-                    battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-                    characterClickAble[i] = true;
-                    //}  
+                    if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2)
+                    {
+                        //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
+                        battleTargetUI[i].SetActive(true);
+                        //shakeObject(battleTargetUI[i]);
+                        battleTargetUI[i].GetComponent<Animator>().Play("Create");
+                        battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                        characterClickAble[i] = true;
+                    }
+                        //}  
                 }
             }
 
@@ -3772,7 +3798,7 @@ public class BattleManager : MonoBehaviour
  
     public void startBattlePhase()
     {
-
+        readyBattleChk = false;
         if (AdventureManager.Instance.getTutorial() == 1 || AdventureManager.Instance.getTutorial() == 2)
         {
             backGroundObj[3].GetComponent<Animator>().Play("Empty");

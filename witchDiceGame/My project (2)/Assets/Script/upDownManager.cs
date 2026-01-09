@@ -768,6 +768,11 @@ public class upDownManager : MonoBehaviour
 
     public void battleStart()
     {
+        if (BattleManager.Instance.skillEmptyChk()) {
+            fullUI.showFull(68);
+            BattleManager.Instance.skillEmptyChkEnd();
+            return;
+        }
         if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 ||
             AdventureManager.Instance.getTutorial() == 11 || AdventureManager.Instance.getTutorial() == 12 ||
                 AdventureManager.Instance.getTutorial() == 13 || AdventureManager.Instance.getTutorial() == 14) {

@@ -135,8 +135,17 @@ public class AdventureManager : MonoBehaviour
 
     public void remainItemOnOff(bool onOff)
     {
-        itemRemainChk.SetActive(onOff);
-        if (onOff) itemRemainText.text = TalkManager.Instance.getDesc(67);
+        
+        if (onOff)
+        {
+            itemRemainText.text = TalkManager.Instance.getDesc(67);
+            itemRemainChk.transform.position = new Vector3(-500f, 0f, 0f);
+            itemRemainChk.GetComponent<hoverRotate>().shakeStart();
+        }
+        else
+        {
+            itemRemainChk.transform.position = new Vector3(-500f, 300f, 0f);
+        }
     }
     public void clickRemainItem()
     {
@@ -241,7 +250,7 @@ public class AdventureManager : MonoBehaviour
     public GameObject tutorialUIText;
     public void clickPlay()
     {
-        tutorialUI.SetActive(true);
+        tutorialUI.transform.position = new Vector3(-1500f, -500f, 0f);
         tutorialUIText.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(24);
     }
     public void mainPlayButton(bool input)
@@ -262,7 +271,7 @@ public class AdventureManager : MonoBehaviour
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
             //SoundManager_Main.Instance.playSound(7);
         }
-        tutorialUI.SetActive(false);
+        tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
     }
     public void mainExitButton()
     {
@@ -466,7 +475,7 @@ public class AdventureManager : MonoBehaviour
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0, 0);
 
-        tutorialUI.SetActive(false);
+        tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
 
         lastCharacter[0] = -99999;
         lastCharacter[1] = -99999;
@@ -736,10 +745,10 @@ public class AdventureManager : MonoBehaviour
 
         if (giveUpAble && onOff)
         {
-            giveUpBoard.SetActive(true);
+            giveUpBoard.transform.position = new Vector3(-500f, 0f, 0f);
             giveUpBoard.GetComponent<hoverRotate>().shakeStart();
         }
-        if(!onOff) giveUpBoard.SetActive(false);
+        if(!onOff) giveUpBoard.transform.position = new Vector3(-500f, 300f, 0f);
     }
     private void meetDiceEvent(bool onOff)
     {

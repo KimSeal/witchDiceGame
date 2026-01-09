@@ -15915,7 +15915,7 @@ RectTransform:
   - {fileID: 695931011}
   - {fileID: 2132424954}
   m_Father: {fileID: 343258020}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -26985,7 +26985,7 @@ Transform:
   - {fileID: 640913003}
   - {fileID: 1614398298}
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &122300003
 MonoBehaviour:
@@ -35099,7 +35099,7 @@ Transform:
   - {fileID: 1801252851}
   - {fileID: 1748836113}
   m_Father: {fileID: 0}
-  m_RootOrder: 21
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &160738038
 GameObject:
@@ -36422,7 +36422,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 182989183}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 37, y: -5, z: 3.0603166}
+  m_LocalPosition: {x: 37, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -36430,7 +36430,7 @@ Transform:
   - {fileID: 1955400456}
   - {fileID: 956856965}
   m_Father: {fileID: 2050254737}
-  m_RootOrder: 11
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &183355586
 GameObject:
@@ -43306,7 +43306,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 32
+  m_RootOrder: 33
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &211931886
 GameObject:
@@ -44641,8 +44641,6 @@ GameObject:
   - component: {fileID: 249837995}
   - component: {fileID: 249837994}
   - component: {fileID: 249837997}
-  - component: {fileID: 249837998}
-  - component: {fileID: 249837999}
   m_Layer: 0
   m_Name: obj_battleTarget_7
   m_TagString: Untagged
@@ -44685,6 +44683,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -44783,36 +44813,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &249837998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249837992}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &249837999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249837992}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &251301567
 GameObject:
   m_ObjectHideFlags: 0
@@ -45228,7 +45228,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 20
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &262810564
 GameObject:
@@ -47379,8 +47379,6 @@ GameObject:
   - component: {fileID: 298217705}
   - component: {fileID: 298217704}
   - component: {fileID: 298217707}
-  - component: {fileID: 298217708}
-  - component: {fileID: 298217709}
   m_Layer: 0
   m_Name: obj_battleTarget_5
   m_TagString: Untagged
@@ -47423,6 +47421,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 5
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 5
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -47521,36 +47551,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &298217708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 298217702}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &298217709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 298217702}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &298525062
 GameObject:
   m_ObjectHideFlags: 0
@@ -50576,18 +50576,18 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1178572265}
   - {fileID: 518407646}
   - {fileID: 568779010}
   - {fileID: 76083004}
   - {fileID: 1350955400}
   - {fileID: 2047746592}
+  - {fileID: 1178572265}
   - {fileID: 423740261}
   - {fileID: 1162726435}
   - {fileID: 818432376}
   - {fileID: 127221258}
   m_Father: {fileID: 0}
-  m_RootOrder: 25
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -62006,7 +62006,7 @@ Transform:
   - {fileID: 206178261}
   - {fileID: 1345126368}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &360337461
 MonoBehaviour:
@@ -73559,7 +73559,7 @@ Transform:
   - {fileID: 1784011373}
   - {fileID: 326194929}
   m_Father: {fileID: 2050254737}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &429960991
 GameObject:
@@ -73974,8 +73974,6 @@ GameObject:
   - component: {fileID: 441268073}
   - component: {fileID: 441268072}
   - component: {fileID: 441268075}
-  - component: {fileID: 441268076}
-  - component: {fileID: 441268077}
   m_Layer: 0
   m_Name: obj_battleTarget_2
   m_TagString: Untagged
@@ -74018,6 +74016,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -74116,36 +74146,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &441268076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441268070}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &441268077
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441268070}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &445148004
 GameObject:
   m_ObjectHideFlags: 0
@@ -80562,7 +80562,7 @@ Transform:
   m_Children:
   - {fileID: 2135448408}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &468547842
 SpriteRenderer:
@@ -84595,7 +84595,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 343258020}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -85030,7 +85030,7 @@ Transform:
   - {fileID: 1459589701}
   - {fileID: 1440234180}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &521083870
 GameObject:
@@ -88730,7 +88730,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 343258020}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -107819,8 +107819,6 @@ GameObject:
   - component: {fileID: 650859927}
   - component: {fileID: 650859926}
   - component: {fileID: 650859929}
-  - component: {fileID: 650859930}
-  - component: {fileID: 650859931}
   m_Layer: 0
   m_Name: obj_battleTarget_0
   m_TagString: Untagged
@@ -107863,6 +107861,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -107961,36 +107991,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &650859930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650859924}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &650859931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650859924}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &653797579
 GameObject:
   m_ObjectHideFlags: 0
@@ -114197,7 +114197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
+  shakeAbleBySelf: 1
   expandAbleBySelf: 1
   shakeAbleByClick: 0
   shakeVal: 0.5
@@ -115273,7 +115273,7 @@ Transform:
   - {fileID: 1890788250}
   - {fileID: 2140152211}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &690054187
 MonoBehaviour:
@@ -120245,7 +120245,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 26
+  m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &756681142
 GameObject:
@@ -123176,8 +123176,6 @@ GameObject:
   - component: {fileID: 797808360}
   - component: {fileID: 797808359}
   - component: {fileID: 797808362}
-  - component: {fileID: 797808363}
-  - component: {fileID: 797808364}
   m_Layer: 0
   m_Name: obj_battleTarget_6
   m_TagString: Untagged
@@ -123220,6 +123218,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 6
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 6
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -123318,36 +123348,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &797808363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 797808357}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &797808364
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 797808357}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &798587840
 GameObject:
   m_ObjectHideFlags: 0
@@ -123491,7 +123491,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 177.6, y: 23.7}
-  m_SizeDelta: {x: 6, y: 6}
+  m_SizeDelta: {x: 8, y: 7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &801489265
 MonoBehaviour:
@@ -143499,7 +143499,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &937596154
 GameObject:
@@ -144005,7 +144005,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 27
+  m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &940005887
 GameObject:
@@ -144594,8 +144594,6 @@ GameObject:
   - component: {fileID: 950936972}
   - component: {fileID: 950936971}
   - component: {fileID: 950936974}
-  - component: {fileID: 950936975}
-  - component: {fileID: 950936976}
   m_Layer: 0
   m_Name: obj_battleTarget_1
   m_TagString: Untagged
@@ -144638,6 +144636,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -144736,36 +144766,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &950936975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 950936969}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &950936976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 950936969}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &951560466
 GameObject:
   m_ObjectHideFlags: 0
@@ -145351,9 +145351,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 0
-  shakeAbleByClick: 1
+  shakeAbleBySelf: 1
+  expandAbleBySelf: 1
+  shakeAbleByClick: 0
   shakeVal: 0.5
   shakeAmountChangeVal: 1
   expandVal: 0.1
@@ -145796,7 +145796,7 @@ Transform:
   - {fileID: 732670776}
   - {fileID: 1971411529}
   m_Father: {fileID: 0}
-  m_RootOrder: 22
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &962982589
 MonoBehaviour:
@@ -158370,7 +158370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shakeAbleBySelf: 0
-  expandAbleBySelf: 0
+  expandAbleBySelf: 1
   shakeAbleByClick: 1
   shakeVal: 0.5
   shakeAmountChangeVal: 1
@@ -158828,7 +158828,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 29
+  m_RootOrder: 30
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &997082177
 MonoBehaviour:
@@ -169549,7 +169549,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 30
+  m_RootOrder: 31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1082280176
 MonoBehaviour:
@@ -173852,7 +173852,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
+  shakeAbleBySelf: 1
   expandAbleBySelf: 1
   shakeAbleByClick: 0
   shakeVal: 0.5
@@ -176248,7 +176248,7 @@ RectTransform:
   m_Children:
   - {fileID: 149492081}
   m_Father: {fileID: 343258020}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -179872,7 +179872,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 23
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1241033225
 GameObject:
@@ -195306,7 +195306,7 @@ RectTransform:
   - {fileID: 95224378}
   - {fileID: 175110669}
   m_Father: {fileID: 343258020}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -196802,7 +196802,7 @@ Transform:
   - {fileID: 33574057}
   - {fileID: 300466539}
   m_Father: {fileID: 0}
-  m_RootOrder: 24
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1384840373
 GameObject:
@@ -205871,8 +205871,6 @@ GameObject:
   - component: {fileID: 1505015822}
   - component: {fileID: 1505015821}
   - component: {fileID: 1505015824}
-  - component: {fileID: 1505015825}
-  - component: {fileID: 1505015826}
   m_Layer: 0
   m_Name: obj_battleTarget_3
   m_TagString: Untagged
@@ -205915,6 +205913,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -206013,36 +206043,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1505015825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1505015819}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1505015826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1505015819}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &1506765282
 GameObject:
   m_ObjectHideFlags: 0
@@ -222430,7 +222430,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 28
+  m_RootOrder: 29
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1594742879
 BoxCollider2D:
@@ -223065,7 +223065,7 @@ Transform:
   m_Children:
   - {fileID: 1101022556}
   m_Father: {fileID: 2050254737}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1603291080
 GameObject:
@@ -224981,7 +224981,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1628245539
 GameObject:
@@ -227416,7 +227416,7 @@ Transform:
   - {fileID: 1731059491}
   - {fileID: 855339883}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1666174655
 SpriteRenderer:
@@ -240413,7 +240413,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1692098266
 GameObject:
@@ -244429,14 +244429,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1749691858}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -963, y: -505, z: 3.0603166}
+  m_LocalPosition: {x: -1500, y: -500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1596222698}
   - {fileID: 670557854}
   - {fileID: 1154456652}
-  m_Father: {fileID: 2050254737}
+  m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1749691860
@@ -270004,7 +270004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shakeAbleBySelf: 0
-  expandAbleBySelf: 0
+  expandAbleBySelf: 1
   shakeAbleByClick: 1
   shakeVal: 0.5
   shakeAmountChangeVal: 1
@@ -270800,7 +270800,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1953595359
 GameObject:
@@ -271170,9 +271170,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 0
-  shakeAbleByClick: 1
+  shakeAbleBySelf: 1
+  expandAbleBySelf: 1
+  shakeAbleByClick: 0
   shakeVal: 0.5
   shakeAmountChangeVal: 1
   expandVal: 0.1
@@ -273342,8 +273342,6 @@ GameObject:
   - component: {fileID: 1991435791}
   - component: {fileID: 1991435790}
   - component: {fileID: 1991435793}
-  - component: {fileID: 1991435794}
-  - component: {fileID: 1991435795}
   m_Layer: 0
   m_Name: obj_battleTarget_4
   m_TagString: Untagged
@@ -273386,6 +273384,38 @@ MonoBehaviour:
         - m_Target: {fileID: 360337461}
           m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
           m_MethodName: click_battle_character
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverInTarget
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 360337461}
+          m_TargetAssemblyTypeName: BattleManager, Assembly-CSharp
+          m_MethodName: hoverOutTarget
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -273484,36 +273514,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1991435794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1991435788}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44241d6295608ed42a9caf39312f1de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1991435795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1991435788}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eef021664f2e6f34bb9224c5575844f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeAbleBySelf: 0
-  expandAbleBySelf: 1
-  shakeAbleByClick: 0
-  shakeVal: 0.5
-  shakeAmountChangeVal: 1
-  expandVal: 0.1
 --- !u!1 &1992945339
 GameObject:
   m_ObjectHideFlags: 0
@@ -274218,7 +274218,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 31
+  m_RootOrder: 32
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2002449793
 GameObject:
@@ -278577,7 +278577,7 @@ RectTransform:
   - {fileID: 801489264}
   - {fileID: 709554134}
   m_Father: {fileID: 343258020}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -278895,13 +278895,12 @@ Transform:
   - {fileID: 743118160}
   - {fileID: 2135182894}
   - {fileID: 1027858842}
-  - {fileID: 1749691859}
   - {fileID: 1601883367}
   - {fileID: 425246838}
-  - {fileID: 448891310}
   - {fileID: 182989187}
+  - {fileID: 448891310}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2050399704
 GameObject:
@@ -287529,7 +287528,7 @@ RectTransform:
   m_Children:
   - {fileID: 778466495}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -288456,7 +288455,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2124110321
 GameObject:
