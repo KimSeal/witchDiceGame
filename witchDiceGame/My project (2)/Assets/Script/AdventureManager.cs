@@ -72,6 +72,7 @@ public class AdventureManager : MonoBehaviour
 
     [SerializeField] private GameObject resultObj; //obj_adventureResuilt
     [SerializeField] private GameObject[] resultObjArr = new GameObject[4]; //obj_adventureResult_Item_(number)
+    [SerializeField] private GameObject[] resultNewMark = new GameObject[4];
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
     
@@ -91,6 +92,7 @@ public class AdventureManager : MonoBehaviour
 
     [SerializeField]
     public GameObject[] characterObj = new GameObject[4];
+    public GameObject[] characterSmoke = new GameObject[4];
 
     bool curCanvasIsAdventure = true;
     bool battleEventTrigger = false;
@@ -827,6 +829,7 @@ public class AdventureManager : MonoBehaviour
             diceObject[diceIdx].GetComponent<hoverRotate>().expandEnd();
         }
     }
+
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
         resetItemResult();
@@ -1340,6 +1343,7 @@ public class AdventureManager : MonoBehaviour
                         //결과로 나오는 아이템에 대한 이미지 처리
                         if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
                         {
+                            resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                             clickAbleObjSet(resultObjArr[i], false, 1);
                             clickAbleObjSet(resultObjArr[i], false, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
@@ -1349,6 +1353,12 @@ public class AdventureManager : MonoBehaviour
                             clickAbleObjSet(resultObjArr[i], true, 1);
                             clickAbleObjSet(resultObjArr[i], true, 2);
                             if (resultItemArr[i, 0] == 4) {
+                                if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1])) { 
+                                    resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark"); 
+                                }
+                                else{
+                                    resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                                }
                                 resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
                             }
                             else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
@@ -1471,12 +1481,21 @@ public class AdventureManager : MonoBehaviour
                         //결과로 나오는 아이템에 대한 이미지 처리
                         if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
                         {
+                            resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                             clickAbleObjSet(resultObjArr[i], false, 1);
                             clickAbleObjSet(resultObjArr[i], false, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                         }
                         else if (resultItemArr[i, 0] == 4) //캐릭터를 얻는 이벤트의 경우
                         {
+                            if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1]))
+                            {
+                                resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
+                            }
+                            else
+                            {
+                                resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            }
                             clickAbleObjSet(resultObjArr[i], true, 1);
                             clickAbleObjSet(resultObjArr[i], true, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
@@ -1732,12 +1751,17 @@ public class AdventureManager : MonoBehaviour
                 {
                     SoundManager_Sfx.Instance.playSound(3);
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
+                    smokeCharacter(emptyPlaceExist);
                     for(int i=0;i<6;i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, Random.Range(1, 7)); // 주사위 랜덤으로 변경
                     if (AdventureManager.Instance.getTutorial() != 0)
                     {
                         for (int i = 0; i < 6; i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, 1); // 주사위 랜덤으로 변경
                     }
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
+
+                    resultNewMark[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
                     clickAbleObjSet(resultObjArr[idx], false, 1);
@@ -1752,6 +1776,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     SoundManager_Sfx.Instance.playSound(3);
                     resultObjArr[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
+                    resultNewMark[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
                     clickAbleObjSet(resultObjArr[idx], false, 1);
@@ -1841,7 +1866,10 @@ public class AdventureManager : MonoBehaviour
             }
         }
     }
-
+    public void smokeCharacter(int idx)
+    {
+        characterSmoke[idx].GetComponent<Animator>().Play("Smoke");
+    }
     public void resetDice()
     {
         selectDiceCharacterIdx = -2; //의미 없는 캐릭터 idx로 변경
