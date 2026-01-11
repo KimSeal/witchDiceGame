@@ -42,7 +42,7 @@ public class coinMove : MonoBehaviour
         {
             transform.position = Vector2.Lerp(transform.position, dest, lastTime);
             lastTime += 0.02f;
-            if (lastTime >= 0.7f) phase = 2;
+            if (lastTime >= 0.6f) phase = 2;
         }
         else if (phase == 2)
         {
@@ -51,11 +51,13 @@ public class coinMove : MonoBehaviour
             {
                 upDownManager.Instance.addGold(1);
                 AdventureManager.Instance.addMoney(0, 1);
+                SoundManager_Sfx.Instance.playSound(Random.Range(64, 68));
             }
             else if (destBag == 1 || destBag == 3)
             {
                 upDownManager.Instance.addJewel(1);
                 AdventureManager.Instance.addMoney(1, 1);
+                SoundManager_Sfx.Instance.playSound(68);
             }
              Destroy(gameObject);
         }

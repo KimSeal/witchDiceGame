@@ -54,6 +54,13 @@ public class Dice
         setCurDice(a, Random.Range(0, 4));
         return this.diceNum[curIdx];
     }
+    public int throwDiceExcept()
+    {
+        int randomMake = Random.Range(0, 5);
+        if (curIdx <= randomMake) randomMake += 1; 
+        setCurDice(randomMake, Random.Range(0, 4));
+        return this.diceNum[curIdx];
+    }
 
     public int getNum()
     {

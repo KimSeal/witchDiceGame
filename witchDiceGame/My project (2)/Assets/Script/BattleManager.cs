@@ -1231,19 +1231,21 @@ public class BattleManager : MonoBehaviour
                 for (int i = 0; i < 4; i++)
                 {
                     if (myDiceState[i] != 0) {
-                        yield return new WaitForSeconds(0.1f);
+                        
+                        SoundManager_Sfx.Instance.playSound(73);
                         myDiceNum[i] = myDiceState[i];
                         //임시 주사위 UI 변경
                         myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].getDir() * -90);
                         myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDiceNum[i] - 1];
                         changeDiceState(i, -999);
-
+                        yield return new WaitForSeconds(0.1f);
                     }
                 }
                 for (int i = 0; i < 4; i++)
                 {
                     if (enemyDiceState[i] != 0)
                     {
+                        SoundManager_Sfx.Instance.playSound(73);
                         enemyDiceNum[i] = enemyDiceState[i];
                         //임시 주사위 UI 변경
                         enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
@@ -1400,7 +1402,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public int[] needJewel = {0, 1, 2, 2, 2, 3, 1};
+    public int[] needJewel = {0, 1, 3, 3, 2, 3, 1};
     //주사위 고르기. 마녀 스킬 추가되면 여기서 작업할것
     public void select_witchPower_Dice(int idx) {
         if (witchPowerClickState == 2) { //다중 선택일 경우, 다음거 선택할수 있도록 설정.
@@ -1420,7 +1422,7 @@ public class BattleManager : MonoBehaviour
         Debug.Log("use Witch Power : " + witchPowerTemp.ToString());
         if (needJewel[witchPowerTemp] > AdventureManager.Instance.getAdventureJewel()) {
             //마녀 능력 값이 부족한 경우
-            fullUI.showFull(0);
+            fullUI.showFull(70);
             return;
         }
 
@@ -1531,7 +1533,7 @@ public class BattleManager : MonoBehaviour
         {
             if (myDice[idx] != null)
             {
-                myDiceNum[idx] = myDice[idx].throwDice();
+                myDiceNum[idx] = myDice[idx].throwDiceExcept();
                 myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
                 myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
             }
@@ -1541,7 +1543,7 @@ public class BattleManager : MonoBehaviour
             idx -= 4;
             if (enemyDice[idx] != null)
             {
-                enemyDiceNum[idx] = enemyDice[idx].throwDice();
+                enemyDiceNum[idx] = enemyDice[idx].throwDiceExcept();
                 enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[idx].dir * -90);
                 enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[idx].getNum() - 1];
             }
@@ -3136,14 +3138,40 @@ public class BattleManager : MonoBehaviour
 
     private void makeRandomResult()
     {
+        int resultType0, resultType1, resultType2;
+        int resultIdx0, resultIdx1, resultIdx2;
 
-        for (int i = 0; i < 3; i++)
+        resultType0 = Random.Range(0, 3);
+        if (resultType0 == 2) resultType0++;
+        resultIdx0 = Random.Range(1, itemManager.Instance.getItemListCount(resultType0));
+        resultItem[0] = itemManager.Instance.getItem(resultType0, resultIdx0);
+
+        resultType1 = Random.Range(0, 3);
+        if (resultType1 == 2) resultType1++;
+        resultIdx1 = Random.Range(1, itemManager.Instance.getItemListCount(resultType1));
+        if (resultType0 == resultType1 && resultIdx0 == resultIdx1)
         {
-            int j = Random.Range(0, 3);
-            if (j == 2) j++;
-            int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
-            resultItem[i] = itemManager.Instance.getItem(j, k);
+            resultIdx1 += 1;
+            if (itemManager.Instance.getItemListCount(resultType1) == resultIdx1) resultIdx1 = 1;
         }
+        resultItem[1] = itemManager.Instance.getItem(resultType1, resultIdx1);
+
+        resultType2 = Random.Range(0, 3);
+        if (resultType2 == 2) resultType1++;
+        resultIdx2 = Random.Range(1, itemManager.Instance.getItemListCount(resultType2));
+        if ((resultType2 == resultType0 && resultIdx2 == resultIdx0) || (resultType2 == resultType1 && resultIdx2 == resultIdx1))
+        {
+            resultIdx2 += 1;
+            if (itemManager.Instance.getItemListCount(resultType2) == resultIdx2) resultIdx2 = 1;
+            if ((resultType2 == resultType0 && resultIdx2 == resultIdx0) || (resultType2 == resultType1 && resultIdx2 == resultIdx1))
+            {
+                resultIdx2 += 1;
+                if (itemManager.Instance.getItemListCount(resultType2) == resultIdx2) resultIdx2 = 1;
+            }
+        }
+        resultItem[2] = itemManager.Instance.getItem(resultType2, resultIdx2);
+
+
     }
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
@@ -3404,7 +3432,7 @@ public class BattleManager : MonoBehaviour
         //캐릭터 정보하고 아이템 창 control을 위한 변수
         characterInfoOpenAble = true;
         getLoseChk = false;
-
+        needJewel[0] = 0;needJewel[1] = 1;needJewel[2] = 3;needJewel[3] = 3;needJewel[4] = 2;needJewel[5] = 3; needJewel[6] = 1;
 
         for (int i = 0; i < 4; i++)
         {

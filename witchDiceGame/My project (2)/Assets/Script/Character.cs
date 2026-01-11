@@ -203,6 +203,9 @@ public abstract class Character
     {
         return this.dice.throwDice();
     }
+    public int throwDiceExcept() {
+        return this.dice.throwDiceExcept();
+    }
     public int needDice(int skillNum)
     {
         return destiny.getNeedDice(skillIdx[skillNum]);

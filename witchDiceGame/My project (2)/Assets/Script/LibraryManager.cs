@@ -84,6 +84,7 @@ public class LibraryManager : MonoBehaviour
         }
         else
         {
+            SoundManager_Sfx.Instance.playSound(71);
             curCharacterIdx = idx + curCharacterBigIdx * 9;
             hoverOutCharacterSelectButton();
         }
@@ -149,9 +150,11 @@ public class LibraryManager : MonoBehaviour
         updateBlackBoard(-1);
         hoverOutCharacterSelectButton();
     }
+    private bool smokeSound = false;
     public void clickCurCharacter(int idx) {
         if (curCharacterIdx != -1) {
             if (curCharacterIdx != curCharacterSelectIdx[idx]) {
+                if(smokeSound) SoundManager_Sfx.Instance.playSound(72);
                 characterSelectSmoke[idx].GetComponent<Animator>().Play("Smoke");
             }
             if (idx == 0 && curCharacterIdx == 0) //만약 두번째 캐릭터에게 주인공운명을 입힐 경우, 불가능.
@@ -255,11 +258,13 @@ public class LibraryManager : MonoBehaviour
         hoverOutCharacterSelectButton();
         hoverOutCharacterSkill();
         hoverOutCurCharacter();
-
+        smokeSound = false;
         curCharacterIdx = jsonDataManager.Instance.getCharacterSelect(0);
         clickCurCharacter(0);
+        
         curCharacterIdx = jsonDataManager.Instance.getCharacterSelect(1);
         clickCurCharacter(1);
+        smokeSound = true;
         curCharacterIdx = -1;
         hoverOutCurCharacter();
     }

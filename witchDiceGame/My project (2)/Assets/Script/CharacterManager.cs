@@ -85,7 +85,7 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(2);
         emptyMyCharacter(3);
         setCharacter(2, 0);
-        //setCharacter(1, 6);
+        //
         myCharacter[2].setReviveUnit(true);
     }
     public void setTestCharacterSet()
@@ -100,6 +100,8 @@ public class CharacterManager : MonoBehaviour
         }
         setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
         myCharacter[2].setReviveUnit(true);
+        setCharacter(1, 1);
+        setCharacter(3, 8);
         //setCharacter(1, 1);
         //setCharacter(2, 2);
         //setCharacter(3, 3);
@@ -163,6 +165,10 @@ public class CharacterManager : MonoBehaviour
     public void throwDice(int characterIdx)
     {
         myCharacter[characterIdx].throwDice();
+    }
+
+    public void throwDiceExcept(int characterIdx) {
+        myCharacter[characterIdx].throwDiceExcept();
     }
 
     public void changeEquip(int characterIdx, int itemNum, int itemType, int itemIdx)

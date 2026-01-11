@@ -48,7 +48,7 @@ public class TownManager : MonoBehaviour
     public void clickTownUI(int i)
     {
         int curTownTemp2 = curTownIdx;
-        SoundManager_Sfx.Instance.playSound(0);
+        
         //0 : 타워 1 : 집 2: 도서관 3: 마을  7: 로비
         if (i == 0)
         {
@@ -57,6 +57,7 @@ public class TownManager : MonoBehaviour
                 jsonDataManager.Instance.towerMeet();
                 TalkManager.Instance.startTalk(17);
             }
+            SoundManager_Sfx.Instance.playSound(0);
             for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
             AdventureReadyManager.Instance.enterAdventureReady();
             curTownIdx = 0;
@@ -64,6 +65,7 @@ public class TownManager : MonoBehaviour
         }
         if (i == 1)
         {
+            SoundManager_Sfx.Instance.playSound(69);
             HomeManager.Instance.enterHome();
             curTownIdx = 1;
             //SoundManager_Main.Instance.stopSound(7);
@@ -78,6 +80,7 @@ public class TownManager : MonoBehaviour
                 //TalkManager.Instance.startTalk(1);
             }
             for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudStop();
+            SoundManager_Sfx.Instance.playSound(70);
             CameraManager.Instance.updateInitPosition(new Vector3(-1500f, 0f, CameraManager.Instance.cameraPointZ()));
             LibraryManager.Instance.enterLibrary(0);
             curTownIdx = 2;
@@ -86,9 +89,11 @@ public class TownManager : MonoBehaviour
         {
             //SoundManager_Main.Instance.stopSound(7);
             fullUI.showFull(6);
+            SoundManager_Sfx.Instance.playSound(0);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
         if (i == 7) {
+            SoundManager_Sfx.Instance.playSound(0);
             CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
             curTownIdx = 7;
         }

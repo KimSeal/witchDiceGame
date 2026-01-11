@@ -16,6 +16,8 @@ public class HomeManager : MonoBehaviour
     [SerializeField]
     public GameObject[] jewel2 = new GameObject[3];
 
+    [SerializeField] public GameObject[] newMark = new GameObject[3];
+
     [SerializeField]
     public Sprite[] jewelSprite = new Sprite[6];
 
@@ -207,8 +209,18 @@ public class HomeManager : MonoBehaviour
     {
         for (int i=0;i<3;i++)
         {
-            if (jsonDataManager.Instance.getChapterRead(1, i) >= 1) { jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2*i]; }
+            if (jsonDataManager.Instance.getChapterRead(1, i) >= 1) { 
+                jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2*i]; 
+            }
             else { jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2 * i + 1]; };
+
+            if (jsonDataManager.Instance.getChapterRead(1, i) == 1) { 
+                newMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
+            }
+            else
+            {
+                newMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            }
         }
     }
 

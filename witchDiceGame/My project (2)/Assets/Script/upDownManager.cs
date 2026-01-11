@@ -9,8 +9,10 @@ public class upDownManager : MonoBehaviour
     [SerializeField]
     public GameObject goldEntity;
     public TextMeshProUGUI goldText;
+    public GameObject goldLogo;
     public GameObject jewelEntity;
     public TextMeshProUGUI jewelText;
+    public GameObject jewelLogo;
     public int gold;
     public int jewel;
     
@@ -117,6 +119,10 @@ public class upDownManager : MonoBehaviour
     private int curCharacterIdx = -1;
 
     private int curUnderBarOption = 0;
+    private float goldRotateSize;
+    private float jewelRotateSize;
+    private float goldRotateVal;
+    private float jewelRotateVal;
 
     private static upDownManager instance = null;
 
@@ -156,6 +162,11 @@ public class upDownManager : MonoBehaviour
         changeOption(0, false);
         itemTypeButtonLock = false;
         curTownIdx = 7;
+
+        goldRotateSize = 0f;
+        jewelRotateSize = 0f;
+        goldRotateVal =0f;
+        jewelRotateVal=0f;
     }
 
     // Update is called once per frame
@@ -167,23 +178,21 @@ public class upDownManager : MonoBehaviour
         for (int i = 0; i < 12; i++) {
             upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
         }
-        /*
-        if (goldEventActive) goldEventCount = 300;
-        if (witchEventActive) witchEventCount = 300;
 
-        if (goldEventCount > 0) {
-            goldEventCount -= 2;
-            if (goldEventCount > 141) { goldEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 418f, 0f); }
-            else { goldEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(goldEventCount - 141f, 418f, 0f); }
+        if (goldRotateSize > 0f) {
+            goldRotateSize -= 1f;
+            goldRotateVal += 0.5f;
+            if (goldRotateVal > 100 * Mathf.PI) goldRotateVal -= 100.0f * Mathf.PI;
+            goldLogo.GetComponent<RectTransform>().rotation = Quaternion.Euler(goldLogo.transform.rotation.x, goldLogo.transform.rotation.y, goldRotateSize * Mathf.Sin(goldRotateVal));
         }
-        if (witchEventCount > 0)
+        if(jewelRotateSize > 0f)
         {
-            witchEventCount-= 2;
-            if (witchEventCount > 141) { witchPowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 436f, 0f); }
-            else { witchPowerEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(witchEventCount - 141f, 436f, 0f); }
+            jewelRotateSize -= 1f;
+            jewelRotateVal += 0.5f;
+            if (jewelRotateVal > 100 * Mathf.PI) jewelRotateVal -= 100.0f * Mathf.PI;
+            jewelLogo.GetComponent<RectTransform>().rotation = Quaternion.Euler(jewelLogo.transform.rotation.x, jewelLogo.transform.rotation.y, jewelRotateSize * Mathf.Sin(jewelRotateVal));
         }
-        */
-        // characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(GetComponent<SpriteRenderer>().bounds.size.x, GetComponent<SpriteRenderer>().bounds.size.y);
+            
     }
 
     public void activePassiveItem(int itemIdx)
@@ -208,6 +217,18 @@ public class upDownManager : MonoBehaviour
         {-2f, 225f},
         { 55f, 168f}
     };
+
+    public void rotateGold()
+    {
+        goldRotateSize = 30f;
+        goldRotateVal = 0f;
+    }
+
+    public void rotateJewel()
+    {
+        jewelRotateSize = 30f;
+        jewelRotateVal = 0f;
+    }
 
     public void hoverInWitchHatButton()
     {
@@ -345,6 +366,7 @@ public class upDownManager : MonoBehaviour
 
     public void addGold(int a)
     {
+        rotateGold();
         gold += a;
         int goldTemp = gold;
         if (gold < 0) goldTemp = 0;
@@ -353,6 +375,7 @@ public class upDownManager : MonoBehaviour
 
     public void addJewel(int a)
     {
+        rotateJewel();
         jewel += a;
         int jewelTemp = jewel;
         jewelText.text = jewelTemp.ToString();
@@ -898,6 +921,10 @@ public class upDownManager : MonoBehaviour
     {
         //clickCharacterButton(-1);
         //전투 중에는 추가 잠금 불가능하게
+        if (input >= 0 && !AdventureManager.Instance.getAdventureStartChk()) {
+            fullUI.showFull(69);
+            return; 
+        }
         if (input != -1 && lockState == 3) return;
         if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 || AdventureManager.Instance.getTutorial() == 9)
         {

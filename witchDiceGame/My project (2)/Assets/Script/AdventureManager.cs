@@ -473,6 +473,7 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        adventureStartChk = false;
         remainItemOnOff(false);
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0, 0);
@@ -615,6 +616,11 @@ public class AdventureManager : MonoBehaviour
     public void adventure_load() //adventure로딩 끝난 경우 확인
     {
         loadEnd = true;
+    }
+    public bool adventureStartChk = false;
+    public bool getAdventureStartChk()
+    {
+        return adventureStartChk;
     }
     public void startAdventure()
     {
@@ -832,6 +838,7 @@ public class AdventureManager : MonoBehaviour
 
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
+        adventureStartChk = true;
         resetItemResult();
 
 
@@ -1157,7 +1164,7 @@ public class AdventureManager : MonoBehaviour
                     
                     diceBtnFire.Play();
                     diceSelectInit();
-                    makeAdventureDice(0);
+                    makeAdventureDice(1);
                     selectDiceNum = -1;
 
                     if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
@@ -1665,11 +1672,11 @@ public class AdventureManager : MonoBehaviour
             }
             */
             TownManager.Instance.backToTownUI();
-
+            
             adventureJewel =  0;
             addMoney(1, 0);
         }
-        
+        adventureStartChk = false;
     }
 
     [SerializeField]
@@ -1752,7 +1759,8 @@ public class AdventureManager : MonoBehaviour
                     SoundManager_Sfx.Instance.playSound(3);
                     CharacterManager.Instance.setCharacter(emptyPlaceExist, resultItemArr[idx, 1]);
                     smokeCharacter(emptyPlaceExist);
-                    for(int i=0;i<6;i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, Random.Range(1, 7)); // 주사위 랜덤으로 변경
+                    SoundManager_Sfx.Instance.playSound(72);
+                    for (int i=0;i<6;i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, Random.Range(1, 7)); // 주사위 랜덤으로 변경
                     if (AdventureManager.Instance.getTutorial() != 0)
                     {
                         for (int i = 0; i < 6; i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, 1); // 주사위 랜덤으로 변경
@@ -1950,6 +1958,7 @@ public class AdventureManager : MonoBehaviour
     {
         Debug.Log(adventureJewel);
         if (adventureJewel < cost) {
+            fullUI.showFull(70);
             return;
         }
         else
@@ -1963,12 +1972,14 @@ public class AdventureManager : MonoBehaviour
             }
         }
         diceEntity.SetActive(true);
-        SoundManager_Sfx.Instance.playSound(0);
+        SoundManager_Sfx.Instance.playSound(2);
         for (int i = 0; i < 4; i++)
         {
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0)
             {
-                CharacterManager.Instance.throwDice(i);
+                //if (cost == 0) CharacterManager.Instance.throwDice(i);
+                //else 
+                    CharacterManager.Instance.throwDiceExcept(i);
                 int temp = Random.Range(0, 4) * 90;
                 Debug.Log("temp : " + temp.ToString());
                 Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp)); //사용된 아이템에 대해 effect

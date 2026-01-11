@@ -319,6 +319,7 @@ public class itemManager : MonoBehaviour
             CharacterManager.Instance.setCharacter(idx, playerB);
             CharacterManager.Instance.setCharacter(idx2, playerA);
             AdventureManager.Instance.resetDice();
+            SoundManager_Sfx.Instance.playSound(72);
             AdventureManager.Instance.smokeCharacter(idx);
             AdventureManager.Instance.smokeCharacter(idx2);
             updateCharacterUIBtn();
@@ -1168,7 +1169,7 @@ public class itemManager : MonoBehaviour
         descObj[0].SetActive(false);
 
         
-        /*
+        
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -1212,7 +1213,7 @@ public class itemManager : MonoBehaviour
         ItemArr[2, 0] = new Item(itemList[2][1]);
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
-        */
+        
         
         updateInventory();
     }
