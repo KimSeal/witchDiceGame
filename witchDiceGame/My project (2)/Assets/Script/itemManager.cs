@@ -1193,13 +1193,13 @@ public class itemManager : MonoBehaviour
         ItemArr[3, 3] = new Item(itemList[3][10]);
         ItemArr[3, 4] = new Item(itemList[3][11]);
         ItemArr[3, 5] = new Item(itemList[3][12]);
-        ItemArr[3, 6] = new Item(itemList[3][22]);
+        ItemArr[3, 6] = new Item(itemList[3][1]);
         ItemExistArr[3, 7] = true;
         ItemArr[3, 7] = new Item(itemList[3][23]);
         ItemExistArr[3, 8] = true;
         ItemArr[3, 8] = new Item(itemList[3][12]);
         ItemExistArr[3, 9] = true;
-        ItemArr[3, 9] = new Item(itemList[3][22]);
+        ItemArr[3, 9] = new Item(itemList[3][2]);
  
 
         for (int i = 0; i < 10; i++)

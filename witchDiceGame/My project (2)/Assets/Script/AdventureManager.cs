@@ -1684,25 +1684,10 @@ public class AdventureManager : MonoBehaviour
         if (opt == 0) {
             adventureGold += val;
             if (val < 0) upDownManager.Instance.addGold(val);
-            /*
-            for (int i = 0; i < val; i++)
-            {
-                GameObject temp = Instantiate(coinEff, new Vector3(-400f,0f,0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-                temp.GetComponent<coinMove>().changeDest(0);
-            }
-            */
-            Debug.Log("adventureMoney : " + adventureGold.ToString());
         }
         else if(opt == 1) {
             adventureJewel += val;
             if (val < 0) upDownManager.Instance.addJewel(val);
-            /*
-            for (int i = 0; i < val; i++)
-            {
-                GameObject temp = Instantiate(coinEff, new Vector3(-400f, 0f, 0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-                temp.GetComponent<coinMove>().changeDest(1);
-            }
-            */
         }
 
 

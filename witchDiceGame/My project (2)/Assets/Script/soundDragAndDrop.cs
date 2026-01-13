@@ -38,8 +38,8 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     public void setUIButton()
     {
         this.GetComponent<hoverRotateUI>().shakeStart();
-        //if (soundOption == 0) this.transform.position = new Vector3((SoundManager_Main.Instance.backgroundVolume * (maxVal - minVal) /2.5f) + minVal,this.transform.position.y, this.transform.position.z);
-        //if (soundOption == 1) this.transform.position = new Vector3((SoundManager_Sfx.Instance.SFXVolume * (maxVal - minVal) / 2.5f) + minVal, this.transform.position.y, this.transform.position.z);
+        if (soundOption == 0) this.transform.position = new Vector3((SoundManager_Main.Instance.backgroundVolume * (maxVal - minVal) /2.5f) + minVal,this.transform.position.y, this.transform.position.z);
+        if (soundOption == 1) this.transform.position = new Vector3((SoundManager_Sfx.Instance.SFXVolume * (maxVal - minVal) / 2.5f) + minVal, this.transform.position.y, this.transform.position.z);
     }
 
     public void OnBeginDrag(PointerEventData eventData) {

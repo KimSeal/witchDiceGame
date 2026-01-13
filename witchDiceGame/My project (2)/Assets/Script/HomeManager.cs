@@ -187,6 +187,7 @@ public class HomeManager : MonoBehaviour
             //TalkManager.Instance.startTalk(13);
             fullUI.showFull(5);
         }
+        updateJewelImage();
     }
     
 

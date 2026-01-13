@@ -2509,6 +2509,12 @@ public class BattleManager : MonoBehaviour
         passiveItemChk = true;
         bool[] effectChk = { false, false, false, false, false, false, false, false, false, false, false, false };
         int conditionNum = 0;
+        if (takeSkillPacketArr[0].getVal() > 0)
+        {
+            battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[0].getVal()) + ">" +
+                                        takeSkillPacketArr[0].getVal().ToString() //상단부에 적용될 text값 적기
+                                    + "</size>";
+        }
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
         {
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
@@ -3376,15 +3382,17 @@ public class BattleManager : MonoBehaviour
     public void click_bosang(int i) //보상 획득
     {
 
-        int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
+        
         if(i == -1)
         {
             SoundManager_Sfx.Instance.playSound(7);
             resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
 
             resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
+            return;
         }
-        else if (result == 0)
+        int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
+        if (result == 0)
         {
             SoundManager_Sfx.Instance.playSound(4);
             resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
