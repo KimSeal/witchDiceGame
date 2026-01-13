@@ -1164,7 +1164,7 @@ public class AdventureManager : MonoBehaviour
                     
                     diceBtnFire.Play();
                     diceSelectInit();
-                    makeAdventureDice(1);
+                    makeAdventureDice(0);
                     selectDiceNum = -1;
 
                     if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
@@ -1347,10 +1347,11 @@ public class AdventureManager : MonoBehaviour
                     {
                         resultItemArr[i, 0] = curDiceEventPacket.getItemType(i);
                         resultItemArr[i, 1] = curDiceEventPacket.getItemIdx(i);
+                        resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         //결과로 나오는 아이템에 대한 이미지 처리
                         if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
                         {
-                            resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            
                             clickAbleObjSet(resultObjArr[i], false, 1);
                             clickAbleObjSet(resultObjArr[i], false, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
@@ -1362,9 +1363,6 @@ public class AdventureManager : MonoBehaviour
                             if (resultItemArr[i, 0] == 4) {
                                 if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1])) { 
                                     resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark"); 
-                                }
-                                else{
-                                    resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                                 }
                                 resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
                             }

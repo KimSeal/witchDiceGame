@@ -87,6 +87,7 @@ public class CharacterManager : MonoBehaviour
         setCharacter(2, 0);
         //
         myCharacter[2].setReviveUnit(true);
+        for(int i=0;i<6;i++) myCharacter[2].setDice(0,1);
     }
     public void setTestCharacterSet()
     {
@@ -100,8 +101,8 @@ public class CharacterManager : MonoBehaviour
         }
         setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
         myCharacter[2].setReviveUnit(true);
-        setCharacter(1, 1);
-        setCharacter(3, 8);
+        //setCharacter(1, 1);
+        //setCharacter(3, 8);
         //setCharacter(1, 1);
         //setCharacter(2, 2);
         //setCharacter(3, 3);

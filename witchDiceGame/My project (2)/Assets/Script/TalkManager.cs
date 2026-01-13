@@ -158,7 +158,12 @@ public class TalkManager : MonoBehaviour
             goToNextTalk();
         }
         else if (titleScreen) {
-
+            /*            if (!jsonDataManager.Instance.getTutorialDid())
+            {
+                AdventureManager.Instance.mainPlayButton(true);
+            }
+            else AdventureManager.Instance.mainPlayButton(false);
+            */
             AdventureManager.Instance.clickPlay();
             titleScreen = false;
             setDescString("");

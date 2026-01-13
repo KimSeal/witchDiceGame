@@ -138895,7 +138895,7 @@ MonoBehaviour:
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
+            m_IntArgument: 1
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
@@ -204609,7 +204609,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "- \u65E5\u672C\u8A9E"
+  m_text: "- \u65E5\u672C\u8A9E(\u672A\u5B8C)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0a08da4a00e254248b38e1b4bfc4873a, type: 2}
   m_sharedMaterial: {fileID: -5920514179905653417, guid: 0a08da4a00e254248b38e1b4bfc4873a, type: 2}
@@ -204652,7 +204652,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}

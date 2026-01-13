@@ -83,7 +83,7 @@ public abstract class Character
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] { 0, 1 };
     protected Destiny destiny; //할당된 운명에 대한 클래스.
-    protected Dice dice;
+    public Dice dice;
     protected Character_battle character_battle;
     protected bool reviveUnit = false;
     protected int shadow = 0;

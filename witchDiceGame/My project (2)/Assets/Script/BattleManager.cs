@@ -1190,14 +1190,17 @@ public class BattleManager : MonoBehaviour
             //아군 모든 주사위 던지기
             for (int i = 0; i < 4; i++)
             {
-                if (myDice[i] != null)
+                
+                if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
                 {
+                    myDice[i] = myCharacter[i].dice;
                     diceCoverAnimation[i].GetComponent<Animator>().Play("diceRoll");
                     diceCoverAnimation[i].transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * -90);
                     //Instantiate(diceRollEff, myDiceUI[i].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
                     
                     SoundManager_Sfx.Instance.playSound(2);
                     yield return new WaitForSeconds(0.25f);
+                    
                     myDice[i].throwDice();
                     myDiceNum[i] = myDice[i].getNum();
                     //임시 주사위 UI 변경
@@ -1209,8 +1212,9 @@ public class BattleManager : MonoBehaviour
             //적군 모든 주사위 던지기
             for (int i = 0; i < 4; i++)
             {
-                if (enemyDice[i] != null)
+                if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
                 {
+                    enemyDice[i] = enemyCharacter[i].dice;
                     diceCoverAnimation[i+4].GetComponent<Animator>().Play("diceRoll");
                     diceCoverAnimation[i+4].transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * -90);
                     //Instantiate(diceRollEff, enemyDiceUI[i].transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
@@ -1531,9 +1535,11 @@ public class BattleManager : MonoBehaviour
     {
         if (idx < 4)
         {
-            if (myDice[idx] != null)
+            if (myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
             {
-                myDiceNum[idx] = myDice[idx].throwDiceExcept();
+                myDice[idx] = myCharacter[idx].dice;
+                myDiceNum[idx] = myCharacter[idx].dice.throwDiceExcept();
+                
                 myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, myDice[idx].dir * -90);
                 myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[idx].getNum() - 1];
             }
@@ -1541,9 +1547,10 @@ public class BattleManager : MonoBehaviour
         else
         {
             idx -= 4;
-            if (enemyDice[idx] != null)
+            if (enemyCharacter[idx] != null && enemyCharacter[idx].getCurState() == 0)
             {
-                enemyDiceNum[idx] = enemyDice[idx].throwDiceExcept();
+                enemyDice[idx] = enemyCharacter[idx].dice;
+                enemyDiceNum[idx] = enemyCharacter[idx].dice.throwDiceExcept();
                 enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, enemyDice[idx].dir * -90);
                 enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[idx].getNum() - 1];
             }
@@ -3157,7 +3164,7 @@ public class BattleManager : MonoBehaviour
         resultItem[1] = itemManager.Instance.getItem(resultType1, resultIdx1);
 
         resultType2 = Random.Range(0, 3);
-        if (resultType2 == 2) resultType1++;
+        if (resultType2 == 2) resultType2++;
         resultIdx2 = Random.Range(1, itemManager.Instance.getItemListCount(resultType2));
         if ((resultType2 == resultType0 && resultIdx2 == resultIdx0) || (resultType2 == resultType1 && resultIdx2 == resultIdx1))
         {

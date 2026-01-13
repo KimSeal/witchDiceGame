@@ -866,12 +866,12 @@ public class itemManager : MonoBehaviour
     */
     public void setTutorialInitDice()
     {
-        CharacterManager.Instance.changeDice(0, 0, 1);
-        CharacterManager.Instance.changeDice(0, 1, 1);
-        CharacterManager.Instance.changeDice(0, 2, 1);
-        CharacterManager.Instance.changeDice(0, 3, 1);
-        CharacterManager.Instance.changeDice(0, 4, 1);
-        CharacterManager.Instance.changeDice(0, 5, 1);
+        CharacterManager.Instance.changeDice(2, 0, 1);
+        CharacterManager.Instance.changeDice(2, 1, 1);
+        CharacterManager.Instance.changeDice(2, 2, 1);
+        CharacterManager.Instance.changeDice(2, 3, 1);
+        CharacterManager.Instance.changeDice(2, 4, 1);
+        CharacterManager.Instance.changeDice(2, 5, 1);
         //for(int i=0;i<6;i++) CharacterManager.Instance.changeDice(0, i, 6);
     }
     public void click_dice_changeNum(int characterIdx, int idx,int itemBagIdx) //
@@ -1169,7 +1169,7 @@ public class itemManager : MonoBehaviour
         descObj[0].SetActive(false);
 
         
-        
+        /*
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -1214,7 +1214,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
-        
+        */
         updateInventory();
     }
 

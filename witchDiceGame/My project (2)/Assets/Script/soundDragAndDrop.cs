@@ -16,7 +16,8 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     // Start is called before the first frame update
     void Start()
     {
-        
+        minVal = 125f * 1;//widthArr[opt] / 1920f; 
+        maxVal = 750f * 1;
     }
 
     // Update is called once per frame
@@ -29,16 +30,16 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     {
         int opt = jsonDataManager.Instance.getScreenSize();
         float[] widthArr = { 640f, 960f, 1280f, 1920f, 1920f };
-        
-        minVal = 125f * widthArr[opt] / 1920f; 
-        maxVal = 750f * widthArr[opt] / 1920f;
+
+        minVal = 125f * 1;//widthArr[opt] / 1920f; 
+        maxVal = 750f * 1;//widthArr[opt] / 1920f;
     }
 
     public void setUIButton()
     {
         this.GetComponent<hoverRotateUI>().shakeStart();
-        if (soundOption == 0) this.transform.position = new Vector3((SoundManager_Main.Instance.backgroundVolume * (maxVal - minVal) /2.5f) + minVal,this.transform.position.y, this.transform.position.z);
-        if (soundOption == 1) this.transform.position = new Vector3((SoundManager_Sfx.Instance.SFXVolume * (maxVal - minVal) / 2.5f) + minVal, this.transform.position.y, this.transform.position.z);
+        //if (soundOption == 0) this.transform.position = new Vector3((SoundManager_Main.Instance.backgroundVolume * (maxVal - minVal) /2.5f) + minVal,this.transform.position.y, this.transform.position.z);
+        //if (soundOption == 1) this.transform.position = new Vector3((SoundManager_Sfx.Instance.SFXVolume * (maxVal - minVal) / 2.5f) + minVal, this.transform.position.y, this.transform.position.z);
     }
 
     public void OnBeginDrag(PointerEventData eventData) {

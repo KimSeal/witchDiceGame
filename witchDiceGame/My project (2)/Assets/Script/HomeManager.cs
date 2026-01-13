@@ -43,7 +43,7 @@ public class HomeManager : MonoBehaviour
     private int[,] chapterTalkAfter = { { 0,0,0},{ 25, 28, 31 }, { 0,0,0} };
     private int[] chapterClear = { 0,19,0 };
 
-    private int homeSoundIdx = 1;
+    private int homeSoundIdx = 19;
     private float textBoxTimer = 0f;
     private void Awake()
     {
@@ -72,7 +72,7 @@ public class HomeManager : MonoBehaviour
     {
         textBoxText = textBoxTrue.GetComponent<TextMeshPro>();
         textBox.SetActive(false);
-        homeSoundIdx = 1;
+        homeSoundIdx = 19;
         chapterIdx[0] = 6;
         chapterIdx[1] = 1;
         chapterIdx[2] = 2;

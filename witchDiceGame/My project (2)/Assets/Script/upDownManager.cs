@@ -167,6 +167,15 @@ public class upDownManager : MonoBehaviour
         jewelRotateSize = 0f;
         goldRotateVal =0f;
         jewelRotateVal=0f;
+
+        townName[0] = "Tower";
+        townName[1] = "Home";
+        townName[2] = "Library";
+        townName[3] = "Market Street";
+        townName[4] = "???";
+        townName[5] = "???";
+        townName[6] = "???";
+        townName[7] = "Hill";
     }
 
     // Update is called once per frame
@@ -970,7 +979,6 @@ public class upDownManager : MonoBehaviour
                 backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
                 bigDiceItemUpdateByDepth(0);
                 lockState = 0;
-                curItemIdx = input;
                 hoverOutUpperBar(0);
                 if (AdventureManager.Instance.getTutorial() == 6) AdventureManager.Instance.setTutorial(7);
             }
@@ -996,7 +1004,8 @@ public class upDownManager : MonoBehaviour
                 itemManager.Instance.useConsumeItem(curCharacterIdx, curItemType, curItemIdx);//click_info_useItem();
 
                 bigDiceItemUpdateByDepth(1);
-                clickItem(curItemIdx);
+                curItemIdx = -1;
+                hoverOutUpperBar(0);
             }
             else if (curItemType == 1)
             {
@@ -1013,7 +1022,7 @@ public class upDownManager : MonoBehaviour
     }
     public void clickBigDiceItemCharacterDice(int idx)
     {
-        if (curItemIdx == -1 && curCharacterIdx != -1 && !getCharacterExist(curCharacterIdx)) return; // 선택된게 없으면 캔슬.
+        if (curItemIdx == -1 || curCharacterIdx == -1 || !getCharacterExist(curCharacterIdx)) return; // 선택된게 없으면 캔슬.
 
         for (int i = 0; i < upperItemOutline.Length; i++)
         {
@@ -1021,13 +1030,16 @@ public class upDownManager : MonoBehaviour
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
         itemManager.Instance.click_dice_changeNum(curCharacterIdx, idx, curItemIdx); // 아이템 사용.
+        
         updateBigDiceItemCharacter(curCharacterIdx);
-        if(curItemIdx != -1) clickItem(curItemIdx);
+        curItemIdx = -1;
+        hoverOutUpperBar(0);
+        //if (curItemIdx != -1) clickItem(curItemIdx);
     }
 
     public void clickBigDiceItemCharacterEquip(int idx)
     {
-        if (curItemIdx == -1 && curCharacterIdx != -1 && !getCharacterExist(curCharacterIdx)) return; // 선택된게 없으면 캔슬.
+        if (curItemIdx == -1 || curCharacterIdx == -1 || !getCharacterExist(curCharacterIdx)) return; // 선택된게 없으면 캔슬.
 
         for (int i = 0; i < upperItemOutline.Length; i++)
         {
@@ -1036,7 +1048,9 @@ public class upDownManager : MonoBehaviour
         }
         itemManager.Instance.click_equip_changeNum(curCharacterIdx, curItemIdx, idx);
         updateBigDiceItemCharacter(curCharacterIdx);
-        if(curItemIdx != -1)clickItem(curItemIdx);
+        curItemIdx = -1;
+        hoverOutUpperBar(0);
+        //if (curItemIdx != -1) clickItem(curItemIdx);
     }
 
     public void updateBigDiceItemCharacter(int characterIdx)
