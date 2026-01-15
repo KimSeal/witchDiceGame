@@ -278,7 +278,7 @@ public class upDownManager : MonoBehaviour
     public void hoverInUnderTownButton(int idx)
     {
         if (idx == 0 || idx == 1 || idx == 7 ||
-            (idx == 2 && jsonDataManager.Instance.getChapterDid(0) == 1) // chapter1 clear
+            (idx == 2 && townCondition(idx)) // chapter1 clear
             ) {
             
             skillDescUpdate("noImage", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
@@ -304,7 +304,7 @@ public class upDownManager : MonoBehaviour
                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
 
         TownManager.Instance.hoverOutUIBtn();
-        skillDescUpdate("noImage", 0, 0, 0, 0, "", "");
+        skillDescUpdate("none", 0, 0, 0, 0, "", "");
         onOffUI(0, 0);
     }
 
@@ -324,7 +324,7 @@ public class upDownManager : MonoBehaviour
         if (idx == 0 || idx == 1 || idx == 7) {
             return true;
         }
-        if (idx == 2) { //&& jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
+        if (idx == 2 && jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
             return true;
         }
         return false;
@@ -716,8 +716,6 @@ public class upDownManager : MonoBehaviour
 
     public void clickCharacterButton(int input)
     {
-        Debug.Log("clickCharacter");
-        Debug.Log(input);
         for (int i = 0; i < 4; i++)
         {
             Character tempCharacter = getCharacter(i);
@@ -758,7 +756,6 @@ public class upDownManager : MonoBehaviour
 
         if (curCharacterIdx == -1)
         {
-            Debug.Log("close this");
             changeOption(2, false);
             if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
         }
@@ -767,7 +764,6 @@ public class upDownManager : MonoBehaviour
             changeOption(2, true);
             hoverOutCharacterButton();
         }
-        Debug.Log(curCharacterIdx);
     }
 
     public void hoverInItemTypeButton(int idx)
@@ -988,7 +984,6 @@ public class upDownManager : MonoBehaviour
             //itemManager.Instance.hoverOutItem(input);
 
         }
-        Debug.Log(curItemIdx);
     }
 
     public void clickBigDiceItemCharacter(int idx)
@@ -1055,8 +1050,6 @@ public class upDownManager : MonoBehaviour
 
     public void updateBigDiceItemCharacter(int characterIdx)
     {
-        Debug.Log("cur Character : ");
-        Debug.Log(characterIdx);
         if (characterIdx == -1)
         {
             bigDiceItemCharacterHpText.text = "";
@@ -1371,7 +1364,11 @@ public class upDownManager : MonoBehaviour
     {
         for (int i=0;i<4;i++)
         {
-            if(BattleManager.Instance.getDiceNum(i) >0 && BattleManager.Instance.getDiceNum(i)<=6) bigDiceSkillButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
+            if (BattleManager.Instance.getCharacter(i) == null || BattleManager.Instance.getCharacter(i).getCurState() != 0)
+            {
+                bigDiceSkillButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
+            }
+            else if (BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDiceSkillButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
             else bigDiceSkillButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
 
 

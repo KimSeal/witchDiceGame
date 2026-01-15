@@ -157,14 +157,6 @@ public class AdventureManager : MonoBehaviour
     }
     public bool remainItemChk()
     {
-        Debug.Log("chk!");
-        Debug.Log(resultObj.activeSelf);
-        for (int i=0;i<4;i++)
-        {
-            Debug.Log("/");
-            Debug.Log(resultItemArr[i, 0].ToString());
-            Debug.Log(resultItemArr[i, 1].ToString());
-        }
         return
             resultObj.activeSelf &&
             !(resultItemArr[0, 0] == -99999 && resultItemArr[0, 1] == -99999 &&
@@ -207,7 +199,6 @@ public class AdventureManager : MonoBehaviour
     }
     public void setTutorial(int val)
     {
-        Debug.Log("tutorial Change " + val.ToString());
         tutorialVal = val;
     }
 
@@ -786,7 +777,6 @@ public class AdventureManager : MonoBehaviour
 
     public void clickBalpanUpDownButton(int dir)
     {
-        Debug.Log("click");
         if (stageIdx + adventureBalpanPointTemp + dir >= -1 &&
             stageIdx + adventureBalpanPointTemp + dir < adventureEventArr.Length) {
             adventureBalpanPointTemp += dir;
@@ -970,7 +960,7 @@ public class AdventureManager : MonoBehaviour
             */
             balpanUpDownButton[0].SetActive(true);
             balpanUpDownButton[1].SetActive(true);
-            balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length + 1).ToString();
+            balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length ).ToString();
             if (stageIdx == -1) balpanCurPointText.GetComponent<TextMeshPro>().text = "START!";
             balpanArrow.transform.position = balpanObj[2].transform.position; //+ new Vector3(0, 8, 0);
             clickAble = true;
@@ -1065,7 +1055,7 @@ public class AdventureManager : MonoBehaviour
                 BattleManager.Instance.makeCoin(1, balpanArrow.transform.position); //운명조각 얻기
                 balpanArrow.transform.position = balpanObj[i + 1 + 2].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
-                balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length + 1).ToString();
+                balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length).ToString();
                 
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
@@ -1085,7 +1075,6 @@ public class AdventureManager : MonoBehaviour
             for (int i = 0; i < balpanObj.Length; i++) balpanObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             balpanScreen.GetComponent<Animator>().Play("Close");
             loadEnd = false;
-            Debug.Log("chk0");
             yield return new WaitUntil(() => loadEnd);
             clearBalpan();
 
@@ -1271,23 +1260,22 @@ public class AdventureManager : MonoBehaviour
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
                     SoundManager_Main.Instance.stopSound(2);
+                    int battleSoundTemp = 5;
                     if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && jsonDataManager.Instance.setChapterDid(0, 4))
                     { // 올빼미 선배
                         giveUpBtnAble(false);
                         TalkManager.Instance.startTalk(21);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         giveUpBtnAble(true);
-                        SoundManager_Main.Instance.playSound(17); //17 : 
+                        battleSoundTemp = 17;
                     }
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101) {
-                        SoundManager_Main.Instance.playSound(18);
+                        battleSoundTemp = 18;
                     }
-                    else
-                    {
-                        SoundManager_Main.Instance.playSound(5);
-                    }
+
+                    SoundManager_Main.Instance.playSound(battleSoundTemp);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     BattleManager.Instance.updateBattleBackground(curDiceEventPacket.getBattleBackSprite());
@@ -1319,7 +1307,7 @@ public class AdventureManager : MonoBehaviour
                     
 
                     yield return new WaitUntil(() => !battleEventTrigger); //돌아올때까지 대기
-                    SoundManager_Main.Instance.stopSound(5);
+                    SoundManager_Main.Instance.stopSound(battleSoundTemp);
                     SoundManager_Main.Instance.playSound(2);
                     updateCharacterFace();
                     if (gameOverChk) { break; }
@@ -1439,6 +1427,7 @@ public class AdventureManager : MonoBehaviour
                     resultObj.SetActive(true);
                     for (int i = 0; i < 4; i++)   // 보상 수만큼 해주기
                     {
+                        resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         if (curDiceEventPacket.getItemExist() % 10 > i) //아이템 수 만큼만 지급.
                         {
                             int j = Random.Range(0, 3);
@@ -1473,6 +1462,7 @@ public class AdventureManager : MonoBehaviour
                     resultObj.SetActive(true);
                     for (int i = 0; i < 4; i++)   
                     {
+                        resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         if (curDiceEventPacket.getItemExist() % 10 > i) // 지정된 캐릭터 보상 수만큼 해주기
                         {
                             resultItemArr[i, 0] = 4;
@@ -1524,11 +1514,6 @@ public class AdventureManager : MonoBehaviour
                 }
                 //데모 보스 클리어 확인
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk ) { // 올빼미 선배 클리어
-                    if(jsonDataManager.Instance.setChapterDid(0, 5))
-                    {
-                        TalkManager.Instance.startTalk(18);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                    }
                     if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) jsonDataManager.Instance.setChapterRead(1, 2);
                     giveUpBtnAble(false);
                     demoEndChk = 1;
@@ -1645,30 +1630,7 @@ public class AdventureManager : MonoBehaviour
             adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/adventureBoard_2");
             adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-            /*
-            if(jsonDataManager.Instance.getChapterRead(1,0) == 1) //만약 1스테이지 중간 보스를 무찔렀는 경우.
-            {
-                TalkManager.Instance.startTalk(23); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(24); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(25); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                jsonDataManager.Instance.setChapterRead(1, 0);
-            }
-            if (jsonDataManager.Instance.getChapterRead(1, 1) == 1) //만약 1스테이지 최종 보스를 무찔렀는 경우.
-            {
-                TalkManager.Instance.startTalk(26); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(27); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(28); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                jsonDataManager.Instance.setChapterRead(1, 1);
-            }
-            if (jsonDataManager.Instance.getChapterRead(1, 2) == 1) //만약 부엉이 선배를 무찔렀는 경우.
-            {
-                TalkManager.Instance.startTalk(29); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(30); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(31); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                TalkManager.Instance.startTalk(19); yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                jsonDataManager.Instance.setChapterRead(1, 2);
-            }
-            */
+
             TownManager.Instance.backToTownUI();
             
             adventureJewel =  0;
@@ -1735,7 +1697,6 @@ public class AdventureManager : MonoBehaviour
                 {
                     SoundManager_Sfx.Instance.playSound(7);
                     fullUI.showFull(0);
-                    Debug.Log("you need Place to add character!");
                 }
                 else
                 {
@@ -1939,7 +1900,6 @@ public class AdventureManager : MonoBehaviour
     public GameObject diceEntity;
     public void makeAdventureDice(int cost)
     {
-        Debug.Log(adventureJewel);
         if (adventureJewel < cost) {
             fullUI.showFull(70);
             return;
@@ -1964,7 +1924,6 @@ public class AdventureManager : MonoBehaviour
                 //else 
                     CharacterManager.Instance.throwDiceExcept(i);
                 int temp = Random.Range(0, 4) * 90;
-                Debug.Log("temp : " + temp.ToString());
                 Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp)); //사용된 아이템에 대해 effect
                 //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
                 diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
@@ -2025,12 +1984,6 @@ public class AdventureManager : MonoBehaviour
                     shakeObject(diceObject[selectDiceCharacterIdx]);
                     characterIdx = selectDiceCharacterIdx;
                     
-                    /*
-                    CharacterManager.Instance.throwDice(characterIdx);
-                    Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
-                    SoundManager_Sfx.Instance.playSound(0);
-                    */
-                    Debug.Log("tutorialVal : " + tutorialVal.ToString());
                     if (tutorialVal >= 1 && tutorialVal <= 4) { selectDiceNum = 1; }
                     else selectDiceNum = CharacterManager.Instance.getDiceNum(characterIdx);
 

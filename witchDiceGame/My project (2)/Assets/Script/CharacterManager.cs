@@ -198,6 +198,7 @@ public class CharacterManager : MonoBehaviour
                 setCharacter(i, myCharacter[i].getDestiny().getDestinyIdx());
                 myCharacter[i].setHp(1);
                 myCharacter[i].setReviveUnit(true);
+
             }
             else{//부활 유닛이 아닌경우
                 myCharacter[i] = null;
@@ -224,7 +225,7 @@ public class CharacterManager : MonoBehaviour
     {
         if (myCharacter[idx].getReviveUnit())
         {
-            Debug.Log("no, this is main character!");
+            fullUI.showFull(71);
             return false;
         }
         else

@@ -167,12 +167,12 @@ public class CameraManager : MonoBehaviour
         int updateMoney = AdventureManager.Instance.getAdventureGold();
         
         money.text = "$" + updateMoney.ToString(); //돈 관련 텍스트 업데이트;
-
+        /*
         if (caseVal == 2)
         {
             money.text += " X 2";
         }
-
+        */
         for (int i = 0; i < 4; i++) {
             int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
             if (destinyIdx != -99999) {
@@ -200,7 +200,8 @@ public class CameraManager : MonoBehaviour
 
         loseChk = true;
         loseUI.transform.position = new Vector3(initialPosition.x, initialPosition.y, loseUI.transform.position.z);
-
+        jsonDataManager.Instance.setMoney(updateMoney);
+        /*
         if (caseVal == 2)
         {
             for (int i = 0; i < updateMoney; i++)
@@ -213,7 +214,7 @@ public class CameraManager : MonoBehaviour
         {
             jsonDataManager.Instance.setMoney(updateMoney);
         }
-        
+        */
 
     }
 

@@ -119,7 +119,6 @@ public class optionManager : MonoBehaviour
     {
         if (optionIdx == 0)
         {
-            Debug.Log(idx);
             jsonDataManager.Instance.setLanguage(idx);
             for (int i = 0; i < languageBtn.Length; i++)
             {

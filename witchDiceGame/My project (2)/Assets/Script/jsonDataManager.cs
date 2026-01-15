@@ -330,7 +330,6 @@ public class jsonDataManager : MonoBehaviour
     }
     public void setLanguage(int lan)
     {
-        Debug.Log(lan);
         this.playerPlayData.setLanguage(lan);
         SavePlayerDataToJson();
     }

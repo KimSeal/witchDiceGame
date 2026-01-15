@@ -319,7 +319,7 @@ public abstract class Character
         return false;
     }
 
-    public int getPhyAtk(){ return phyAtk; }
+    public int getPhyAtk(){ return phyAtk + character_battle.getAtk(); }
     public int getMagAtk() { return magAtk; }
     public int getPhyDef() { return phyDef; }
     public int damage(int damage)

@@ -150,6 +150,9 @@ public class itemManager : MonoBehaviour
     private void FixedUpdate()
     {
         characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
+        characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(
+            characterOrigin.GetComponent<SpriteRenderer>().sprite.bounds.size.x,
+           characterOrigin.GetComponent<SpriteRenderer>().sprite.bounds.size.y);
     }
     public Item getCurItem(int idx)
     {
@@ -1199,8 +1202,9 @@ public class itemManager : MonoBehaviour
         ItemExistArr[3, 8] = true;
         ItemArr[3, 8] = new Item(itemList[3][12]);
         ItemExistArr[3, 9] = true;
-        ItemArr[3, 9] = new Item(itemList[3][2]);
- 
+        ItemArr[3, 9] = new Item(itemList[3][1]);
+        ItemExistArr[3, 10] = true;
+        ItemArr[3, 10] = new Item(itemList[3][23]);
 
         for (int i = 0; i < 10; i++)
         {

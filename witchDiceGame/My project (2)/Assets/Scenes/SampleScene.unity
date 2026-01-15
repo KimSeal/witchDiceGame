@@ -30143,7 +30143,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: 21300000, guid: 2e215c5ae5210094b9d4105215f715dd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 76927c757e21945448d8bc4a269948bd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -63432,6 +63432,16 @@ MonoBehaviour:
   - {fileID: 866765517}
   - {fileID: 173561564}
   - {fileID: 874582909}
+  myHpUIBack:
+  - {fileID: 1983298897}
+  - {fileID: 148037706}
+  - {fileID: 1312591883}
+  - {fileID: 2081578500}
+  enemyHpUIBack:
+  - {fileID: 1855215989}
+  - {fileID: 1902569943}
+  - {fileID: 16145744}
+  - {fileID: 421619373}
   battleTextObj: {fileID: 500459151}
   battleDescBox: {fileID: 380049373}
   battleDescBoxName: {fileID: 976221899}
@@ -118471,6 +118481,16 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   enemyHpUI:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  myHpUIBack:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  enemyHpUIBack:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

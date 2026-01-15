@@ -53,7 +53,7 @@ public class LibraryManager : MonoBehaviour
         Debug.Log("?");
         characterSelectOutline[idx].GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
-        if (jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + 1))
+        if (jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + idx)) 
         {
             updateBlackBoard(curCharacterBigIdx * 9 + idx);
         }
@@ -139,7 +139,10 @@ public class LibraryManager : MonoBehaviour
 
     public void hoverInCurCharacter(int idx)
     {
-        if (!(idx == 0 && curCharacterSelectIdx[idx] == 0)) updateBlackBoard(curCharacterSelectIdx[idx]);
+        if (!(idx == 0 && curCharacterSelectIdx[idx] == 0) )
+        {
+            updateBlackBoard(curCharacterSelectIdx[idx]);
+        }
         curCharacter[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
         
     }
@@ -194,7 +197,7 @@ public class LibraryManager : MonoBehaviour
             else
             {
                 characterSelectButton[i].GetComponent<SpriteRenderer>().sprite =
-                       Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face");
+                       Resources.Load<Sprite>("sprite/townImage/spr_town_lock");
             }
         }
     }

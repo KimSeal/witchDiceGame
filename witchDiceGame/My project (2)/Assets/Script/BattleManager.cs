@@ -165,6 +165,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject[] myHpUI = new GameObject[4];
     [SerializeField] private GameObject[] enemyHpUI = new GameObject[4];
 
+    [SerializeField] private GameObject[] myHpUIBack = new GameObject[4];
+    [SerializeField] private GameObject[] enemyHpUIBack = new GameObject[4];
+
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
     [SerializeField] private GameObject battleTextObj;
 
@@ -212,14 +215,12 @@ public class BattleManager : MonoBehaviour
 
     public void hoverInCharacter(int idx)
     {
-        Debug.Log("hoverIn");
         if(idx<4) myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
         else enemyCharacterObjUI[idx-4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
     }
 
     public void hoverOutCharacter(int idx)
     {
-        Debug.Log("hoverOut");
         for (int i = 0; i < 4; i++)
         {
             enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
@@ -311,7 +312,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             myDiceTake[idx] = characterIdx * 10 + skillIdx; //캐릭터하고 사용하는 스킬에 대해 값 생성
-            myFireObj[characterIdx, skillIdx].Play(true);
+            
         }
     }
     private void enemyDiceChange(int idx, int skillIdx) {
@@ -327,7 +328,6 @@ public class BattleManager : MonoBehaviour
         else
         {
             enemyDiceTake[idx] = (skillIdx % 4) * 10 + skillIdx / 4; //캐릭터하고 사용하는 스킬에 대해 값 생성
-            enemyFireObj[(skillIdx % 4), (skillIdx / 4)].Play(true);
         }
     }
     private void drawSkill(Character character)
@@ -612,24 +612,48 @@ public class BattleManager : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            myHpUI[i].GetComponent<TextMeshPro>().text = "";
 
 
-            if (myCharacter[i] != null) {
-                myHpUI[i].GetComponent<TextMeshPro>().text = myCharacter[i].getHp().ToString();
-            }
-
-            if (enemyHpUI[i] != null)
+            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
-                enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
-                if (enemyCharacter[i] != null)
+                myHpUI[i].GetComponent<TextMeshPro>().text = myCharacter[i].getHp().ToString();
+                if (myCharacter[i].getHp() <= 0)
                 {
-                    enemyHpUI[i].GetComponent<TextMeshPro>().text = enemyCharacter[i].getHp().ToString();
+                    myHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
+                }
+                else
+                {
+                    float hpTemp = (float)myCharacter[i].getMaxHp() * 0.2f;
+                    int hpTemp2 = (int)((float)myCharacter[i].getHp() / hpTemp);
+                    if (hpTemp2 == 5) hpTemp2 = 4; 
+                    myHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_" + (hpTemp2 +1).ToString());
                 }
             }
             else
             {
-                Debug.Log(i.ToString() + " / wtf where is it?!");
+                myHpUI[i].GetComponent<TextMeshPro>().text = "";
+                myHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
+            }
+
+            if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
+            {
+                enemyHpUI[i].GetComponent<TextMeshPro>().text = enemyCharacter[i].getHp().ToString();
+                if (enemyCharacter[i].getHp() <= 0)
+                {
+                    enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
+                }
+                else
+                {
+                    float hpTemp = (float)enemyCharacter[i].getMaxHp() * 0.2f;
+                    int hpTemp2 = (int)((float)enemyCharacter[i].getHp() / hpTemp);
+                    if (hpTemp2 == 5) hpTemp2 = 4;
+                    enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_" + (hpTemp2 + 1).ToString());
+                }
+            }
+            else
+            {
+                enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
+                enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
             }
         }
         updateInfoUIFaceUpdate();
@@ -1125,7 +1149,14 @@ public class BattleManager : MonoBehaviour
     //DiceThrow Phase  Start (phase 1- dice throw start)//
     private IEnumerator diceThrowPhase()
     {
-
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                myFireObj[i, j] = battleFireObject[i * 2 + j].GetComponent<ParticleSystem>(); myFireObj[i, j].Stop();
+                enemyFireObj[i, j] = battleFireObject[i * 2 + j + 8].GetComponent<ParticleSystem>(); enemyFireObj[i, j].Stop();
+            }
+        }
         witchPowerObj[0].GetComponent<hoverRotate>().expandEnd();
         witchPowerObj[1].GetComponent<hoverRotate>().expandEnd();
         witchPowerObj[2].GetComponent<hoverRotate>().expandEnd();
@@ -1423,7 +1454,6 @@ public class BattleManager : MonoBehaviour
         clickedDice[0] = idx;
         int witchPowerTemp = witchPowerState;
 
-        Debug.Log("use Witch Power : " + witchPowerTemp.ToString());
         if (needJewel[witchPowerTemp] > AdventureManager.Instance.getAdventureJewel()) {
             //마녀 능력 값이 부족한 경우
             fullUI.showFull(70);
@@ -1988,6 +2018,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
+                    myFireObj[curDiceNum / 10, curDiceNum % 10].Play(true);
                     skillNameTake = myCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
                     if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake) == null)
                     {
@@ -2010,6 +2041,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
+                    enemyFireObj[curDiceNum / 10, curDiceNum % 10].Play(true);
                     skillNameTake = enemyCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
                     if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake) == null)
                     {
@@ -2455,11 +2487,25 @@ public class BattleManager : MonoBehaviour
 
             int moneyTemp = enemyCharacter[idx].getMoney();
             moneyTemp = Random.Range(moneyTemp - (moneyTemp * 2 / 5), moneyTemp + (moneyTemp * 2 / 5));
-            AdventureManager.Instance.addMoney(0,moneyTemp);
+            if (moneyTemp <= 0) moneyTemp = 1;
+
             for (int i = 0; i < moneyTemp; i++)
             {
                 GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(2);
+            }
+            /*
+            int jewelTemp = enemyCharacter[idx].getMoney();
+            jewelTemp = Random.Range(jewelTemp - (jewelTemp * 2 / 5), jewelTemp + (jewelTemp * 2 / 5));
+            if (jewelTemp <= 0) jewelTemp = 1;
+            Debug.Log("money : " + jewelTemp.ToString());
+            //AdventureManager.Instance.addMoney(0, moneyTemp);
+             */
+            int jewelTemp = 1;
+            for (int i = 0; i < jewelTemp; i++)
+            {
+                GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                temp.GetComponent<coinMove>().changeDest(3);
             }
 
             updateEnemyDiceUI();
@@ -2509,11 +2555,18 @@ public class BattleManager : MonoBehaviour
         passiveItemChk = true;
         bool[] effectChk = { false, false, false, false, false, false, false, false, false, false, false, false };
         int conditionNum = 0;
-        if (takeSkillPacketArr[0].getVal() > 0)
+        if (updateLook)
         {
-            battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[0].getVal()) + ">" +
-                                        takeSkillPacketArr[0].getVal().ToString() //상단부에 적용될 text값 적기
-                                    + "</size>";
+            for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
+            {
+                if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0 && takeSkillPacketArr[takeSkillArrIdx].getVal() > 0)
+                {
+                    battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal()) + ">" +
+                                                takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                                            + "</size>";
+                    break;
+                }
+            }
         }
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
         {
