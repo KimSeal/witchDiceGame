@@ -39,7 +39,7 @@ public class HomeManager : MonoBehaviour
 
     private int[] chapterIdx = { 6, 1, 2 };
     private int[,] chapterTalkBefore = { { 0,0,0}, { 23, 26, 29 }, { 0, 0, 0 } };
-    private int[,] chapterTalk = { { 0,0,0},{ 24, 27, 30 }, { 0, 0, 0 } };
+    private int[,] chapterTalk = { { 0,0,0},{ 31, 27, 30 }, { 0, 0, 0 } };
     private int[,] chapterTalkAfter = { { 0,0,0},{ 25, 28, 31 }, { 0,0,0} };
     private int[] chapterClear = { 0,19,0 };
 

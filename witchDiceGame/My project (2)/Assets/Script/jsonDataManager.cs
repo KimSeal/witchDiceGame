@@ -44,13 +44,14 @@ public class jsonDataManager : MonoBehaviour
             if (File.Exists(preFileName))
             {
                 LoadPlayerFromJson_pre();
-                
+
             }
             SavePlayerDataToJson();
         }
-        else 
-        LoadPlayerFromJson();
-
+        else
+        {
+            LoadPlayerFromJson();
+        }
 
         optionManager.Instance.changeOption(1);
         optionManager.Instance.changeOption(2);
@@ -401,7 +402,7 @@ public class jsonDataManager : MonoBehaviour
         public PlayerPlayData()
         {
             this.screenSize = 1;
-            this.language = 1;
+            this.language = 0;
             this.money = 0;
             this.SFXVolume = 1.0f;
             this.backgroundVolume = 1.0f;

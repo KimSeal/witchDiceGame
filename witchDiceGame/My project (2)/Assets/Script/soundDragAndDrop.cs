@@ -16,8 +16,7 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     // Start is called before the first frame update
     void Start()
     {
-        minVal = 125f * 1;//widthArr[opt] / 1920f; 
-        maxVal = 750f * 1;
+        changeSoundMinMaxVal();
     }
 
     // Update is called once per frame
@@ -31,8 +30,8 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
         int opt = jsonDataManager.Instance.getScreenSize();
         float[] widthArr = { 640f, 960f, 1280f, 1920f, 1920f };
 
-        minVal = 125f * 1;//widthArr[opt] / 1920f; 
-        maxVal = 750f * 1;//widthArr[opt] / 1920f;
+        minVal = 125f * widthArr[opt] / 1920f; 
+        maxVal = 750f * widthArr[opt] / 1920f;
     }
 
     public void setUIButton()
