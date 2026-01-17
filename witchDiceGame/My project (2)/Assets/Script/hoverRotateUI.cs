@@ -108,7 +108,6 @@ public class hoverRotateUI : MonoBehaviour
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Exit");
         if (expandAbleBySelf) expandEnd();
     }
 

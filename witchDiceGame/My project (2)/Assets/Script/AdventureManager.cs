@@ -852,7 +852,7 @@ public class AdventureManager : MonoBehaviour
         adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
 
-        TalkManager.Instance.setDescString("");
+        TalkManager.Instance.setDescIdx(-1);
         //selectInfo.GetComponent<TextMeshPro>().text = "";
 
         makeStageEventArr(stageNum); //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
@@ -970,7 +970,7 @@ public class AdventureManager : MonoBehaviour
             nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(1));
+            TalkManager.Instance.setDescIdx(1);
             
 
             diceBtnFire.Play();
@@ -993,13 +993,13 @@ public class AdventureManager : MonoBehaviour
             if (tutorialVal == 18) {
                 tutorialVal = 19;
                 TalkManager.Instance.setDescClickLock(true);
-                TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(62));
+                TalkManager.Instance.setDescIdx(62);
                 TalkManager.Instance.startTalk(47);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
                 yield return new WaitUntil(() => tutorialVal == 20);
                 TalkManager.Instance.setDescClickLock(true);
-                TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(1));
+                TalkManager.Instance.setDescIdx(1);
             }
             
 
@@ -1010,7 +1010,7 @@ public class AdventureManager : MonoBehaviour
             balpanUpDownButton[1].SetActive(false);
 
             TalkManager.Instance.setDescClickLock(false);
-            TalkManager.Instance.setDescString("");
+            TalkManager.Instance.setDescIdx(-1);
 
             diceEntity.SetActive(false);
             /*
@@ -1113,18 +1113,14 @@ public class AdventureManager : MonoBehaviour
                 {
                     meetDiceEvent(false);
                 }
-                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText(); //선택지 텍스트 변경
-                //eventInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
 
 
-                TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
-                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText(); // 이벤트 텍스트 내용 변경
+                TalkManager.Instance.setDescSelectText(curDiceEvent);
+                //TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
 
                 adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/background/spr_ui_adventureBack_" + curDiceEvent.getBackgroundSprite());
-                //adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_adventureBack_" + curDiceEvent.getEventName() + "_0");
 
                 adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEvent.getNPCSprite());
-                //adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_0");
 
                 selectImage.transform.rotation = Quaternion.Euler(0, 0, 0);
 
@@ -1196,8 +1192,8 @@ public class AdventureManager : MonoBehaviour
                     curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_" + curDiceEventPacket.getSpriteIndex());
 
-                    TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
-                    //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
+                    TalkManager.Instance.setDescResultText(curDiceEventPacket);
+                    //TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
                 }
                 else
                 {
@@ -1205,8 +1201,8 @@ public class AdventureManager : MonoBehaviour
                     nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     curDiceEventPacket = curDiceEvent.getPacket(0); // 주사위 결과가 의미 없는 경우 0번째 packet으로 변경
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEventPacket.getSpriteIndex()); //적힌 sprite받아오기
-                    TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
-                    //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();//선택지 텍스트 변경
+                    TalkManager.Instance.setDescResultText(curDiceEventPacket);
+                    //TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
                 }
 
                 if (curDiceEventPacket.getSelectType() == 3) { //능력치 감소
@@ -1323,7 +1319,7 @@ public class AdventureManager : MonoBehaviour
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
 
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                    TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(16));
+                    TalkManager.Instance.setDescIdx(16);
                     //selectInfo.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(16);
                 }
 
@@ -1361,7 +1357,7 @@ public class AdventureManager : MonoBehaviour
                     {
 
                         TalkManager.Instance.setDescClickLock(true);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(51));
+                        TalkManager.Instance.setDescIdx(51);
 
                         giveUpBtnAble(false);
                         TalkManager.Instance.startTalk(35);
@@ -1375,7 +1371,7 @@ public class AdventureManager : MonoBehaviour
                                                         resultItemArr[0, 1] == -99999 && resultItemArr[1, 1] == -99999 && resultItemArr[2, 1] == -99999 && resultItemArr[3, 1] == -99999 ));
 
                         TalkManager.Instance.setDescClickLock(true);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(52));
+                        TalkManager.Instance.setDescIdx(52);
 
                         TalkManager.Instance.startTalk(36);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1386,10 +1382,10 @@ public class AdventureManager : MonoBehaviour
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
                         TalkManager.Instance.setDescClickLock(true);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(53));
+                        TalkManager.Instance.setDescIdx(53);
                         yield return new WaitUntil(() => tutorialVal == 4);
                         TalkManager.Instance.setDescClickLock(false);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(54));
+                        TalkManager.Instance.setDescIdx(54);
                         clickAble = true;
                         clickAbleObjSet(nextBtnObj, true, 1);
                         giveUpBtnAble(true);
@@ -1397,7 +1393,7 @@ public class AdventureManager : MonoBehaviour
                     else if (tutorialVal == 4)
                     {
                         TalkManager.Instance.setDescClickLock(true);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(55));
+                        TalkManager.Instance.setDescIdx(55);
                         eventEndClick = true;
                         clickAble = false;
                         clickAbleObjSet(nextBtnObj, false, 1);
@@ -1405,17 +1401,17 @@ public class AdventureManager : MonoBehaviour
                                                         resultItemArr[0, 1] == -99999 && resultItemArr[1, 1] == -99999 && resultItemArr[2, 1] == -99999 && resultItemArr[3, 1] == -99999));
 
                         TalkManager.Instance.setDescClickLock(true);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(56));
+                        TalkManager.Instance.setDescIdx(56);
                         TalkManager.Instance.startTalk(38);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         yield return new WaitUntil(() => tutorialVal == 5);
                         TalkManager.Instance.setDescClickLock(true);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(57));
+                        TalkManager.Instance.setDescIdx(57);
                         yield return new WaitUntil(() => tutorialVal == 6);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(53));
+                        TalkManager.Instance.setDescIdx(53);
                         yield return new WaitUntil(() => tutorialVal == 7);
                         TalkManager.Instance.setDescClickLock(false);
-                        TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(54));
+                        TalkManager.Instance.setDescIdx(54);
                         clickAble = true;
                         clickAbleObjSet(nextBtnObj, true, 1);
                         giveUpBtnAble(true);
@@ -1545,7 +1541,7 @@ public class AdventureManager : MonoBehaviour
         {
             SoundManager_Main.Instance.stopSound(2); //기본 브금 제거
             SoundManager_Main.Instance.playSound(3); //기본 브금 제거
-            TalkManager.Instance.setDescString("");
+            TalkManager.Instance.setDescIdx(-1);
             //selectInfo.GetComponent<TextMeshPro>().text = "";
             if (demoEndChk != 0)
             { //스테이지 보스 잡은 경우 스테이지 클리어 띄우기
@@ -1764,9 +1760,8 @@ public class AdventureManager : MonoBehaviour
                     else eventWatchNum--;
                 }
                 //회전도 적용(나중에 마녀 능력을 위해서)
-                TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());
-                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경
-                                                                                                                    //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+                TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(eventWatchNum));
+                //TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());
             }
         }
     }
@@ -1794,9 +1789,8 @@ public class AdventureManager : MonoBehaviour
                 {
                     watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
                 }
-
-                TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
-                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getSelectText();
+                TalkManager.Instance.setDescSelectText(curDiceEvent);
+                //TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
             }
             else
             {
@@ -1813,8 +1807,8 @@ public class AdventureManager : MonoBehaviour
                     }
                 }
                 eventWatchNum = inputNum - 1;
-                TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());
-                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEvent.getPacket(eventWatchNum).getChooseText();//선택지 텍스트 변경                                                                                                       //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum+1).ToString());
+                TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(eventWatchNum));
+                //TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());//선택지 텍스트 변경    
             }
         }
     }
@@ -1964,7 +1958,7 @@ public class AdventureManager : MonoBehaviour
 
         
         if (characterIdx == -1 && battleEventTrigger && selectDiceCharacterIdx >= 0) {
-            TalkManager.Instance.setDescString("");
+            TalkManager.Instance.setDescIdx(-1);
             enterBattleCanvas();
         }
         

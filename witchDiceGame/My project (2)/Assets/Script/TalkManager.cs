@@ -46,6 +46,10 @@ public class TalkManager : MonoBehaviour
     private int initIdx = -1;
     //private int curLight = 0;
 
+    private string[] descLanArr = new string[3];
+    private string[] talkLanArr = new string[3];
+
+
     private bool talkingChk = false;
     private bool descChk = false;
     private string descString = "";
@@ -74,6 +78,17 @@ public class TalkManager : MonoBehaviour
 
     [SerializeField] public GameObject skipButton;
 
+    public void changeLan()
+    {
+        if (talkingChk)
+        {
+            characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
+        }
+        else if (descChk)
+        {
+            characterTalk.GetComponent<TextMeshProUGUI>().text = descLanArr[jsonDataManager.Instance.getLanguage()];
+        }
+    }
     public void setDescClickLock(bool hello)
     {
         descClickLock = hello;
@@ -100,6 +115,48 @@ public class TalkManager : MonoBehaviour
             descString = str;
             changeTalkState(1, true);
         }
+    }
+
+    public void setDescIdx(int descIdx) // -1  : cancle
+    {
+        if (descIdx < 0) {
+            descLanArr[0] = "";
+            descLanArr[1] = "";
+            descLanArr[2] = "";
+            setDescString("");
+        }
+        else
+        {
+            descLanArr[0] = descList[descIdx].KR;
+            descLanArr[1] = descList[descIdx].EN;
+            descLanArr[2] = descList[descIdx].JP;
+            setDescString(getDesc(descIdx));
+        }
+        
+    }
+    public void setDescSelectText(adventureEvent curDiceEvent)
+    {
+        for (int i = 0; i < curDiceEvent.selectText.Length; i++)
+        {
+            descLanArr[i] = curDiceEvent.selectText[i];
+        }
+        setDescString(curDiceEvent.getSelectText());
+    }
+    public void setDescChooseText(adventureEvent_Packet curDiceEventPacket)
+    {
+        for (int i = 0; i < curDiceEventPacket.chooseText.Length; i++)
+        {
+            descLanArr[i] = curDiceEventPacket.chooseText[i];
+        }
+        setDescString(curDiceEventPacket.getChooseText());
+    }
+    public void setDescResultText(adventureEvent_Packet curDiceEventPacket)
+    {
+        for (int i = 0; i < curDiceEventPacket.resultText.Length; i++)
+        {
+            descLanArr[i] = curDiceEventPacket.resultText[i];
+        }
+        setDescString(curDiceEventPacket.getResultText());
     }
 
     private void setPoint(TalkReader talkReader){
@@ -144,10 +201,6 @@ public class TalkManager : MonoBehaviour
         }
         
     }
-    public void titleClick()
-    {
-        if(titleScreen) TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(39));
-    }
     
     public void clickDescBox()
     {
@@ -166,7 +219,7 @@ public class TalkManager : MonoBehaviour
             */
             AdventureManager.Instance.clickPlay();
             titleScreen = false;
-            setDescString("");
+            TalkManager.Instance.setDescIdx(-1);
         }
         else
         {
@@ -508,9 +561,15 @@ public class TalkManager : MonoBehaviour
         {
             nameBackground.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/spr_ui_communicate_back");
         }
-        if(jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
+        talkLanArr[0] = talkList[a].TextKR;
+        talkLanArr[1] = talkList[a].TextEN;
+        talkLanArr[2] = talkList[a].TextJP;
+        characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
+        /*
+        if (jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
         else if (jsonDataManager.Instance.getLanguage() == 2) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextJP;
         else characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextEN;
+        */
 
         Debug.Log(talkList[a].TextKR);
         preBackground = talkList[a].backGround;

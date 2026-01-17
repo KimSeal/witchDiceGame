@@ -1691,7 +1691,7 @@ public class BattleManager : MonoBehaviour
         if (AdventureManager.Instance.getTutorial() == 11)
         {//주사위 변경, 운명 마법 사용 관련
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(59));
+            TalkManager.Instance.setDescIdx(59);
             itemManager.Instance.getItemResult(1, 9);
             TalkManager.Instance.startTalk(43);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1699,33 +1699,33 @@ public class BattleManager : MonoBehaviour
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 12);
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(60));
+            TalkManager.Instance.setDescIdx(60);
             TalkManager.Instance.startTalk(44);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 13);
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(61));
+            TalkManager.Instance.setDescIdx(61);
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 14);
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(62));
+            TalkManager.Instance.setDescIdx(62);
             TalkManager.Instance.startTalk(45);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 15);
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(63));
+            TalkManager.Instance.setDescIdx(63);
             TalkManager.Instance.startTalk(46);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 16);
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(64));
+            TalkManager.Instance.setDescIdx(64);
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 17);
             TalkManager.Instance.setDescClickLock(false);
-            TalkManager.Instance.setDescString("");
+            TalkManager.Instance.setDescIdx(-1);
         }
         /*
         if (AdventureManager.Instance.getTutorial() == 1)

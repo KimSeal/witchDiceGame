@@ -131,7 +131,7 @@ public class optionManager : MonoBehaviour
                     languageBtn[i].GetComponent<hoverRotateUI>().setLanguageActive(false);
                 }
             }
-            TalkManager.Instance.titleClick();
+            TalkManager.Instance.changeLan();
         }
     }
 
