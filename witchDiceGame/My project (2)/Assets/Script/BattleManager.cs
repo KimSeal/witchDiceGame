@@ -1377,6 +1377,9 @@ public class BattleManager : MonoBehaviour
     }
     public void hoverInWitchPowerNum(int idx)
     {
+        if (true) {
+            return;
+        }
         if (!witchPowerAble(idx)) //챕터상 아직 쓸 수 없는 경우 통과 
         {
             return;
@@ -3776,7 +3779,7 @@ public class BattleManager : MonoBehaviour
             enemyCharacterPunch[idx-4] = 0;
             enemyCharacterSwing[idx - 4] = temp;
         }
-        CameraManager.Instance.VibrateForeTime(0.1f, temp * 5);//데미지만큼 더 흔들리게
+        //CameraManager.Instance.VibrateForeTime(0.1f, temp * 5);//데미지만큼 더 흔들리게
 
     }
 

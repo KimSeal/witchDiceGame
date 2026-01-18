@@ -962,6 +962,7 @@ public class AdventureManager : MonoBehaviour
             balpanUpDownButton[1].SetActive(true);
             balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length ).ToString();
             if (stageIdx == -1) balpanCurPointText.GetComponent<TextMeshPro>().text = "START!";
+            balpanArrow.GetComponent<Animator>().Play("Idle");
             balpanArrow.transform.position = balpanObj[2].transform.position; //+ new Vector3(0, 8, 0);
             clickAble = true;
             clickAbleObjSet(nextBtnObj, true, 1);
@@ -1059,7 +1060,14 @@ public class AdventureManager : MonoBehaviour
                 
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
-                    //balpanArrow.GetComponent<Animator>().Play("Hit");
+                    balpanArrow.GetComponent<Animator>().Play("Stop");
+                    SoundManager_Sfx.Instance.playSound(11);
+                    break;
+                }
+                else if(i == moveCount - 1)
+                {
+                    balpanArrow.GetComponent<Animator>().Play("Do");
+                    SoundManager_Sfx.Instance.playSound(34);
                     break;
                 }
                 yield return new WaitForSeconds((0.5f / moveCount));
