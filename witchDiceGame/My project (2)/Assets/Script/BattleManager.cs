@@ -1319,6 +1319,11 @@ public class BattleManager : MonoBehaviour
         return false;
     }
     //witch Power 선택 시작!
+    public void witchPowerEffDestroy()
+    {
+        GameObject witchPowerDestroyObj = Instantiate(hitEff, witchPowerObj[0].transform.position, Quaternion.Euler(0, 0, 0));
+        witchPowerDestroyObj.GetComponent<Animator>().Play("witchPowerDestroy");
+    }
     public void witchPowerPhase()
     {
         /*
@@ -1342,8 +1347,11 @@ public class BattleManager : MonoBehaviour
                     Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerNum/spr_witchPowerSelectNum_lock");
             }
         }
+        
+        backGroundObj[3].GetComponent<Animator>().Play("ChangeBattleToPower");
+        backGroundObj[4].GetComponent<Animator>().Play("ChangeBattleToPower");
 
-        for(int i=0;i<4;i++)
+        for (int i=0;i<4;i++)
         {
             myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
             enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
@@ -1355,6 +1363,7 @@ public class BattleManager : MonoBehaviour
             witchPowerObj[2].SetActive(true);
             witchPowerSelectObjEntity.SetActive(true);
             hoverInWitchPowerNum(1);
+           witchPowerObj[0].GetComponent<Animator>().Play("Create");
             //witchPowerObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPower_noUse");
             for (int i = 0; i < 3; i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 30, witchPowerObj[i].transform.position.z);
 
@@ -1409,16 +1418,21 @@ public class BattleManager : MonoBehaviour
         
     }
 
+    public void witchPowerLookUpdate(int idx)
+    {
+        if (idx < 0) backGroundObj[4].GetComponent<Animator>().Play("eyeMove 1");
+        else backGroundObj[4].GetComponent<Animator>().Play("look" + idx.ToString());
+    }
 
     //마녀 파워 선택 (좌우)
     public void witchPowerState_Change(int dir)
     {
         SoundManager_Sfx.Instance.playSound(0);
 
-        shakeObject(witchPowerObj[0]);
-        shakeObject(witchPowerObj[dir + 1]);
-        witchPowerClickState = 6;
 
+        //);
+        witchPowerClickState = 6;
+        int preState = witchPowerState;
         if (dir == 1)
         {
             do
@@ -1437,6 +1451,11 @@ public class BattleManager : MonoBehaviour
                 if (witchPowerState < 0) witchPowerState = 6;
                 hoverInWitchPowerNum(witchPowerState);
             } while (!witchPowerAble(witchPowerState));
+        }
+        if (preState != witchPowerState) {
+            shakeObject(witchPowerObj[0]);
+            if (dir == -1) shakeObject(witchPowerObj[1]);
+            else if (dir == 1) shakeObject(witchPowerObj[2]);
         }
     }
 
@@ -1629,7 +1648,8 @@ public class BattleManager : MonoBehaviour
             myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
         }
-
+        backGroundObj[3].GetComponent<Animator>().Play("ChangePowerToBattle");
+        backGroundObj[4].GetComponent<Animator>().Play("ChangePowerToBattle");
         for (int i = 1; i < 3; i++) witchPowerObj[i].transform.position = new Vector3(witchPowerObj[i].transform.position.x, 300, witchPowerObj[i].transform.position.z);
 
             witchPowerObj[0].SetActive(false);
@@ -3582,8 +3602,18 @@ public class BattleManager : MonoBehaviour
         {6f, -30f, 0f, -18f, -475f, 0f, 115f},
         { 60f, 15f, 0f, 20f, -475f, 0f, 100f},
         { 42f, -26f, 0f,-22f, -475f, 0f, 50f},
+        { -130f, -150f, 0f, -90f, -475f, 0f, 10f}
+    };
+    /*
+     * {
+        { 45f, -23f, 0f, -13f, -475f, 0f, 132f},
+        {6f, -30f, 0f, -18f, -475f, 0f, 115f},
+        { 60f, 15f, 0f, 20f, -475f, 0f, 100f},
+        { 42f, -26f, 0f,-22f, -475f, 0f, 50f},
         { -130f, -150f, 0f, -90f, -125f, 0f, -250f}
     };
+     */
+
     //field, witchbody(powerSelect), background, witchbody(default), witchface
     float[] backgroundBlackAlpha = { 0f, 0f, 0f, 0f, 0f };
     
@@ -3601,6 +3631,7 @@ public class BattleManager : MonoBehaviour
         {
             moveArrY[i] = moveConstY[idx,i];
         }
+
         updateBlackAlpha(idx);
     }
 

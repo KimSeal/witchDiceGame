@@ -1413,19 +1413,23 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInBigDicePowerButton(int i)
     {
+        BattleManager.Instance.witchPowerLookUpdate(i);
         if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
         {
             hoverInWitchPowerButton();
+            
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         }
     }
     public void hoverOutBigDicePowerButton()
     {
+        BattleManager.Instance.witchPowerLookUpdate(-1);
         for (int i = 0; i < 8; i++)
         {
             hoverOutWitchPowerButton();
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
+        
     }
 
     public void updateBigDicePower()
