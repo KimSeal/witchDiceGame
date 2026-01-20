@@ -88,7 +88,7 @@ public class upDownManager : MonoBehaviour
     public GameObject[] bigDicePowerButton = new GameObject[8];
     public GameObject[] bigDicePowerOutline = new GameObject[8];
     public GameObject[] bigDicePowerState = new GameObject[8];
-    public GameObject[] bigDicePowerChain = new GameObject[3];
+    public GameObject[] bigDicePowerChain = new GameObject[8];
     public GameObject bigDicePowerCancleObj;
 
     [SerializeField]
@@ -1413,9 +1413,10 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInBigDicePowerButton(int i)
     {
-        BattleManager.Instance.witchPowerLookUpdate(i);
+        
         if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
         {
+            BattleManager.Instance.witchPowerLookUpdate(i);
             hoverInWitchPowerButton();
             
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
@@ -1423,21 +1424,39 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutBigDicePowerButton()
     {
-        BattleManager.Instance.witchPowerLookUpdate(-1);
         for (int i = 0; i < 8; i++)
         {
             hoverOutWitchPowerButton();
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
-        
     }
-
+    public void hoverOutBigDicePowerButton(int i)
+    {
+        if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+        {
+            BattleManager.Instance.witchPowerLookUpdate(-1);
+        }
+        hoverOutBigDicePowerButton();
+    }
     public void updateBigDicePower()
     {
+        for (int i = 0; i < 8; i++) {
+            bigDicePowerButton[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(0,i);
+            bigDicePowerState[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(1, i);
+        }
+        for (int i = 0; i < 3; i++){
+            bigDicePowerChain[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(2, i); 
+        }
+        for (int i = 4; i < 7; i++)
+        {
+            bigDicePowerChain[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(2, i-1);
+        }
+        /*
         for (int i = 0; i < 4; i++)
         {
-            if (BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
-            else bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
+            if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0 &&
+                BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
+            else bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");//Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
 
 
             if (BattleManager.Instance.getDiceTake(i) != -999)
@@ -1479,8 +1498,9 @@ public class upDownManager : MonoBehaviour
 
         for (int i = 4; i < 8; i++)
         {
-            if (BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
-            else bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
+            if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0 &&
+                BattleManager.Instance.getDiceNum(i) > 0 && BattleManager.Instance.getDiceNum(i) <= 6) bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + BattleManager.Instance.getDiceNum(i));
+            else bigDicePowerButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");//Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + "none");
 
 
             if (BattleManager.Instance.getDiceTake(i) != -999)
@@ -1519,7 +1539,7 @@ public class upDownManager : MonoBehaviour
 
         }
 
-
+        */
     }
 
     private void moveBattleUI(float inputY, GameObject gameObjTemp)

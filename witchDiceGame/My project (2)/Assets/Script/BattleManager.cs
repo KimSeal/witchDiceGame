@@ -81,7 +81,7 @@ public class BattleManager : MonoBehaviour
     public GameObject[] enemyDiceUI = new GameObject[4];
     [SerializeField] private GameObject[] diceUIChk = new GameObject[8]; // obj_skill_Chk_(number)
     [SerializeField] private GameObject[] diceUIChain = new GameObject[6]; // obj_ my/enemyChain_ number
-
+    [SerializeField] public GameObject[] enemyChainAnim =new GameObject[4];
 
     [SerializeField] private GameObject[] myDiceStateUI = new GameObject[4];
     [SerializeField] private GameObject[] enemyDiceStateUI = new GameObject[4];
@@ -1238,6 +1238,10 @@ public class BattleManager : MonoBehaviour
                     myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, myDice[i].getDir() * -90);
                     myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDice[i].getNum() - 1];
                 }
+                else
+                {
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                }
             }
 
             //적군 모든 주사위 던지기
@@ -1256,6 +1260,10 @@ public class BattleManager : MonoBehaviour
 
                     enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
                     enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDice[i].getNum() - 1];
+                }
+                else
+                {
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                 }
             }
             if (myDiceState[0] != 0 || myDiceState[1] != 0 || myDiceState[2] != 0 || myDiceState[3] != 0 ||
@@ -1461,7 +1469,33 @@ public class BattleManager : MonoBehaviour
 
     public int[] needJewel = {0, 1, 3, 3, 2, 3, 1};
     //주사위 고르기. 마녀 스킬 추가되면 여기서 작업할것
+
+    public Sprite getDiceSprite(int opt, int idx)
+    {
+        if (opt == 0) {
+            if (idx < 4) {
+                return myDiceUI[idx].GetComponent<SpriteRenderer>().sprite; 
+            }
+            else
+            {
+                return enemyDiceUI[idx-4].GetComponent<SpriteRenderer>().sprite;
+            }
+        }
+        if (opt == 1) {
+            return diceUIChk[idx].GetComponent<SpriteRenderer>().sprite;
+         }
+        if (opt == 2) {
+             return diceUIChain[idx].GetComponent<SpriteRenderer>().sprite;
+        }
+
+        return null;
+    }
     public void select_witchPower_Dice(int idx) {
+
+        if (getCharacter(idx) == null || getCharacter(idx).getCurState() != 0) {
+            return;
+        }
+
         if (witchPowerClickState == 2) { //다중 선택일 경우, 다음거 선택할수 있도록 설정.
             witchPowerClickState = 1;
             clickedDice[witchPowerClickState] = idx;
@@ -2032,7 +2066,7 @@ public class BattleManager : MonoBehaviour
             string skillNameTake = "";
             for (int i = 0; i < 4; i++)  //아군 주사위 배치
             {
-                if (myDice[i] == null) continue;
+                if (myDice[i] == null || getCharacter(i) == null || getCharacter(i).getCurState() != 0) continue;
                 myDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
                 curDiceNum = myDiceTake[i];
                 if (curDiceNum == -999)
@@ -2055,7 +2089,7 @@ public class BattleManager : MonoBehaviour
             }
             for (int i = 0; i < 4; i++) //적군 주사위 배치
             {
-                if (enemyDice[i] == null) continue;
+                if (enemyDice[i] == null || getCharacter(i+4) == null || getCharacter(i+4).getCurState() != 0) continue;
                 enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
                 curDiceNum = enemyDiceTake[i];
                 if (curDiceNum == -999)
@@ -2444,8 +2478,14 @@ public class BattleManager : MonoBehaviour
                                               //플레이어 죽음으로 맛있는데! 가 아니라 플레이어 받게 되면 애니메이션은 밖에서 해줌.
     {
         changeDiceState(idx, -999);
+
+        SoundManager_Sfx.Instance.playSound(75);
+        diceCoverAnimation[idx].GetComponent<Animator>().Play("diceBoom");
+        diceCoverAnimation[idx].transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * -90);
+        
         if (idx < 4)
         {
+
             int diceNumTemp = myDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
 
 
@@ -2469,15 +2509,26 @@ public class BattleManager : MonoBehaviour
                     myDiceChange(i, 0, -999);
                 }
             }
+            for (int i = 0; i < 4; i++)
+            {
+                if (getCharacter(i) == null || getCharacter(i).getCurState() != 0)
+                {
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                }
+            }
 
             myDiceNum[idx] = -999;
             myDice[idx] = null;
 
             updateMyDiceUI();
+            myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
         else
         {
             idx -= 4;
+            int[] beforeDiceTake = { 0, 0, 0, 0 };
+            for (int i = 0; i < 4; i++) beforeDiceTake[i] = enemyDiceTake[i]; // chain 애니메이션 발동을 위해 이전 상태 저장.
+
             int diceNumTemp = enemyDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
 
             for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
@@ -2497,6 +2548,13 @@ public class BattleManager : MonoBehaviour
                 {
                     enemyDiceChange(i, -999);
                     enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                }
+            }
+            for (int i = 4; i < 8; i++)
+            {
+                if (getCharacter(i) == null || getCharacter(i).getCurState() != 0)
+                {
+                    enemyDiceUI[i-4].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                 }
             }
 
@@ -2532,6 +2590,17 @@ public class BattleManager : MonoBehaviour
             }
 
             updateEnemyDiceUI();
+            enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+            bool chainChk = false;
+            for (int i=0;i<4;i++)
+            {
+                if (beforeDiceTake[i] != enemyDiceTake[i] && i != idx) {
+                    chainChk = true;
+                    enemyChainAnim[i].GetComponent<Animator>().Play("breakChain_" + Random.Range(0, 6).ToString());
+                }
+            }
+            if (chainChk) SoundManager_Sfx.Instance.playSound(74);
         }
     }
 
@@ -2998,10 +3067,10 @@ public class BattleManager : MonoBehaviour
                             myDiceChange(i, 0, -999);
                             myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                            if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            //if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         }
                     }
-                    
+                    updateMyDiceUI();
                     //
                     nextSkill = 0;
 
@@ -3143,13 +3212,15 @@ public class BattleManager : MonoBehaviour
                         {
                             enemyDiceChange(i, -999);
                             enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                            if (i != 3)
+                            /*if (i != 3)
                             {
+                                Debug.Log("chain delete " + i.ToString());
                                 diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                            }
+                            }*/
 
                         }
                     }
+                    updateEnemyDiceUI();
                     battleAlphaControl_Enemy(-1);
                     //
                     nextSkill = 0;
@@ -3163,12 +3234,12 @@ public class BattleManager : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 myDiceChange(i, 0, -999);
-                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                 diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                 if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
 
                 enemyDiceChange(i, -999);
-                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                 diceUIChk[i + 4].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                 if (i + 3 != 6) diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
@@ -3831,8 +3902,8 @@ public class BattleManager : MonoBehaviour
 
             changeDiceState(i, 0);
             changeDiceState(i+4, 0);
-            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
         adventureStartChk = true;
         StartCoroutine(startPhaseManage());
@@ -3951,40 +4022,44 @@ public class BattleManager : MonoBehaviour
             mySkillUsed[i, 1] = false;
             enemySkillUsed[i, 0] = false;
             enemySkillUsed[i, 1] = false;
-
-
-        //적군
-        //enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
-        if (!CharacterManager.Instance.character_deepCopy(ref enemyCharacter[i], CharacterManager.Instance.getCharacter(false, i)))
+            myDiceNum[i] = -999;
+            enemyDiceNum[i] = -999;
+            //적군
+            //enemyCharacter[i] = CharacterManager.Instance.getCharacter(false, i); //현재는 null인경우로 체크하는데 나중에 null말고 빈값을 주어야함.
+            if (!CharacterManager.Instance.character_deepCopy(ref enemyCharacter[i], CharacterManager.Instance.getCharacter(false, i)))
             {
                 enemyCharacter[i] = null;
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
 
             if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
             {
                 
                 enemyDice[i] = new Dice();
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             else
             {
                 enemyDice[i] = null;
-                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
             //어군
             //myCharacter[i] = CharacterManager.Instance.getCharacter(true, i);
             if(!CharacterManager.Instance.character_deepCopy(ref myCharacter[i], CharacterManager.Instance.getCharacter(true, i))){
                 myCharacter[i] = null;
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
 
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
                 myCharacter[i].getCharacter_battle().setOriginIdx(i); //돌아갈때 원래 위치 저장하기 위함
                 myDice[i] = new Dice(myCharacter[i].getDiceObj());
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             else
             {
                 myDice[i] = null;
-                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
 
         }
