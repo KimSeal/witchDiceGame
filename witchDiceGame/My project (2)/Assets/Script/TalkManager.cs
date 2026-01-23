@@ -593,6 +593,8 @@ public class TalkManager : MonoBehaviour
             background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + "empty");
             characterName.GetComponent<TextMeshProUGUI>().text = "";
             characterTalk.GetComponent<TextMeshProUGUI>().text = "";
+            talkImage[1].SetActive(false);
+            talkImage[0].SetActive(false);
             entity.SetActive(false);
             changeTalkState(0, false);
         }

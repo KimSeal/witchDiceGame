@@ -732,6 +732,13 @@ public class upDownManager : MonoBehaviour
 
     public void clickCharacterButton(int input)
     {
+        if (AdventureManager.Instance.getTutorial() == 1) {
+            return;
+        }
+        else if (AdventureManager.Instance.getTutorial() == 2 && !AdventureManager.Instance.getTutorialVal4ErrorChk())            
+        {
+            return;
+        }
         for (int i = 0; i < 4; i++)
         {
             Character tempCharacter = getCharacter(i);
@@ -773,10 +780,19 @@ public class upDownManager : MonoBehaviour
         if (curCharacterIdx == -1)
         {
             changeOption(2, false);
-            if (AdventureManager.Instance.getTutorial() == 3) AdventureManager.Instance.setTutorial(4);
+            if (AdventureManager.Instance.getTutorial() == 3 && AdventureManager.Instance.getTutorialVal4ErrorChk())
+            {
+                AdventureManager.Instance.setTutorialVal4ErrorChk(false);
+                AdventureManager.Instance.setTutorial(4);
+            }
         }
-        else {
-            if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
+        else
+        {
+            if (AdventureManager.Instance.getTutorial() == 2 && AdventureManager.Instance.getTutorialVal4ErrorChk())
+            {
+                AdventureManager.Instance.setTutorialVal4ErrorChk(false);
+                AdventureManager.Instance.setTutorial(3);
+            }
             changeOption(2, true);
             hoverOutCharacterButton();
         }
@@ -1217,6 +1233,7 @@ public class upDownManager : MonoBehaviour
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
 
+        if (AdventureManager.Instance.getTutorial() != 0 && AdventureManager.Instance.getTutorial() < 13) return;
         deleteOtherLock(4);
 
         if (input != -1)

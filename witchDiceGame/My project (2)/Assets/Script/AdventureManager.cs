@@ -222,6 +222,7 @@ public class AdventureManager : MonoBehaviour
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         //튜토리얼이 시작되었음을 알림.
         tutorialVal = 1;
+        setTutorialVal4ErrorChk(false);
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         StartCoroutine(phase_Manage_Coroutine(0));
     }
@@ -1052,6 +1053,7 @@ public class AdventureManager : MonoBehaviour
                 TalkManager.Instance.startTalk(34);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 setTutorial(2);
+                setTutorialVal4ErrorChk(false);
             }
             if (tutorialVal == 18) {
                 tutorialVal = 19;
@@ -1232,6 +1234,7 @@ public class AdventureManager : MonoBehaviour
                         giveUpBtnAble(false);
                         TalkManager.Instance.startTalk(49);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        setTutorialVal4ErrorChk(false);
                     }
 
                 }
@@ -1430,7 +1433,7 @@ public class AdventureManager : MonoBehaviour
                     }
                     if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
                     {
-
+                        setTutorialVal4ErrorChk(false);
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(51);
 
@@ -1450,12 +1453,12 @@ public class AdventureManager : MonoBehaviour
 
                         TalkManager.Instance.startTalk(36);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
+                        setTutorialVal4ErrorChk(true);
                         yield return new WaitUntil(() => tutorialVal == 3);
-
+                        setTutorialVal4ErrorChk(false);
                         TalkManager.Instance.startTalk(37);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
+                        setTutorialVal4ErrorChk(true);
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(53);
                         yield return new WaitUntil(() => tutorialVal == 4);
@@ -2021,7 +2024,7 @@ public class AdventureManager : MonoBehaviour
             }
             else
             {
-                diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
         }
     }

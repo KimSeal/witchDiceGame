@@ -91,11 +91,14 @@ public class optionManager : MonoBehaviour
             else optionBoards[i].SetActive(false);
         }
         changeOption(optionIdx);
-        AdventureManager.Instance.changeLanguage();
-        upDownManager.Instance.clickItem(-1);
-        upDownManager.Instance.clickItem(-1);
-        upDownManager.Instance.hoverOutWitchPowerButton();
-        BattleManager.Instance.setCurClickSkill(-1);
+        if (AdventureManager.Instance.getTutorial() == 0)
+        {
+            AdventureManager.Instance.changeLanguage();
+            upDownManager.Instance.clickItem(-1);
+            upDownManager.Instance.clickItem(-1);
+            upDownManager.Instance.hoverOutWitchPowerButton();
+            BattleManager.Instance.setCurClickSkill(-1);
+        }
 
     }
     public void unactiveOptionBoard()
