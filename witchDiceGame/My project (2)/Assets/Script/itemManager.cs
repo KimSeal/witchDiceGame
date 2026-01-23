@@ -147,7 +147,7 @@ public class itemManager : MonoBehaviour
     [SerializeField]
     public GameObject changeDiceEff;
 
-    private void FixedUpdate()
+    void Update()
     {
         characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
         characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(
@@ -1455,10 +1455,4 @@ public class itemManager : MonoBehaviour
 
     // passive Item use function End
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

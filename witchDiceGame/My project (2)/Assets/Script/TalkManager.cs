@@ -201,7 +201,10 @@ public class TalkManager : MonoBehaviour
         }
         
     }
-    
+    public void setTitleScreen(bool onOff)
+    {
+        titleScreen = onOff;
+    }
     public void clickDescBox()
     {
         Debug.Log("click talk Box!");
@@ -211,15 +214,15 @@ public class TalkManager : MonoBehaviour
             goToNextTalk();
         }
         else if (titleScreen) {
-            /*            if (!jsonDataManager.Instance.getTutorialDid())
+            if (!jsonDataManager.Instance.getTutorialDid())
             {
                 AdventureManager.Instance.mainPlayButton(true);
             }
-            else AdventureManager.Instance.mainPlayButton(false);
-            */
-            AdventureManager.Instance.clickPlay();
-            titleScreen = false;
-            TalkManager.Instance.setDescIdx(-1);
+            else AdventureManager.Instance.clickPlay();
+            //AdventureManager.Instance.mainPlayButton(false);
+
+            //
+
         }
         else
         {

@@ -59,19 +59,25 @@ public class optionManager : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape)) {
-
-            if (optionOn)
-            {
-                unactiveOptionBoard();
-            }
-            else
-            {
-                activeOptionBoard();
-            }
-            
+            clickOptionButton();
         }
     }
 
+    public void clickOptionButton()
+    {
+        if (optionOn)
+        {
+            unactiveOptionBoard();
+        }
+        else
+        {
+            activeOptionBoard();
+        }
+    }
+    public void clickBlack()
+    {
+        Debug.Log("double click");
+    }
     public void activeOptionBoard()
     {
         optionOn = true;
@@ -85,6 +91,11 @@ public class optionManager : MonoBehaviour
             else optionBoards[i].SetActive(false);
         }
         changeOption(optionIdx);
+        AdventureManager.Instance.changeLanguage();
+        upDownManager.Instance.clickItem(-1);
+        upDownManager.Instance.clickItem(-1);
+        upDownManager.Instance.hoverOutWitchPowerButton();
+        BattleManager.Instance.setCurClickSkill(-1);
 
     }
     public void unactiveOptionBoard()
@@ -119,6 +130,7 @@ public class optionManager : MonoBehaviour
     {
         if (optionIdx == 0)
         {
+            AdventureManager.Instance.changeLanguage();
             jsonDataManager.Instance.setLanguage(idx);
             for (int i = 0; i < languageBtn.Length; i++)
             {

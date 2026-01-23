@@ -89,6 +89,8 @@ public class upDownManager : MonoBehaviour
     public GameObject[] bigDicePowerOutline = new GameObject[8];
     public GameObject[] bigDicePowerState = new GameObject[8];
     public GameObject[] bigDicePowerChain = new GameObject[8];
+    public GameObject[] bigDicePowerButtonEff = new GameObject[8];
+    public GameObject[] bigDicePowerButtonEffOrigin = new GameObject[8];
     public GameObject bigDicePowerCancleObj;
 
     [SerializeField]
@@ -178,15 +180,24 @@ public class upDownManager : MonoBehaviour
         townName[7] = "Hill";
     }
 
+    void Update()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+        }
+        for (int i=0;i<8;i++)
+        {
+            bigDicePowerButtonEff[i].GetComponent<Image>().sprite =
+               bigDicePowerButtonEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+        }
+
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
         moveBattleUI(moveArrY[0], underHoverBar[0]);
         moveBattleUI(moveArrY[1], upperHoverBar[0]);
-
-        for (int i = 0; i < 12; i++) {
-            upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
-        }
 
         if (goldRotateSize > 0f) {
             goldRotateSize -= 1f;
@@ -203,7 +214,12 @@ public class upDownManager : MonoBehaviour
         }
             
     }
-
+    public void activeWitchPowerDice(int powerIdx, int diceIdx)
+    {
+        bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString());
+        bigDicePowerButtonEff[diceIdx].GetComponent<Image>().sprite =
+               bigDicePowerButtonEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
+    }
     public void activePassiveItem(int itemIdx)
     {
         upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active");
@@ -241,25 +257,25 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInWitchHatButton()
     {
-        skillDescUpdate("noImage", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(40));
+        skillDescUpdate("none", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(40));
         underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
         onOffUI(0, 1);
     }
     public void hoverOutWitchHatButton()
     {
-        skillDescUpdate("noImage", 0, 0, 0, 0, "", "");
+        skillDescUpdate("none", 0, 0, 0, 0, "", "");
         onOffUI(0, 0);
     }
 
     public void hoverInAdventureWitchPowerButton()
     {
-        skillDescUpdate("noImage", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(48));
+        skillDescUpdate("none", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(48));
         underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
         onOffUI(0, 1);
     }
     public void hoverOutAdventureWitchPowerButton()
     {
-        skillDescUpdate("noImage", 0, 0, 0, 0, "", "");
+        skillDescUpdate("none", 0, 0, 0, 0, "", "");
         onOffUI(0, 0);
     }
     public void hoverInWitchPowerButton()
@@ -281,12 +297,12 @@ public class upDownManager : MonoBehaviour
             (idx == 2 && townCondition(idx)) // chapter1 clear
             ) {
             
-            skillDescUpdate("noImage", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
+            skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
             underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + townName[idx]);
         }
         else
         {
-            skillDescUpdate("noImage", 0, 0, 0, 0,"???", TalkManager.Instance.getDesc(38));
+            skillDescUpdate("none", 0, 0, 0, 0,"???", TalkManager.Instance.getDesc(38));
             underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + "lock");
         }
         underTownOutline[idx].GetComponent<Image>().sprite
@@ -931,7 +947,7 @@ public class upDownManager : MonoBehaviour
             return; 
         }
         if (input != -1 && lockState == 3) return;
-        if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 || AdventureManager.Instance.getTutorial() == 9)
+        if (AdventureManager.Instance.getTutorial() != 0 && (AdventureManager.Instance.getTutorial() != 4 && AdventureManager.Instance.getTutorial() != 5 && AdventureManager.Instance.getTutorial() != 6 &&  AdventureManager.Instance.getTutorial() <= 9))
         {
             //fullUI.showFull(65);
             return;
@@ -965,7 +981,7 @@ public class upDownManager : MonoBehaviour
             //bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUpperBar(input);
             lockState = 2; //클릭시 현재 스킬에 대한 설명으로 고정.
-            if (AdventureManager.Instance.getTutorial() == 4 && input == 0 && curItemType == 0) { AdventureManager.Instance.setTutorial(5); }
+            if (AdventureManager.Instance.getTutorial() == 4 && input == 0 && curItemType == 0 && AdventureManager.Instance.getTutorialVal4ErrorChk()) { AdventureManager.Instance.setTutorial(5); }
             if (AdventureManager.Instance.getTutorial() == 11 && input == 0 && curItemType == 1) AdventureManager.Instance.setTutorial(12);
             //updatebigDiceSkill();
         }

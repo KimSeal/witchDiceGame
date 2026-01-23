@@ -39,6 +39,8 @@ public class CameraManager : MonoBehaviour
     TextMeshPro money;
     TextMeshPro partGet;
 
+    
+
     // Start is called before the first frame update
     public void VibrateForeTime(float time) {
         ShakeTime = time;
@@ -91,6 +93,7 @@ public class CameraManager : MonoBehaviour
             windowChk = true;
             changeScreenSize(jsonDataManager.Instance.getScreenSize());
         }
+
         if (ZoomTime > 0)
         {
             
@@ -134,9 +137,42 @@ public class CameraManager : MonoBehaviour
                 transform.position = initialPosition;
             }
         }
+       
 
+    }
+    void FixedUpdate()
+    {
+        
+    }
+    private void LateUpdate()
+    {
+        if (dirShakeSize > 0)
+        {
+            Debug.Log("chk CameraMove");
+            this.transform.position = initialPosition + new Vector3(dirShakeSize * Mathf.Sin(dirShakeVal) * Mathf.Cos(dirShake), dirShakeSize * Mathf.Sin(dirShakeVal) * Mathf.Sin(dirShake), 0f);
+            dirShakeSize -= (subShakeVal * Time.deltaTime);
+            dirShakeVal += 20f * Time.deltaTime;
+            if (dirShakeSize <= 0) this.transform.position = initialPosition;
+        }
+    }
 
+    [SerializeField]
+    public float dirShakeSize = 0; //흔들리는 크기
+    public float dirShake = 0; //실제 방향
+    public float dirShakeVal = 0; //흔들릴때 시간 축이 될 변수
+    public float subShakeVal = 0.02f;
 
+    public void attackShakeStart(float power)
+    {
+        dirShakeVal = 0.0f;
+        
+        if (power < 0) {
+            dirShakeVal = Mathf.PI;
+            power *= -1.0f;
+        }
+        dirShakeSize = power;
+        subShakeVal = power;
+        dirShake = Random.Range(Mathf.PI * -0.25f, Mathf.PI * 0.25f);
 
     }
     public void zoomEvent()

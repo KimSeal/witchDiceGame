@@ -135,6 +135,9 @@ public class AdventureManager : MonoBehaviour
 
     private int tutorialVal = 0;
 
+    public bool tutorialVal4ErrorChk;
+    public bool getTutorialVal4ErrorChk() { return tutorialVal4ErrorChk; }
+    public void setTutorialVal4ErrorChk(bool onOff) { tutorialVal4ErrorChk = onOff; }
 
     public void remainItemOnOff(bool onOff)
     {
@@ -200,7 +203,15 @@ public class AdventureManager : MonoBehaviour
     }
     public void setTutorial(int val)
     {
-        tutorialVal = val;
+
+        if (val == 1 || tutorialVal + 1 == val)
+        {
+            tutorialVal = val;
+        }
+        else
+        {
+            Debug.Log("tutorial : " + tutorialVal.ToString());
+        }
     }
 
     public IEnumerator tutorial_Coroutine()
@@ -247,6 +258,12 @@ public class AdventureManager : MonoBehaviour
         tutorialUI.transform.position = new Vector3(-1500f, -500f, 0f);
         tutorialUIText.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(24);
     }
+    public void changeLanguage()
+    {
+        tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
+        closeTryBuyItem(false);
+        remainItemOnOff(false);
+    }
     public void mainPlayButton(bool input)
     {
         storyLineErrorChk();
@@ -265,6 +282,9 @@ public class AdventureManager : MonoBehaviour
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
             //SoundManager_Main.Instance.playSound(7);
         }
+        TalkManager.Instance.setTitleScreen(false);
+        TalkManager.Instance.setDescIdx(-1);
+
         tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
     }
     public void mainExitButton()
@@ -308,7 +328,7 @@ public class AdventureManager : MonoBehaviour
                 storeItemArr[storeIdx, 1] = -99999;
                 storeItemArr[storeIdx, 2] = -99999;
 
-                closeTryBuyItem();
+                closeTryBuyItem(true);
                 shakeObject(storeImageObj);
                 updateStore();
             }
@@ -377,12 +397,12 @@ public class AdventureManager : MonoBehaviour
                     "\n" + TalkManager.Instance.getDesc(11) + adventureGold.ToString() + " -> " + (adventureGold - storeItemArr[storeIdx, 2]).ToString();
         }
     }
-    public void closeTryBuyItem()
+    public void closeTryBuyItem(bool soundOnOff)
     {
         storeCheckButtonYes.GetComponent<hoverRotate>().expandEnd();
         storeCheckButtonNo.GetComponent<hoverRotate>().expandEnd();
         storeCheckEntityObj.SetActive(false);
-        SoundManager_Sfx.Instance.playSound(7);
+        if(soundOnOff) SoundManager_Sfx.Instance.playSound(7);
     }
     
     public void hoverInItem_store()
@@ -940,6 +960,7 @@ public class AdventureManager : MonoBehaviour
         while (//stageIdx < 20 &&
                !gameOverChk)
         {
+            closeTryBuyItem(true);
             if (descObj[0].activeSelf == true) hoverOutItem();
             giveUpBtnAble(false);
             eventWatchNum = -1;
@@ -1438,6 +1459,7 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(53);
                         yield return new WaitUntil(() => tutorialVal == 4);
+                        setTutorialVal4ErrorChk(false);
                         TalkManager.Instance.setDescClickLock(false);
                         TalkManager.Instance.setDescIdx(54);
                         clickAble = true;
@@ -1457,6 +1479,7 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(56);
                         TalkManager.Instance.startTalk(38);
+                        setTutorialVal4ErrorChk(true);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         yield return new WaitUntil(() => tutorialVal == 5);
                         TalkManager.Instance.setDescClickLock(true);

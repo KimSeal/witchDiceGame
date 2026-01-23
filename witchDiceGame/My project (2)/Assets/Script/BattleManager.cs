@@ -32,6 +32,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     public GameObject starEff;
 
+    [SerializeField]
+    public GameObject brokenEff;
+
     public int chooseDiceIdx;
 
     //선공 팀 구분
@@ -881,6 +884,8 @@ public class BattleManager : MonoBehaviour
     }
     public void click_dice(int diceIdx)
     {
+        
+
         if (currentLightUI == 0 && currentMoveUI == 0)
         {
             if (curPhase == 3)
@@ -1394,13 +1399,12 @@ public class BattleManager : MonoBehaviour
     }
     public void hoverInWitchPowerNum(int idx)
     {
-        if (true) {
-            return;
-        }
+
         if (!witchPowerAble(idx)) //챕터상 아직 쓸 수 없는 경우 통과 
         {
             return;
         }
+
         for (int i=0;i<7;i++)
         {
             witchPowerSelectObjOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
@@ -1420,6 +1424,7 @@ public class BattleManager : MonoBehaviour
         witchPowerClickState = diceNum;
         witchPowerState = idx;
         witchPowerObj[0].GetComponent<Animator>().Play(witchPowerTemp.ToString());
+
     }
     public void hoverOutWitchPowerNum()
     {
@@ -1433,6 +1438,14 @@ public class BattleManager : MonoBehaviour
     }
 
     //마녀 파워 선택 (좌우)
+    public void hoverInWitchPowerNextButton(int idx)
+    {
+        witchPowerObj[idx+1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+    }
+    public void hoverOutWitchPowerNextButton() {
+        witchPowerObj[1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        witchPowerObj[2].GetComponent<SpriteRenderer>().material.SetInt("_Radius",0);
+    }
     public void witchPowerState_Change(int dir)
     {
         SoundManager_Sfx.Instance.playSound(0);
@@ -1506,6 +1519,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+
         if (AdventureManager.Instance.getTutorial() == 15) AdventureManager.Instance.setTutorial(16);
         clickedDice[0] = idx;
         int witchPowerTemp = witchPowerState;
@@ -1517,24 +1531,33 @@ public class BattleManager : MonoBehaviour
         }
 
         AdventureManager.Instance.addMoney(1, needJewel[witchPowerTemp] * -1);
-        
+        //backGroundObj[4].GetComponent<Animator>().Play("DiceUse");
         if (witchPowerTemp == 0) //reroll 스킬 사용시 
         {
             rerollDice(clickedDice[0]);
+            SoundManager_Sfx.Instance.playSound(2);
+            upDownManager.Instance.activeWitchPowerDice(0,clickedDice[0]);
         }
         if (witchPowerTemp == 1) //reroll 스킬 사용시 
         {
             rerollDice(clickedDice[0]);
+            SoundManager_Sfx.Instance.playSound(2);
+            upDownManager.Instance.activeWitchPowerDice(1, clickedDice[0]);
         }
         if (witchPowerTemp == 2) //add 스킬 사용시 
         {
             addDice(clickedDice[0], true);
+            SoundManager_Sfx.Instance.playSound(20);
+            upDownManager.Instance.activeWitchPowerDice(2, clickedDice[0]);
         }
         if (witchPowerTemp == 3) //sub 스킬 사용시 
         {
             addDice(clickedDice[0], false);
+            SoundManager_Sfx.Instance.playSound(16);
+            upDownManager.Instance.activeWitchPowerDice(3, clickedDice[0]);
         }
-
+        
+        /*
         //스킬 사용되었으니 변경 값에 대하여 이펙트 생성
         for (int i = 0; i < 2; i++)
         {
@@ -1549,6 +1572,7 @@ public class BattleManager : MonoBehaviour
                 SoundManager_Sfx.Instance.playSound(2);
             }
         }
+        */
         //yield return new WaitForSeconds(1f);
 
         GameObject witchPowerDestroyObj = Instantiate(hitEff, witchPowerObj[0].transform.position, Quaternion.Euler(0, 0, 0));
@@ -1565,15 +1589,15 @@ public class BattleManager : MonoBehaviour
         }
 
         MakeEnemyAttackSet();
-        upDownManager.Instance.updateBigDicePower();
+       
         updateMyDiceUI();
         updateEnemyDiceUI();
-
+        
         //setCurClickSkill(-1);
 
         clickedDice[0] = -1;
         clickedDice[1] = -1;
-
+        upDownManager.Instance.updateBigDicePower();
         //주사위 선택 종료시 버튼 이동
         //직관성을 위해 나눔
 
@@ -2478,11 +2502,24 @@ public class BattleManager : MonoBehaviour
                                               //플레이어 죽음으로 맛있는데! 가 아니라 플레이어 받게 되면 애니메이션은 밖에서 해줌.
     {
         changeDiceState(idx, -999);
-
+        Debug.Log("75Chk");
         SoundManager_Sfx.Instance.playSound(75);
         diceCoverAnimation[idx].GetComponent<Animator>().Play("diceBoom");
         diceCoverAnimation[idx].transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * -90);
-        
+
+        for (int i=0;i<4;i++) {
+            if (idx < 4)
+            {
+                GameObject temp = Instantiate(brokenEff, myDiceUI[idx].transform.position, Quaternion.Euler(0, 0, 0));
+                temp.GetComponent<brokenObj>().setBrokenDice();
+            }
+            else { 
+                GameObject temp = Instantiate(brokenEff, enemyDiceUI[idx - 4].transform.position, Quaternion.Euler(0, 0, 0));
+                temp.GetComponent<brokenObj>().setBrokenDice();
+            }
+            
+        }
+
         if (idx < 4)
         {
 
@@ -2700,6 +2737,11 @@ public class BattleManager : MonoBehaviour
                         }
                         yield return new WaitForSeconds(activeTime);
 
+                        activeTime /= 1.5f;
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(activeTime * 2f);
                         activeTime /= 1.5f;
                     }
                 }
@@ -3009,6 +3051,7 @@ public class BattleManager : MonoBehaviour
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
+                                        backGroundObj[4].GetComponent<Animator>().Play("BattleKill");
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                         updateEnemyDiceUI();
@@ -3020,6 +3063,7 @@ public class BattleManager : MonoBehaviour
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                             makeHitEffect(tempTargetIdx);
+                                            backGroundObj[4].GetComponent<Animator>().Play("BattleShine");
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -3138,6 +3182,7 @@ public class BattleManager : MonoBehaviour
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
+                                        backGroundObj[4].GetComponent<Animator>().Play("BattleFaint");
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                     }
@@ -3148,6 +3193,7 @@ public class BattleManager : MonoBehaviour
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                             makeHitEffect(tempTargetIdx);
+                                            backGroundObj[4].GetComponent<Animator>().Play("BattleHit");
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -3881,6 +3927,11 @@ public class BattleManager : MonoBehaviour
             enemyCharacterPunch[idx-4] = 0;
             enemyCharacterSwing[idx - 4] = temp;
         }
+
+        Debug.Log("shakeAmount");
+        if(idx < 4) CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage));
+        else CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage) * -1);
+
         //CameraManager.Instance.VibrateForeTime(0.1f, temp * 5);//데미지만큼 더 흔들리게
 
     }
