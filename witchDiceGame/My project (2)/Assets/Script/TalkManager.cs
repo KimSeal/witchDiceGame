@@ -277,8 +277,8 @@ public class TalkManager : MonoBehaviour
 
             for (int i = 0; i < 4; i++) material[i] = characterImage[i].GetComponent<Image>().material;
 
-            talkImage[0].SetActive(false);
-            talkImage[1].SetActive(false);
+            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             entity.SetActive(false);
 
             titleScreen = true;
@@ -506,15 +506,17 @@ public class TalkManager : MonoBehaviour
             }
         }
 
-        Debug.Log("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
         //이미지 사용시 체크
-        if (talkList[a].imagePlace == 0) { talkImage[0].SetActive(false); talkImage[1].SetActive(false); }
+        if (talkList[a].imagePlace == 0) {
+            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
         else if (talkList[a].imagePlace == 1) {
-            talkImage[0].SetActive(true);
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
+            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
         else if (talkList[a].imagePlace == 2) {
-            talkImage[0].SetActive(false); talkImage[1].SetActive(true);
+            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
         }
 
@@ -593,8 +595,9 @@ public class TalkManager : MonoBehaviour
             background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + "empty");
             characterName.GetComponent<TextMeshProUGUI>().text = "";
             characterTalk.GetComponent<TextMeshProUGUI>().text = "";
-            talkImage[1].SetActive(false);
-            talkImage[0].SetActive(false);
+            
+            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             entity.SetActive(false);
             changeTalkState(0, false);
         }

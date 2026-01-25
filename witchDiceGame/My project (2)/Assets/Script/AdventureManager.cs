@@ -46,7 +46,7 @@ public class AdventureManager : MonoBehaviour
     private GameObject diceRollEff;
 
     [SerializeField] private GameObject[] descObj = new GameObject[4]; // obj_ui_adventure_item_Desc_ board/logo/name/desc
-    [SerializeField] private GameObject balpanLoad,balpanScreen, balpanArrow, balpanArrowGoal; // obj_adventure_diceBoard_load, obj_adventure_diceBoard, obj_balpan_arrow
+    [SerializeField] private GameObject balpanLoad, balpanScreen, balpanArrow, balpanArrowGoal; // obj_adventure_diceBoard_load, obj_adventure_diceBoard, obj_balpan_arrow
     [SerializeField] private GameObject[] balpanObj = new GameObject[10]; //obj_balpan_(number)
     [SerializeField] public GameObject[] balpanUpDownButton = new GameObject[2];
     [SerializeField] public GameObject balpanCurPointText;
@@ -63,7 +63,7 @@ public class AdventureManager : MonoBehaviour
     //전투 : 0  주사위 굴리기 이벤트 : 1 
 
 
-    [SerializeField]private GameObject stageInfo; //현재 스테이지의 level과 스테이지 정보를 담는 text
+    [SerializeField] private GameObject stageInfo; //현재 스테이지의 level과 스테이지 정보를 담는 text
     [SerializeField] private GameObject selectInfo; // adventure_selectInfo
     [SerializeField] private GameObject selectImage; //adventure_selectDice
     private GameObject[] textObject = new GameObject[2]; // 주사위 굴렸을때 결과를 처리하기 위해 사용한다. 
@@ -75,7 +75,7 @@ public class AdventureManager : MonoBehaviour
     [SerializeField] private GameObject[] resultNewMark = new GameObject[4];
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
-    
+
     public List<adventureEvent>[] adventureEventList = new List<adventureEvent>[5]; //
 
     public List<AdventureEventReader> adventureEventReaderList = new List<AdventureEventReader>(); // 
@@ -114,7 +114,7 @@ public class AdventureManager : MonoBehaviour
 
     //상점에 대한 데이터
     private int adventureGold = 0;
-    
+
     private TextMeshPro moneyText;
     private int[,] storeItemArr = new int[4, 3]; //4개의 아이템이 배치, 각각 type, index(아이템 고유번호), 가격이 저장될 예정 
 
@@ -125,7 +125,7 @@ public class AdventureManager : MonoBehaviour
     private TextMeshPro storeCheckPriceObj;
     [SerializeField] private GameObject storeCheckEntityObj, storeCheckButtonYes, storeCheckButtonNo; // spr_ui_adventureStore_ yes/no Btn
 
-    [SerializeField] 
+    [SerializeField]
     public GameObject itemRemainChk;
     public TextMeshPro itemRemainText;
 
@@ -141,7 +141,7 @@ public class AdventureManager : MonoBehaviour
 
     public void remainItemOnOff(bool onOff)
     {
-        
+
         if (onOff)
         {
             itemRemainText.text = TalkManager.Instance.getDesc(67);
@@ -275,7 +275,7 @@ public class AdventureManager : MonoBehaviour
         //if (false) {
         if (input) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
-            tutorialStart();            
+            tutorialStart();
         }
         else
         {
@@ -324,7 +324,7 @@ public class AdventureManager : MonoBehaviour
             if (buyResult == 0) //정상작동의 경우
             {
                 SoundManager_Sfx.Instance.playSound(4);
-                addMoney(0,storeItemArr[storeIdx, 2] * -1);
+                addMoney(0, storeItemArr[storeIdx, 2] * -1);
                 storeItemArr[storeIdx, 0] = -99999;
                 storeItemArr[storeIdx, 1] = -99999;
                 storeItemArr[storeIdx, 2] = -99999;
@@ -335,7 +335,7 @@ public class AdventureManager : MonoBehaviour
             }
             else if (buyResult == 1) //인벤토리가 가득 찬 경우
             {
-                
+
                 SoundManager_Sfx.Instance.playSound(7);
                 shakeObject(storeCheckEntityObj);
                 storeCheckPriceObj.text = TalkManager.Instance.getDesc(19);
@@ -350,7 +350,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void updateStore() //가게 이미지 업데이트
     {
-        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) { 
+        if (storeItemArr[storeIdx, 0] == -99999 || storeItemArr[storeIdx, 1] == -99999 || storeItemArr[storeIdx, 2] == -99999) {
             storeImageObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             storePriceObj.text = "";//"No Item Here!";
         }
@@ -365,11 +365,11 @@ public class AdventureManager : MonoBehaviour
     {
         shakeObject(storeImageObj);
         SoundManager_Sfx.Instance.playSound(0);
-        if (dir == 1){
+        if (dir == 1) {
             storeIdx++;
             if (storeIdx > 3) storeIdx = 0;
         }
-        else if (dir == -1){
+        else if (dir == -1) {
             storeIdx--;
             if (storeIdx < 0) storeIdx = 3;
         }
@@ -386,7 +386,7 @@ public class AdventureManager : MonoBehaviour
         else
         {
             SoundManager_Sfx.Instance.playSound(0);
-            
+
             storeCheckEntityObj.SetActive(true);
             clickAbleObjSet(storeCheckButtonYes, true, 1);
             clickAbleObjSet(storeCheckButtonNo, true, 1);
@@ -403,9 +403,9 @@ public class AdventureManager : MonoBehaviour
         storeCheckButtonYes.GetComponent<hoverRotate>().expandEnd();
         storeCheckButtonNo.GetComponent<hoverRotate>().expandEnd();
         storeCheckEntityObj.SetActive(false);
-        if(soundOnOff) SoundManager_Sfx.Instance.playSound(7);
+        if (soundOnOff) SoundManager_Sfx.Instance.playSound(7);
     }
-    
+
     public void hoverInItem_store()
     {
         if (storeItemArr[storeIdx, 0] != -99999 && storeItemArr[storeIdx, 1] != -99999 && storeItemArr[storeIdx, 2] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
@@ -414,7 +414,7 @@ public class AdventureManager : MonoBehaviour
 
             if (storeItemArr[storeIdx, 0] == 4)
             {
-                
+
                 Destiny hoverDestiny = CharacterManager.Instance.getDestiny(storeItemArr[storeIdx, 1]);
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
@@ -423,7 +423,7 @@ public class AdventureManager : MonoBehaviour
             }
             else
             {
-                
+
                 Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
@@ -529,11 +529,11 @@ public class AdventureManager : MonoBehaviour
             adventureEventList[Idx] = new List<adventureEvent>();
         }
 
-        int packetIdx=0; //전체 packet 배열을 위한 변수
+        int packetIdx = 0; //전체 packet 배열을 위한 변수
         int packetArrIdx = 0; //event내 packet 배열에 대응하는 변수
         for (int eventIdx = 0; eventIdx < adventureEventReaderList.Count; eventIdx++) //Reader 2개를 병합 시켜 하나의 event를 만들어 list에 추가
         {
-            for (int i =0;i<6;i++) { // 배열 초기화
+            for (int i = 0; i < 6; i++) { // 배열 초기화
                 tempList[i] = null;
             }
             packetArrIdx = 0;
@@ -559,10 +559,61 @@ public class AdventureManager : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    private float[] characterMoveSize = new float[4];
+    private float[] characterMoveVal = new float[4];
 
+    // Update is called once per frame
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            //jumpTest();
+        }
+    }
+    void FixedUpdate()
+    {
+        
+        for (int i = 0; i < 4; i++)
+        {
+            if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0) {
+                if (characterMoveSize[i] > 0f)
+                {
+                    characterMoveSize[i] -= jumpValMove;
+                    characterMoveVal[i] += 1.0f;
+                    characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74 + characterMoveSize[i] * Mathf.Abs(Mathf.Sin((characterMoveVal[i] / 50) * Mathf.PI)), 0f);
+                }
+                else
+                {
+                    characterMoveSize[i] = 0.0f;
+                    characterMoveVal[i] = 0.0f;
+                    characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74, 0f);
+                }
+            }
+            else
+            {
+                characterMoveSize[i] = 0.0f;
+                characterMoveVal[i] = 0.0f;
+                characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74, 0f);
+            }
+        }
+    }
+    [SerializeField]
+    public float jumpPower = 50f;
+    public float jumpValMove = 0.5f;
+    public float jumpDelay = 0.1f;
+    [SerializeField]
+    public GameObject boardObj;
+
+    public IEnumerator jumpCharacter(){ 
+        for(int i=3; i>=0; i--){
+            if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
+            {
+                characterMoveSize[i] = jumpPower;
+                characterMoveVal[i] = 0f;
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+        
     }
 
     public void randomMake(int start, int end) //이 중간에 있는 stage를 섞는다
@@ -1171,7 +1222,9 @@ public class AdventureManager : MonoBehaviour
 
                 //float tempMoveVal = 1.0f;
                 float timeVal = 0.0f;
-                while(timeVal < 1.0f) {
+                StartCoroutine(jumpCharacter());
+                boardObj.GetComponent<Animator>().Play("Move");
+                while (timeVal < 1.0f) {
                     adventureBackground.transform.localPosition = new Vector3(32f + 0.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 7.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
                     adventureBackBoard.transform.localPosition = new Vector3(32f + 8.0f + (4 * Mathf.Sin(timeVal * Mathf.PI)), -1.0f - (4 * Mathf.Sin(timeVal * Mathf.PI)), 0f);
                     timeVal += 0.05f;
