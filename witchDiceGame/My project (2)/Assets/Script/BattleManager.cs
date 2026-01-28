@@ -2497,13 +2497,12 @@ public class BattleManager : MonoBehaviour
         }
         //}
     }
-
+    private bool chainChk = false;
     private void DeadCharacterUpdate(int idx) //캐릭터가 죽을 경우(getcurstate가 2를 반환시) 작동한다. 
                                               //플레이어 죽음으로 맛있는데! 가 아니라 플레이어 받게 되면 애니메이션은 밖에서 해줌.
     {
         changeDiceState(idx, -999);
-        Debug.Log("75Chk");
-        SoundManager_Sfx.Instance.playSound(75);
+        
         diceCoverAnimation[idx].GetComponent<Animator>().Play("diceBoom");
         diceCoverAnimation[idx].transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * -90);
 
@@ -2628,8 +2627,7 @@ public class BattleManager : MonoBehaviour
 
             updateEnemyDiceUI();
             enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-
-            bool chainChk = false;
+            chainChk = false;
             for (int i=0;i<4;i++)
             {
                 if (beforeDiceTake[i] != enemyDiceTake[i] && i != idx) {
@@ -2637,7 +2635,7 @@ public class BattleManager : MonoBehaviour
                     enemyChainAnim[i].GetComponent<Animator>().Play("breakChain_" + Random.Range(0, 6).ToString());
                 }
             }
-            if (chainChk) SoundManager_Sfx.Instance.playSound(74);
+            
         }
     }
 
@@ -2975,9 +2973,10 @@ public class BattleManager : MonoBehaviour
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         AdventureManager.Instance.setTutorial(10);
                     }
-                    
 
 
+                    bool boomChk = false;
+                    chainChk = false;
                     for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
                         characterTargetIdx = 0;
                         int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3020,6 +3019,11 @@ public class BattleManager : MonoBehaviour
                                         makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
+                                        if (!boomChk)
+                                        {
+                                            boomChk = true;
+                                            SoundManager_Sfx.Instance.playSound(75);
+                                        }
                                         updateMyDiceUI();
                                     }
                                     else
@@ -3054,6 +3058,11 @@ public class BattleManager : MonoBehaviour
                                         backGroundObj[4].GetComponent<Animator>().Play("BattleKill");
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
+                                        if (!boomChk)
+                                        {
+                                            boomChk = true;
+                                            SoundManager_Sfx.Instance.playSound(75);
+                                        }
                                         updateEnemyDiceUI();
                                     }
                                     else
@@ -3080,8 +3089,11 @@ public class BattleManager : MonoBehaviour
 
                             //if (winningCheck() != 0) break;
                         }
-
-
+                        if (chainChk)
+                        {
+                            chainChk = false;
+                            SoundManager_Sfx.Instance.playSound(74);
+                        }
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
 
@@ -3148,7 +3160,8 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.2f);
 
                     jsonDataManager.Instance.meetMonsterSkill(enemyCharacter[skillUseCharacter].getDestiny().DestinyIdx, skillUseIdx);
-
+                    bool boomChk = false;
+                    chainChk = false;
                     for (int i = 0; i < curSkill.getTargetChance(); i++)
                     { // 해당 스킬이 공격하는 숫자
                         int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3185,6 +3198,11 @@ public class BattleManager : MonoBehaviour
                                         backGroundObj[4].GetComponent<Animator>().Play("BattleFaint");
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
+                                        if (!boomChk)
+                                        {
+                                            boomChk = true;
+                                            SoundManager_Sfx.Instance.playSound(75);
+                                        }
                                     }
                                     else // 사망이 아닌 경우
                                     {
@@ -3215,6 +3233,11 @@ public class BattleManager : MonoBehaviour
                                         makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
+                                        if (!boomChk)
+                                        {
+                                            boomChk = true;
+                                            SoundManager_Sfx.Instance.playSound(75);
+                                        }
                                     }
                                     else //사망 하지 않은 경우
                                     {
@@ -3235,6 +3258,12 @@ public class BattleManager : MonoBehaviour
                             updateEnemyDiceUI();
                             updateBattleUI();
 
+                        }
+
+                        if (chainChk)
+                        {
+                            chainChk = false;
+                            SoundManager_Sfx.Instance.playSound(74);
                         }
 
                         skillAnimationControl(false, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행

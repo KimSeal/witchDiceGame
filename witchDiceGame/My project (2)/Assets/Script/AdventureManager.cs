@@ -579,7 +579,7 @@ public class AdventureManager : MonoBehaviour
                 if (characterMoveSize[i] > 0f)
                 {
                     characterMoveSize[i] -= jumpValMove;
-                    characterMoveVal[i] += 1.0f;
+                    characterMoveVal[i] += 1.5f;
                     characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74 + characterMoveSize[i] * Mathf.Abs(Mathf.Sin((characterMoveVal[i] / 50) * Mathf.PI)), 0f);
                 }
                 else
