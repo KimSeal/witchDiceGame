@@ -5,6 +5,8 @@ using UnityEngine;
 public class Character_battle{
     private int originIdx;
     private int atk;
+    private int mag;
+    private int spd;
     private int armor;
     private int diceState;
     private int characterState;
@@ -13,6 +15,8 @@ public class Character_battle{
     {
         originIdx = -999;
         atk = 0;
+        mag = 0;
+        spd = 0;
         armor = 0;
         diceState = 0;
         specialVal = 0;
@@ -35,6 +39,11 @@ public class Character_battle{
     {
         return atk;
     }
+    public int getSpeed()
+    {
+        return this.spd;
+    }
+    public int getMag() { return mag; }
     public void setOriginIdx(int originIdx)
     {
         this.originIdx = originIdx;
@@ -56,7 +65,15 @@ public class Character_battle{
     {
         if (idx == 2) {  //공격력업
             this.atk += val;
-        } 
+        }
+        if (idx == 4)
+        {  //마법감응력업
+            this.mag += val;
+        }
+        if (idx == 5)
+        {  //스피드업
+            this.spd += val;
+        }
     }
     public int damage(int val)
     {
@@ -77,8 +94,9 @@ public abstract class Character
 {
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
-    protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0,
+    protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0, speed = 0,
         hp = 0, maxHp = 0, mp = 0, maxMp = 0;
+
     protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] { 0, 1 };
@@ -103,6 +121,7 @@ public abstract class Character
             this.magAtk = destiny.magAtk;
             this.phyDef = destiny.phyDef;
             this.magDef = destiny.magDef;
+            this.speed = destiny.speed;
             this.maxHp = destiny.maxHp;
             this.hp = maxHp;
 
@@ -128,6 +147,7 @@ public abstract class Character
         this.magAtk = character.magAtk;
         this.phyDef = character.phyDef;
         this.magDef = character.magDef;
+        this.speed = character.speed;
         this.hp = character.hp;
         this.maxHp = character.maxHp;
         this.item[0] = new Item(character.getItem(0));
@@ -153,6 +173,7 @@ public abstract class Character
         this.magAtk = character.magAtk;
         this.phyDef = character.phyDef;
         this.magDef = character.magDef;
+        this.speed = character.speed;
         this.hp = character.hp;
         this.maxHp = character.maxHp;
         this.item[0] = new Item(character.getItem(0));
@@ -165,6 +186,14 @@ public abstract class Character
         this.reviveUnit = character.reviveUnit;
         this.shadow = character.shadow;
         this.money = character.getMoney();
+    }
+    public bool getPossible(int val)
+    {
+        if (Random.Range(0, 99) + this.magAtk >= 100 - val)
+        {
+            return true;
+        }
+        return false;
     }
     public int getMoney() {
         return this.money;
@@ -274,10 +303,11 @@ public abstract class Character
 
     public abstract List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
 
-    public bool TakeSkillPacket(TakeSkillPacket takeSkillPacket)
+    public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 
     {
         if (takeSkillPacket.getSkillType() == 0 || takeSkillPacket.getSkillType() == 1000)
         {
+            if (this.getSpeed() > Random.Range(1, 100)) { return 2; }
             this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
             //Debug.Log("this damage is : " + takeSkillPacket.getVal());
             //Debug.Log("my remain Hp is : " + this.hp);
@@ -287,13 +317,13 @@ public abstract class Character
                 if (this.reviveUnit && AdventureManager.Instance.getTutorial() != 0)
                 {
                     jsonDataManager.Instance.tutorialRevive();
-                    this.hp = 1; return false;
+                    this.hp = 1; return 0;
                 } //튜토리얼 용으로 하나 만들기.
                 this.hp = 0;
                 this.curState = 2;
-                return true;
+                return 1;
             }
-            return false;
+            return 0;
         }
         else if (takeSkillPacket.getSkillType() == 1 || takeSkillPacket.getSkillType() == 1001) //회복인 경우
         {
@@ -304,24 +334,44 @@ public abstract class Character
             {
                 this.hp = this.maxHp;
             }
-            return false;
+            return 3;
         }
         else if (takeSkillPacket.getSkillType() == 2) //공격력 업인 경우
         {
             this.character_battle.upgrade(2, takeSkillPacket.getVal());
-            return false;
+            return 3;
         }
         else if (takeSkillPacket.getSkillType() == 3) //특수 변수 변화인경우
         {
             this.character_battle.setSpecialVal(takeSkillPacket.getVal()); // 변수를 해당 값으로 변화시킨다.
         }
-
-        return false;
+        else if (takeSkillPacket.getSkillType() == 4) //마법감응력 업인 경우
+        {
+            this.character_battle.upgrade(4, takeSkillPacket.getVal());
+            return 3;
+        }
+        else if (takeSkillPacket.getSkillType() == 5) //공격력 업인 경우
+        {
+            this.character_battle.upgrade(5, takeSkillPacket.getVal());
+            return 3;
+        }
+        return -1;
     }
 
-    public int getPhyAtk(){ return phyAtk + character_battle.getAtk(); }
-    public int getMagAtk() { return magAtk; }
-    public int getPhyDef() { return phyDef; }
+    public int getPhyAtk(){
+        if (phyAtk + character_battle.getAtk() < 0) return 0;
+        if (phyAtk + character_battle.getAtk() > 99) return 99;
+        return phyAtk + character_battle.getAtk(); 
+    }
+    public int getMagAtk() {
+        if (magAtk + character_battle.getMag() < 0) return 0;
+        if (magAtk + character_battle.getMag() > 99) return 99;
+        return magAtk + character_battle.getMag(); }
+    public int getSpeed() {
+        if (speed + character_battle.getSpeed() < 0) return 0;
+        if (speed + character_battle.getSpeed() > 99) return 99;
+        return speed + character_battle.getSpeed(); 
+    }
     public int damage(int damage)
     {
         this.hp -= damage;

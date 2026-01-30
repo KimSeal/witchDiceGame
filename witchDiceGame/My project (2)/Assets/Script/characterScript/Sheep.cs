@@ -31,7 +31,7 @@ public class Sheep : Character
         //{
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //적 한명에게 주사위 숫자만큼 공격
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //적 한명에게 주사위 숫자만큼 공격
             }
         if (sendSkillPacket.useSkillIdx == 1) 
         {

@@ -148,7 +148,6 @@ public class CameraManager : MonoBehaviour
     {
         if (dirShakeSize > 0)
         {
-            Debug.Log("chk CameraMove");
             this.transform.position = initialPosition + new Vector3(dirShakeSize * Mathf.Sin(dirShakeVal) * Mathf.Cos(dirShake), dirShakeSize * Mathf.Sin(dirShakeVal) * Mathf.Sin(dirShake), 0f);
             dirShakeSize -= (subShakeVal * Time.deltaTime);
             dirShakeVal += 20f * Time.deltaTime;

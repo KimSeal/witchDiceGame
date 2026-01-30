@@ -31,13 +31,13 @@ public class Schnauzer : Character
 
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 0) //와와 기본 스킬
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0], 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
             packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 0, Random.Range(1,sendSkillPacket.diceNum[0]), 2)); //스킬을 사용한 대상에게 / 0변화 / 상태변화를 현재 주사위 값으로 / 스킬은 버프류
         }
 
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1) //와와 특수 스킬(스킬기억)
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5, 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5 + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
 
 //            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.phyAtk + this.character_battle.getAtk()) * this.skillUse(sendSkillPacket.useSkillIdx).getVal(0), 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
         }

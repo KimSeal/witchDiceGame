@@ -55,6 +55,7 @@ public class DestinyReader
     public int magAtk;
     public int phyDef;
     public int magDef;
+    public int Speed;
     public int maxHp;
     public int maxMp;
     public int shadow;

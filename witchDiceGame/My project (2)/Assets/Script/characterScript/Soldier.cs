@@ -31,11 +31,11 @@ public class Soldier : Character
         //{
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8, 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
             }
             if (sendSkillPacket.useSkillIdx == 1) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5, 0));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5 + this.getPhyAtk(), 0));
             }
         //}
         return packets;

@@ -31,11 +31,11 @@ public class Duck : Character
         //{
             if (sendSkillPacket.useSkillIdx == 0) //오리 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(0, 0), 0)); //1명에게 15데미지
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(0, 0) + this.getPhyAtk(), 0)); //1명에게 15데미지
             }
         if (sendSkillPacket.useSkillIdx == 1) //용사 기본 스킬
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0)); //3명에게 5데미지
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0) + this.getPhyAtk(), 0)); //3명에게 5데미지
         }
         //}
         return packets;

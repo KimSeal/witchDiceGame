@@ -2223,7 +2223,7 @@ public class BattleManager : MonoBehaviour
 
     public void click_battle_character(int characterIdxInput)
     {   //캐릭터를 누르면 해당 캐릭터 클릭이 비활성화되고
-        if (curPhase == 5 && characterTargetIdx != -999 && characterClickAble[characterIdxInput])
+        if (curPhase == 5 && characterTargetIdx != -999 && characterClickAble[characterIdxInput] && !KillAnimationManager.Instance.getKillAnimationPlay())
         {
             clickCharacter[this.characterTargetIdx] = characterIdxInput; //누른 캐릭터 저장
             battleTargetUI[characterIdxInput].SetActive(false); //해당 target ui 배활성화
@@ -2978,6 +2978,7 @@ public class BattleManager : MonoBehaviour
                     bool boomChk = false;
                     chainChk = false;
                     for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
+                        boomChk = false;
                         characterTargetIdx = 0;
                         int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
                         //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
@@ -3011,10 +3012,13 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-
-                                    if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                    int skillResult = myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                    if (skillResult != 2){
+                                        if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                                    }
+                                    if (myCharacter[tempTargetIdx] != null && skillResult == 1) //사망인경우
                                     {
+
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
@@ -3029,10 +3033,9 @@ public class BattleManager : MonoBehaviour
                                     else
                                     {
                                         //주사위 상태 변화 실행
-
                                         changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
 
-                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        if (skillResult == 0)
                                         {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                             makeHitEffect(tempTargetIdx);
@@ -3046,13 +3049,22 @@ public class BattleManager : MonoBehaviour
 
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
 
+                                    int skillResult = enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
                                     //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                    if (enemyCharacter[tempTargetIdx - 4] != null && skillResult == 1) //반환 결과가 해당 캐릭터의 죽음 인경우
                                     {
+                                        if (!boomChk && winningCheck() == 1)
+                                        {
+                                            KillAnimationManager.Instance.startAnimation(0, myCharacter[skillUseCharacter], enemyCharacter[tempTargetIdx - 4]);
+                                            yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
+                                        }
+                                        if (skillResult != 2)
+                                        {
+                                            if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                                        }
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
                                         backGroundObj[4].GetComponent<Animator>().Play("BattleKill");
@@ -3067,8 +3079,12 @@ public class BattleManager : MonoBehaviour
                                     }
                                     else
                                     {
+                                        if (skillResult != 2)
+                                        {
+                                            if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                                        }
                                         changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        if (skillResult == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                             makeHitEffect(tempTargetIdx);
@@ -3185,13 +3201,17 @@ public class BattleManager : MonoBehaviour
 
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                                    int skillResult = myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                    if (skillResult != 2)
+                                    {
+                                        if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                                    }
                                     //specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //사망인 경우
-
-                                    if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                    
+                                    if ( skillResult == 1)
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
@@ -3207,7 +3227,7 @@ public class BattleManager : MonoBehaviour
                                     else // 사망이 아닌 경우
                                     {
                                         changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        if (skillResult == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                             makeHitEffect(tempTargetIdx);
@@ -3222,12 +3242,15 @@ public class BattleManager : MonoBehaviour
                             {
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    int skillResult = enemyCharacter[tempTargetIdx-4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                    if (skillResult != 2)
+                                    {
+                                        if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                                    }//specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //사망한경우
-                                    if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                    if ( skillResult == 1)
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                         makeHitEffect(tempTargetIdx);
@@ -3242,7 +3265,7 @@ public class BattleManager : MonoBehaviour
                                     else //사망 하지 않은 경우
                                     {
                                         changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                        if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0)
+                                        if (skillResult == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                             makeHitEffect(tempTargetIdx);
@@ -3673,8 +3696,8 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            myCharacterSwing[i] = 0;
-            enemyCharacterSwing[i] = 0;
+            myCharacterSwing[i] = 0f;
+            enemyCharacterSwing[i] = 0f;
             myCharacterPunch[i] = 0;
             enemyCharacterPunch[i] = 0;
             for (int j = 0; j < 2; j++) {
@@ -3794,7 +3817,10 @@ public class BattleManager : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-                if (myCharacterSwing[i] < 0.0) myCharacterSwing[i] = 0.0f;
+                if (myCharacterSwing[i] < 0.0f) myCharacterSwing[i] = 0.0f;
+                Debug.Log("whathappen");
+                Debug.Log(myCharacterSwing[i]);
+                Debug.Log(myCharacterPunch[i]);
                 myCharacterObjEntityUI[i].transform.position = new Vector3(
                         myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
                         myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
@@ -3833,7 +3859,7 @@ public class BattleManager : MonoBehaviour
             
             for (int i = 0; i < 4; i++)
             {
-                if (enemyCharacterSwing[i] < 0.0) enemyCharacterSwing[i] = 0.0f;
+                if (enemyCharacterSwing[i] < 0.0f) enemyCharacterSwing[i] = 0.0f;
                 enemyCharacterObjEntityUI[i].transform.position = new Vector3(
                         enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
                         enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
@@ -3843,8 +3869,8 @@ public class BattleManager : MonoBehaviour
                 if (enemyCharacterAtkReady[i] == 0) //공격 준비 상태가 아닌경우 
                 {
                     enemyCharacterPunch[i] += 0.05f;
-                    if (enemyCharacterPunch[i] >= 2) enemyCharacterPunch[i] -= 2.0f;
-                    if (enemyCharacterSwing[i] > 0) enemyCharacterSwing[i] -= swingDescVal(enemyCharacterSwing[i]);//0.005f;
+                    if (enemyCharacterPunch[i] >= 2f) enemyCharacterPunch[i] -= 2.0f;
+                    if (enemyCharacterSwing[i] > 0f) enemyCharacterSwing[i] -= swingDescVal(enemyCharacterSwing[i]);//0.005f;
                 }
                 else if (enemyCharacterAtkReady[i] == 1 || enemyCharacterAtkReady[i] == 2)
                 { //공격 준비 상태인경우
@@ -3944,6 +3970,11 @@ public class BattleManager : MonoBehaviour
 
     private void characterDamageMove(int idx, int damage)
     {
+        if (damage < 0)
+        {
+            Debug.Log("Error Damage : " + damage.ToString());
+            damage = 0;
+        }
         if (damage > 1000) damage = 1000;
         float temp = Mathf.Sqrt(damage / 1000.0f);
         if(damage == 0) temp = 0; 

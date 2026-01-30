@@ -1431,7 +1431,7 @@ public class BattleManagerBackUp : MonoBehaviour
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]) == 1) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
@@ -1444,7 +1444,7 @@ public class BattleManagerBackUp : MonoBehaviour
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-                                if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx])) //반환 결과가 해당 캐릭터의 죽음 인경우
+                                if (enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]) ==1) //반환 결과가 해당 캐릭터의 죽음 인경우
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
@@ -1517,7 +1517,7 @@ public class BattleManagerBackUp : MonoBehaviour
                             Debug.Log("target is...! : " + tempTargetIdx.ToString());
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                if (myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]) == 1)
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);
@@ -1527,7 +1527,7 @@ public class BattleManagerBackUp : MonoBehaviour
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-                                if(enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]))
+                                if(enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]) == 1)
                                 {
                                     battleAnimationControl(tempTargetIdx, 2);
                                     DeadCharacterUpdate(tempTargetIdx);

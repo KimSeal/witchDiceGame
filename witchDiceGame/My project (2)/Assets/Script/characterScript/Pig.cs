@@ -36,7 +36,7 @@ public class Pig : Character
         if (sendSkillPacket.useSkillIdx == 1) 
         {
             
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0)); //한명에게 3데미지
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0) + this.getPhyAtk(), 0)); //한명에게 3데미지
         }
         //}
         return packets;

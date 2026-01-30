@@ -128,6 +128,9 @@ public class upDownManager : MonoBehaviour
 
     private static upDownManager instance = null;
 
+    [SerializeField]
+    public GameObject infoToolBar;
+    public TextMeshProUGUI infoToolBarText;
 
     private void Awake()
     {
@@ -178,6 +181,8 @@ public class upDownManager : MonoBehaviour
         townName[5] = "???";
         townName[6] = "???";
         townName[7] = "Hill";
+
+        infoToolBar.SetActive(false);
     }
 
     void Update()
@@ -213,6 +218,16 @@ public class upDownManager : MonoBehaviour
             jewelLogo.GetComponent<RectTransform>().rotation = Quaternion.Euler(jewelLogo.transform.rotation.x, jewelLogo.transform.rotation.y, jewelRotateSize * Mathf.Sin(jewelRotateVal));
         }
             
+    }
+
+    public void hoverInInfoToolBar(int i)
+    {
+        infoToolBar.SetActive(true);
+        infoToolBarText.text = "<size=8>-" + TalkManager.Instance.getDesc(72 + i) + "-</size>\n" + TalkManager.Instance.getDesc(75 + i);
+    }
+    public void hoverOutInfoToolBar()
+    {
+        infoToolBar.SetActive(false);
     }
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
     {

@@ -31,7 +31,7 @@ public class Wolf : Character
         //{
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.phyAtk, 0)); //한명에게 주사위 * 공격력 데미지
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.getPhyAtk() + this.getPhyAtk(), 0)); //한명에게 주사위 * 공격력 데미지
             }
         if (sendSkillPacket.useSkillIdx == 1) 
         {

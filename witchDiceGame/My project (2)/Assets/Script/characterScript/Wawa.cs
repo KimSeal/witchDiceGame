@@ -36,8 +36,7 @@ public class Wawa : Character
 
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1) //와와 특수 스킬(스킬기억)
         {
-            Debug.Log("take skill Val check" + this.skillUse(sendSkillPacket.useSkillIdx).getVal(0));
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.phyAtk + this.character_battle.getAtk()) * this.skillUse(sendSkillPacket.useSkillIdx).getVal(0), 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.getPhyAtk()) * this.skillUse(sendSkillPacket.useSkillIdx).getVal(0) + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 공격력 * 10 Damage / 상태변화 없음
         }
 
         return packets;
