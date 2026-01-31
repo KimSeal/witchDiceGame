@@ -2612,19 +2612,14 @@ public class BattleManager : MonoBehaviour
                 temp.GetComponent<coinMove>().changeDest(2);
             }
             /*
-            int jewelTemp = enemyCharacter[idx].getMoney();
-            jewelTemp = Random.Range(jewelTemp - (jewelTemp * 2 / 5), jewelTemp + (jewelTemp * 2 / 5));
-            if (jewelTemp <= 0) jewelTemp = 1;
-            Debug.Log("money : " + jewelTemp.ToString());
-            //AdventureManager.Instance.addMoney(0, moneyTemp);
-             */
+            
             int jewelTemp = 1;
             for (int i = 0; i < jewelTemp; i++)
             {
                 GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(3);
             }
-
+            */
             updateEnemyDiceUI();
             enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             chainChk = false;
@@ -2884,7 +2879,7 @@ public class BattleManager : MonoBehaviour
     {
         return sendSkillPacketTemp;
     }
-    private void takeSkillPacketLastFix(List<TakeSkillPacket> takeSkillPackets)
+    private void takeSkillPacketLastFix(List<TakeSkillPacket> takeSkillPackets) //패시브 등 조건에 따른 추가 효과 세팅
     {
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
@@ -3016,11 +3011,14 @@ public class BattleManager : MonoBehaviour
                                     if (skillResult != 2){
                                         if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                     }
+                                    else
+                                    {
+                                        specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx);
+                                    }
                                     if (myCharacter[tempTargetIdx] != null && skillResult == 1) //사망인경우
                                     {
 
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                         if (!boomChk)
@@ -3038,7 +3036,6 @@ public class BattleManager : MonoBehaviour
                                         if (skillResult == 0)
                                         {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            makeHitEffect(tempTargetIdx);
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -3056,7 +3053,7 @@ public class BattleManager : MonoBehaviour
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     if (enemyCharacter[tempTargetIdx - 4] != null && skillResult == 1) //반환 결과가 해당 캐릭터의 죽음 인경우
                                     {
-                                        if (!boomChk && winningCheck() == 1)
+                                        if (!boomChk )//&& winningCheck() == 1)
                                         {
                                             KillAnimationManager.Instance.startAnimation(0, myCharacter[skillUseCharacter], enemyCharacter[tempTargetIdx - 4]);
                                             yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
@@ -3065,8 +3062,11 @@ public class BattleManager : MonoBehaviour
                                         {
                                             if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                         }
+                                        else
+                                        {
+                                            specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4);
+                                        }
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        makeHitEffect(tempTargetIdx);
                                         backGroundObj[4].GetComponent<Animator>().Play("BattleKill");
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
@@ -3083,11 +3083,14 @@ public class BattleManager : MonoBehaviour
                                         {
                                             if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                         }
+                                        else
+                                        {
+                                            specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4);
+                                        }
                                         changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                                         if (skillResult == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            makeHitEffect(tempTargetIdx);
                                             backGroundObj[4].GetComponent<Animator>().Play("BattleShine");
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
@@ -3206,15 +3209,19 @@ public class BattleManager : MonoBehaviour
                                     {
                                         if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                                     }
+                                    else
+                                    {
+                                        specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx);
+                                    }
                                     //specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //사망인 경우
-                                    
+
                                     if ( skillResult == 1)
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        makeHitEffect(tempTargetIdx);
+                                        
                                         backGroundObj[4].GetComponent<Animator>().Play("BattleFaint");
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
@@ -3230,7 +3237,6 @@ public class BattleManager : MonoBehaviour
                                         if (skillResult == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            makeHitEffect(tempTargetIdx);
                                             backGroundObj[4].GetComponent<Animator>().Play("BattleHit");
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
@@ -3246,14 +3252,18 @@ public class BattleManager : MonoBehaviour
                                     if (skillResult != 2)
                                     {
                                         if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    }//specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                                    }
+                                    else
+                                    {
+                                        specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4);
+                                    }
+                                    //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
                                     //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
                                     //사망한경우
                                     if ( skillResult == 1)
                                     {
                                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        makeHitEffect(tempTargetIdx);
                                         battleAnimationControl(tempTargetIdx, 2);
                                         DeadCharacterUpdate(tempTargetIdx);
                                         if (!boomChk)
@@ -3268,7 +3278,6 @@ public class BattleManager : MonoBehaviour
                                         if (skillResult == 0)
                                         { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
                                             characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            makeHitEffect(tempTargetIdx);
                                             battleAnimationControl(tempTargetIdx, 1);
                                         }
                                     }
@@ -3432,7 +3441,7 @@ public class BattleManager : MonoBehaviour
 
     }
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
-    string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
+    int[] typeArr2 = { 78, 79, 80, 81, 82 };
     private void printRandomResult(int i, bool pointOn)
     {
         //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
@@ -3443,7 +3452,7 @@ public class BattleManager : MonoBehaviour
 
         resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
         resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
-        resultObj[i, 3].GetComponent<TextMeshPro>().text = typeArr2[resultItem[i].getType()] + "\n\n" + resultItem[i].getContent();
+        resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- "+ TalkManager.Instance.getDesc(typeArr2[resultItem[i].getType()]) + " -</size>" + "\n\n" + resultItem[i].getContent();
     }
     public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1f); }
     // printRandomResult(i, true);}
@@ -3970,6 +3979,7 @@ public class BattleManager : MonoBehaviour
 
     private void characterDamageMove(int idx, int damage)
     {
+        Debug.Log(idx.ToString() + ":::" + damage.ToString());
         if (damage < 0)
         {
             Debug.Log("Error Damage : " + damage.ToString());
@@ -3991,6 +4001,9 @@ public class BattleManager : MonoBehaviour
         Debug.Log("shakeAmount");
         if(idx < 4) CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage));
         else CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage) * -1);
+
+
+        makeHitEffect(idx);
 
         //CameraManager.Instance.VibrateForeTime(0.1f, temp * 5);//데미지만큼 더 흔들리게
 

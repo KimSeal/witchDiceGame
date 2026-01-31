@@ -428,7 +428,7 @@ public class AdventureManager : MonoBehaviour
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
                 descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
-                descObj[3].GetComponent<TextMeshPro>().text = typeArr2[storeItemArr[storeIdx, 0]] + "\n\n" + hoverItem.getContent();
+                descObj[3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc( typeArr2[storeItemArr[storeIdx, 0]]) + " -</size>\n\n" + hoverItem.getContent();
             }
         }
         else
@@ -443,7 +443,7 @@ public class AdventureManager : MonoBehaviour
     #endregion
 
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
-    string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
+    int[] typeArr2 = { 78, 79, 80, 81, 82 };
     public void hoverInItem(int idx)
     {
         if (resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
@@ -464,7 +464,7 @@ public class AdventureManager : MonoBehaviour
                 descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
                 descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItemArr[idx, 0]] + "ItemSprite/spr_item_" + typeArr[resultItemArr[idx, 0]] + "_" + hoverItem.getItemName());
                 descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
-                descObj[3].GetComponent<TextMeshPro>().text = typeArr[resultItemArr[idx, 0]] + "\n\n" + hoverItem.getContent();
+                descObj[3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[resultItemArr[idx, 0]]) + " -</size>\n\n" + hoverItem.getContent();
             }
         }
         else
@@ -561,7 +561,7 @@ public class AdventureManager : MonoBehaviour
 
     private float[] characterMoveSize = new float[4];
     private float[] characterMoveVal = new float[4];
-
+    private float[] characterLandVal = new float[4];
     // Update is called once per frame
     private void Update()
     {
@@ -579,13 +579,23 @@ public class AdventureManager : MonoBehaviour
                 if (characterMoveSize[i] > 0f)
                 {
                     characterMoveSize[i] -= jumpValMove;
-                    characterMoveVal[i] += 1.5f;
+                    if (characterMoveSize[i] <= 0f || characterMoveVal[i] >= 50f)
+                    {
+                        characterMoveVal[i] -= 50f;
+                        characterLandVal[i] += 0.5f;
+                        if (!getBattleEventChk()) { //전투 들어갔을땐 소리 안나도록
+                            SoundManager_Sfx.Instance.playSound(1);
+                        }
+                    }
+                    characterMoveVal[i] += 1.0f + characterLandVal[i];
                     characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74 + characterMoveSize[i] * Mathf.Abs(Mathf.Sin((characterMoveVal[i] / 50) * Mathf.PI)), 0f);
+                    
                 }
                 else
                 {
                     characterMoveSize[i] = 0.0f;
                     characterMoveVal[i] = 0.0f;
+                    characterLandVal[i] = 0.0f;
                     characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74, 0f);
                 }
             }
@@ -593,6 +603,7 @@ public class AdventureManager : MonoBehaviour
             {
                 characterMoveSize[i] = 0.0f;
                 characterMoveVal[i] = 0.0f;
+                characterLandVal[i] = 0.0f;
                 characterObj[i].GetComponent<Transform>().position = new Vector3(characterObj[i].transform.position.x, -74, 0f);
             }
         }
@@ -609,6 +620,7 @@ public class AdventureManager : MonoBehaviour
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
             {
                 characterMoveSize[i] = jumpPower;
+                SoundManager_Sfx.Instance.playSound(19);
                 characterMoveVal[i] = 0f;
                 yield return new WaitForSeconds(0.05f);
             }

@@ -84,9 +84,10 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(1);
         emptyMyCharacter(2);
         emptyMyCharacter(3);
+
         setCharacter(2, 0);
-        //setCharacter(1, 7);
-        //setCharacter(3, 0);
+        setCharacter(1, 7);
+        setCharacter(3, 0);
         //
         myCharacter[2].setReviveUnit(true);
         for(int i=0;i<6;i++) myCharacter[2].setDice(i,1);

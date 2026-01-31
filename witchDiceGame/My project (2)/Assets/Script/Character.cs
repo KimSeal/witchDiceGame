@@ -305,7 +305,7 @@ public abstract class Character
 
     public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 
     {
-        if (takeSkillPacket.getSkillType() == 0 || takeSkillPacket.getSkillType() == 1000)
+        if (takeSkillPacket.getSkillType() == 0 )//|| takeSkillPacket.getSkillType() == 1000)
         {
             if (this.getSpeed() > Random.Range(1, 100)) { return 2; }
             this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
@@ -325,7 +325,7 @@ public abstract class Character
             }
             return 0;
         }
-        else if (takeSkillPacket.getSkillType() == 1 || takeSkillPacket.getSkillType() == 1001) //회복인 경우
+        else if (takeSkillPacket.getSkillType() == 1)// || takeSkillPacket.getSkillType() == 1001) //회복인 경우
         {
             Debug.Log("Heal is " + takeSkillPacket.getVal());
             this.hp += takeSkillPacket.getVal();
@@ -344,6 +344,7 @@ public abstract class Character
         else if (takeSkillPacket.getSkillType() == 3) //특수 변수 변화인경우
         {
             this.character_battle.setSpecialVal(takeSkillPacket.getVal()); // 변수를 해당 값으로 변화시킨다.
+            return 3;
         }
         else if (takeSkillPacket.getSkillType() == 4) //마법감응력 업인 경우
         {
