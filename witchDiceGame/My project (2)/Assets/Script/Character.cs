@@ -410,7 +410,7 @@ public abstract class Character
         
     }
     public int upGrade(int idx, int val)
-    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:경험치 / 
+    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:마법 감응력 / 7.스피드 
         if (idx == 0){
             this.hp += val;
             if (hp > maxHp) hp = maxHp;
@@ -437,10 +437,20 @@ public abstract class Character
         if (idx == 5)
         {
             this.phyAtk += val;
+            if (this.phyAtk > 99) this.phyAtk = 99;
+            if (this.phyAtk < 0) this.phyAtk = 0;
         }
         if (idx == 6)
         {
-            this.exp += val;
+            this.magAtk += val;
+            if (this.magAtk > 99) this.magAtk = 99;
+            if (this.magAtk < 0) this.magAtk = 0;
+        }
+        if (idx == 7)
+        {
+            this.speed += val;
+            if (this.speed > 99) this.speed = 99;
+            if (this.speed < 0) this.speed = 0;
         }
         return 0;
     }
@@ -484,12 +494,20 @@ public abstract class Character
         if (idx == 5)
         {
             this.phyAtk -= val;
+            if (this.phyAtk > 99) this.phyAtk = 99;
             if (this.phyAtk < 0) this.phyAtk = 0;
         }
         if (idx == 6)
         {
-            this.exp -= val;
-            if (this.exp < 0) this.exp = 0;
+            this.magAtk -= val;
+            if (this.magAtk > 99) this.magAtk = 99;
+            if (this.magAtk < 0) this.magAtk = 0;
+        }
+        if (idx == 7)
+        {
+            this.speed -= val;
+            if (this.speed > 99) this.speed = 99;
+            if (this.speed < 0) this.speed = 0;
         }
         return 0;
     }
