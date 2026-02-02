@@ -891,6 +891,19 @@ public class upDownManager : MonoBehaviour
             }
         }
     }
+
+    public void hoverInDiceSkill(int idx)
+    {
+        if (BattleManager.Instance.getDiceTake(idx) != -999)
+        {
+            ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
+
+        }
+    }
+    public void hoverOutDiceSkill()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
     public void hoverOutUnderBarSkill(int idx)
     {
         if (curSkill != idx)

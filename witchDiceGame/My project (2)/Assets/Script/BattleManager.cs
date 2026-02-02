@@ -220,6 +220,15 @@ public class BattleManager : MonoBehaviour
     {
         if(idx<4) myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
         else enemyCharacterObjUI[idx-4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+
+        if (idx < 4 && myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
+        {
+            ToolBarManager.Instance.setToolBar(myCharacter[idx]);
+        }
+        else if (idx >= 4 && idx<8 && enemyCharacter[idx - 4] != null && enemyCharacter[idx-4].getCurState() == 0)
+        {
+            ToolBarManager.Instance.setToolBar(enemyCharacter[idx-4]);
+        }
     }
 
     public void hoverOutCharacter(int idx)
@@ -229,6 +238,7 @@ public class BattleManager : MonoBehaviour
             enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
             myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         }
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     public void useGiveUpBtn()
@@ -1990,6 +2000,25 @@ public class BattleManager : MonoBehaviour
         }
     }
     //스킬이 눌려서 해당 skill에 대한 내용을 출력해야하는 경우
+    public Skill getSkillTake(int idx) {
+        
+        Skill thisSkill = null;
+        int characterIdx = 0;
+        int skillIdx = 0;
+        if (idx < 4) {
+            characterIdx = myDiceTake[idx] / 10;
+            skillIdx = myDiceTake[idx] % 10;
+            thisSkill = myCharacter[characterIdx].skillUse(skillIdx);
+        
+        }
+        else if (idx < 8)
+        {
+            characterIdx = enemyDiceTake[idx-4] / 10;
+            skillIdx = enemyDiceTake[idx-4] % 10;
+            thisSkill = enemyCharacter[characterIdx].skillUse(skillIdx);
+        }
+        return thisSkill;
+    }
     public void makeSkillCommand(int characterIdx, int skillIdx)
     {
         Skill thisSkill = null;
@@ -3827,9 +3856,6 @@ public class BattleManager : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 if (myCharacterSwing[i] < 0.0f) myCharacterSwing[i] = 0.0f;
-                Debug.Log("whathappen");
-                Debug.Log(myCharacterSwing[i]);
-                Debug.Log(myCharacterPunch[i]);
                 myCharacterObjEntityUI[i].transform.position = new Vector3(
                         myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
                         myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);

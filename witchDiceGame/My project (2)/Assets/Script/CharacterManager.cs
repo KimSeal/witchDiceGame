@@ -78,7 +78,7 @@ public class CharacterManager : MonoBehaviour
 
         //setCharacter(3, 4);
     }
-    public void setTurotialCharacterSet()
+    public void setTutotialCharacterSet()
     {
         emptyMyCharacter(0);
         emptyMyCharacter(1);
@@ -87,7 +87,7 @@ public class CharacterManager : MonoBehaviour
 
         setCharacter(2, 0);
         setCharacter(1, 7);
-        setCharacter(3, 0);
+        setCharacter(3, 8);
         //
         myCharacter[2].setReviveUnit(true);
         for(int i=0;i<6;i++) myCharacter[2].setDice(i,1);

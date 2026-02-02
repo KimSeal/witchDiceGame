@@ -45,7 +45,6 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     private GameObject diceRollEff;
 
-    [SerializeField] private GameObject[] descObj = new GameObject[4]; // obj_ui_adventure_item_Desc_ board/logo/name/desc
     [SerializeField] private GameObject balpanLoad, balpanScreen, balpanArrow, balpanArrowGoal; // obj_adventure_diceBoard_load, obj_adventure_diceBoard, obj_balpan_arrow
     [SerializeField] private GameObject[] balpanObj = new GameObject[10]; //obj_balpan_(number)
     [SerializeField] public GameObject[] balpanUpDownButton = new GameObject[2];
@@ -172,11 +171,16 @@ public class AdventureManager : MonoBehaviour
     public void hoverInCharacter(int idx)
     {
         characterObj[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+        if (CharacterManager.Instance.getCharacter(idx) != null)
+        {
+            ToolBarManager.Instance.setToolBar(CharacterManager.Instance.getCharacter(idx));
+        }
     }
 
     public void hoverOutCharacter(int idx)
     {
         characterObj[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     private void clickAbleObjSet(GameObject gameObjectTemp, bool onOff, int opt)
@@ -232,7 +236,7 @@ public class AdventureManager : MonoBehaviour
         addMoney(0, 0);
         upDownManager.Instance.setInit(0, 0);
 
-        CharacterManager.Instance.setTurotialCharacterSet(); //캐릭터는 주인공 혼자만
+        CharacterManager.Instance.setTutotialCharacterSet(); //캐릭터는 주인공 혼자만
         itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
         useFairDice = false;
 
@@ -406,39 +410,23 @@ public class AdventureManager : MonoBehaviour
         if (soundOnOff) SoundManager_Sfx.Instance.playSound(7);
     }
 
+    public Character[] resultCharacter = new Character[4];
     public void hoverInItem_store()
     {
         if (storeItemArr[storeIdx, 0] != -99999 && storeItemArr[storeIdx, 1] != -99999 && storeItemArr[storeIdx, 2] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
         {
-            if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
 
             if (storeItemArr[storeIdx, 0] == 4)
             {
-
-                Destiny hoverDestiny = CharacterManager.Instance.getDestiny(storeItemArr[storeIdx, 1]);
-                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
-                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
-                descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
-                descObj[3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(9);//"Lets be a friend!";
+                ToolBarManager.Instance.setToolBar(resultCharacter[storeIdx]);
             }
             else
             {
-
                 Item hoverItem = itemManager.Instance.getItem(storeItemArr[storeIdx, 0], storeItemArr[storeIdx, 1]);
-                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
-                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[storeItemArr[storeIdx, 0]] + "ItemSprite/spr_item_" + typeArr[storeItemArr[storeIdx, 0]] + "_" + hoverItem.getItemName());
-                descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
-                descObj[3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc( typeArr2[storeItemArr[storeIdx, 0]]) + " -</size>\n\n" + hoverItem.getContent();
+                ToolBarManager.Instance.setToolBar(hoverItem);
             }
         }
-        else
-        {
-            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            descObj[2].GetComponent<TextMeshPro>().text = "";
-            descObj[3].GetComponent<TextMeshPro>().text = "";
-            if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
 
-        }
     }
     #endregion
 
@@ -448,40 +436,23 @@ public class AdventureManager : MonoBehaviour
     {
         if (resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999) //아이템이 있는 경우 해당 아이템으로 변경
         {
-            if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
+            //if (descObj[0].activeSelf == false) descObj[0].SetActive(true);
 
             if (resultItemArr[idx, 0] == 4)
             {
-                Destiny hoverDestiny = CharacterManager.Instance.getDestiny(resultItemArr[idx, 1]);
-                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_90");
-                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + hoverDestiny.getName() + "_face");
-                descObj[2].GetComponent<TextMeshPro>().text = hoverDestiny.getName();
-                descObj[3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(9);
+                ToolBarManager.Instance.setToolBar(resultCharacter[idx]);
             }
             else
             {
                 Item hoverItem = itemManager.Instance.getItem(resultItemArr[idx, 0], resultItemArr[idx, 1]);
-                descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
-                descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItemArr[idx, 0]] + "ItemSprite/spr_item_" + typeArr[resultItemArr[idx, 0]] + "_" + hoverItem.getItemName());
-                descObj[2].GetComponent<TextMeshPro>().text = hoverItem.getItemName();
-                descObj[3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[resultItemArr[idx, 0]]) + " -</size>\n\n" + hoverItem.getContent();
+                ToolBarManager.Instance.setToolBar(hoverItem);
             }
         }
-        else
-        {
-            descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            descObj[2].GetComponent<TextMeshPro>().text = "";
-            descObj[3].GetComponent<TextMeshPro>().text = "";
-            if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
 
-        }
     }
     public void hoverOutItem()
     {
-        descObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-        descObj[2].GetComponent<TextMeshPro>().text = "";
-        descObj[3].GetComponent<TextMeshPro>().text = "";
-        if (descObj[0].activeSelf == true) descObj[0].SetActive(false);
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
     // Start is called before the first frame update
     void Start()
@@ -502,7 +473,6 @@ public class AdventureManager : MonoBehaviour
         lifeObj_back.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 0f);
 
         lifeObj.SetActive(false);
-        descObj[0].SetActive(false);
 
         diceBtnFire = diceBtnFireInit.GetComponent<ParticleSystem>();
         diceBtnFire.Stop();
@@ -570,6 +540,7 @@ public class AdventureManager : MonoBehaviour
             //jumpTest();
         }
     }
+
     void FixedUpdate()
     {
         
@@ -1025,7 +996,6 @@ public class AdventureManager : MonoBehaviour
                !gameOverChk)
         {
             closeTryBuyItem(true);
-            if (descObj[0].activeSelf == true) hoverOutItem();
             giveUpBtnAble(false);
             eventWatchNum = -1;
             selectDiceNum = -1; // 플레이어가 주사위 던질 대상을 선택할 수 있도록
@@ -1222,7 +1192,6 @@ public class AdventureManager : MonoBehaviour
             stageInfo.GetComponent<TextMeshPro>().text = "";//(stageIdx+1).ToString() + " / " + adventureEventList[stageNum].Count.ToString(); //초기화
             updateCharacterFace();
 
-            if (descObj[0].activeSelf == true) hoverOutItem();
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
             resultObj.SetActive(false);
             storeEntityObj.SetActive(false);
@@ -1380,9 +1349,7 @@ public class AdventureManager : MonoBehaviour
                             if (storeItemArr[tempIdx, 0] == 2) storeItemArr[tempIdx, 0]++;
                         }
                         
-                        
                         storeItemArr[tempIdx, 1] = Random.Range(1,itemManager.Instance.getItemListCount(storeItemArr[tempIdx, 0]));
-                        
                         storeItemArr[tempIdx, 2] = itemManager.Instance.getItem(storeItemArr[tempIdx, 0], storeItemArr[tempIdx, 1]).getRare() * 10 + 5;
                     }
                     storeIdx = 0;
@@ -1488,6 +1455,13 @@ public class AdventureManager : MonoBehaviour
                             clickAbleObjSet(resultObjArr[i], true, 1);
                             clickAbleObjSet(resultObjArr[i], true, 2);
                             if (resultItemArr[i, 0] == 4) {
+                                CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]); //getCharacter(resultItemArr[i, 1]);
+                                for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
+                                
+                                if (tutorialVal != 0) //튜토리얼에서는 1만 넣는다.
+                                {
+                                    for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, 1);
+                                }
                                 if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1])) { 
                                     resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark"); 
                                 }
@@ -1608,6 +1582,8 @@ public class AdventureManager : MonoBehaviour
                         {
                             resultItemArr[i, 0] = 4;
                             resultItemArr[i, 1] = CharacterManager.Instance.getRandomCharacterDestinyIdx();
+                            CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]);
+                            for (int j=0;j<6;j++ )resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
                         }
                         else
                         {
@@ -1846,7 +1822,10 @@ public class AdventureManager : MonoBehaviour
                     resetDice();
                     smokeCharacter(emptyPlaceExist);
                     SoundManager_Sfx.Instance.playSound(72);
-                    for (int i=0;i<6;i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, Random.Range(1, 7)); // 주사위 랜덤으로 변경
+                    for (int i = 0; i < 6; i++)
+                    {
+                        CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, resultCharacter[idx].getDice(i)); // 주사위 랜덤으로 변경
+                    }
                     if (AdventureManager.Instance.getTutorial() != 0)
                     {
                         for (int i = 0; i < 6; i++) CharacterManager.Instance.getCharacter(emptyPlaceExist).changeDiceNum(i, 1); // 주사위 랜덤으로 변경
@@ -2102,10 +2081,7 @@ public class AdventureManager : MonoBehaviour
             fullUI.showFull(65);
             return;
         }
-        
-        if (descObj[0].activeSelf == true) hoverOutItem();
 
-        
         if (characterIdx == -1 && battleEventTrigger && selectDiceCharacterIdx >= 0) {
             TalkManager.Instance.setDescIdx(-1);
             enterBattleCanvas();

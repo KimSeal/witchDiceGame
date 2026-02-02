@@ -278,6 +278,9 @@ public abstract class Character
     }
     public int getCurState(){ return curState; }
     public int getHp() {return hp; }
+    public int getArmor() {
+        return this.character_battle.getArmor();
+    }
     public int getMaxHp() { return maxHp; }
     public int getMp() { return mp; }
     public int getMaxMp() { return maxMp; }
