@@ -459,7 +459,7 @@ public abstract class Character
     }
 
     public int downGrade(int idx, int val)
-    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:경험치 / 
+    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:마법 감응력/ 7 : 스피드
         if (idx == 0) //체력이 줄었고 
         {
             if (downGradeDamage(val) == 1) return 1;

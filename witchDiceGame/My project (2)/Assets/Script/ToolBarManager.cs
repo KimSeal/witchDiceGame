@@ -172,9 +172,33 @@ public class ToolBarManager : MonoBehaviour
         }
         toolBarDesc.text = item.getContent();
     }
+    //공격력, 마법감응력, 스피드, 방어도, HP    
+    private int[] toolBarTitleIdx = { 72,73,74, 83, 85};
+    private int[] toolBarContentIdx = { 75,76,77, 84, 86};
     public void setToolBar(int idx)
     {
         toolBarOnOff(1);
         toolBarCharacterInfo.SetActive(false);
+
+        for (int i = 0; i < 6; i++)
+        {
+            toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        toolBarTitle.text = TalkManager.Instance.getDesc(toolBarTitleIdx[idx]);
+        toolBarDesc.text = TalkManager.Instance.getDesc(toolBarContentIdx[idx]);
+    }
+    public void setToolBar(string title, string content, Sprite spriteImage)
+    {
+        toolBarOnOff(1);
+        toolBarCharacterInfo.SetActive(false);
+
+        for (int i = 0; i < 6; i++)
+        {
+            toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        toolBarImage.GetComponent<Image>().sprite = spriteImage;
+        toolBarTitle.text = title;
+        toolBarDesc.text = content;
     }
 }

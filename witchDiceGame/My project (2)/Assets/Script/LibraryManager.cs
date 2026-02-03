@@ -96,23 +96,28 @@ public class LibraryManager : MonoBehaviour
 
         Destiny destinyTemp = CharacterManager.Instance.getDestiny(curCharacterIdx);
         Skill thisSkill = destinyTemp.getSkill(idx);
+        ToolBarManager.Instance.setToolBar(thisSkill);
+        /*
         upDownManager.Instance.skillDescUpdate(thisSkill.getSkillName(), thisSkill.getNeedDice(0), thisSkill.getNeedDice(1),
             thisSkill.getNeedDice(2), thisSkill.getNeedDice(3), thisSkill.getSkillName(), thisSkill.getCommand());
         upDownManager.Instance.onOffUI(0, 1);
+        */
         characterSkillOutline[idx].GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
     }
 
     public void hoverOutCharacterSkill()
     {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        /*
         upDownManager.Instance.skillDescUpdate("none", 0, 0, 0, 0, "", "");
         upDownManager.Instance.onOffUI(0, 0);
-
+        */
         characterSkillOutline[0].GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         characterSkillOutline[1].GetComponent<SpriteRenderer>().sprite =
             Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
-
+        
     }
 
     public void updateBlackBoard(int idx)
@@ -207,6 +212,7 @@ public class LibraryManager : MonoBehaviour
         if (curCharacterBigIdx == 0) curCharacterBigIdx = 1;
         else curCharacterBigIdx = 0;
         updateCharacterSelectImage();
+        hoverOutCurCharacter();
     }
     public void hoverRotateAble(GameObject gameObjectTemp, int eventType, bool onOff)
     {

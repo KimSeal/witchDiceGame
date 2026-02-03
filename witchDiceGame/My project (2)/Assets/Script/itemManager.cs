@@ -112,6 +112,7 @@ public class itemManager : MonoBehaviour
     public TextMeshProUGUI characterAtk;
     public TextMeshProUGUI characterMag;
     public TextMeshProUGUI characterSpd;
+    public TextMeshProUGUI characterArmor;
     public GameObject[] characterDice = new GameObject[6];
     public GameObject[] characterSkill = new GameObject[2];
     public GameObject[] characterEquip = new GameObject[2];
@@ -233,6 +234,7 @@ public class itemManager : MonoBehaviour
             return 1; //빈 공간이 없는 경우.
         }
         setItem(type, emptyIdx, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
+        upDownManager.Instance.activePassiveItem(emptyIdx);
         upDownManager.Instance.clickItemTypeButton(type);
         updateInventory();
         
@@ -666,9 +668,9 @@ public class itemManager : MonoBehaviour
         characterAtk.text = tempCharacter.getPhyAtk().ToString();
         characterMag.text = tempCharacter.getMagAtk().ToString();
         characterSpd.text = tempCharacter.getSpeed().ToString();
-        characterDescTitle.text = "Status";
+        characterArmor.text = tempCharacter.getArmor().ToString();
+        characterDescTitle.text = "";
         for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
-        characterAtk.text = tempCharacter.getPhyAtk().ToString();
         characterOrigin.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + tempCharacter.getName() + "/animator_" + tempCharacter.getName());
         characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
         //주사위 업데이트
@@ -695,6 +697,7 @@ public class itemManager : MonoBehaviour
 
     public void hoverInSkill(int i)
     {
+        characterInfoEntity.SetActive(false);
         Skill temp;
         
         if (AdventureManager.Instance.getBattleEventChk())
@@ -726,8 +729,29 @@ public class itemManager : MonoBehaviour
             characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
         }
     }
+    public void hoverInSwapOrDelete(int idx)
+    {
+        characterInfoEntity.SetActive(false);
+        if (idx == 0) {
+            characterDescTitle.text = TalkManager.Instance.getDesc(87);
+            characterDescText.text = TalkManager.Instance.getDesc(89);
+            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn");
+        }
+        if (idx == 1)
+        {
+            characterDescTitle.text = TalkManager.Instance.getDesc(88);
+            characterDescText.text = TalkManager.Instance.getDesc(90);
+            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        }
+        
+        for (int j = 0; j < 4; j++)
+        {
+            characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+    }
     public void hoverInEquip(int i)
     {
+        characterInfoEntity.SetActive(false);
         Item temp;
         if (AdventureManager.Instance.getBattleEventChk())
         {
@@ -753,11 +777,16 @@ public class itemManager : MonoBehaviour
     }
     public void hoverInInfo(int i)
     {
+        ToolBarManager.Instance.setToolBar(i);
+        /*
         if (i == 0)
         {
+            
+            
             characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_atk_1212_2");
             characterDescTitle.text = TalkManager.Instance.getDesc(72);
             characterDescText.text = TalkManager.Instance.getDesc(75);
+            
         }
         else if (i == 1)
         {
@@ -770,9 +799,11 @@ public class itemManager : MonoBehaviour
             characterDescTitle.text = TalkManager.Instance.getDesc(74);
             characterDescText.text = TalkManager.Instance.getDesc(77);
         }
+        */
     }
     public void hoverOutDesc()
     {
+        characterInfoEntity.SetActive(true);
         for (int i=0;i<6;i++)
         {
             characterDiceOutline[i].GetComponent<Image>().sprite
@@ -786,12 +817,12 @@ public class itemManager : MonoBehaviour
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
 
-        characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-        characterDescTitle.text = "Status";
+        characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        characterDescTitle.text = "";
         characterDescText.text = "";
         for (int j = 0; j < 4; j++)
         {
-            characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_0");
+            characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
     }
     public bool getItemUseAble(int characterIdx, int itemType, int itemIdx)

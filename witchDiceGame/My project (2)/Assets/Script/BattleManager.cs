@@ -126,7 +126,8 @@ public class BattleManager : MonoBehaviour
     //private IEnumerator battleTimer = null;
 
     [SerializeField] private GameObject resultObj_all; //bosang_ui
-    [SerializeField] private GameObject resultExitBtn;//obj_itemUI_battleEndBtn
+    [SerializeField] public GameObject[] resultEff = new GameObject[3];
+    [SerializeField] public GameObject[] resultItemTypeObj = new GameObject[3];
     [SerializeField] private GameObject[] resultObjInit = new GameObject[12]; //obj_resultUI _board, _itemLogo, _itemName, _itemDesc + (number)
     private GameObject[,] resultObj = new GameObject[3, 4];
     private Item[] resultItem = new Item[3];
@@ -2828,11 +2829,13 @@ public class BattleManager : MonoBehaviour
         if (val == 0) return false;
         else
         {
+            if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }
+            if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; }
+            if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, -1 * val, height); return true; }
+            /*
             if (myTeam) //아군 대상일 경우
             {
-                if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(idx, val, height); return true; }
-                if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamHeal(idx, val, height); return true; }
-                if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamAtkUp(idx, val, height); return true; }
+                
             }
             else // 적군 대상일 경우
             {
@@ -2840,6 +2843,7 @@ public class BattleManager : MonoBehaviour
                 if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamHeal(idx, val, height); return true; }
                 if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamAtkUp(idx, val, height); return true; }
             }
+            */
         }
 
         return false;
@@ -3467,12 +3471,18 @@ public class BattleManager : MonoBehaviour
         }
         resultItem[2] = itemManager.Instance.getItem(resultType2, resultIdx2);
 
+        resultItemTypeObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType0]);
+        resultItemTypeObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType1]);
+        resultItemTypeObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType2]);
 
     }
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     int[] typeArr2 = { 78, 79, 80, 81, 82 };
     private void printRandomResult(int i, bool pointOn)
     {
+        resultEff[i].transform.position = new Vector3(100f * i - 100f, 0f, 0f);
+        resultItemTypeObj[i].transform.position = new Vector3(100f * i - 100, 300f, 0f);
+        resultEff[i].GetComponent<Animator>().Play("Eff");
         //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
         //else
         {
@@ -3560,31 +3570,45 @@ public class BattleManager : MonoBehaviour
             if (bossPhase == 0)
             {
                 itemManager.Instance.endOfBattlePhase();
-                yield return new WaitForSeconds(0.5f);
+                TalkManager.Instance.setDescClickLock(true);
+                TalkManager.Instance.setDescIdx(92);
+                
+                
+                yield return new WaitForSeconds(0.2f);
                 for (int i = 0; i < 4; i++)
                 {
                     myHpUI[i].GetComponent<TextMeshPro>().text = "";
                     enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
                 }
-
-                
                     //보상 나와있으면 캐릭터 창 끌수 있도록
                     if (characterInfoOpen) {
                     clickCharacterInfoBox();
                 }
                 characterInfoOpenAble = false;
                 bosang_click = true;
+                
                 if (AdventureManager.Instance.getTutorial() != 10)
                 {
                     //랜덤 아이템 배정하고 출력
                     makeRandomResult();
-                    for (int i = 0; i < 3; i++) printRandomResult(i, false);
-                    resultObj_all.transform.position = new Vector3(0f, -0f, resultObj_all.transform.position.z);
-                    if (AdventureManager.Instance.getTutorial() == 17) {
+                    resultItemTemp = 0.0f;
+                    resultItemPopChk = true;
+                    resultObj_all.transform.position = new Vector3(0f, 0f, resultObj_all.transform.position.z);
+                    resultObj_all.GetComponent<Animator>().Play("Change");
+                    yield return new WaitUntil(() => !resultItemPopChk); // 튀어오른 아이템이 0에 도달시
+                    for (int i = 0; i < 3; i++) printRandomResult(i, false); //eff 시작
+
+                    if (AdventureManager.Instance.getTutorial() == 17)
+                    {
                         TalkManager.Instance.startTalk(48);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         AdventureManager.Instance.setTutorial(18);
                     }
+                    
+
+                    yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
+
+                    for(int i=0;i<3;i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
 
                     
                 }
@@ -3593,11 +3617,6 @@ public class BattleManager : MonoBehaviour
                     AdventureManager.Instance.setTutorial(11);
                     bosang_click = false;
                 }
-                else
-                {
-                    resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
-                }
-                
                 
   
 
@@ -3611,8 +3630,15 @@ public class BattleManager : MonoBehaviour
 
 
                 yield return new WaitUntil(() => !bosang_click);
-
-                CharacterManager.Instance.character_reset();
+                TalkManager.Instance.setDescIdx(0);
+                TalkManager.Instance.setDescClickLock(false);
+                for (int i = 0; i < 3; i++)
+                {
+                    resultItemTypeObj[i].transform.position = new Vector3(100f * i - 100f, 300f, 0f);//eff 삭제
+                    resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 300f,0f);
+                    resultEff[i].transform.position = new Vector3(100f * i - 100f, 300f, 0f);//eff 삭제
+                }
+                    CharacterManager.Instance.character_reset();
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
                 {
                     if (myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0)
@@ -3631,8 +3657,6 @@ public class BattleManager : MonoBehaviour
                 {
                     yield return new WaitForSeconds(0.5f);
                 }
-
-                resultExitBtn.transform.position = new Vector3(0f, 300f, resultExitBtn.transform.position.z);
                 characterInfoOpenAble = true;
                 for (int i = 0; i < 4; i++)
                 {
@@ -3664,14 +3688,15 @@ public class BattleManager : MonoBehaviour
 
     public void click_bosang(int i) //보상 획득
     {
-
-        
-        if(i == -1)
+        if (i == -1)
         {
-            SoundManager_Sfx.Instance.playSound(7);
-            resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
-
-            resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
+            if (!resultItemPopChk)
+            {
+                SoundManager_Sfx.Instance.playSound(7);
+                resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
+                bosang_click = false;
+                
+            }
             return;
         }
         int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
@@ -3679,8 +3704,7 @@ public class BattleManager : MonoBehaviour
         {
             SoundManager_Sfx.Instance.playSound(4);
             resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
-
-            resultExitBtn.transform.position = new Vector3(171f, -37.5f, resultExitBtn.transform.position.z);
+            bosang_click = false;
         }
         else
         {
@@ -3689,14 +3713,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void click_backToAdventure()
-    {
-
-        if (bosang_click)
-        {
-            bosang_click = false;
-        }
-    }
+    
     // End Phase End (phase 6 - check game finish)//
 
 
@@ -3727,7 +3744,9 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        //캐릭터 정보하고 아이템 창 control을 위한 변수
+        resultItemPopChk = false;
+        resultItemTemp = 0;
+    //캐릭터 정보하고 아이템 창 control을 위한 변수
         characterInfoOpenAble = true;
         getLoseChk = false;
         needJewel[0] = 0;needJewel[1] = 1;needJewel[2] = 3;needJewel[3] = 3;needJewel[4] = 2;needJewel[5] = 3; needJewel[6] = 1;
@@ -3849,8 +3868,49 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            specialTextManager.GetComponent<ExampleTextManager>().printTest();
+        }
+        
+    }
+    private bool resultItemPopChk = false;
+    private float resultItemTemp=0;
     void FixedUpdate()
     {
+        
+        if (resultItemPopChk) //item 튕기기 중인경우
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                resultItemTypeObj[i].transform.rotation = Quaternion.Euler(0, 0, 360f * (resultItemTemp - 2.0f) * (resultItemTemp - 2.0f));
+                resultItemTypeObj[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", resultItemTemp / 2.0f);
+                if (resultItemTemp < 1f)
+                {
+                    resultItemTypeObj[i].transform.position = Vector3.Lerp(
+                        new Vector3(-100f + 100f * i, 50f, 0f), new Vector3(-100f + 100f * i, -100f, 0f), (1 - resultItemTemp) * (1 - resultItemTemp));
+                    resultItemTemp += 0.01f;
+
+                }
+                else if (resultItemTemp < 2.0f)
+                {
+                    resultItemTypeObj[i].transform.position = Vector3.Lerp(
+                        new Vector3(-100f + 100f * i, 50f, 0f), new Vector3(-100f + 100f * i, 0f, 0f), (resultItemTemp - 1.0f) * (resultItemTemp - 1.0f));
+                    resultItemTemp += 0.01f;
+                }
+                else {
+                    for (int t = 0; t < 10; t++)
+                    {
+                        GameObject startemp2 = Instantiate(starEff, resultItemTypeObj[i].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                        startemp2.GetComponent<effMove>().changeSprite(-999);
+                    }
+                    resultItemPopChk = false;
+                }
+            }
+        }
+        
         if (adventureStartChk)
         {
             for (int i = 0; i < 4; i++)

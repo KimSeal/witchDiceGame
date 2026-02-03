@@ -36,6 +36,7 @@ public class upDownManager : MonoBehaviour
     public GameObject underTownEntity;
     public GameObject[] underTownButton = new GameObject[8];
     public GameObject[] underTownOutline = new GameObject[8];
+    public GameObject[] underTownNewMark = new GameObject[8];
     public int curTownIdx = 0;
 
     [SerializeField]
@@ -128,9 +129,6 @@ public class upDownManager : MonoBehaviour
 
     private static upDownManager instance = null;
 
-    [SerializeField]
-    public GameObject infoToolBar;
-    public TextMeshProUGUI infoToolBarText;
 
     private void Awake()
     {
@@ -182,7 +180,6 @@ public class upDownManager : MonoBehaviour
         townName[6] = "???";
         townName[7] = "Hill";
 
-        infoToolBar.SetActive(false);
     }
 
     void Update()
@@ -220,15 +217,7 @@ public class upDownManager : MonoBehaviour
             
     }
 
-    public void hoverInInfoToolBar(int i)
-    {
-        infoToolBar.SetActive(true);
-        infoToolBarText.text = "<size=8>-" + TalkManager.Instance.getDesc(72 + i) + "-</size>\n" + TalkManager.Instance.getDesc(75 + i);
-    }
-    public void hoverOutInfoToolBar()
-    {
-        infoToolBar.SetActive(false);
-    }
+    
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
     {
         bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString());
@@ -272,36 +261,31 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInWitchHatButton()
     {
-        skillDescUpdate("none", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(40));
-        underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
-        onOffUI(0, 1);
+        ToolBarManager.Instance.setToolBar(TalkManager.Instance.getDesc(91), TalkManager.Instance.getDesc(40),
+           Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change"));
     }
     public void hoverOutWitchHatButton()
     {
-        skillDescUpdate("none", 0, 0, 0, 0, "", "");
-        onOffUI(0, 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     public void hoverInAdventureWitchPowerButton()
     {
-        skillDescUpdate("none", 0, 0, 0, 0, "Destiny Change", TalkManager.Instance.getDesc(48));
-        underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
-        onOffUI(0, 1);
+        ToolBarManager.Instance.setToolBar(TalkManager.Instance.getDesc(91), TalkManager.Instance.getDesc(48),
+           Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change"));
     }
     public void hoverOutAdventureWitchPowerButton()
     {
-        skillDescUpdate("none", 0, 0, 0, 0, "", "");
-        onOffUI(0, 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
     public void hoverInWitchPowerButton()
     {
-        updateUpperHoverBarPower(BattleManager.Instance.getCurWitchPower());
-        onOffUI(1, 1);
+        int powerIdx = BattleManager.Instance.getCurWitchPower();
+        ToolBarManager.Instance.setToolBar(powerName[powerIdx], TalkManager.Instance.getDesc(41 + powerIdx), Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerSmall/spr_witchPowerSmall_" + powerName[powerIdx]));
     }
     public void hoverOutWitchPowerButton()
     {
-        updateUpperHoverBar(0, null);
-        onOffUI(1, 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     public string[] townName = {"Tower", "Home", "Library", "Market Street", "???", "???", "???", "Hill"};
@@ -355,7 +339,7 @@ public class upDownManager : MonoBehaviour
         if (idx == 0 || idx == 1 || idx == 7) {
             return true;
         }
-        if (idx == 2 && jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
+        if (idx == 2) { //&& jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
             return true;
         }
         return false;
@@ -455,6 +439,7 @@ public class upDownManager : MonoBehaviour
     {
         changeOutline[i].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+       
     }
 
     public void hoverOutChangeBtn(int input)
@@ -493,12 +478,14 @@ public class upDownManager : MonoBehaviour
         }
         changeBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        itemManager.Instance.hoverInSwapOrDelete(0);
     }
 
     public void hoverOutChangeInitBtn()
     {
         changeBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        itemManager.Instance.hoverOutDesc();
     }
     public void clickChangeInitBtn()
     {
@@ -535,7 +522,7 @@ public class upDownManager : MonoBehaviour
         }
         deleteOutline[i].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_yesBtn_outline");
-
+        
     }
     public void hoverOutDeleteBtn()
     {
@@ -566,11 +553,13 @@ public class upDownManager : MonoBehaviour
         }
         deleteBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        itemManager.Instance.hoverInSwapOrDelete(1);
     }
     public void hoverOutDeleteInitBtn()
     {
         deleteBtnInitOutline.GetComponent<Image>().sprite
              = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        itemManager.Instance.hoverOutDesc();
     }
 
     public void clickDeleteInitBtn()
@@ -1392,12 +1381,7 @@ public class upDownManager : MonoBehaviour
         underSkillButton[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + str);
     }
     public string[] powerName = { "Reroll Origin", "Reroll", "Add", "Sub"};
-    public void updateUpperHoverBarPower(int powerIdx)
-    {
-        upperHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerSmall/spr_witchPowerSmall_" + powerName[powerIdx]);
-        upperHoverBarTitle.text = powerName[powerIdx];
-        upperHoverBarDesc.text = TalkManager.Instance.getDesc(41 + powerIdx);
-    }
+    
     public void updateUpperHoverBar(int option, Item item)
     {
         if(option == 1) // delete Bar

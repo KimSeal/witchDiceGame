@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using TMPro;
-
+using AnimatedBattleText.Examples;
 public class AdventureManager : MonoBehaviour
 {
     public int adventureJewelMax = 0;
@@ -920,7 +920,22 @@ public class AdventureManager : MonoBehaviour
             diceObject[diceIdx].GetComponent<hoverRotate>().expandEnd();
         }
     }
+    public void downgradeEff(int opt, int val, int characterIdx)
+    {
+        if (opt == 0)
+        {
+            SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
+        }
+        specialTextManager.GetComponent<ExampleTextManager>().printAdventureUpgrade(opt, -1 * val, characterIdx);
+        characterObj[characterIdx].GetComponent<Animator>().Play("Hit");
 
+    }
+    public void upgradeEff(int opt, int val, int characterIdx)
+    {
+        specialTextManager.GetComponent<ExampleTextManager>().printAdventureUpgrade(opt, val, characterIdx);
+    }
+
+    public GameObject specialTextManager;
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
         adventureStartChk = true;
@@ -1325,17 +1340,33 @@ public class AdventureManager : MonoBehaviour
                             break;
                         }
 
+                        if (curDiceEventPacket.getVal(i) != 0)
+                        {
+                            
+                            downgradeEff(i, curDiceEventPacket.getVal(i), selectDiceCharacterIdx);
+                        }
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).downGrade(i, curDiceEventPacket.getVal(i)) == 1)
                         { //약화 효과로 인해 죽어버릴 경우
-                            //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
-                            //balpanArrow.GetComponent<Animator>().Play("arrowAnim");
-
                             selectDiceCharacterIdx = -1;
                             resetDice();
                             break;
                         }
                     }
+                }
+                if (curDiceEventPacket.getSelectType() == 4)
+                { //능력치 증가
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
+                        {
+                            break;
+                        }
 
+                        if (curDiceEventPacket.getVal(i) != 0)
+                        {
+                            upgradeEff(i, curDiceEventPacket.getVal(i), selectDiceCharacterIdx);
+                        }
+                    }
                 }
                 if (curDiceEventPacket.getSelectType() == 8) { //상점 시스템
                     
