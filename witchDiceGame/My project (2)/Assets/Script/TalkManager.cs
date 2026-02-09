@@ -217,8 +217,9 @@ public class TalkManager : MonoBehaviour
             if (!jsonDataManager.Instance.getTutorialDid())
             {
                 AdventureManager.Instance.mainPlayButton(true);
+                //AdventureManager.Instance.clickPlay();
             }
-            else AdventureManager.Instance.clickPlay();
+            else AdventureManager.Instance.mainPlayButton(false);
             //AdventureManager.Instance.mainPlayButton(false);
 
             //
@@ -371,7 +372,7 @@ public class TalkManager : MonoBehaviour
 
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
             characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -550f, 0f);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -548f, 0f);
         }
         else if(descChk) // 설명만
         {
@@ -385,7 +386,7 @@ public class TalkManager : MonoBehaviour
                 characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
                 characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
             }
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -550f, 0f);
+            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -548f, 0f);
             characterTalk.GetComponent<TextMeshProUGUI>().text = descString;
         }
         else //text 필요 없음. 

@@ -220,7 +220,6 @@ public class AdventureManager : MonoBehaviour
 
     public IEnumerator tutorial_Coroutine()
     {
-        jsonDataManager.Instance.setMoney(0);
         resetDice();
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -232,9 +231,6 @@ public class AdventureManager : MonoBehaviour
     }
     public void tutorialStart()
     {
-        adventureGold = 0;
-        addMoney(0, 0);
-        upDownManager.Instance.setInit(0, 0);
 
         CharacterManager.Instance.setTutotialCharacterSet(); //캐릭터는 주인공 혼자만
         itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
@@ -284,6 +280,11 @@ public class AdventureManager : MonoBehaviour
         else
         {
             TownManager.Instance.backToTownUI();
+            if (!jsonDataManager.Instance.getTutorialDid())
+            {
+                jsonDataManager.Instance.tutorialDid();
+                TalkManager.Instance.startTalk(16);
+            }
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
             //SoundManager_Main.Instance.playSound(7);
         }

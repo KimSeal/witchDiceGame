@@ -321,11 +321,25 @@ public class upDownManager : MonoBehaviour
         TownManager.Instance.hoverOutUIBtn();
         skillDescUpdate("none", 0, 0, 0, 0, "", "");
         onOffUI(0, 0);
+        for (int i=0;i<8;i++) // new mark ฐüทร
+        {
+            if (TownManager.Instance.getTownNewMark(i)) {
+                underTownNewMark[i].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
+            }
+            else
+            {
+                underTownNewMark[i].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+        }
+       
     }
 
     public void activeTownUI(bool input) {
-        hoverOutUnderTownButton();
+        
         if (input) {
+            hoverOutUnderTownButton();
             underTownEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
         }
         else

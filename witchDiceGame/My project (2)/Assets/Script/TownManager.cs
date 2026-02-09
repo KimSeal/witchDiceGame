@@ -39,8 +39,30 @@ public class TownManager : MonoBehaviour
     public int[] townSound = new int[8];
     public bool townActive = false;
 
+    public GameObject[] townNewMark = new GameObject[7];
 
+    public bool getTownNewMark(int idx)
+    {
+        if (idx == 0 && !jsonDataManager.Instance.getTowerMeet()) { //tower
+            return true;
+        }
+        if (idx == 1 &&
+            (jsonDataManager.Instance.getChapterRead(1,0) == 1 || jsonDataManager.Instance.getChapterRead(1, 1) == 1 || jsonDataManager.Instance.getChapterRead(1, 2) == 1 ) ) {//home
+            return true;
+        }
+        if (idx == 2 &&
+            (jsonDataManager.Instance.getChapterRead(0,2) == 2 && !jsonDataManager.Instance.getLibraryMeet())) {//library
+            return true;
+        }
+        if (idx == 4 || idx == 5) return true;
+        if (idx == 7)//
+        {
+            if(getTownNewMark(0) || getTownNewMark(1) || getTownNewMark(2) || getTownNewMark(3) || getTownNewMark(4) || getTownNewMark(5) || getTownNewMark(6))
+                return true;
+        }
 
+        return false;
+    }
     private void shakeTownText(int idx)
     {
         townText[idx].GetComponent<hoverRotate>().shakeStart();
@@ -93,7 +115,13 @@ public class TownManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(0);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
+       
         if (i == 7) {
+            for (int newMarkIdx=0;newMarkIdx<7;newMarkIdx++)
+            {
+                if (getTownNewMark(newMarkIdx)) townNewMark[newMarkIdx].GetComponent<Animator>().Play("NewEvent");
+                else townNewMark[newMarkIdx].GetComponent<Animator>().Play("Empty");
+            }
             SoundManager_Sfx.Instance.playSound(0);
             CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
             curTownIdx = 7;
@@ -123,11 +151,10 @@ public class TownManager : MonoBehaviour
         upDownManager.Instance.setInit(jsonDataManager.Instance.getMoney(), 0);
 
         for (int i = 0; i < cloudObj.Length; i++) cloudObj[i].GetComponent<cloudMove>().cloudActive();
-        SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.playSound(7);
-        CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
         setTownActive(true);
-        
+        clickTownUI(7);
+
     }
     public void backToMain()
     {

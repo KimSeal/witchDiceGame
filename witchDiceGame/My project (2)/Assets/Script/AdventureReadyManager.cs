@@ -10,6 +10,17 @@ public class AdventureReadyManager : MonoBehaviour
     [SerializeField]
     public GameObject[] enterCharacterObj = new GameObject[2];
     private float[] enterCharacterMove = new float[2];
+
+    public GameObject enterButton;
+    public GameObject newMark;
+
+    [SerializeField]
+    public GameObject backgroundLine;
+    public GameObject[] backgroundSpark = new GameObject[9];
+
+    public Sprite[] towerSprite = new Sprite[2];
+    private int[] spark = new int[2];
+    private float[] sparkVal = new float [2];
     private void Awake()
     {
 
@@ -40,6 +51,13 @@ public class AdventureReadyManager : MonoBehaviour
         enterCharacterMove[0] = 200f;
         enterCharacterMove[1] = 200f;
         for(int i=0;i<2;i++) witchPowerObj[i] = GameObject.Find("obj_adventureReady_witchPower_Select_" +i.ToString());
+
+        for (int i=0;i<9;i++)
+        {
+            backgroundSpark[i].GetComponent<SpriteRenderer>().color = new Color(255f,255f,255f,0f);
+        }
+        spark[0] = -1; spark[1] = -1;
+        sparkVal[0] = 0;  sparkVal[1] = 0.5f;
     }
 
     // Update is called once per frame
@@ -47,6 +65,8 @@ public class AdventureReadyManager : MonoBehaviour
     {
         
     }
+    [SerializeField]
+    public float addVal = 0f;
 
     private void FixedUpdate(){
         if (enterCharacterMove[0] < 200f)
@@ -62,11 +82,52 @@ public class AdventureReadyManager : MonoBehaviour
             if (enterCharacterMove[1] % 50f == 25) SoundManager_Sfx.Instance.playSound(17);
             enterCharacterObj[1].GetComponent<Transform>().position = new Vector3(-1260 + enterCharacterMove[1], -530 + 12 * Mathf.Abs(Mathf.Sin((enterCharacterMove[1] / 50) * Mathf.PI)), 0f);
         }
+
+        if (spark[0] >= 0)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (sparkVal[i] >= 0.0f && sparkVal[i] <= 1.0f)
+                {
+                    backgroundSpark[spark[i]].GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, sparkVal[i]);
+                    sparkVal[i] += addVal;
+                }
+                else if (sparkVal[i] > 1.0f && sparkVal[i] <= 2.0f)
+                {
+                    backgroundSpark[spark[i]].GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, (2.0f - sparkVal[i]));
+                    sparkVal[i] += addVal;
+                    if (sparkVal[i] >= 2.0f)
+                    {
+                        backgroundSpark[spark[i]].GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 0f);
+                        sparkVal[i] = Random.Range(-2.0f, -0.5f);
+                        spark[i] = Random.Range(0, 9);
+                        if (spark[i] == spark[(i + 1) % 2]) spark[i] = (spark[i] + 1) % 9;
+                    }
+                }
+                else
+                {
+                    sparkVal[i] += addVal;
+                }
+
+            }
+        }
     }
-
-
+    
+    public void hoverInTower()
+    {
+        enterButton.GetComponent<SpriteRenderer>().sprite = towerSprite[1];
+        if (!backgroundLine.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("lineDraw"))
+        {
+            backgroundLine.GetComponent<Animator>().Play("lineDraw");
+        }
+    }
+    public void hoverOutTower()
+    {
+        enterButton.GetComponent<SpriteRenderer>().sprite = towerSprite[0];
+    }
     public void startAdventure()
     {
+        jsonDataManager.Instance.towerEntry();
         enterCharacterMove[0] = 200f;
         enterCharacterMove[1] = 200f;
         SoundManager_Sfx.Instance.stopSound(17);
@@ -78,12 +139,23 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void enterAdventureReady()
     {
-        
+        if (!jsonDataManager.Instance.getTowerEntry()) {
+            newMark.GetComponent<Animator>().Play("NewEvent");
+        }
+        else newMark.GetComponent<Animator>().Play("Empty");
+
         enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(1)).getName() + "_back");
         enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(0)).getName() + "_back");
 
         enterCharacterMove[0] = 0;
         enterCharacterMove[1] = -20;
+
+        spark[0] = Random.Range(0, 9);
+        spark[1] = (spark[0] + 1) % 9;
+        for (int i = 0; i < 9; i++)
+        {
+            backgroundSpark[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 0f);
+        }
 
         if (jsonDataManager.Instance.getCharacterSelect(0) == 0)
         {
@@ -94,6 +166,8 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void exitAdventureReady() {
         SoundManager_Sfx.Instance.stopSound(17);
+        spark[0] = -1;
+        spark[1] = -1;
         enterCharacterMove[0] = 200;
         enterCharacterMove[1] = 200;
         //TownManager.Instance.backToTownUI();

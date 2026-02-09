@@ -188,6 +188,7 @@ public class HomeManager : MonoBehaviour
             fullUI.showFull(5);
         }
         updateJewelImage();
+        upDownManager.Instance.hoverOutUnderTownButton();
     }
     
 

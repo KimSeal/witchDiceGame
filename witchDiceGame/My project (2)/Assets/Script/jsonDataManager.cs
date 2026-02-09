@@ -278,6 +278,18 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+    public bool getTowerEntry()
+    {
+        return playerPlayData.towerEntry;
+    }
+    public void towerEntry()
+    {
+        if (!playerPlayData.towerEntry) { 
+            playerPlayData.towerEntry = true;
+            SavePlayerDataToJson();
+        }
+    }
+    
     public bool getLibraryMeet()
     {
         return playerPlayData.libraryMeet;
@@ -352,15 +364,16 @@ public class jsonDataManager : MonoBehaviour
         public int[] curWitchPower = new int[2];
         public int money = 0;
         public bool[] witchPower = new bool[100];
-        public bool[] playCharacterAble = new bool[10000];
-        public int[] playCharacterToken = new int[10000];
-        public bool[] monsterSkill0Meet = new bool[10000];
-        public bool[] monsterSkill1Meet = new bool[10000];
-        public bool[] stageWatched = new bool[10000];
+        public bool[] playCharacterAble = new bool[100];
+        public int[] playCharacterToken = new int[100];
+        public bool[] monsterSkill0Meet = new bool[100];
+        public bool[] monsterSkill1Meet = new bool[100];
+        public bool[] stageWatched = new bool[100];
         public bool downGradeRevive = false;
         public bool tutorialRevive = false;
         public bool tutorialDid = false;
         public bool towerMeet = false;
+        public bool towerEntry = false;
         public bool libraryMeet = false;
         public bool owlBattleWin = false;
         public bool firstGetCharacterPart = false;
@@ -432,6 +445,7 @@ public class jsonDataManager : MonoBehaviour
             tutorialRevive = false;
             tutorialDid = false;
             towerMeet = false;
+            towerEntry = false;
             libraryMeet = false;
             owlBattleWin = false;
             firstGetCharacterPart = false;
@@ -470,6 +484,7 @@ public class jsonDataManager : MonoBehaviour
             tutorialRevive = playerPlayerData.tutorialRevive;
             tutorialDid = playerPlayerData.tutorialDid;
             towerMeet = playerPlayerData.towerMeet;
+            towerEntry = playerPlayerData.towerEntry;
             libraryMeet = playerPlayerData.libraryMeet;
             owlBattleWin = playerPlayerData.owlBattleWin;
             firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
