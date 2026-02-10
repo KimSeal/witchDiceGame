@@ -294,6 +294,18 @@ public class jsonDataManager : MonoBehaviour
     {
         return playerPlayData.libraryMeet;
     }
+    public bool getHomeMeet()
+    {
+        return playerPlayData.homeMeet;
+    }
+    public void HomeMeet()
+    {
+        if (!playerPlayData.homeMeet)
+        {
+            playerPlayData.homeMeet = true;
+            SavePlayerDataToJson();
+        }
+    }
     public void libraryMeet()
     {
         if (!playerPlayData.libraryMeet)
@@ -327,11 +339,11 @@ public class jsonDataManager : MonoBehaviour
     }
     public int getChapterRead(int chapterIdx, int idx)
     {
-        if (chapterIdx == 1) return playerPlayData.chapter1Read[idx];
+        if (chapterIdx == 0) return playerPlayData.chapter1Read[idx];
         else return 0;
     }
     public void setChapterRead(int chapterIdx, int idx) {
-        if (chapterIdx == 1)
+        if (chapterIdx == 0)
         {
             playerPlayData.chapter1Read[idx]++;
             SavePlayerDataToJson();
@@ -372,6 +384,7 @@ public class jsonDataManager : MonoBehaviour
         public bool downGradeRevive = false;
         public bool tutorialRevive = false;
         public bool tutorialDid = false;
+        public bool homeMeet = false;
         public bool towerMeet = false;
         public bool towerEntry = false;
         public bool libraryMeet = false;
@@ -444,6 +457,7 @@ public class jsonDataManager : MonoBehaviour
             downGradeRevive = false;
             tutorialRevive = false;
             tutorialDid = false;
+            homeMeet = false;
             towerMeet = false;
             towerEntry = false;
             libraryMeet = false;
@@ -483,6 +497,7 @@ public class jsonDataManager : MonoBehaviour
             downGradeRevive = playerPlayerData.downGradeRevive;
             tutorialRevive = playerPlayerData.tutorialRevive;
             tutorialDid = playerPlayerData.tutorialDid;
+            homeMeet = playerPlayerData.homeMeet;
             towerMeet = playerPlayerData.towerMeet;
             towerEntry = playerPlayerData.towerEntry;
             libraryMeet = playerPlayerData.libraryMeet;

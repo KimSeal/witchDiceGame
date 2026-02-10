@@ -1647,7 +1647,7 @@ public class AdventureManager : MonoBehaviour
                     }
                 }
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 2)){ // 1스테이지 중간 보스 클리어
-                    if(jsonDataManager.Instance.getChapterRead(1,0) == 0) jsonDataManager.Instance.setChapterRead(1,0);
+                    if(jsonDataManager.Instance.getChapterRead(0,0) == 0) jsonDataManager.Instance.setChapterRead(0,0);
                     giveUpBtnAble(false);
                     TalkManager.Instance.startTalk(33);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1655,7 +1655,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 && !gameOverChk && jsonDataManager.Instance.setChapterDid(0, 3))
                 { // 1스테이지 최종 보스 클리어
-                    if (jsonDataManager.Instance.getChapterRead(1, 1) == 0) jsonDataManager.Instance.setChapterRead(1, 1);
+                    if (jsonDataManager.Instance.getChapterRead(0, 1) == 0) jsonDataManager.Instance.setChapterRead(0, 1);
                     giveUpBtnAble(false);
                     TalkManager.Instance.startTalk(32);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1663,7 +1663,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 //데모 보스 클리어 확인
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && !gameOverChk ) { // 올빼미 선배 클리어
-                    if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) jsonDataManager.Instance.setChapterRead(1, 2);
+                    if (jsonDataManager.Instance.getChapterRead(0, 2) == 0) jsonDataManager.Instance.setChapterRead(0, 2);
                     giveUpBtnAble(false);
                     demoEndChk = 1;
                     gameOverChk = true;

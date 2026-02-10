@@ -47,14 +47,20 @@ public class TownManager : MonoBehaviour
             return true;
         }
         if (idx == 1 &&
-            (jsonDataManager.Instance.getChapterRead(1,0) == 1 || jsonDataManager.Instance.getChapterRead(1, 1) == 1 || jsonDataManager.Instance.getChapterRead(1, 2) == 1 ) ) {//home
+            (jsonDataManager.Instance.getChapterRead(0,0) == 1 || jsonDataManager.Instance.getChapterRead(0, 1) == 1 || jsonDataManager.Instance.getChapterRead(0, 2) == 1 ||
+            jsonDataManager.Instance.getChapterRead(1, 0) == 1 || jsonDataManager.Instance.getChapterRead(1, 1) == 1 || jsonDataManager.Instance.getChapterRead(1, 2) == 1 ||
+            jsonDataManager.Instance.getChapterRead(2, 0) == 1 || jsonDataManager.Instance.getChapterRead(2, 1) == 1 || jsonDataManager.Instance.getChapterRead(2, 2) == 1 ||
+            jsonDataManager.Instance.getChapterRead(3, 0) == 1 || jsonDataManager.Instance.getChapterRead(3, 1) == 1 || jsonDataManager.Instance.getChapterRead(3, 2) == 1 ||
+            jsonDataManager.Instance.getChapterRead(4, 0) == 1 || jsonDataManager.Instance.getChapterRead(4, 1) == 1 || jsonDataManager.Instance.getChapterRead(4, 2) == 1 ||
+            jsonDataManager.Instance.getChapterRead(5, 0) == 1 || jsonDataManager.Instance.getChapterRead(5, 1) == 1 || jsonDataManager.Instance.getChapterRead(5, 2) == 1 ||
+            !jsonDataManager.Instance.getHomeMeet()) ) {//home
             return true;
         }
         if (idx == 2 &&
             (jsonDataManager.Instance.getChapterRead(0,2) == 2 && !jsonDataManager.Instance.getLibraryMeet())) {//library
             return true;
         }
-        if (idx == 4 || idx == 5) return true;
+
         if (idx == 7)//
         {
             if(getTownNewMark(0) || getTownNewMark(1) || getTownNewMark(2) || getTownNewMark(3) || getTownNewMark(4) || getTownNewMark(5) || getTownNewMark(6))
