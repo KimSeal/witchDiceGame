@@ -37,7 +37,10 @@ public class optionManager : MonoBehaviour
     [SerializeField]
     public GameObject[] optionBoards = new GameObject[3];
    
-
+    [SerializeField]
+    public TextMeshProUGUI[] optionBtnText = new TextMeshProUGUI[3];
+    public TextMeshProUGUI[] soundText = new TextMeshProUGUI[2];
+    public TextMeshProUGUI fullScreenText;
 
     private bool optionOn = false;
     public static optionManager Instance
@@ -99,7 +102,7 @@ public class optionManager : MonoBehaviour
             upDownManager.Instance.hoverOutWitchPowerButton();
             BattleManager.Instance.setCurClickSkill(-1);
         }
-
+        updateOptionButtonText();
     }
     public void unactiveOptionBoard()
     {
@@ -129,6 +132,13 @@ public class optionManager : MonoBehaviour
         else if (idx == 2) changeSound();
     }
 
+    public void updateOptionButtonText()
+    {
+        optionBtnText[0].text = TalkManager.Instance.getDesc(93);
+        optionBtnText[1].text = TalkManager.Instance.getDesc(94);
+        optionBtnText[2].text = TalkManager.Instance.getDesc(95);
+    }
+
     public void changeLanguage(int idx)
     {
         if (optionIdx == 0)
@@ -147,6 +157,7 @@ public class optionManager : MonoBehaviour
                 }
             }
             TalkManager.Instance.changeLan();
+            updateOptionButtonText();
         }
     }
 
@@ -166,10 +177,13 @@ public class optionManager : MonoBehaviour
                     screenSizeBtn[i].GetComponent<hoverRotateUI>().setLanguageActive(false);
                 }
             }
+            fullScreenText.text = "- " + TalkManager.Instance.getDesc(98);
         }
     }
     public void changeSound()
     {
+        soundText[0].text = TalkManager.Instance.getDesc(96);
+        soundText[1].text = TalkManager.Instance.getDesc(97);
         for (int i=0;i<soundBtn.Length;i++)
         {
             soundBtn[i].GetComponent<soundDragAndDrop>().setUIButton();

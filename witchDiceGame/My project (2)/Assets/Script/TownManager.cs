@@ -77,7 +77,7 @@ public class TownManager : MonoBehaviour
     {
         int curTownTemp2 = curTownIdx;
         AdventureReadyManager.Instance.exitAdventureReady();
-
+        upDownManager.Instance.clickCharacterButton(-1);
         //0 : 타워 1 : 집 2: 도서관 3: 마을  7: 로비
         if (i == 0)
         {

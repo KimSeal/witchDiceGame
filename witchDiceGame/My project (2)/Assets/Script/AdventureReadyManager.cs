@@ -135,6 +135,7 @@ public class AdventureReadyManager : MonoBehaviour
         SoundManager_Main.Instance.stopSound(7);
         SoundManager_Sfx.Instance.playSound(0);
         TownManager.Instance.setTownActive(false);
+        upDownManager.Instance.clickCharacterButton(-1);
         AdventureManager.Instance.startAdventure();
     }
     public void enterAdventureReady()
@@ -143,6 +144,13 @@ public class AdventureReadyManager : MonoBehaviour
             newMark.GetComponent<Animator>().Play("NewEvent");
         }
         else newMark.GetComponent<Animator>().Play("Empty");
+
+        
+        CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
+        if (jsonDataManager.Instance.getCharacterSelect(0) > 0) CharacterManager.Instance.setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
+        else CharacterManager.Instance.emptyMyCharacter(1);
+
+        hoverOutTower();
 
         enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(1)).getName() + "_back");
         enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(0)).getName() + "_back");

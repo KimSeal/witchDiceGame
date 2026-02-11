@@ -207,8 +207,6 @@ public class TalkManager : MonoBehaviour
     }
     public void clickDescBox()
     {
-        Debug.Log("click talk Box!");
-        
         if (talkingChk)
         {   
             goToNextTalk();
@@ -227,7 +225,6 @@ public class TalkManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(AdventureManager.Instance.getTutorial() == 0);
             if (AdventureManager.Instance.remainItemChk()  && AdventureManager.Instance.getTutorial() == 0 ) //튜토리얼이 아니고, 남은 게 있을 경우
             {
                 AdventureManager.Instance.remainItemOnOff(true);

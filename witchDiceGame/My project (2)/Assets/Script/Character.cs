@@ -310,7 +310,7 @@ public abstract class Character
     {
         if (takeSkillPacket.getSkillType() == 0 )//|| takeSkillPacket.getSkillType() == 1000)
         {
-            if (this.getSpeed() > Random.Range(1, 100)) { return 2; }
+            if (this.getSpeed() >= Random.Range(1, 101)) { return 2; }
             this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
             //Debug.Log("this damage is : " + takeSkillPacket.getVal());
             //Debug.Log("my remain Hp is : " + this.hp);

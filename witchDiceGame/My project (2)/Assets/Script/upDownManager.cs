@@ -940,7 +940,7 @@ public class upDownManager : MonoBehaviour
         {
             //deleteOtherLock(1);
             backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
-            bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
+            bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 130f, 0f);
             hoverInUnderBarSkill(curSkill);
             lockState = 1; //클릭시 현재 스킬에 대한 설명으로 고정.
             updateBigDiceSkill();
@@ -1372,7 +1372,7 @@ public class upDownManager : MonoBehaviour
             if (lockState == 1)
             {
                 underSkillDiceDescImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + arrNum[i].ToString());
-                if (arrNum[i] <= 6 && arrNum[i] >= 1) underSkillDiceDescText[i].text = arrNum[i].ToString();
+                if (arrNum[i] <= 6 && arrNum[i] >= 1) underSkillDiceDescText[i].text = arrNum[i].ToString() + " "+TalkManager.Instance.getDesc(99);
                 else if (arrNum[i] == 7) underSkillDiceDescText[i].text = TalkManager.Instance.getDesc(27);
                 else if (arrNum[i] == 8) underSkillDiceDescText[i].text = TalkManager.Instance.getDesc(28);
                 else if (arrNum[i] == 9) underSkillDiceDescText[i].text = TalkManager.Instance.getDesc(29);

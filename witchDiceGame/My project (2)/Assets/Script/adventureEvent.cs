@@ -208,6 +208,10 @@ public class adventureEvent
     {
         return this.eventName;
     }
+    public int getEventIdx()
+    {
+        return this.eventIdx;
+    }
     public int getDiceUse()
     {
         return this.diceUse;

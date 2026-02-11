@@ -41,6 +41,10 @@ public class ToolBarManager : MonoBehaviour
     [SerializeField]
     public Sprite[] backgroundSprite = new Sprite[6];
 
+    [SerializeField]
+    public GameObject toolBarDiceInfo;
+    public TextMeshProUGUI[] toolBarDiceText = new TextMeshProUGUI[6];
+
     public int toolBarState = 0;
     // Start is called before the first frame update
     void Start()
@@ -111,6 +115,7 @@ public class ToolBarManager : MonoBehaviour
     public void setToolBar(Character character)
     {
         toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
         toolBarCharacterInfo.SetActive(true);
 
         if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + character.getName() + "_face") == null)
@@ -137,6 +142,7 @@ public class ToolBarManager : MonoBehaviour
     }
     public void setToolBar(Skill skill) {
         toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
         toolBarCharacterInfo.SetActive(false);
 
         toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skill.getSkillName());
@@ -151,6 +157,7 @@ public class ToolBarManager : MonoBehaviour
     }
     public void setToolBar(Item item) {
         toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
         toolBarCharacterInfo.SetActive(false);
 
         if (item.getType() == 0) toolBarImage.GetComponent<Image>().sprite
@@ -173,11 +180,13 @@ public class ToolBarManager : MonoBehaviour
         toolBarDesc.text = item.getContent();
     }
     //공격력, 마법감응력, 스피드, 방어도, HP    
-    private int[] toolBarTitleIdx = { 72,73,74, 83, 85};
-    private int[] toolBarContentIdx = { 75,76,77, 84, 86};
+    //전투, 보물, 불운, 행운, 랜덤, 상점, 보스, ??? 이벤트
+    private int[] toolBarTitleIdx = { 72,73,74, 83, 85, 100,102,104,106,108,110,112, 114};
+    private int[] toolBarContentIdx = { 75,76,77, 84, 86 ,101,103,105,107,109,111,113, 115};
     public void setToolBar(int idx)
     {
         toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
         toolBarCharacterInfo.SetActive(false);
 
         for (int i = 0; i < 6; i++)
@@ -191,7 +200,11 @@ public class ToolBarManager : MonoBehaviour
     public void setToolBar(string title, string content, Sprite spriteImage)
     {
         toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
         toolBarCharacterInfo.SetActive(false);
+
+
+
 
         for (int i = 0; i < 6; i++)
         {
@@ -200,5 +213,30 @@ public class ToolBarManager : MonoBehaviour
         toolBarImage.GetComponent<Image>().sprite = spriteImage;
         toolBarTitle.text = title;
         toolBarDesc.text = content;
+    }
+    public void setToolBarDiceInfo()
+    {
+        if(!AdventureManager.Instance.getBattleEventChk()){
+            return;
+        }
+        toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(true);
+        toolBarCharacterInfo.SetActive(false);
+
+        for (int i = 0; i < 6; i++)
+        {
+            toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+
+        toolBarTitle.text = TalkManager.Instance.getDesc(116);
+        toolBarDesc.text = "";
+
+        toolBarDiceText[0].text = TalkManager.Instance.getDesc(29);
+        toolBarDiceText[1].text = TalkManager.Instance.getDesc(27);
+        toolBarDiceText[2].text = TalkManager.Instance.getDesc(28);
+        toolBarDiceText[3].text = "3 " + TalkManager.Instance.getDesc(99);
+        toolBarDiceText[4].text = "3 " + TalkManager.Instance.getDesc(26);
+        toolBarDiceText[5].text = "3 " + TalkManager.Instance.getDesc(25);
     }
 }

@@ -2928,6 +2928,103 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    private Queue<int> skillResultQueueForAnim = new Queue<int>();  //return -1 : 처리하지 않음. 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프
+    private bool battleHitAnimEndChk = false;
+
+    private IEnumerator battleHitAnim(int lastAttack, int lastDead)
+    {
+        int skillResult = 0;
+        int tempTargetIdx = 0;
+        bool boomChk = false;
+
+        if (lastAttack >= 0 && lastDead >= 0) { //kill Animation
+            KillAnimationManager.Instance.startAnimation(0, getCharacter(lastAttack), getCharacter(lastDead));
+            yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
+        }
+
+        for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++) {
+            skillResult = skillResultQueueForAnim.Dequeue();
+            if (skillResult < 0) {//처리하지 않는 Animation인 경우 넘어간다.
+                continue;
+            }
+
+            tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+            Debug.Log(tempTargetIdx);
+            if (tempTargetIdx < 4) //아군이 타겟일 경우
+            {
+                if (skillResult != 2) //회피가 아닌 경우
+                {
+                    if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])){
+                        textHeight[tempTargetIdx]++;
+                    }
+                }
+                else{  //회피
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx, textHeight[tempTargetIdx]++);
+                }
+
+                if (skillResult == 1) {
+                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                    backGroundObj[4].GetComponent<Animator>().Play("BattleFaint");
+                    battleAnimationControl(tempTargetIdx, 2);
+                    DeadCharacterUpdate(tempTargetIdx);
+                    boomChk = true;
+                }
+                else
+                {
+                    //주사위 상태 변화 실행
+                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+
+                    if (skillResult == 0)
+                    {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                        backGroundObj[4].GetComponent<Animator>().Play("BattleHit");
+                        battleAnimationControl(tempTargetIdx, 1);
+                    }
+                }
+            }
+            else
+            {
+                if (skillResult != 2) {
+                    if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                }
+                else {
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
+                }
+                if (skillResult == 1) //사망한 경우
+                {
+                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                    backGroundObj[4].GetComponent<Animator>().Play("BattleKill");
+                    battleAnimationControl(tempTargetIdx, 2);
+                    DeadCharacterUpdate(tempTargetIdx);
+                    boomChk = true;
+                }
+                else
+                {
+                    changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
+                    if (skillResult == 0) { //대미지는 주었지만한 생존한 경우
+                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                        backGroundObj[4].GetComponent<Animator>().Play("BattleShine");
+                        battleAnimationControl(tempTargetIdx, 1);
+                    }
+                }
+
+            }
+            
+            
+        }
+
+
+        if (boomChk) SoundManager_Sfx.Instance.playSound(75);
+
+        battleHitAnimEndChk = false;
+
+        updateHp();
+        updateMyDiceUI();
+        updateEnemyDiceUI();
+        updateBattleUI();
+    }
+
     private IEnumerator battlePhase()
     {
         
@@ -3008,7 +3105,7 @@ public class BattleManager : MonoBehaviour
                     for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
                         boomChk = false;
                         characterTargetIdx = 0;
-                        int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
+                        for (int heightIdx = 0; heightIdx < textHeight.Length; heightIdx++) textHeight[heightIdx] = 0;
                         //SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                         if (curSkill.TargetAuto == 0)
                         {
@@ -3032,115 +3129,45 @@ public class BattleManager : MonoBehaviour
                         passiveUpdateAfterClick(takeSkillPacketArr, usedDiceArr, true);
 
                         int tempTargetIdx;
+                        int lastAtk = -1;
+                        int lastDead = -1;
                         //만들어진 상호작용 Queue를 기반으로 전투 진행
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+                            Debug.Log("target Idx : " + tempTargetIdx.ToString());
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
                                     int skillResult = myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                    if (skillResult != 2){
-                                        if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    }
-                                    else
-                                    {
-                                        specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx);
-                                    }
-                                    if (myCharacter[tempTargetIdx] != null && skillResult == 1) //사망인경우
-                                    {
-
-                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        battleAnimationControl(tempTargetIdx, 2);
-                                        DeadCharacterUpdate(tempTargetIdx);
-                                        if (!boomChk)
-                                        {
-                                            boomChk = true;
-                                            SoundManager_Sfx.Instance.playSound(75);
-                                        }
-                                        updateMyDiceUI();
-                                    }
-                                    else
-                                    {
-                                        //주사위 상태 변화 실행
-                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-
-                                        if (skillResult == 0)
-                                        {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            battleAnimationControl(tempTargetIdx, 1);
-                                        }
-                                    }
+                                    skillResultQueueForAnim.Enqueue(skillResult);
+                                    if (skillResult == 1 && winningCheck() > 0) { lastAtk = skillUseCharacter; lastDead = tempTargetIdx; }
+                                }
+                                else
+                                {
+                                    skillResultQueueForAnim.Enqueue(-1); //해당 스킬 결과에 대해서는 처리 하지 않음.
                                 }
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
-
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-
                                     int skillResult = enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                    //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx-4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    if (enemyCharacter[tempTargetIdx - 4] != null && skillResult == 1) //반환 결과가 해당 캐릭터의 죽음 인경우
-                                    {
-                                        if (!boomChk )//&& winningCheck() == 1)
-                                        {
-                                            KillAnimationManager.Instance.startAnimation(0, myCharacter[skillUseCharacter], enemyCharacter[tempTargetIdx - 4]);
-                                            yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
-                                        }
-                                        if (skillResult != 2)
-                                        {
-                                            if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                        }
-                                        else
-                                        {
-                                            specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4);
-                                        }
-                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        backGroundObj[4].GetComponent<Animator>().Play("BattleKill");
-                                        battleAnimationControl(tempTargetIdx, 2);
-                                        DeadCharacterUpdate(tempTargetIdx);
-                                        if (!boomChk)
-                                        {
-                                            boomChk = true;
-                                            SoundManager_Sfx.Instance.playSound(75);
-                                        }
-                                        updateEnemyDiceUI();
-                                    }
-                                    else
-                                    {
-                                        if (skillResult != 2)
-                                        {
-                                            if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                        }
-                                        else
-                                        {
-                                            specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4);
-                                        }
-                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                        if (skillResult == 0)
-                                        { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            backGroundObj[4].GetComponent<Animator>().Play("BattleShine");
-                                            battleAnimationControl(tempTargetIdx, 1);
-                                        }
-                                    }
+                                    skillResultQueueForAnim.Enqueue(skillResult);
+                                    if (skillResult == 1 && winningCheck() > 0) { lastAtk = skillUseCharacter; lastDead = tempTargetIdx; }
                                 }
-
-
+                                else
+                                {
+                                    skillResultQueueForAnim.Enqueue(-1); //해당 스킬 결과에 대해서는 처리 하지 않음.
+                                }
                             }
-
-
-
-                            updateHp();
-                            updateMyDiceUI();
-                            updateBattleUI();
-
-                            //if (winningCheck() != 0) break;
                         }
+                        
+                        battleHitAnimEndChk = true;
+                        StartCoroutine(battleHitAnim(lastAtk, lastDead));
+                        yield return new WaitUntil(() => !battleHitAnimEndChk);
+
                         if (chainChk)
                         {
                             chainChk = false;
@@ -3234,96 +3261,36 @@ public class BattleManager : MonoBehaviour
 
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
-
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
                                     int skillResult = myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                    if (skillResult != 2)
-                                    {
-                                        if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    }
-                                    else
-                                    {
-                                        specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx);
-                                    }
-                                    //specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    //GameObject temp = Instantiate(damageTextObj, myCharacterObjUI[tempTargetIdx].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    //사망인 경우
-
-                                    if ( skillResult == 1)
-                                    {
-                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        
-                                        backGroundObj[4].GetComponent<Animator>().Play("BattleFaint");
-                                        battleAnimationControl(tempTargetIdx, 2);
-                                        DeadCharacterUpdate(tempTargetIdx);
-                                        if (!boomChk)
-                                        {
-                                            boomChk = true;
-                                            SoundManager_Sfx.Instance.playSound(75);
-                                        }
-                                    }
-                                    else // 사망이 아닌 경우
-                                    {
-                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                        if (skillResult == 0)
-                                        { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            backGroundObj[4].GetComponent<Animator>().Play("BattleHit");
-                                            battleAnimationControl(tempTargetIdx, 1);
-                                        }
-                                    }
+                                    skillResultQueueForAnim.Enqueue(skillResult);
                                 }
-
+                                else
+                                {
+                                    skillResultQueueForAnim.Enqueue(-1);
+                                }
                             }
                             else // 적군 대상으로 스킬이 들어온 경우
                             {
                                 if (enemyCharacter[tempTargetIdx - 4] != null && enemyCharacter[tempTargetIdx - 4].getCurState() == 0) //대상 존재시 damage text 출력
                                 {
-                                    int skillResult = enemyCharacter[tempTargetIdx-4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
-                                    if (skillResult != 2)
-                                    {
-                                        if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
-                                    }
-                                    else
-                                    {
-                                        specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4);
-                                    }
-                                    //specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(tempTargetIdx-4, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    //GameObject temp = Instantiate(damageTextObj, enemyCharacterObjUI[tempTargetIdx - 4].transform.position + new Vector3(0, 45, 0), new Quaternion(0, 0, 0, 0)); //적용된 것에 대한 텍스트 생성
-                                    //temp.GetComponent<damageMove>().textChange(takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                    //사망한경우
-                                    if ( skillResult == 1)
-                                    {
-                                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                        battleAnimationControl(tempTargetIdx, 2);
-                                        DeadCharacterUpdate(tempTargetIdx);
-                                        if (!boomChk)
-                                        {
-                                            boomChk = true;
-                                            SoundManager_Sfx.Instance.playSound(75);
-                                        }
-                                    }
-                                    else //사망 하지 않은 경우
-                                    {
-                                        changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
-                                        if (skillResult == 0)
-                                        { //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
-                                            characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
-                                            battleAnimationControl(tempTargetIdx, 1);
-                                        }
-                                    }
+                                    int skillResult = enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
+                                    skillResultQueueForAnim.Enqueue(skillResult);
+                                }
+                                else
+                                {
+                                    skillResultQueueForAnim.Enqueue(-1); //해당 스킬 결과에 대해서는 처리 하지 않음.
                                 }
 
-
-
                             }
-                            updateHp();
-                            updateEnemyDiceUI();
-                            updateBattleUI();
 
                         }
+
+                        battleHitAnimEndChk = true;
+                        StartCoroutine(battleHitAnim(-1, -1));
+                        yield return new WaitUntil(() => !battleHitAnimEndChk);
+
 
                         if (chainChk)
                         {

@@ -630,7 +630,6 @@ public class itemManager : MonoBehaviour
     public int click_Character_battle(int idx)
     {
         characterSelectIdx = idx;
-        Debug.Log(idx);
         if (idx == -1)
         {//character UI delete 
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 390f, 0f);
@@ -778,28 +777,6 @@ public class itemManager : MonoBehaviour
     public void hoverInInfo(int i)
     {
         ToolBarManager.Instance.setToolBar(i);
-        /*
-        if (i == 0)
-        {
-            
-            
-            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_atk_1212_2");
-            characterDescTitle.text = TalkManager.Instance.getDesc(72);
-            characterDescText.text = TalkManager.Instance.getDesc(75);
-            
-        }
-        else if (i == 1)
-        {
-            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_mag_1212_2");
-            characterDescTitle.text = TalkManager.Instance.getDesc(73);
-            characterDescText.text = TalkManager.Instance.getDesc(76);
-        }
-        else if (i == 2) {
-            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_speed_1212_2");
-            characterDescTitle.text = TalkManager.Instance.getDesc(74);
-            characterDescText.text = TalkManager.Instance.getDesc(77);
-        }
-        */
     }
     public void hoverOutDesc()
     {

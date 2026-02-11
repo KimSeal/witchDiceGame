@@ -366,6 +366,8 @@ public class jsonDataManager : MonoBehaviour
         this.playerPlayData.setCharacterSelect(idx, val);
         SavePlayerDataToJson();
     }
+    public bool getEventMeet(int idx) { return playerPlayData.eventMeet[idx]; }
+    public void setEventMeet(int idx) { playerPlayData.eventMeet[idx] = true; SavePlayerDataToJson(); }
 
     public class PlayerPlayData
     {
@@ -393,7 +395,7 @@ public class jsonDataManager : MonoBehaviour
         public int[] chapterDid = new int[6];
         public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
         public int[] characterSelect = new int[2];
-
+        public bool[] eventMeet = new bool[300];
         public void setCharacterSelect(int idx, int val)
         {
             characterSelect[idx] = val;
@@ -454,6 +456,7 @@ public class jsonDataManager : MonoBehaviour
                 monsterSkill0Meet[i] = false;
                 monsterSkill1Meet[i] = false;
             }
+            for(int i=0;i<eventMeet.Length;i++) eventMeet[i] = false;
             downGradeRevive = false;
             tutorialRevive = false;
             tutorialDid = false;
@@ -494,6 +497,7 @@ public class jsonDataManager : MonoBehaviour
             {
                 stageWatched[i] = playerPlayerData.stageWatched[i];
             }
+            for (int i = 0; i < eventMeet.Length; i++) eventMeet[i] = playerPlayerData.eventMeet[i];
             downGradeRevive = playerPlayerData.downGradeRevive;
             tutorialRevive = playerPlayerData.tutorialRevive;
             tutorialDid = playerPlayerData.tutorialDid;
