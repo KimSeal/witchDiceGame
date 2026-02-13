@@ -2555,8 +2555,8 @@ public class BattleManager : MonoBehaviour
             int diceNumTemp = myDiceTake[idx]; //죽은 캐릭터가 지니고 있는 주사위를 사용한 스킬 들 해제
 
 
-            upDownManager.Instance.skillIconUpdate(idx * 2, "none");
-            upDownManager.Instance.skillIconUpdate(idx * 2 + 1, "none");
+            upDownManager.Instance.skillIconUpdate(idx * 2, "none2");
+            upDownManager.Instance.skillIconUpdate(idx * 2 + 1, "none2");
 
             for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
             {
@@ -4259,7 +4259,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
-                    upDownManager.Instance.skillIconUpdate(i * 2 + j, "none");
+                    upDownManager.Instance.skillIconUpdate(i * 2 + j, "none2");
                 }
             }
         }
