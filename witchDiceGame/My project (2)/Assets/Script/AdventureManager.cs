@@ -47,6 +47,7 @@ public class AdventureManager : MonoBehaviour
 
     [SerializeField] private GameObject balpanLoad, balpanScreen, balpanArrow, balpanArrowGoal; // obj_adventure_diceBoard_load, obj_adventure_diceBoard, obj_balpan_arrow
     [SerializeField] private GameObject[] balpanObj = new GameObject[10]; //obj_balpan_(number)
+    [SerializeField] public GameObject[] balpanEffObj = new GameObject[10];
     [SerializeField] private GameObject[] balpanNewMark = new GameObject[10];
     [SerializeField] public GameObject[] balpanUpDownButton = new GameObject[2];
     [SerializeField] public GameObject balpanCurPointText;
@@ -614,7 +615,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 0; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -920,12 +921,21 @@ public class AdventureManager : MonoBehaviour
         
         
     }
-    public void setBalpan(int balpanIdx, adventureEvent adventureEventTemp){
-        balpanObj[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventTemp.getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
+    public void setBalpan(int balpanIdx, adventureEvent adventureEventTemp)
+    {
+       
         balpanEventIdx[balpanIdx] = adventureEventTemp.getEventIdx();
         balpanEventType[balpanIdx] = adventureEventTemp.getEventType();
-        if(!jsonDataManager.Instance.getEventMeet(balpanEventIdx[balpanIdx])) balpanNewMark[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
-        else balpanNewMark[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        if (tutorialVal == 0 && !jsonDataManager.Instance.getEventMeet(balpanEventIdx[balpanIdx]) && adventureEventTemp.getEventType() < 98)
+        {
+            balpanObj[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_new" );//이벤트에 관련된 발판으로 이미지 변경
+            balpanNewMark[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
+        }
+        else
+        {
+            balpanObj[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventTemp.getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
+            balpanNewMark[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
     }
     private IEnumerator phase_Manage_Coroutine(int stageNumTemp)
     {
@@ -1143,19 +1153,27 @@ public class AdventureManager : MonoBehaviour
                 SoundManager_Sfx.Instance.playSound(4);
                 shakeObject(balpanObj[i+1 + 2]);
                 
+
                 balpanArrow.transform.position = balpanObj[i + 1 + 2].transform.position;// + new Vector3(0,8,0);
                 stageIdx++;
                 balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length).ToString();
                 
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
-                    
+                    balpanEffObj[i + 1 + 2].GetComponent<Animator>().Play("Update");
+                    jsonDataManager.Instance.setEventMeet(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventIdx()); //이벤트 만난거 처리
+                    setBalpan(i+1+2, adventureEventList[stageNum][adventureEventArr[stageIdx]]);
+
                     balpanArrow.GetComponent<Animator>().Play("Stop");
                     SoundManager_Sfx.Instance.playSound(11);
                     break;
                 }
                 else if(i == moveCount - 1)
                 {
+                    balpanEffObj[i + 1 + 2].GetComponent<Animator>().Play("Update");
+                    jsonDataManager.Instance.setEventMeet(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventIdx()); //이벤트 만난거 처리
+                    setBalpan(i+1+2, adventureEventList[stageNum][adventureEventArr[stageIdx]]);
+                    
                     balpanArrow.GetComponent<Animator>().Play("Do");
                     SoundManager_Sfx.Instance.playSound(34);
                     break;
@@ -1208,7 +1226,7 @@ public class AdventureManager : MonoBehaviour
                 eventWatchNum = 0;
 
                 curDiceEvent = new adventureEvent(adventureEventList[stageNum][adventureEventArr[stageIdx]]); //랜덤한 이벤트를 받아온다. -> 현재는 그냥 보드 이벤트 따라가게 함.
-                jsonDataManager.Instance.setEventMeet(curDiceEvent.getEventIdx()); //이벤트 만난거 처리
+                
 
                 if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
 
@@ -2160,8 +2178,15 @@ public class AdventureManager : MonoBehaviour
 
     public void hoverInBalpan(int idx)
     {
+
         if (balpanEventType[idx] == -1) return;
         balpanObj[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
+        if (!jsonDataManager.Instance.getEventMeet(balpanEventIdx[idx]) && balpanEventType[idx] < 98) //boss 가 아니고, 아직 만난적 없는 이벤트인 경우
+        {
+            ToolBarManager.Instance.setToolBar(13);
+            return;
+        }
+        
         switch (balpanEventType[idx]) {
             case 0:
                 ToolBarManager.Instance.setToolBar(5);

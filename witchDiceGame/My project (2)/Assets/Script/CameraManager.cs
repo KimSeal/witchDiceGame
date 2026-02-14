@@ -200,12 +200,17 @@ public class CameraManager : MonoBehaviour
     public void resultScreenActive(int caseVal)
     {
         int updateMoney = AdventureManager.Instance.getAdventureGold();
-        
         money.text = "$" + updateMoney.ToString(); //돈 관련 텍스트 업데이트;
+        if (caseVal == 0) {
+            money.text += " / 2 = ";
+            AdventureManager.Instance.addMoney(0, (AdventureManager.Instance.getAdventureGold() / 2) * -1);
+            money.text += AdventureManager.Instance.getAdventureGold().ToString();
+        }
+        
         /*
         if (caseVal == 2)
         {
-            money.text += " X 2";
+            
         }
         */
         for (int i = 0; i < 4; i++) {
@@ -235,7 +240,7 @@ public class CameraManager : MonoBehaviour
 
         loseChk = true;
         loseUI.transform.position = new Vector3(initialPosition.x, initialPosition.y, loseUI.transform.position.z);
-        jsonDataManager.Instance.setMoney(updateMoney);
+        jsonDataManager.Instance.setMoney(AdventureManager.Instance.getAdventureGold());
         /*
         if (caseVal == 2)
         {
