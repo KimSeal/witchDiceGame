@@ -43,7 +43,7 @@ public class HomeManager : MonoBehaviour
 
     private int[] chapterIdx = { 6, 1, 2 };
     private int[,] chapterTalkBefore = { { 23, 26, 29 }, { 0, 0, 0 } };
-    private int[,] chapterTalk = { { 24, 27, 30 }, { 0, 0, 0 } };
+    private int[,] chapterTalk = { { 18, 21, 30 }, { 0, 0, 0 } };
     private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 0,0,0} };
     private int[] chapterClear = { 19,0 };
 
@@ -236,7 +236,7 @@ public class HomeManager : MonoBehaviour
             int detailIdx = num % 3;
             Debug.Log("jewel test");
             Debug.Log(jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx));
-            if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
+            if (true) { //jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapterTalk[chapterNum,detailIdx]));
             }
             else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 1)

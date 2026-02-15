@@ -219,16 +219,16 @@ public class BattleManager : MonoBehaviour
 
     public void hoverInCharacter(int idx)
     {
-        if(idx<4) myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
-        else enemyCharacterObjUI[idx-4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
-
         if (idx < 4 && myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
         {
             ToolBarManager.Instance.setToolBar(myCharacter[idx]);
+            myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
         }
         else if (idx >= 4 && idx<8 && enemyCharacter[idx - 4] != null && enemyCharacter[idx-4].getCurState() == 0)
         {
+            
             ToolBarManager.Instance.setToolBar(enemyCharacter[idx-4]);
+            enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
         }
     }
 
@@ -3641,6 +3641,7 @@ public class BattleManager : MonoBehaviour
                 bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
                 setEnemyCharacter(0, 10013);
+                hoverOutCharacter(4);
             }
 
 
