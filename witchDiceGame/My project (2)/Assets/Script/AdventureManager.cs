@@ -615,7 +615,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 30; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -1415,18 +1415,11 @@ public class AdventureManager : MonoBehaviour
 
                     BattleManager.Instance.changeBossPhase(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType());
                     updateCharacterFace();
-                    for (int i = 0; i < 4; i++) CharacterManager.Instance.emptyEnemyCharacter(i);
                     for (int i = 0; i < 4; i++)
                     {
                         //마지막 전투에서의 캐릭터 정보를 확인
-                        
-
+                        CharacterManager.Instance.emptyEnemyCharacter(i);
                         if (curDiceEventPacket.getSelectType() != -99999) CharacterManager.Instance.setCharacter(i, curDiceEventPacket.getVal(i));
-                        else CharacterManager.Instance.emptyEnemyCharacter(i);
-
-                        
-                        //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
-                        //balpanArrow.GetComponent<Animator>().Play("arrowAnim");
                     }
                     /*
                     hoverRotateAble(battleBtn, 2, true);

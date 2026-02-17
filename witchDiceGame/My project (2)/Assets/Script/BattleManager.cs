@@ -3636,8 +3636,11 @@ public class BattleManager : MonoBehaviour
             }
             else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
             {
-                TalkManager.Instance.startTalk(22);
-                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                if (jsonDataManager.Instance.getChapterRead(0, 2) == 0)
+                {
+                    TalkManager.Instance.startTalk(22);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
                 bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
                 setEnemyCharacter(0, 10013);
@@ -4302,6 +4305,12 @@ public class BattleManager : MonoBehaviour
                 string temp = enemyCharacter[i].getDestiny().getName();
                 enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
                 enemyCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[i].getShadow().ToString());
+                if (
+                    (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (enemyCharacter[i].getDestiny().getDestinyIdx() == 10012 || enemyCharacter[i].getDestiny().getDestinyIdx() == 10003 || enemyCharacter[i].getDestiny().getDestinyIdx() == 10004))
+                ){
+                    enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp  +"_2");
+                }
+                
             }
 
         }
