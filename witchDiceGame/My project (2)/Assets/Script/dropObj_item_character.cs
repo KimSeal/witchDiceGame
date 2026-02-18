@@ -13,6 +13,7 @@ public class dropObj_item_character : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData)
     {
+        /*
         Debug.Log("swap character test :");
         Debug.Log(itemManager.Instance.getDragCharacterStartNum());
         if (itemManager.Instance.getDragCharacterStartNum() != -1)
@@ -30,6 +31,7 @@ public class dropObj_item_character : MonoBehaviour, IDropHandler
             Debug.Log("swap Character! : " + itemManager.Instance.getDragCharacterStartNum().ToString() + " / " + itemManager.Instance.getDragCharacterEndNum().ToString());
             itemManager.Instance.swapCharacter();
         }
+        */
     }
     // Update is called once per frame
     void Update()

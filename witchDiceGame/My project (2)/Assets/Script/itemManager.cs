@@ -76,6 +76,7 @@ public class itemManager : MonoBehaviour
     private Item[,] ItemArr = new Item[5,11];
     private bool[,] ItemExistArr = new bool[5, 11];
 
+    /*
     [SerializeField] private GameObject[] characterBoardState = new GameObject[5]; //캐릭터 보드의 선택버튼에 대한 object
     private GameObject[] itemBoardState = new GameObject[5]; //item 보드 선택버튼에 대한 object
 
@@ -90,7 +91,7 @@ public class itemManager : MonoBehaviour
     [SerializeField] private GameObject[] skillBoardObjInit = new GameObject[14];
     private GameObject[,] skillBoardObj = new GameObject[2,7]; //스킬에 대한 이미지 처리를 위해 사용될 object 뒤줄은 메인이미지,제목,설명,필요주사위4개 순으로 index를 갖는다.
     [SerializeField] private GameObject[] equipBoardObj = new GameObject[6]; //취득 아이템에 대한 이미지 처리를 위해 사용될 object
-
+    */
     [SerializeField]private GameObject bagBtnObj; //item_btn
 
     [SerializeField] private GameObject mainCamera;
@@ -124,25 +125,12 @@ public class itemManager : MonoBehaviour
     public TextMeshProUGUI characterDescText;
     public GameObject[] characterDescDice = new GameObject[4];
 
-
-
+    //이거 아래는 일단 대기. 없애기에는 리스크가 있다.
     private int curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
     private int curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
 
-    private int characterSelectIdx = -1;//현재 선택된 캐릭터의 idx
-    private int curSelectCharacterInfoType = 0; //현재 선택한 캐릭터 정보 창 종류
+    private int characterSelectIdx = -1;//현재 선택된 캐릭터의 idx -> 얘는 둬야 할듯
 
-    private bool itemBoxMove = false;
-    private bool itemBoxOpen = false;
-    private int itemBoxOpenPoint = -1;
-
-
-    private int dragObjStartNum =-1;
-    private int dragObjEndNum = -1;
-
-
-    private int dragCharacterStartNum = -1;
-    private int dragCharacterEndNum = -1;
 
     //string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     [SerializeField]
@@ -259,22 +247,8 @@ public class itemManager : MonoBehaviour
         }
         */
     }
-    public void turnOffCharacterCollider_item()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            CharacterUIArr[i].GetComponent<BoxCollider2D>().enabled = false;
-        }
-    }
-    public void turnOnCharacterCollider_item()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            CharacterUIArr[i].GetComponent<BoxCollider2D>().enabled = true;
-        }
-    }
 
-
+    /*
     public void swapItem()
     {
         if(AdventureManager.Instance.curCanvasItemCanvas && !(dragObjEndNum == -1 || dragObjStartNum == -1))
@@ -300,7 +274,8 @@ public class itemManager : MonoBehaviour
             click_item_bagButton(curSelectItemIndex);
         }
     }
-
+    */
+    /*
     public void swapCharacter()
     {
         if (!(dragCharacterStartNum == -1 || dragCharacterEndNum == -1)) {
@@ -317,6 +292,7 @@ public class itemManager : MonoBehaviour
         updateCharacterBar();
         }
     }
+    */
     public void swapCharacter(int idx, int idx2)
     {
             Character playerA = CharacterManager.Instance.getCharacter(idx);
@@ -327,8 +303,6 @@ public class itemManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(72);
             AdventureManager.Instance.smokeCharacter(idx);
             AdventureManager.Instance.smokeCharacter(idx2);
-            updateCharacterUIBtn();
-            setUpAnimator();
             //click_characterInfoType_selectButton(curSelectCharacterInfoType);
             updateCharacterBar();
     }
@@ -342,133 +316,10 @@ public class itemManager : MonoBehaviour
         if (deleteResult) //캐릭터가 무사히 제거된 경우
         {
             AdventureManager.Instance.resetDice();
-            updateCharacterUIBtn();
-            setUpAnimator();
-            click_characterInfoType_selectButton(curSelectCharacterInfoType);
             updateCharacterBar();
         }
     }
 
-    //drag 관련 함수 모음
-    #region
-    public int getDragObjStartNum()
-    {
-        return dragObjStartNum;
-    }
-    public int getDragObjEndNum()
-    {
-        return dragObjEndNum;
-    }
-
-    public void setDragObjStartNum(int input)
-    {
-        dragObjStartNum = input;
-    }
-    public void setDragObjEndNum(int input)
-    {
-        dragObjEndNum = input;
-    }
-
-    public int getDragCharacterStartNum()
-    {
-        return dragCharacterStartNum;
-    }
-    public int getDragCharacterEndNum()
-    {
-        return dragCharacterEndNum;
-    }
-
-    public void setDragCharacterStartNum(int input)
-    {
-        dragCharacterStartNum = input;
-    }
-    public void setDragCharacterEndNum(int input)
-    {
-        dragCharacterEndNum = input;
-    }
-    #endregion
-
-    private IEnumerator ItemMoveUI(GameObject gameObjTemp, int opt, int onOff) // onoff : 위로 올라갈때 0 아래로 내려갈때 1
-    {
-        float[] tempPointX = { -1148f, -648f, -148f};
-        float[] tempPointY = { -200f, -88f };
-        
-        if (!itemBoxMove) { //혹시 모르니 한번더 이동중인지 확인
-            gameObjTemp.transform.position = new Vector3(tempPointX[opt], tempPointY[onOff], 0);
-
-            itemBoxMove = true;
-            float termY = 0.3f;
-            Vector3 destination = new Vector3(gameObjTemp.transform.position.x, tempPointY[(onOff+1)%2], 0);
-
-            
-            if (onOff == 0 && !itemBoxOpen) //상자가 잠겨있고 올라가는 경우
-            {
-                itemBoxOpenPoint = opt; //현재 포인트 변경
-                termY *= -1;
-
-                while (gameObjTemp.transform.position.y < destination.y + termY )
-                {
-                    gameObjTemp.transform.position = Vector3.Lerp(gameObjTemp.transform.position, destination, 0.05f);
-                    yield return new WaitForSeconds(0.01f);
-                    
-                }
-                itemBoxOpen = true;
-                
-            }
-            else if(onOff == 1 && itemBoxOpen) // 상자가 열려있고 내려가는 경우
-            {
-                termY = 5.0f;
-                while (gameObjTemp.transform.position.y > destination.y + termY*10)//inputY + termY)
-                {
-                    gameObjTemp.transform.position = Vector3.Lerp(gameObjTemp.transform.position, destination, 0.05f);
-                    yield return new WaitForSeconds(0.01f);
-                }
-                itemBoxOpen =  false;
-                itemBoxOpenPoint = -1; //종료 후 포인트 변경
-            }
-            gameObjTemp.transform.position = destination;
-            itemBoxMove = false;
-        }
-    }
-
-    public bool getItemBoxMove()
-    {
-        return itemBoxMove;
-    }
-    public bool getItemBoxOpen()
-    {
-        return itemBoxOpen;
-    }
-
-    public void flipItemBox(int placeIdx, int onOff)
-    {
-        if (!itemBoxMove) { //box가 움직이지 않을때
-            if (onOff == 0 && !itemBoxOpen) //열려있지 않으면 열수있게
-            {
-                StartCoroutine(ItemMoveUI(inventoryUI, placeIdx, 0));
-            }
-            else if (onOff == 1 && itemBoxOpen) // 열려있다면 닫을 수 있게.
-            {   //이미 열려있다면 닫을 수 있게 한다
-                StartCoroutine(ItemMoveUI(inventoryUI, placeIdx, 1));
-            }
-        }
-    }
-
-    public void flipItemBox_AdventureUI(bool onOff)
-    {
-        if (!AdventureManager.Instance.getGameOverChk())
-        {
-            AdventureManager.Instance.activeGiveUpBoard(false);
-            if (!itemBoxOpen) flipItemBox(1, 0);
-            else flipItemBox(1, 1);
-        }
-    }
-
-    public void flipItemBox_BattleUI()
-    {
-        if (!itemBoxOpen) flipItemBox(2, 0);
-        else flipItemBox(2, 1);
-    }
     public void enterBattlePhase()
     {
         //click_itemType_selectButton(3);
@@ -499,56 +350,6 @@ public class itemManager : MonoBehaviour
         curSelectItemIndex = idx;
     }
 
-    public void click_item_bagButton(int idx) //하단부 아이템 박스에서 아이템 클릭하는 경우
-    {
-        if (idx != -1)
-        {
-            if (ItemExistArr[curSelectItemType, idx]) //아이템이 있는 경우 
-            {
-
-                if (curSelectItemIndex == idx)
-                {// 이미 자신이 선택한 아이템인 경우 해제
-                    //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-                    curSelectItemIndex = -1;
-
-                }
-                else //다른 경우 선택한 대상으로 변경
-                {
-                    //if (curSelectItemIndex != -1) changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f); //-1이면 색 바꿀게 없다.
-                    curSelectItemIndex = idx;
-                    //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.7f);
-                    if (curSelectItemType == 0) { 
-                        click_characterInfoType_selectButton(0);
-                        GameObject temp = Instantiate(effObj, infoBoardObj[0].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
-                        temp.GetComponent<Animator>().Play("itemTarget");
-                    }
-                    if (curSelectItemType == 1) { 
-                        click_characterInfoType_selectButton(1);
-                        for (int tempIdx = 0; tempIdx < 6; tempIdx++)
-                        {
-                            GameObject temp = Instantiate(effObj, diceBoardObj[tempIdx].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
-                            temp.GetComponent<Animator>().Play("itemTarget");
-                        }
-                    }
-                    if (curSelectItemType == 2) { 
-                        click_characterInfoType_selectButton(3);
-                        GameObject temp = Instantiate(effObj, equipBoardObj[0].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
-                        temp.GetComponent<Animator>().Play("itemTarget");
-                        GameObject temp2 = Instantiate(effObj, equipBoardObj[3].transform.position, Quaternion.Euler(0, 0, 0)); //아이템을 어디 사용하는지 알려줌.
-                        temp2.GetComponent<Animator>().Play("itemTarget");
-                    }
-                }
-            }
-            else //아이템이 없는 경우 해제
-            {
-                if (curSelectItemIndex != -1)
-                {
-                    //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-                }
-                curSelectItemIndex = -1;
-            }
-        }
-    }
 
     public void click_item_trash()
     {
@@ -560,20 +361,6 @@ public class itemManager : MonoBehaviour
         }
     }
      
-    public void click_selectCharacter(int idx) //캐릭터 선택
-    {
-        if(CharacterManager.Instance.getCharacterState(idx) == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
-        {
-            characterSelectIdx = idx;
-            click_characterInfoType_selectButton(curSelectCharacterInfoType);
-            for (int i=0;i<4;i++)
-            {
-                changeAlpha(CharacterUIArr[i], 0.7f);
-            }
-            changeAlpha(CharacterUIArr[idx], 0.0f);
-        }
-    }
-
     public void click_itemType_selectButton(int idx) // 중단부 아이템 종류 선택 버튼 클릭하는 경우
     {
 
@@ -582,33 +369,11 @@ public class itemManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(0);
             curSelectItemIndex = -1; //택한 아이템 초기화
             curSelectItemType = idx; //타입 변경   
-            for (int i=0;i < 11;i++)
-            {
-                //changeAlpha(inventoryUIArr[i], 0.0f);
-            }
             updateInventory();
         }
         else { SoundManager_Sfx.Instance.playSound(7); }
     }
     
-    public void click_characterInfoType_selectButton(int idx) // 캐릭터 정보 창에서 선택한 정보
-    {
-        //TalkManager.Instance.startTalk(11);
-        if(curSelectCharacterInfoType == idx) SoundManager_Sfx.Instance.playSound(7);
-        else SoundManager_Sfx.Instance.playSound(0);
-        curSelectCharacterInfoType = idx;
-        
-        for (int i=0;i<5;i++)
-        {
-            if (i == idx)
-            {
-                characterBoardState[i].SetActive(true);
-                //characterBoard_update(idx);
-                
-            }
-            else characterBoardState[i].SetActive(false);
-        }
-    }
     public int click_Character(int idx)
     {
         characterSelectIdx = idx;
@@ -670,7 +435,7 @@ public class itemManager : MonoBehaviour
         characterArmor.text = tempCharacter.getArmor().ToString();
         characterDescTitle.text = "";
         for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
-        characterOrigin.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + tempCharacter.getName() + "/animator_" + tempCharacter.getName());
+        characterOrigin.GetComponent<Animator>().runtimeAnimatorController = tempCharacter.getAnimator(false);
         characterSprite.GetComponent<Image>().sprite = characterOrigin.GetComponent<SpriteRenderer>().sprite;
         //주사위 업데이트
         for (int i = 0; i < 6; i++)
@@ -835,7 +600,6 @@ public class itemManager : MonoBehaviour
             //useItemToUpgrade();
             SoundManager_Sfx.Instance.playSound(2);
             useItem();
-            click_characterInfoType_selectButton(0);
         }
         else
         {
@@ -874,8 +638,6 @@ public class itemManager : MonoBehaviour
         if (number > 6) number = 6;
         SoundManager_Sfx.Instance.playSound(1);
         CharacterManager.Instance.changeDice(characterIdx, idx, number);
-            diceBoardObj[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + number.ToString());
-            Instantiate(changeDiceEff, diceBoardObj[idx].transform.position, new Quaternion(0, 0, 0, 0));
         
     }
     /*
@@ -1043,8 +805,6 @@ public class itemManager : MonoBehaviour
         ItemArr[curSelectItemType, itemIdx] = null;
         ItemExistArr[curSelectItemType, itemIdx] = false;
 
-        setUpAnimator();
-
     }
     private void useItem()
     {
@@ -1054,8 +814,6 @@ public class itemManager : MonoBehaviour
         ItemArr[curSelectItemType, curSelectItemIndex] = null;
         ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
         curSelectItemIndex = -1;
-
-        setUpAnimator();
 
     }
     public void useItem(int itemType, int itemIdx)
@@ -1097,15 +855,9 @@ public class itemManager : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            changeAlpha(CharacterUIArr[i], 0.7f);
-        }
-        for (int i = 0; i < 4; i++)
-        {
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
             {
                 characterSelectIdx = i;
-                click_characterInfoType_selectButton(curSelectCharacterInfoType);
-                changeAlpha(CharacterUIArr[i], 0.0f);
                 break;
             }
         }
@@ -1116,42 +868,15 @@ public class itemManager : MonoBehaviour
         //초반 캐릭터는 살아있는 친구로 선택하는 코드 나중에 넘어올떄마다 실행시킬수 있도록 코드
 
         updateCharacterBar();
-        
-        StartCoroutine(ItemMoveUI(inventoryUI, 0, 0));
 
         //mainCamera.transform.position = new Vector3(-1000f,mainCamera.transform.position.y, mainCamera.transform.position.z);
     }
-
-    
-
-    public void updateCharacterUIBtn()
-    {
-        //CharacterUIArr[i]
-        for (int characterSelectIdx = 0; characterSelectIdx < 4; characterSelectIdx++) {
-            Character tempCharacter = CharacterManager.Instance.getCharacter(characterSelectIdx);
-            if (tempCharacter == null || tempCharacter.getCurState() != 0)
-            {
-                CharacterUIArr[characterSelectIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
-            }
-            else
-            {
-                if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face") != null)
-                {
-                    CharacterUIArr[characterSelectIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + tempCharacter.getName() + "_face");
-                }
-                else { CharacterUIArr[characterSelectIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
-            }
-        }
-
-    }
-
     
     // Start is called before the first frame update
     void Start()
     {
         curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
         curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
-        curSelectCharacterInfoType = 0;
 
         for (int i = 0; i < 5; i++)
         {
@@ -1164,13 +889,6 @@ public class itemManager : MonoBehaviour
             itemList[itemReaderList[i].type].Add(new Item(itemReaderList[i]));
         }
 
-
-
-        for (int i = 0; i < 4; i++) {
-            CharacterStandArr[i] = CharacterStandArrInit[i].GetComponent<Animator>();
-            CharacterStandArr[i].Play("Idle");
-        }
-
         for (int i = 0; i < 11; i++)
         {
             for(int j=0;j<5;j++) ItemExistArr[j, i] = false; //아이템 없다는 것을 초기화를 통해 배정
@@ -1178,21 +896,6 @@ public class itemManager : MonoBehaviour
         }
 
         itemBoxInitPoint[11] = itemBoxInitPointInit[11].transform.position;
-    
-
-        for (int i=0;i<2;i++){
-            for (int j=0;j<7;j++) {
-                skillBoardObj[i, j] = skillBoardObjInit[i * 7 + j];
-            }
-        }
-
-        for (int i = 1; i < 5; i++)
-        {
-            characterBoardState[i].SetActive(false);
-        }
-
-        setUpAnimator();
-        
         descObj[0].SetActive(false);
 
         
@@ -1257,22 +960,6 @@ public class itemManager : MonoBehaviour
         return new Vector3(0,0,0);
         //return inventoryUIArr[idx].transform.position;
     }
-    public void setUpAnimator()
-    {
-        for (int i=0;i<4;i++)
-        {
-            
-            if (CharacterManager.Instance.getCharacterState(i) == 0) {
-                CharacterStandArr[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(i) + "/animator_" + CharacterManager.Instance.getName_itemManager(i));
-            }
-            else
-            {
-                CharacterStandArr[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
-            }
-        }
-
-    }
-
 
     //passive Item use function start
     public passiveReturn usePassiveItem(List<TakeSkillPacket> takeSkillPacketList, TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTime)

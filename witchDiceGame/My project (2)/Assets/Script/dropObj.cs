@@ -13,10 +13,10 @@ public class dropObj : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData)
     {
+        /*
         Debug.Log("You Drop!");
-        Debug.Log(itemManager.Instance.getItemBoxMove());
         Debug.Log(itemManager.Instance.getDragCharacterStartNum());
-        if (!itemManager.Instance.getItemBoxMove() && itemManager.Instance.getDragObjStartNum() != -1)
+        if (itemManager.Instance.getDragObjStartNum() != -1)
         {
             int temp = -1;
             for (int i = 0; i <= 11; i++)
@@ -35,6 +35,7 @@ public class dropObj : MonoBehaviour, IDropHandler
             Debug.Log(itemManager.Instance.getDragObjEndNum());
             itemManager.Instance.swapItem();
         }
+        */
     }
     // Update is called once per frame
     void Update()

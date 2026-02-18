@@ -25,9 +25,11 @@ public class dragObj_item_character : MonoBehaviour, IBeginDragHandler, IEndDrag
                 break;
             }
         }
+        /*
         itemManager.Instance.setDragCharacterStartNum(temp);
         Debug.Log(itemManager.Instance.getDragCharacterStartNum());
         itemManager.Instance.turnOffCharacterCollider_item();
+        */
         //GetComponent<BoxCollider2D>().enabled = false;
     }
     public void OnDrag(PointerEventData eventData)
@@ -40,8 +42,7 @@ public class dragObj_item_character : MonoBehaviour, IBeginDragHandler, IEndDrag
     {
         SoundManager_Sfx.Instance.playSound(4);
         this.transform.position = defaultPoint;
-            itemManager.Instance.turnOnCharacterCollider_item();
-        Debug.Log(itemManager.Instance.getDragCharacterStartNum());
+           // itemManager.Instance.turnOnCharacterCollider_item();
 
         // 레이캐스트 타겟도 원래대로 돌려준다
         //GetComponent<Image>().raycastTarget = true;

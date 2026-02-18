@@ -312,6 +312,14 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    public RuntimeAnimatorController getAnimator(Character character, bool deadOk)
+    {
+        //character가 존재 X면 빈 애니메이터 내보내기
+        if(character == null) return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+        //아니라면 해당 캐릭터 기반 애니메이터 반환
+        return character.getAnimator(deadOk);
+    }
+
     //살아있는 캐릭터 배치
     public void setCharacter(int place, int characterIdx)
     {

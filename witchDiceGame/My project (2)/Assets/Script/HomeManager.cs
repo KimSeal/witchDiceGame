@@ -43,7 +43,7 @@ public class HomeManager : MonoBehaviour
 
     private int[] chapterIdx = { 6, 1, 2 };
     private int[,] chapterTalkBefore = { { 23, 26, 29 }, { 0, 0, 0 } };
-    private int[,] chapterTalk = { { 18, 21, 30 }, { 0, 0, 0 } };
+    private int[,] chapterTalk = { { 24, 27, 30 }, { 0, 0, 0 } };
     private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 0,0,0} };
     private int[] chapterClear = { 19,0 };
 
@@ -190,11 +190,9 @@ public class HomeManager : MonoBehaviour
     }
     IEnumerator jewelTalk(int talkIdx)
     {
-        Debug.Log("Item is false 0 ");
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
         TalkManager.Instance.startTalk(talkIdx);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-        Debug.Log("Item is false 2");
         FadeUIScript.fadeIn();
         SoundManager_Main.Instance.playSound(homeSoundIdx);
     }
@@ -236,7 +234,7 @@ public class HomeManager : MonoBehaviour
             int detailIdx = num % 3;
             Debug.Log("jewel test");
             Debug.Log(jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx));
-            if (true) { //jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
+            if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapterTalk[chapterNum,detailIdx]));
             }
             else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 1)
@@ -250,6 +248,10 @@ public class HomeManager : MonoBehaviour
                     StartCoroutine(jewelTalk(chapterNum, detailIdx));
                     jsonDataManager.Instance.setChapterRead(chapterNum, detailIdx);
                 }
+            }
+            else if (chapterNum == 3 && detailIdx == 1)
+            {
+                StartCoroutine(jewelTalk(52));
             }
             else
             {
@@ -295,7 +297,12 @@ public class HomeManager : MonoBehaviour
             if (jsonDataManager.Instance.getChapterRead(curChapterIdx, i) >= 1) { 
                 jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2*i]; 
             }
-            else { jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2 * i + 1]; };
+            else { 
+                jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2 * i + 1];
+                if (curChapterIdx == 3 && i == 1) {
+                    jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[0];
+                }
+            };
 
             if (jsonDataManager.Instance.getChapterRead(curChapterIdx, i) == 1) { 
                 newMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
@@ -323,6 +330,7 @@ public class HomeManager : MonoBehaviour
                 jsonDataManager.Instance.getChapterRead(i, 2) == 0)
             {
                 chapterDiceObject[i].GetComponent<SpriteRenderer>().sprite = diceSpriteOff[i];
+                if(i == 3) chapterDiceObject[i].GetComponent<SpriteRenderer>().sprite = diceSpriteOn[i];
             }
             else
             {

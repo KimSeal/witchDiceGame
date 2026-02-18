@@ -175,34 +175,9 @@ public class BattleManager : MonoBehaviour
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
     [SerializeField] private GameObject battleTextObj;
 
-    [SerializeField] private GameObject battleDescBox; //board_descBoard
-    [SerializeField] private GameObject battleDescBoxName; // board_battle_Info_name
-    [SerializeField] private GameObject battleDescBoxInfo; //board_battle_info_value
-    [SerializeField] private GameObject battleDescBoxCharacter;//board_battle_Info_character
-    [SerializeField] private GameObject[] faceDescInit = new GameObject[8];
-    GameObject[,] faceDesc = new GameObject[2, 4];
-
-    [SerializeField] private GameObject diceDescBox; //ui_battle_board_dice
-    [SerializeField] private GameObject[] diceDesc = new GameObject[6];
 
     private int[] myDiceState = { 0, 0, 0, 0 };
     private int[] enemyDiceState = { 0, 0, 0, 0 };
-
-    //스킬 설명을 위해 준비된 칸
-    [SerializeField] private GameObject skillDescBox; //ui_battle_board_skill
-    [SerializeField] private GameObject[] skillDescBox_title = new GameObject[2]; //board_skillDesc_skillTitle_(number)
-    [SerializeField] private GameObject[] skillDescBox_info = new GameObject[2]; //board_skillDesc_skillInfo_(number)
-    [SerializeField] private GameObject[] skillDescBox_image = new GameObject[2]; //board_skillDesc_skillImage_(number)
-    [SerializeField] public GameObject[] skillDescBox_dice_0 = new GameObject[4]; //board_skill
-
-    [SerializeField]
-    public GameObject[] skillDescBox_dice_1 = new GameObject[4];
-
-    [SerializeField] private GameObject equipDescBox; ////ui_battle_board_equip
-    [SerializeField] private GameObject[] equipDescBox_title = new GameObject[2]; //board_equipDesc_equipTitle_(number)
-    [SerializeField] private GameObject[] equipDescBox_info = new GameObject[2]; //board_equipDesc_equipInfo_(number)
-    [SerializeField] private GameObject[] equipDescBox_image = new GameObject[2]; //board_equipDesc_equipImage_(number)
-
 
     [SerializeField]
     public GameObject giveUpBtn;
@@ -300,8 +275,6 @@ public class BattleManager : MonoBehaviour
         return myCharacter[skillIdx / 10].skillUse(skillIdx % 10).getSkillName();
     }
 
-    int curSelectInfo = 0;
-    int hoverCharacterIdx = -1;
 
     int bossPhase = 0;
     public void changeBossPhase(int a)
@@ -344,72 +317,8 @@ public class BattleManager : MonoBehaviour
             enemyDiceTake[idx] = (skillIdx % 4) * 10 + skillIdx / 4; //캐릭터하고 사용하는 스킬에 대해 값 생성
         }
     }
-    private void drawSkill(Character character)
-    {
-        for (int skillIdx = 0; skillIdx < 2; skillIdx++)
-        {
-            Skill thisSkill = character.skillUse(skillIdx);
-            if (character.getDestiny().DestinyIdx < 10001 || jsonDataManager.Instance.getMonsterSkill(character.getDestiny().DestinyIdx, skillIdx)) // 만난적있는 지 확인
-            {
 
-                if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
-                {
-                    skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName());
-                }
-                else
-                {
-                    skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
-                }
-                skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getCommand();
-                skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = thisSkill.getSkillName();
-                for (int diceIdx = 0; diceIdx < 4; diceIdx++)
-                {
-                    if (skillIdx == 0) skillDescBox_dice_0[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
-                    if (skillIdx == 1) skillDescBox_dice_1[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
 
-                }
-            }
-            else {
-                skillDescBox_image[skillIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
-                skillDescBox_info[skillIdx].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(17);
-                skillDescBox_title[skillIdx].GetComponent<TextMeshPro>().text = "Not Found";
-                for (int diceIdx = 0; diceIdx < 4; diceIdx++)
-                {
-                    //만난적 없더라도 스킬 대처는 할 수 있도록
-                    if (skillIdx == 0) skillDescBox_dice_0[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
-                    if (skillIdx == 1) skillDescBox_dice_1[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + thisSkill.getNeedDice(diceIdx).ToString());
-
-                }
-            }
-        }
-    }
-    private void drawDice(Character character)
-    {
-        for (int diceIdx = 0; diceIdx < 6; diceIdx++)
-        {
-            diceDesc[diceIdx].GetComponent<SpriteRenderer>().sprite = diceSprite[character.getDice(diceIdx) - 1];
-        }
-    }
-
-    private void drawEquip(Character character)
-    {
-        for (int Idx = 0; Idx < 2; Idx++)
-        {
-            Item thisItem = character.getItem(Idx);
-            if (thisItem == null)
-            {
-                equipDescBox_image[Idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-                equipDescBox_title[Idx].GetComponent<TextMeshPro>().text = "";
-                equipDescBox_info[Idx].GetComponent<TextMeshPro>().text = "";
-            }
-            else
-            {
-                equipDescBox_image[Idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + thisItem.getItemName());
-                equipDescBox_title[Idx].GetComponent<TextMeshPro>().text = thisItem.getItemName();
-                equipDescBox_info[Idx].GetComponent<TextMeshPro>().text = thisItem.getContent();
-            }
-        }
-    }
     private int getTotalHp(Character character)
     {
         return character.getHp() + character.getCharacter_battle().getArmor();
@@ -421,204 +330,9 @@ public class BattleManager : MonoBehaviour
 
     //전투 ui 에 대한 함수들 모음 updateBattleUI()로 지속적으로 업데이트 해줄것 
     #region
-    private void writeBattleInfo(Character character)
-    {
-        battleDescBoxCharacter.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + character.getName() + "/animator_" + character.getName());
-        battleDescBoxName.GetComponent<TextMeshPro>().text = character.getName();
-        battleDescBoxInfo.GetComponent<TextMeshPro>().text =
-            character.getHp() + "/" + character.getMaxHp() + "( +" + character.getCharacter_battle().getArmor() + " )\n\n"
-            //(getTotalHp(character)).ToString() + "(" + character.getHp().ToString() + "+" + character.getCharacter_battle().getArmor().ToString() +  ")" + "\n" 
-            + (getTotalAtk(character)).ToString() + "(" + character.getPhyAtk().ToString() + "/" + character.getCharacter_battle().getAtk().ToString() + ")" + "\n";
-    }
 
-    private bool characterInfoOpen = false;
-
-    private void makeEmptyBattleInfoBox() //전투 정보 ui 초기화
-    {
-        curSelectInfo = -1;
-        hoverCharacterIdx = -1;
-        diceDescBox.SetActive(false);
-        skillDescBox.SetActive(false);
-        equipDescBox.SetActive(false);
-        darkFaceImage(0, 0, true);
-        battleDescBoxCharacter.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
-
-        battleDescBoxName.GetComponent<TextMeshPro>().text = "";
-        battleDescBoxInfo.GetComponent<TextMeshPro>().text = "";
-    }
-    public void updateBattleUI() //현재 정보를 바탕으로 battle ui 업데이트
-    {
-        if (hoverCharacterIdx >= 0 && hoverCharacterIdx < 4) {
-            if (!(myCharacter[hoverCharacterIdx] == null && myCharacter[hoverCharacterIdx].getCurState() != 0))
-            {
-                hoverCharacterIdx = -1;
-            }
-        }
-        if (hoverCharacterIdx >= 4 && hoverCharacterIdx < 8)
-        {
-            if (!(enemyCharacter[hoverCharacterIdx - 4] == null && enemyCharacter[hoverCharacterIdx - 4].getCurState() != 0))
-            {
-                hoverCharacterIdx = -1;
-            }
-        }
-        if (hoverCharacterIdx == -1) //선택된 캐릭터가 없을 경우 비게 만들기
-        {
-            makeEmptyBattleInfoBox();
-        }
-        else if (curSelectInfo == -1) //선택된 캐릭터는 있으나 선택된 ui가 없는 경우
-        {
-            diceDescBox.SetActive(false);
-            skillDescBox.SetActive(false);
-            equipDescBox.SetActive(false);
-            if (hoverCharacterIdx < 4 && hoverCharacterIdx >= 0) writeBattleInfo(myCharacter[hoverCharacterIdx]);
-            if (hoverCharacterIdx < 8 && hoverCharacterIdx >= 4) writeBattleInfo(enemyCharacter[hoverCharacterIdx - 4]);
-        }
-        else clickBattleUIInfo(curSelectInfo); //선택된 캐릭터도, 선택된 ui도 있는 경우
-    }
     private bool characterInfoOpenAble = true; //다른 목적으로 쓰는 중(최종 보상 획득 씬에서 아이템 선택창 나왔는지 여부)
     private bool getLoseChk = false; // 패배씬 나왔을때 true바꿈. 패배씬 나오는 동안은 캐릭터랑 아이템 사용 안되도록
-    public void clickCharacterInfoBox()
-    {
-        if (!getLoseChk)
-        {
-            if (characterInfoOpenAble || (!characterInfoOpenAble && !itemManager.Instance.getItemBoxOpen() && !itemManager.Instance.getItemBoxMove()))
-            {
-                makeEmptyBattleInfoBox();
-                if (!characterInfoOpen)
-                {
-
-                    characterInfoOpen = true;
-                    battleDescBox.transform.position = new Vector3(0, 0, battleDescBox.transform.position.z);
-                }
-                else
-                {
-                    characterInfoOpen = false;
-                    battleDescBox.transform.position = new Vector3(0, 500, battleDescBox.transform.position.z);
-                }
-            }
-            else if (!itemManager.Instance.getItemBoxMove()) { flipBag_battle(); }
-        }
-    }
-    public void clickBattleUIInfo(int idx) //전투 ui에서 뭐볼지 선택하는 경우
-    {
-        if (hoverCharacterIdx != -1)
-        {
-            curSelectInfo = idx;
-            if (curSelectInfo == 0)
-            {
-                diceDescBox.SetActive(true);
-                skillDescBox.SetActive(false);
-                equipDescBox.SetActive(false);
-            }
-            if (curSelectInfo == 1)
-            {
-                diceDescBox.SetActive(false);
-                skillDescBox.SetActive(true);
-                equipDescBox.SetActive(false);
-            }
-            if (curSelectInfo == 2)
-            {
-                diceDescBox.SetActive(false);
-                skillDescBox.SetActive(false);
-                equipDescBox.SetActive(true);
-            }
-            clickSkillDesc(hoverCharacterIdx);
-        }
-
-    }
-    private void darkFaceImage(int enemy, int idx, bool all) //전투 ui의 캐릭터 얼굴을 그리기 위한 함수
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            Material material = faceDesc[0, i].GetComponent<SpriteRenderer>().material;
-            material.SetFloat("_Transparency", 0.7f);
-            Material material2 = faceDesc[1, i].GetComponent<SpriteRenderer>().material;
-            material2.SetFloat("_Transparency", 0.7f);
-        }
-        if (!all)
-        {
-            Material material3 = faceDesc[enemy, idx].GetComponent<SpriteRenderer>().material;
-            material3.SetFloat("_Transparency", 0.0f);
-        }
-    }
-
-    public void hoverInSkillDesc(int i)
-    {
-        if (hoverCharacterIdx != i) {
-            Material material3 = faceDesc[i / 4, i % 4].GetComponent<SpriteRenderer>().material;
-            material3.SetFloat("_Transparency", 0.0f);
-        }
-
-    }
-    public void hoverOutSkillDesc(int i) {
-        if (hoverCharacterIdx != i)
-        {
-            Material material3 = faceDesc[i / 4, i % 4].GetComponent<SpriteRenderer>().material;
-            material3.SetFloat("_Transparency", 0.7f);
-        }
-    }
-    public void clickSkillDesc(int i) //전투 ui에서 캐릭터 얼굴에 가져다댄 후 정보 출력
-    {
-        if (i >= 0 && i < 4)
-        {
-            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
-            {
-                SoundManager_Sfx.Instance.playSound(4);
-                if (curSelectInfo == 0)
-                {
-                    drawDice(myCharacter[i]);
-
-                }
-                else if (curSelectInfo == 1)
-                {
-                    drawSkill(myCharacter[i]);
-                }
-                else if (curSelectInfo == 2)
-                {
-                    drawEquip(myCharacter[i]);
-                }
-                hoverCharacterIdx = i;
-                darkFaceImage(0, i, false); //해당 캐릭터 얼굴 어둡게 바꾸고
-                writeBattleInfo(myCharacter[i]); //정보 출력
-            }
-            else {
-                SoundManager_Sfx.Instance.playSound(7);
-                makeEmptyBattleInfoBox();
-            }
-        }
-        else if (i >= 4 && i < 8)
-        {
-            i -= 4;
-            if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
-            {
-                SoundManager_Sfx.Instance.playSound(4);
-                if (curSelectInfo == 0)
-                {
-                    drawDice(enemyCharacter[i]);
-                }
-                else if (curSelectInfo == 1)
-                {
-                    drawSkill(enemyCharacter[i]);
-                }
-                else if (curSelectInfo == 2)
-                {
-                    drawEquip(enemyCharacter[i]);
-                }
-                darkFaceImage(1, i, false);
-                writeBattleInfo(enemyCharacter[i]);
-                hoverCharacterIdx = i + 4;
-            }
-            else
-            {
-                SoundManager_Sfx.Instance.playSound(7);
-                makeEmptyBattleInfoBox();
-            }
-        }
-        else
-        {
-            makeEmptyBattleInfoBox();
-        }
-    }
 
     #endregion  
 
@@ -670,7 +384,6 @@ public class BattleManager : MonoBehaviour
                 enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
             }
         }
-        updateInfoUIFaceUpdate();
     }
     private void InitSetOfEnemySkill() //추후 적군 스킬 자동 발사를 위해 스킬을 미리 받아둔다.
     {
@@ -2052,18 +1765,6 @@ public class BattleManager : MonoBehaviour
         upDownManager.Instance.skillDescUpdate("none", 0, 0, 0, 0, "", "");
     }
 
-    public void flipBag_battle()    // 가방 키고 끄는 함수. 4페이즈, 5페이즈 일땐 끌수 없게 한다.
-    {
-        if (!getLoseChk && curPhase != 4 && curPhase != 5)
-        {
-            //아이템 킬꺼면 캐릭터창 종료
-            if (characterInfoOpen) clickCharacterInfoBox();
-            SoundManager_Sfx.Instance.playSound(0);
-            itemManager.Instance.flipItemBox_BattleUI();
-        }
-    }
-
-
     //phase넘어가기
     public void moveToBattlePhase()
     {
@@ -2074,16 +1775,8 @@ public class BattleManager : MonoBehaviour
         }
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            if (!itemManager.Instance.getItemBoxOpen())
-            {
-                readyBattleChk = false;
-                curPhase = 4;
-                itemManager.Instance.flipItemBox_BattleUI(); //넘어갈때 passive칸을 켜준다.
-            }
-            else
-            {
-                itemManager.Instance.flipItemBox_BattleUI();// 열려있다면 끄고 넘어간다.
-            }
+            readyBattleChk = false;
+            curPhase = 4;
         }
     }
 
@@ -3022,7 +2715,6 @@ public class BattleManager : MonoBehaviour
         updateHp();
         updateMyDiceUI();
         updateEnemyDiceUI();
-        updateBattleUI();
     }
 
     private IEnumerator battlePhase()
@@ -3475,7 +3167,6 @@ public class BattleManager : MonoBehaviour
     private IEnumerator endPhase()
     {
         battleBagBtn.GetComponent<CircleCollider2D>().enabled = true;
-        itemManager.Instance.flipItemBox_BattleUI(); //켜진 item box 끄기
         yield return new WaitForSeconds(0.2f);
         int result = winningCheck();
         //tutorial용 전투 종료 확인
@@ -3484,9 +3175,6 @@ public class BattleManager : MonoBehaviour
         if (result == 2 || giveUpChk)
         {
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
-            if (characterInfoOpen) {
-                clickCharacterInfoBox();
-            }
 
             itemManager.Instance.endOfBattlePhase();
             //AdventureManager.Instance.loseGame();
@@ -3495,7 +3183,6 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
             getLoseChk = false;
 
-            if (characterInfoOpen) clickCharacterInfoBox();
             //CameraManager.Instance.loseScreenUnActive();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
 
@@ -3516,10 +3203,6 @@ public class BattleManager : MonoBehaviour
         else if (result == 1)
         {
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
-            if (characterInfoOpen)
-            {
-                clickCharacterInfoBox();
-            }
 
             if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
             if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
@@ -3547,10 +3230,7 @@ public class BattleManager : MonoBehaviour
                     myHpUI[i].GetComponent<TextMeshPro>().text = "";
                     enemyHpUI[i].GetComponent<TextMeshPro>().text = "";
                 }
-                    //보상 나와있으면 캐릭터 창 끌수 있도록
-                    if (characterInfoOpen) {
-                    clickCharacterInfoBox();
-                }
+
                 characterInfoOpenAble = false;
                 bosang_click = true;
                 
@@ -3747,14 +3427,6 @@ public class BattleManager : MonoBehaviour
         battleTextObj.GetComponent<TextMeshPro>().text = "";
 
         for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) resultObj[i, j] = resultObjInit[i * 4 + j];
-        // Hp 관련 UI, targeting을 위한 object find 
-        for (int i = 0; i < 2; i++) for (int j = 0; j < 4; j++) faceDesc[i, j] = faceDescInit[i * 4 + j];
-
-        //주사위 정보로 먼저 ui 출력
-        curSelectInfo = 0;
-        diceDescBox.SetActive(true);
-        skillDescBox.SetActive(false);
-        equipDescBox.SetActive(false);
 
         curPhase = 0;
         //마녀 능력 임시 배치
@@ -4150,33 +3822,6 @@ public class BattleManager : MonoBehaviour
     }
     */
     [SerializeField]private GameObject[] battleTargetUI = new GameObject[8];
-
-    private void updateInfoUIFaceUpdate() //battle ui에서 얼굴 업데이트
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
-            {
-                if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + myCharacter[i].getName() + "_face") != null)
-                {
-                    faceDesc[0, i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + myCharacter[i].getName() + "_face");
-                }
-                else { faceDesc[0, i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face"); }
-            }
-            else {
-                faceDesc[0, i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            }
-
-            if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
-            {
-                faceDesc[1, i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_enemy_face");
-            }
-            else
-            {
-                faceDesc[1, i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            }
-        }
-    }
  
     public void startBattlePhase()
     {
@@ -4289,9 +3934,8 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                string temp = myCharacter[i].getDestiny().getName();
-                myCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
-                myCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + myCharacter[i].getShadow().ToString());
+                myCharacterObjUIAnim[i].runtimeAnimatorController =   myCharacter[i].getAnimator(false);
+                myCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = myCharacter[i].getShadowSprite();
             }
             
             if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() == 2)
@@ -4303,14 +3947,8 @@ public class BattleManager : MonoBehaviour
             else
             {
                 string temp = enemyCharacter[i].getDestiny().getName();
-                enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
-                enemyCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[i].getShadow().ToString());
-                if (
-                    (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (enemyCharacter[i].getDestiny().getDestinyIdx() == 10012 || enemyCharacter[i].getDestiny().getDestinyIdx() == 10003 || enemyCharacter[i].getDestiny().getDestinyIdx() == 10004))
-                ){
-                    enemyCharacterObjUIAnim[i].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp  +"_2");
-                }
-                
+                enemyCharacterObjUIAnim[i].runtimeAnimatorController = enemyCharacter[i].getAnimator(false);
+                enemyCharacterShadowObjUI[i].GetComponent<SpriteRenderer>().sprite = enemyCharacter[i].getShadowSprite();
             }
 
         }
@@ -4326,7 +3964,6 @@ public class BattleManager : MonoBehaviour
         witchPowerSelectObjEntity.SetActive(false);
         updateHp();
         InitSetOfEnemySkill();
-        updateInfoUIFaceUpdate();
         curPhase = 1;
         
     }
@@ -4349,7 +3986,6 @@ public class BattleManager : MonoBehaviour
 
         updateHp();
         InitSetOfEnemySkill();
-        updateInfoUIFaceUpdate();
     }
    
 }

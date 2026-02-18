@@ -187,6 +187,38 @@ public abstract class Character
         this.shadow = character.shadow;
         this.money = character.getMoney();
     }
+
+    public RuntimeAnimatorController getAnimator(bool deadOk)
+    {
+        string temp = this.getDestiny().getName();
+
+        if (!deadOk && this.getCurState() != 0)
+        {
+            return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+        }
+
+        if (
+            (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10012 || this.getDestiny().getDestinyIdx() == 10003 || this.getDestiny().getDestinyIdx() == 10004))
+        )
+        {
+            return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp + "_2");
+        }
+        return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+    }
+
+    public Sprite getBackSprite()
+    {
+        return Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + this.getName() + "_back");
+    }
+    public Sprite getShadowSprite()
+    {
+        if (this.getCurState() != 0)
+        {
+            return Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        return Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + this.getShadow().ToString());
+    }
+
     public bool getPossible(int val)
     {
         if (Random.Range(0, 99) + this.magAtk >= 100 - val)

@@ -720,7 +720,7 @@ public class AdventureManager : MonoBehaviour
                 Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
                 //diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_noImage_face");
                 }
-            }
+        }
 
 
 
@@ -767,9 +767,6 @@ public class AdventureManager : MonoBehaviour
     }
     public void activeGiveUpBoard(bool onOff)
     {
-        if (onOff && itemManager.Instance.getItemBoxOpen() || itemManager.Instance.getItemBoxMove()) return;//아이템 창 열려있으면 못키게
-
-
         if (giveUpAble && onOff)
         {
             giveUpBoard.transform.position = new Vector3(-500f, 0f, 0f);
@@ -2193,8 +2190,14 @@ public class AdventureManager : MonoBehaviour
             case 4:
                 ToolBarManager.Instance.setToolBar(8);
                 break;
+            case 5:
+                ToolBarManager.Instance.setToolBar(15);
+                break;
             case 6:
                 ToolBarManager.Instance.setToolBar(9);
+                break;
+            case 7:
+                ToolBarManager.Instance.setToolBar(14);
                 break;
             case 8:
                 ToolBarManager.Instance.setToolBar(10);
@@ -2262,24 +2265,12 @@ public class AdventureManager : MonoBehaviour
     {
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
-            if (!itemManager.Instance.getItemBoxMove() ) //상자 동작중에는 넘어가기 불가능.
-            {
-                if (itemManager.Instance.getItemBoxOpen())
-                { //열려있는 경우 상자 끄기
-                    itemManager.Instance.flipItemBox(1, 1);
-                }
-                else
-                {
-                    upDownManager.Instance.changeOption(1, true);
-                    gameOverChk = false;
-                    curCanvasIsAdventure = false;
-                    upDownManager.Instance.resetUI();
-                    BattleManager.Instance.startBattle_fromAdventure();
-                    CameraManager.Instance.updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-                   // mainCamera.transform.position = new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z);
-                }
-            }
-            
+            upDownManager.Instance.changeOption(1, true);
+            gameOverChk = false;
+            curCanvasIsAdventure = false;
+            upDownManager.Instance.resetUI();
+            BattleManager.Instance.startBattle_fromAdventure();
+            CameraManager.Instance.updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
         }
         
     }
@@ -2289,31 +2280,21 @@ public class AdventureManager : MonoBehaviour
     {
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
-            if (!itemManager.Instance.getItemBoxMove()) //상자 동작중에는 넘어가기 불가능.
-            {
-                if (itemManager.Instance.getItemBoxOpen())
-                {   //열려있는 경우 상자 끄기
-                    itemManager.Instance.flipItemBox(2, 1);
-                }
-                else
-                {
-                    upDownManager.Instance.changeOption(1, false);
-                    curCanvasIsAdventure = true;
-                    
-                    upDownManager.Instance.deleteOtherLock(0);
-                    upDownManager.Instance.resetUI();
+            upDownManager.Instance.changeOption(1, false);
+            curCanvasIsAdventure = true;
 
-                    battleEventTrigger = false;
-                    if (!win)
-                    {
-                        gameOverAtBattle = true;
-                        gameOverChk = true; //Adventure 반복문 탈출
-                    }
-                    CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
-                    //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
-                    return true;
-                }
+            upDownManager.Instance.deleteOtherLock(0);
+            upDownManager.Instance.resetUI();
+
+            battleEventTrigger = false;
+            if (!win)
+            {
+                gameOverAtBattle = true;
+                gameOverChk = true; //Adventure 반복문 탈출
             }
+            CameraManager.Instance.updateInitPosition(new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z));
+            //mainCamera.transform.position = new Vector3(-500f, mainCamera.transform.position.y, mainCamera.transform.position.z);
+            return true;
         }
         return false;
     }

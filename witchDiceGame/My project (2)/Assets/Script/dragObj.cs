@@ -16,7 +16,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (AdventureManager.Instance.curCanvasItemCanvas && !itemManager.Instance.getItemBoxMove())
+        if (AdventureManager.Instance.curCanvasItemCanvas)
         { //이동중이면 움직임 X
             SoundManager_Sfx.Instance.playSound(0);
             defaultPoint = this.transform.position;
@@ -31,12 +31,8 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             }
             chkBegin = true;
             Debug.Log("begin Number : " + temp.ToString());
-            itemManager.Instance.setDragObjStartNum(temp);
             itemManager.Instance.turnOffItemCollider_item();
             //GetComponent<BoxCollider2D>().enabled = false;
-        }
-        else if(!itemManager.Instance.getItemBoxMove()) {
-            fullUI.showFull(3);
         }
     }
     public void OnDrag(PointerEventData eventData)
@@ -47,7 +43,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         // 원인을 아시는 분은 댓글로 알려주시면 감사하겠습니다
         //currentPos.z = 90f;
         //currentPos.y -= 160f;
-        if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin && !itemManager.Instance.getItemBoxMove() )
+        if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin )
         { //이동중이면 움직임 X
             Vector3 tempVector = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             tempVector.y = defaultPoint.y;
@@ -56,7 +52,7 @@ public class dragObj : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin && !itemManager.Instance.getItemBoxMove())
+        if (AdventureManager.Instance.curCanvasItemCanvas && chkBegin )
         { //이동중이면 움직임 X
             SoundManager_Sfx.Instance.playSound(4);
             this.transform.position = defaultPoint;
