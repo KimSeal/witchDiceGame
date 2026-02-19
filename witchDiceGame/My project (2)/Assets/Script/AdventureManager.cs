@@ -260,11 +260,21 @@ public class AdventureManager : MonoBehaviour
     public GameObject tutorialUI;
     [SerializeField]
     public GameObject tutorialUIText;
-    public void clickPlay()
+    public void activeTutorialButton(bool onOff)
     {
-        tutorialUI.transform.position = new Vector3(-1500f, -500f, 0f);
-        tutorialUIText.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(24);
+        if (onOff)
+        {
+            tutorialUI.transform.position = new Vector3(-1500f, -500f, 0f);
+            tutorialUIText.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(24);
+            upDownManager.Instance.changeOption(3, false);
+        }
+        else
+        {
+            tutorialUI.transform.position = new Vector3(-2000f, -500f, 0f);
+            upDownManager.Instance.changeOption(3, true);
+        }
     }
+
     public void changeLanguage()
     {
         tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
@@ -278,6 +288,7 @@ public class AdventureManager : MonoBehaviour
         //Screen.SetResolution(960, 540, FullScreenMode.Windowed);
         SoundManager_Sfx.Instance.playSound(0);
         SoundManager_Main.Instance.stopSound(0);
+        upDownManager.Instance.changeOption(3, false);
         //if (false) {
         if (input) {
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, mainCamera.transform.position.z));
@@ -294,7 +305,6 @@ public class AdventureManager : MonoBehaviour
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
             //SoundManager_Main.Instance.playSound(7);
         }
-        TalkManager.Instance.setTitleScreen(false);
         TalkManager.Instance.setDescIdx(-1);
 
         tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
@@ -615,7 +625,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 30; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 1; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -678,7 +688,7 @@ public class AdventureManager : MonoBehaviour
         CharacterManager.Instance.setTestCharacterSet();
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
-
+        tagInit();
         resetDice();
         //지금은 시작 버튼 누르면 바로 시작
         StartCoroutine(phase_Manage_Coroutine(1));
@@ -888,19 +898,117 @@ public class AdventureManager : MonoBehaviour
             diceObject[diceIdx].GetComponent<hoverRotate>().expandEnd();
         }
     }
-    public void downgradeEff(int opt, int val, int characterIdx)
+    [SerializeField]
+    public GameObject[] upgradeTagEntity = new GameObject[4];
+    public GameObject[] upgradeTagType = new GameObject[4];
+    public GameObject[] upgradeTagText = new GameObject[4];
+    
+    private float[] upgradeTagAmount = new float[4];
+    private int[] upgradeTagTypeVal = new int[4];
+
+    public void tagInit()
+    {
+        for (int i=0;i<4;i++)
+        {
+            upgradeTagEntity[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            upgradeTagType[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            upgradeTagAmount[i] = 0f;
+            upgradeTagTypeVal[i] = -1;
+            upgradeTagText[i].GetComponent<TextMeshPro>().text = "";
+        }
+    }
+    public void hoverInTagType(int idx)
+    {
+        if(upgradeTagTypeVal[idx] >= 0){
+            itemManager.Instance.hoverInInfo(upgradeTagTypeVal[idx]);
+        }
+    }
+    public void hoverOutTagType()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void setTag(int idx, int opt, int val)
+    {
+        //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:마법 감응력/ 7 : 스피드 -> 캐릭터 전투 기준
+        //설명에서의 능력치는 아래함수에 의해 변경됨.
+        switch (opt)
+        {
+            case 0: 
+                opt = 4;
+                break;
+            case 1:
+                opt = 5;
+                break;
+            case 4:
+                opt = 3;
+                break;
+            case 5:
+                opt = 0;
+                break;
+            case 6:
+                opt = 1;
+                break;
+            case 7:
+                opt = 2;
+                break;
+        }
+
+        upgradeTagTypeVal[idx] = opt;
+
+        switch (upgradeTagTypeVal[idx])
+        {
+            case 0:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_atk_1212_2");
+                break;
+            case 1:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_mag_1212_2");
+                break;
+            case 2:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_speed_1212_2");
+                break;
+            case 3:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_armor_1212_2");
+                break;
+            case 4:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_hp_1212_2");
+                break;
+            case 5:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_info_maxhp_1212_2");
+                break;
+            default:
+                upgradeTagType[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                break;
+        }   
+
+        if (val < 0) {
+            upgradeTagText[idx].GetComponent<TextMeshPro>().text = val.ToString();
+            upgradeTagEntity[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/spr_subStatePost");
+        }
+        else if(val > 0)
+        {
+            upgradeTagText[idx].GetComponent<TextMeshPro>().text = "+" + val.ToString();
+            upgradeTagEntity[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/spr_addStatePost");
+        }
+        else
+        {
+            upgradeTagText[idx].GetComponent<TextMeshPro>().text = "";
+            upgradeTagEntity[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+    }
+
+    public void downgradeEff(int opt, int val, int characterIdx, int height)
     {
         if (opt == 0)
         {
             SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
         }
-        specialTextManager.GetComponent<ExampleTextManager>().printAdventureUpgrade(opt, -1 * val, characterIdx);
+        specialTextManager.GetComponent<ExampleTextManager>().printAdventureUpgrade(opt, val, characterIdx, height);
         characterObj[characterIdx].GetComponent<Animator>().Play("Hit");
 
     }
-    public void upgradeEff(int opt, int val, int characterIdx)
+    public void upgradeEff(int opt, int val, int characterIdx, int height)
     {
-        specialTextManager.GetComponent<ExampleTextManager>().printAdventureUpgrade(opt, val, characterIdx);
+        specialTextManager.GetComponent<ExampleTextManager>().printAdventureUpgrade(opt, val, characterIdx, height);
     }
 
     public GameObject specialTextManager;
@@ -1027,7 +1135,7 @@ public class AdventureManager : MonoBehaviour
 
             yield return new WaitUntil(() => loadEnd);
             resetItemResult();
-
+            tagInit();
             adventureBalpanPointTemp = 0;
             //발판 이벤트를 위한 이펙트
             //setBalpan(stageIdx);
@@ -1202,6 +1310,7 @@ public class AdventureManager : MonoBehaviour
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
             resultObj.SetActive(false);
             storeEntityObj.SetActive(false);
+            tagInit();
 
             if (true)//adventureEventArr[stageIdx] == 1)
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
@@ -1326,7 +1435,9 @@ public class AdventureManager : MonoBehaviour
                     //TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
                 }
 
-                if (curDiceEventPacket.getSelectType() == 3) { //능력치 감소
+                if (curDiceEventPacket.getSelectType() == 3 || curDiceEventPacket.getSelectType() == 4 || curDiceEventPacket.getSelectType() == 5) { //능력치 변화
+                    tagInit();
+                    int tagIdxTemp = 0;
                     for (int i = 0; i < 8; i++)
                     {
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
@@ -1334,34 +1445,27 @@ public class AdventureManager : MonoBehaviour
                             break;
                         }
 
-                        if (curDiceEventPacket.getVal(i) != 0)
+                        if (curDiceEventPacket.getVal(i) < 0)
                         {
-                            
-                            downgradeEff(i, curDiceEventPacket.getVal(i), selectDiceCharacterIdx);
+                            downgradeEff(i, curDiceEventPacket.getVal(i) , selectDiceCharacterIdx, tagIdxTemp);
+                            setTag(tagIdxTemp++, i, curDiceEventPacket.getVal(i));
+                            if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).downGrade(i, -1 * curDiceEventPacket.getVal(i)) == 1)
+                            { //약화 효과로 인해 죽어버릴 경우
+                                selectDiceCharacterIdx = -1;
+                                resetDice();
+                                break;
+                            }
                         }
-                        if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).downGrade(i, curDiceEventPacket.getVal(i)) == 1)
-                        { //약화 효과로 인해 죽어버릴 경우
-                            selectDiceCharacterIdx = -1;
-                            resetDice();
-                            break;
+                        else if (curDiceEventPacket.getVal(i) > 0)
+                        {
+                            upgradeEff(i, curDiceEventPacket.getVal(i), selectDiceCharacterIdx, tagIdxTemp);
+                            setTag(tagIdxTemp++, i, curDiceEventPacket.getVal(i));
+                            CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).upGrade(i, curDiceEventPacket.getVal(i));
                         }
+                        
                     }
                 }
-                if (curDiceEventPacket.getSelectType() == 4)
-                { //능력치 증가
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
-                        {
-                            break;
-                        }
 
-                        if (curDiceEventPacket.getVal(i) != 0)
-                        {
-                            upgradeEff(i, curDiceEventPacket.getVal(i), selectDiceCharacterIdx);
-                        }
-                    }
-                }
                 if (curDiceEventPacket.getSelectType() == 8) { //상점 시스템
                     
                     storeEntityObj.SetActive(true);
@@ -1671,8 +1775,11 @@ public class AdventureManager : MonoBehaviour
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
                     yield return new WaitUntil(() => !eventEndClick);
-                    storeEntityObj.SetActive(false);
+                    
                 }
+                storeEntityObj.SetActive(false);
+                resultObj.SetActive(false);
+
             }
         }
         if (gameOverChk) //게임오버로 왔을 경우.
@@ -1960,17 +2067,41 @@ public class AdventureManager : MonoBehaviour
     }
     public void resetDice()
     {
+
+        resetCharacterObjSet();
+
         selectDiceCharacterIdx = -2; //의미 없는 캐릭터 idx로 변경
+        standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
         {
-            
+            if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
+            {
+                selectDiceCharacterIdx = characterIdx;
+                standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back");
+                break;
+                
+            }
+        }
+    }
+    public void resetDice(int idx)
+    {
+        if (idx < 0) {resetDice(); return; }
+        resetCharacterObjSet();
+        selectDiceCharacterIdx = idx;
+        standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getCharacter(idx).getName() + "_back");
+    }
+    public void resetCharacterObjSet()
+    {
+        for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
+        {
+
             diceObject[characterIdx].transform.rotation = Quaternion.Euler(0, 0, 0);
             if (CharacterManager.Instance.getCharacter(characterIdx) == null || CharacterManager.Instance.getCharacter(characterIdx).getCurState() != 0)
             {
                 clickAbleObjSet(diceObject[characterIdx], false, 1);
                 clickAbleObjSet(diceObject[characterIdx], false, 2);
 
-                characterObj[characterIdx].GetComponent<Animator>().runtimeAnimatorController = 
+                characterObj[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
                 Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
                 characterShadow[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                 //diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_no_face");
@@ -1985,7 +2116,8 @@ public class AdventureManager : MonoBehaviour
                 characterShadow[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_0");
                 //diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
             }
-            else {
+            else
+            {
                 characterObj[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
                 Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
                 characterShadow[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -1993,19 +2125,14 @@ public class AdventureManager : MonoBehaviour
             }
         }
         hoverOutCharacterDice(0);
- 
-        //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/balpan/spr_balpan_arrow_0");
-        standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
-        for (int characterIdx = 0; characterIdx < 4; characterIdx++) //캐릭터 얼굴 업로드
-        {
-            if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
-            {
-                selectDiceCharacterIdx = characterIdx;
-                standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back");
-                break;
-                
-            }
-        }
+    }
+    public int getSelectDiceCharacterIdx()
+    {
+        return selectDiceCharacterIdx;
+    }
+    public void setSelectDiceCharacterIdx(int input)
+    {
+        selectDiceCharacterIdx = input;
     }
     public bool rerollChk = false;
     [SerializeField]
@@ -2173,43 +2300,43 @@ public class AdventureManager : MonoBehaviour
         balpanObj[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
         if (!jsonDataManager.Instance.getEventMeet(balpanEventIdx[idx]) && balpanEventType[idx] < 98) //boss 가 아니고, 아직 만난적 없는 이벤트인 경우
         {
-            ToolBarManager.Instance.setToolBar(13);
+            ToolBarManager.Instance.setToolBarStat(8);
             return;
         }
         
         switch (balpanEventType[idx]) {
             case 0:
-                ToolBarManager.Instance.setToolBar(5);
+                ToolBarManager.Instance.setToolBarStat(0);
                 break;
             case 2:
-                ToolBarManager.Instance.setToolBar(6);
+                ToolBarManager.Instance.setToolBarStat(1);
                 break;
             case 3:
-                ToolBarManager.Instance.setToolBar(7);
+                ToolBarManager.Instance.setToolBarStat(2);
                 break;
             case 4:
-                ToolBarManager.Instance.setToolBar(8);
+                ToolBarManager.Instance.setToolBarStat(3);
                 break;
             case 5:
-                ToolBarManager.Instance.setToolBar(15);
+                ToolBarManager.Instance.setToolBarStat(10);
                 break;
             case 6:
-                ToolBarManager.Instance.setToolBar(9);
+                ToolBarManager.Instance.setToolBarStat(4);
                 break;
             case 7:
-                ToolBarManager.Instance.setToolBar(14);
+                ToolBarManager.Instance.setToolBarStat(9);
                 break;
             case 8:
-                ToolBarManager.Instance.setToolBar(10);
+                ToolBarManager.Instance.setToolBarStat(5);
                 break;
             case 98:
-                ToolBarManager.Instance.setToolBar(11);
+                ToolBarManager.Instance.setToolBarStat(6);
                 break;
             case 99:
-                ToolBarManager.Instance.setToolBar(11);
+                ToolBarManager.Instance.setToolBarStat(6);
                 break;
         }
-        if (balpanEventType[idx] >= 100) ToolBarManager.Instance.setToolBar(12);
+        if (balpanEventType[idx] >= 100) ToolBarManager.Instance.setToolBarStat(7);
     }
     public void hoverOutBalpan()
     {

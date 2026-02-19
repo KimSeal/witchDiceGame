@@ -71,9 +71,6 @@ public class TalkManager : MonoBehaviour
     private int[] jumpChk = { 0, 0, 0, 0 };
     private float[] jumpSpd = { 0, 0, 0, 0 };
 
-    private bool titleScreen = true;
-    
-
     private bool libraryEntry = false;
 
     [SerializeField] public GameObject skipButton;
@@ -201,27 +198,11 @@ public class TalkManager : MonoBehaviour
         }
         
     }
-    public void setTitleScreen(bool onOff)
-    {
-        titleScreen = onOff;
-    }
     public void clickDescBox()
     {
         if (talkingChk)
         {   
             goToNextTalk();
-        }
-        else if (titleScreen) {
-            if (!jsonDataManager.Instance.getTutorialDid())
-            {
-                AdventureManager.Instance.mainPlayButton(true);
-                //AdventureManager.Instance.clickPlay();
-            }
-            else AdventureManager.Instance.mainPlayButton(false);
-            //AdventureManager.Instance.mainPlayButton(false);
-
-            //
-
         }
         else
         {
@@ -279,7 +260,6 @@ public class TalkManager : MonoBehaviour
             talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             entity.SetActive(false);
 
-            titleScreen = true;
             
         }
 

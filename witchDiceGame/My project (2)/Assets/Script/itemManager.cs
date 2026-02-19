@@ -295,11 +295,16 @@ public class itemManager : MonoBehaviour
     */
     public void swapCharacter(int idx, int idx2)
     {
+        int originDiceIdx = AdventureManager.Instance.getSelectDiceCharacterIdx();
+        int endDiceIdx = AdventureManager.Instance.getSelectDiceCharacterIdx();
+        if (originDiceIdx == idx) { endDiceIdx = idx2; }
+        if (originDiceIdx == idx2) { endDiceIdx = idx; }
+
             Character playerA = CharacterManager.Instance.getCharacter(idx);
             Character playerB = CharacterManager.Instance.getCharacter(idx2);
             CharacterManager.Instance.setCharacter(idx, playerB);
             CharacterManager.Instance.setCharacter(idx2, playerA);
-            AdventureManager.Instance.resetDice();
+            AdventureManager.Instance.resetDice(endDiceIdx);
             SoundManager_Sfx.Instance.playSound(72);
             AdventureManager.Instance.smokeCharacter(idx);
             AdventureManager.Instance.smokeCharacter(idx2);
@@ -315,7 +320,14 @@ public class itemManager : MonoBehaviour
         }
         if (deleteResult) //캐릭터가 무사히 제거된 경우
         {
-            AdventureManager.Instance.resetDice();
+            if (AdventureManager.Instance.getSelectDiceCharacterIdx() == characterSelectIdx) {
+                AdventureManager.Instance.resetDice();
+            }
+            else
+            {
+                AdventureManager.Instance.resetDice(AdventureManager.Instance.getSelectDiceCharacterIdx());
+            }
+            
             updateCharacterBar();
         }
     }

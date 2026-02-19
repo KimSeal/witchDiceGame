@@ -40,6 +40,12 @@ public class upDownManager : MonoBehaviour
     public int curTownIdx = 0;
 
     [SerializeField]
+    public GameObject underTitleEntity;
+    public GameObject[] underTitleButton = new GameObject[8];
+    public GameObject[] underTitleOutline = new GameObject[8];
+    public GameObject[] underTitleNewMark = new GameObject[8];
+
+    [SerializeField]
     public GameObject backBlackItem;
     public GameObject[] upperItemEff = new GameObject[12];
     public GameObject[] upperItemEffOrigin = new GameObject[12];
@@ -155,14 +161,15 @@ public class upDownManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
+        for (int i = 0; i < 4; i++) optionOnOff[i] = false;
+         backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
         backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
         bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
         bigDicePowerCancleObj.SetActive(false);
         hoverInItemTypeButton(curItemType);
         cancleChangeBtn();
         cancleDeleteBtn();
-        changeOption(0, false);
+        changeOption(3, true);
         itemTypeButtonLock = false;
         curTownIdx = 7;
 
@@ -179,11 +186,16 @@ public class upDownManager : MonoBehaviour
         townName[5] = "???";
         townName[6] = "???";
         townName[7] = "Hill";
-
+        initSet = false;
     }
 
+    private bool initSet = false;
     void Update()
     {
+        if (!initSet) {
+            initSet = true;
+            hoverOutUnderTitleButton();
+        }
         for (int i = 0; i < 12; i++)
         {
             upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
@@ -335,7 +347,72 @@ public class upDownManager : MonoBehaviour
         }
        
     }
+    public void clickUnderTitleButton(int idx)
+    {
+        if (idx == 0) {
+            if (jsonDataManager.Instance.getTutorialDid()) {
+                AdventureManager.Instance.activeTutorialButton(true);
+            }
+        }
+        if (idx == 7) {
+            if (jsonDataManager.Instance.getTutorialDid()) {
+                AdventureManager.Instance.mainPlayButton(false);
+            }
+            else
+            {
+                AdventureManager.Instance.mainPlayButton(true);
+            }
+        }
+    } 
+    public void hoverInUnderTitleButton(int idx)
+    {
+        if (idx == 0 && jsonDataManager.Instance.getTutorialDid())
+        {
+            skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
+        }
+        else if (idx == 7 && !jsonDataManager.Instance.getTutorialDid()) {
+            skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
+        }
+        else if (idx == 7 && jsonDataManager.Instance.getTutorialDid())
+        {
+            skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
+        }
+        else
+        {
+            skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
+        }
+        underHoverBar[1].GetComponent<Image>().sprite = underTitleButton[idx].GetComponent<Image>().sprite;
 
+
+        underTitleOutline[idx].GetComponent<Image>().sprite
+             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        onOffUI(0, 1);
+    }
+    public void hoverOutUnderTitleButton()
+    {
+       
+        for (int i = 0; i < 8; i++) //new mark 다 초기화
+        {
+            underTitleOutline[i].GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            underTitleNewMark[i].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            underTitleButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + "lock");
+        }
+
+        if (!jsonDataManager.Instance.getTutorialDid()) { // 아직 아무것도 안된 경우 튜토리얼만 열어두기.
+            underTitleNewMark[7].GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
+            underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        }
+        else
+        {
+            underTitleButton[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+            underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_Hill");
+        }
+        skillDescUpdate("none", 0, 0, 0, 0, "", "");
+        onOffUI(0, 0);
+    }
     public void activeTownUI(bool input) {
         
         if (input) {
@@ -588,18 +665,24 @@ public class upDownManager : MonoBehaviour
     }
     #endregion
 
-    public bool[] optionOnOff = { false, false, false }; 
+    private bool[] optionOnOff = new bool[4];
     // 0 : non
     // 1 : skillUI
     // 2 : characterUI
+    // 3 : titleUI
 
     public void changeOption(int i, bool onOff)
     {
         optionOnOff[i] = onOff;
 
+        underTitleEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
         underSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
         characterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
 
+        if (optionOnOff[3]) { //title SelectUI
+            underTitleEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+            return;
+        }
         if (optionOnOff[2]) { //characterSelect UI
             characterEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
             return;
