@@ -2375,12 +2375,12 @@ public class BattleManager : MonoBehaviour
 
     private void changeDiceState(int characterIdx, int stateChange)
     {
-
         if (stateChange == 0) return;
         if (stateChange == -999)
         {
             stateChange = 0;
         }
+
         if (characterIdx < 4)
         {
             myDiceState[characterIdx] = stateChange;
@@ -2524,7 +2524,10 @@ public class BattleManager : MonoBehaviour
         {
             if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }
             if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; }
-            if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, -1 * val, height); return true; }
+            if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, val, height); return true; }
+            if (skillType == 4) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(6, myTeam, idx, val, height); return true; }
+            if (skillType == 5) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(7, myTeam, idx, val, height); return true; }
+
             /*
             if (myTeam) //아군 대상일 경우
             {
@@ -2637,12 +2640,22 @@ public class BattleManager : MonoBehaviour
         }
 
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++) {
+
             skillResult = skillResultQueueForAnim.Dequeue();
-            if (skillResult < 0) {//처리하지 않는 Animation인 경우 넘어간다.
+            if (skillResult == -1) {//처리하지 않는 Animation인 경우 넘어간다.
+                continue;
+            }
+            //state 변화만 있는 경우 예외처리.
+            
+
+            tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+
+            if (skillResult == -2)
+            {
+                changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                 continue;
             }
 
-            tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
             Debug.Log(tempTargetIdx);
             if (tempTargetIdx < 4) //아군이 타겟일 경우
             {

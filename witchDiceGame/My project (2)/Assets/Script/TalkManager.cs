@@ -184,7 +184,7 @@ public class TalkManager : MonoBehaviour
         return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("？", "?")/*.Replace("。", ".").Replace("、", ", ")*/.Replace("！", "!").Replace("）",")").Replace("（", "(");
     }
 
-    private int[] lifeStartIdx = {3,  -99999};
+    private int[] lifeStartIdx = {3,  -99999, -99999};
     public bool stageStart(int stageStart)
     {
         //스테이지가 0이 아니면서(다시 튜토리얼 시도 할때 대사 보여줘야 하니까) 기존에 방문했던 stage가 아니면
@@ -373,7 +373,7 @@ public class TalkManager : MonoBehaviour
     }
     public void startTalk(int a)
     {
-
+        if (a < 0) return;
         if (!talkingChk)
         {
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);

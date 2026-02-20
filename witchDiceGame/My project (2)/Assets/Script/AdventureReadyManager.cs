@@ -127,6 +127,7 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void startAdventure()
     {
+
         jsonDataManager.Instance.towerEntry();
         enterCharacterMove[0] = 200f;
         enterCharacterMove[1] = 200f;

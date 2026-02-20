@@ -226,6 +226,7 @@ public class AdventureManager : MonoBehaviour
 
     public IEnumerator tutorial_Coroutine()
     {
+        tagInit();
         resetDice();
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -625,7 +626,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 1; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -680,7 +681,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
-
+        tagInit();
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0,0);
         adventureJewel = 0;
@@ -688,10 +689,10 @@ public class AdventureManager : MonoBehaviour
         CharacterManager.Instance.setTestCharacterSet();
         CameraManager.Instance.updateInitPosition(new Vector3(-500f, 0f, mainCamera.transform.position.z));
         //mainCamera.transform.position = new Vector3(-500f, 0f, mainCamera.transform.position.z);
-        tagInit();
+        
         resetDice();
         //지금은 시작 버튼 누르면 바로 시작
-        StartCoroutine(phase_Manage_Coroutine(1));
+        StartCoroutine(phase_Manage_Coroutine(2));
     }
 
     public void clearBalpan()// 발판 이벤트 끝나고 발판 화면 치우기
@@ -2298,45 +2299,45 @@ public class AdventureManager : MonoBehaviour
 
         if (balpanEventType[idx] == -1) return;
         balpanObj[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1);
-        if (!jsonDataManager.Instance.getEventMeet(balpanEventIdx[idx]) && balpanEventType[idx] < 98) //boss 가 아니고, 아직 만난적 없는 이벤트인 경우
+        if (!jsonDataManager.Instance.getEventMeet(balpanEventIdx[idx]) && balpanEventType[idx] < 98 && tutorialVal == 0) //boss 가 아니고, 아직 만난적 없는 이벤트인 경우
         {
-            ToolBarManager.Instance.setToolBarStat(8);
+            ToolBarManager.Instance.setToolBar(8);
             return;
         }
         
         switch (balpanEventType[idx]) {
             case 0:
-                ToolBarManager.Instance.setToolBarStat(0);
+                ToolBarManager.Instance.setToolBar(0);
                 break;
             case 2:
-                ToolBarManager.Instance.setToolBarStat(1);
+                ToolBarManager.Instance.setToolBar(1);
                 break;
             case 3:
-                ToolBarManager.Instance.setToolBarStat(2);
+                ToolBarManager.Instance.setToolBar(2);
                 break;
             case 4:
-                ToolBarManager.Instance.setToolBarStat(3);
+                ToolBarManager.Instance.setToolBar(3);
                 break;
             case 5:
-                ToolBarManager.Instance.setToolBarStat(10);
+                ToolBarManager.Instance.setToolBar(10);
                 break;
             case 6:
-                ToolBarManager.Instance.setToolBarStat(4);
+                ToolBarManager.Instance.setToolBar(4);
                 break;
             case 7:
-                ToolBarManager.Instance.setToolBarStat(9);
+                ToolBarManager.Instance.setToolBar(9);
                 break;
             case 8:
-                ToolBarManager.Instance.setToolBarStat(5);
+                ToolBarManager.Instance.setToolBar(5);
                 break;
             case 98:
-                ToolBarManager.Instance.setToolBarStat(6);
+                ToolBarManager.Instance.setToolBar(6);
                 break;
             case 99:
-                ToolBarManager.Instance.setToolBarStat(6);
+                ToolBarManager.Instance.setToolBar(6);
                 break;
         }
-        if (balpanEventType[idx] >= 100) ToolBarManager.Instance.setToolBarStat(7);
+        if (balpanEventType[idx] >= 100) ToolBarManager.Instance.setToolBar(7);
     }
     public void hoverOutBalpan()
     {

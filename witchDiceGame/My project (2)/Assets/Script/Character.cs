@@ -338,7 +338,7 @@ public abstract class Character
 
     public abstract List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
 
-    public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 
+    public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -2 : state변화만  -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 
     {
         if (takeSkillPacket.getSkillType() == 0 )//|| takeSkillPacket.getSkillType() == 1000)
         {
@@ -390,6 +390,11 @@ public abstract class Character
         {
             this.character_battle.upgrade(5, takeSkillPacket.getVal());
             return 3;
+        }
+
+        if (takeSkillPacket.getStateChange() >= 1 && takeSkillPacket.getStateChange() <= 6)
+        {
+            return -2;
         }
         return -1;
     }

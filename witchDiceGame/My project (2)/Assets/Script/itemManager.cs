@@ -553,7 +553,7 @@ public class itemManager : MonoBehaviour
     }
     public void hoverInInfo(int i)
     {
-        ToolBarManager.Instance.setToolBar(i);
+        ToolBarManager.Instance.setToolBarStat(i);
     }
     public void hoverOutDesc()
     {

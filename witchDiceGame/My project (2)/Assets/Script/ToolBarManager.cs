@@ -181,11 +181,11 @@ public class ToolBarManager : MonoBehaviour
     }
     //공격력, 마법감응력, 스피드, 방어도, HP, 최대 HP
     //전투, 보물, 불운, 행운, 랜덤, 상점, 보스, ???, 미확인 이벤트, 우연, 성장
-    private int[] toolBarTitleIdx = { 72, 73, 74, 83, 85, 124 };
-    private int[] toolBarContentIdx = { 75, 76, 77, 84, 86, 125 };
+    private int[] toolBarStatTitleIdx = { 72, 73, 74, 83, 85, 124 };
+    private int[] toolBarStatContentIdx = { 75, 76, 77, 84, 86, 125 };
 
-    private int[] toolBatStatTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121 };
-    private int[] toolBarStateContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122};
+    private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121 };
+    private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122};
     public void setToolBar(int idx)
     {
         toolBarOnOff(1);
@@ -211,8 +211,8 @@ public class ToolBarManager : MonoBehaviour
             toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
         toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
-        toolBarTitle.text = TalkManager.Instance.getDesc(toolBarTitleIdx[idx]);
-        toolBarDesc.text = TalkManager.Instance.getDesc(toolBarContentIdx[idx]);
+        toolBarTitle.text = TalkManager.Instance.getDesc(toolBarStatTitleIdx[idx]);
+        toolBarDesc.text = TalkManager.Instance.getDesc(toolBarStatContentIdx[idx]);
     }
     public void setToolBar(string title, string content, Sprite spriteImage)
     {

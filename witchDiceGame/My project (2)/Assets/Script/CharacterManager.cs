@@ -86,8 +86,8 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(3);
 
         setCharacter(2, 0);
-        setCharacter(1, 7);
-        setCharacter(3, 8);
+        //setCharacter(1, 7);
+        //setCharacter(3, 8);
         //
         myCharacter[2].setReviveUnit(true);
         for(int i=0;i<6;i++) myCharacter[2].setDice(i,1);
@@ -308,6 +308,22 @@ public class CharacterManager : MonoBehaviour
                     character = new Schnauzer(0, destinyList_monster[characterIdx]); break;
                 case 14:
                     character = new WolfSheep(0, destinyList_monster[characterIdx]); break;
+                case 15:
+                    character = new NestEater(0, destinyList_monster[characterIdx]); break;
+                case 16:
+                    character = new NestAter(0, destinyList_monster[characterIdx]); break;
+                case 17:
+                    character = new Alphaca(0, destinyList_monster[characterIdx]); break;
+                case 18:
+                    character = new MaybeAlphaca(0, destinyList_monster[characterIdx]); break;
+                case 19:
+                    character = new FlyingPaper(0, destinyList_monster[characterIdx]); break;
+                case 20:
+                    character = new FlyingTreatise(0, destinyList_monster[characterIdx]); break;
+                case 21:
+                    character = new FlyingBook(0, destinyList_monster[characterIdx]); break;
+                case 22:
+                    character = new EagleWizard(0, destinyList_monster[characterIdx]); break;
             }
         }
     }
