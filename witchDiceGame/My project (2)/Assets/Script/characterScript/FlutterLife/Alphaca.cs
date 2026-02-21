@@ -78,7 +78,6 @@ public class MaybeAlphaca : Character
             {
                 packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0, 2)); //아군 대상에게 공격력 1 추가
             }
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 0, Random.Range(1,4), -999));
         }
 
         return packets;

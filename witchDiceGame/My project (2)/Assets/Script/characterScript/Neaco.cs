@@ -122,7 +122,157 @@ public class LemGol : Character
         return packets;
     }
 }
+public class SHA : Character
+{
+    public SHA(int curState, Destiny destiny) : base(curState, destiny)
+    {
 
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+        if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 3 + this.getPhyAtk(), 0));
+            if (getPossible(33)) {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 3, 0, 2));
+            }
+            if (getPossible(33)) {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 3,-999));
+            }
+        }
+        if (sendSkillPacket.useSkillIdx == 1) // 스피드 만큼 데미지
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 3 + this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 3, -999));
+        }
+        return packets;
+    }
+
+}
+public class Peck : Character
+{
+    public Peck(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+        if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getMagAtk() + this.getPhyAtk(), sendSkillPacket.diceNum[0]));
+        }
+        if (sendSkillPacket.useSkillIdx == 1) // 스피드 만큼 데미지
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0, 4));
+        }
+        return packets;
+    }
+}
+public class Flap : Character
+{
+    public Flap(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+        if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0]));
+        }
+        if (sendSkillPacket.useSkillIdx == 1) // 스피드 만큼 데미지
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSpeed() + this.getPhyAtk(), 0));
+            if (sendSkillPacket.targetIdx[0] != -999 && BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]) == sendSkillPacket.diceNum[0])
+            {
+                Debug.Log("It is Active!");
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 5));
+            }
+        }
+        return packets;
+    }
+}
+
+public class Betaca : Character
+{
+    public Betaca(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+
+        if (sendSkillPacket.useSkillIdx == 0) //고블린의 첫번째 스킬이 호출된 경우
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(0, 0) + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            if (sendSkillPacket.targetIdx[0] != -999 && BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]) <= 3)
+            {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getSkillVal(0, 1), 0, 2)); //자신에게 공격력 추가
+            }
+        }
+        else if (sendSkillPacket.useSkillIdx == 1) //고블린의 두번째 스킬이 호출된 경우
+        {
+            if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
+            {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            }
+            else if (sendSkillPacket.targetIdx[0] >= 0 && sendSkillPacket.targetIdx[0] < 4)
+            {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0, 2)); //아군 대상에게 공격력 1 추가
+            }
+        }
+
+        return packets;
+    }
+}
 public class Unu : Character
 {
     public Unu(int curState, Destiny destiny) : base(curState, destiny)

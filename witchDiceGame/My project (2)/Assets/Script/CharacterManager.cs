@@ -105,7 +105,7 @@ public class CharacterManager : MonoBehaviour
         setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
         myCharacter[2].setReviveUnit(true);
         //setCharacter(1, 1);
-        setCharacter(3, 8);
+        //setCharacter(3, 8);
         //setCharacter(1, 1);
         //setCharacter(2, 2);
         //setCharacter(3, 3);
@@ -249,24 +249,31 @@ public class CharacterManager : MonoBehaviour
                 case 0:
                     character = new Yongsa(0, destinyList[characterIdx]); break;
                 case 1:
-                    character = new Neaco(0, destinyList[characterIdx]); break;
-                case 2:
-                    character = new Druid(0, destinyList[characterIdx]); break;
-                case 3:
-                    character = new Tom(0, destinyList[characterIdx]); break;
-                case 4:
-                    character = new Bob(0, destinyList[characterIdx]); break;
-                case 5:
-                    character = new Border(0, destinyList[characterIdx]); break;
-                case 6:
-                    character = new Wawa(0, destinyList[characterIdx]); break;
-                case 7:
-                    character = new Unu(0, destinyList[characterIdx]); break;
-                case 8:
-                    character = new Raco(0, destinyList[characterIdx]); break;
-                case 9:
                     character = new LemGol(0, destinyList[characterIdx]); break;
-
+                case 2:
+                    character = new Flap(0, destinyList[characterIdx]); break;
+                case 3:
+                    character = new Betaca(0, destinyList[characterIdx]); break;
+                case 4:
+                    character = new Peck(0, destinyList[characterIdx]); break;
+                case 5:
+                    character = new SHA(0, destinyList[characterIdx]); break;
+                case 6:
+                    character = new Tom(0, destinyList[characterIdx]); break;
+                case 7:
+                    character = new Bob(0, destinyList[characterIdx]); break;
+                case 8:
+                    character = new Border(0, destinyList[characterIdx]); break;
+                case 9:
+                    character = new Wawa(0, destinyList[characterIdx]); break;
+                case 10:
+                    character = new Unu(0, destinyList[characterIdx]); break;
+                case 11:
+                    character = new Raco(0, destinyList[characterIdx]); break;
+                case 12:
+                    character = new Neaco(0, destinyList[characterIdx]); break;
+                case 13:
+                    character = new Druid(0, destinyList[characterIdx]); break;
             }
             if (!jsonDataManager.Instance.getPlayerCharacterAble(characterIdx)) {
                 jsonDataManager.Instance.setPlayerCharacterAble(characterIdx);

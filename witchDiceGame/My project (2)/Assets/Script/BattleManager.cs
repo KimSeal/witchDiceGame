@@ -1898,21 +1898,21 @@ public class BattleManager : MonoBehaviour
             {//아군 선택만 가능한 경우
                 for (int i = 0; i < 4; i++)
                 {
-                    if (myCharacter[i] != null && myCharacter[i].getCurState() != 2)
+                    if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
                     {
                         battleTargetUI[i].SetActive(true);
-                        shakeObject(battleTargetUI[i]);
+                        //shakeObject(battleTargetUI[i]);
                         battleTargetUI[i].GetComponent<Animator>().Play("Create");
                         battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                         characterClickAble[i] = true;
                     }
                 }
             }
-            else if (clickAbleTeam != 1)
+            if(clickAbleTeam != 1)
             {//적군 선택만 가능한 경우
                 for (int i = 4; i < 8; i++)
                 {
-                    if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2)
+                    if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() == 0)
                     {
                         //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
                         battleTargetUI[i].SetActive(true);
