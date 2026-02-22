@@ -219,24 +219,16 @@ public class BattleManager : MonoBehaviour
 
     public void useGiveUpBtn()
     {
-        if (giveUpChk)
-        {
-            giveUpChk = false;
-            giveUpBtn.GetComponent<Animator>().Play("unactive");
-        }
-        else if (!giveUpChk)
+        if (!giveUpChk)
         {
             if (AdventureManager.Instance.getTutorial() != 0)
             {
                 giveUpChk = false;
                 fullUI.showFull(14);
-                giveUpBtn.GetComponent<Animator>().Play("unactive");
             }
             else
             {
                 giveUpChk = true;
-                fullUI.showFull(15);
-                giveUpBtn.GetComponent<Animator>().Play("active");
             }
         }
     }
@@ -850,15 +842,22 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(diceThrowPhase());
             yield return new WaitUntil(() => phaseMoveChk(2));
             curPhase = 3;
+            AdventureManager.Instance.giveUpBtnAble(true);
             //StartCoroutine(witchPowerPhase());
             yield return new WaitUntil(() => phaseMoveChk(3));
+           
+
             StartCoroutine(skillSelectPhase());
-            yield return new WaitUntil(() => phaseMoveChk(4));
-            StartCoroutine(readyBattlePhase());
-            yield return new WaitUntil(() => phaseMoveChk(5));
-            StartCoroutine(battlePhase());
-            yield return new WaitUntil(() => phaseMoveChk(6));
-            upDownManager.Instance.setItemTypeButtonLock(false);
+            yield return new WaitUntil(() => phaseMoveChk(4) || giveUpChk);
+            AdventureManager.Instance.giveUpBtnAble(false);
+            if (!giveUpChk)
+            {
+                StartCoroutine(readyBattlePhase());
+                yield return new WaitUntil(() => phaseMoveChk(5));
+                StartCoroutine(battlePhase());
+                yield return new WaitUntil(() => phaseMoveChk(6));
+                upDownManager.Instance.setItemTypeButtonLock(false);
+            }
             StartCoroutine(endPhase());
 
             yield return new WaitUntil(() => curPhase != 6 && currentLightUI == 0 && currentMoveUI == 0);
@@ -3179,6 +3178,14 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator endPhase()
     {
+        for (int i=0;i<4;i++)
+        {
+            myDiceTake[i] = -999;
+            enemyDiceTake[i] = -999;
+        }
+        updateMyDiceUI();
+        updateEnemyDiceUI();
+
         battleBagBtn.GetComponent<CircleCollider2D>().enabled = true;
         yield return new WaitForSeconds(0.2f);
         int result = winningCheck();
@@ -3188,7 +3195,7 @@ public class BattleManager : MonoBehaviour
         if (result == 2 || giveUpChk)
         {
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
-
+            upDownManager.Instance.changeOption(1, false);
             itemManager.Instance.endOfBattlePhase();
             //AdventureManager.Instance.loseGame();
             CameraManager.Instance.resultScreenActive(0);
@@ -3197,7 +3204,10 @@ public class BattleManager : MonoBehaviour
             getLoseChk = false;
 
             //CameraManager.Instance.loseScreenUnActive();
+
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
+
+            
 
             for (int i = 0; i < 4; i++)
             {
@@ -3216,7 +3226,7 @@ public class BattleManager : MonoBehaviour
         else if (result == 1)
         {
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
-
+            upDownManager.Instance.changeOption(1, false);
             if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
             if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
@@ -3753,14 +3763,16 @@ public class BattleManager : MonoBehaviour
 
     public void startBattle_fromAdventure()
     {
-        giveUpChk = true; //전투 시작시에는 항복 꺼두기
-        useGiveUpBtn(); 
-        
+        giveUpChk = false; //전투 시작시에는 항복 꺼두기 
+
         for (int i = 0; i < 8; i++) {
            // diceArrowAnimationControl(i, false);
         }
         for (int i = 0; i < 4; i++)
         {
+            myDiceTake[i] = -999;
+            enemyDiceTake[i] = -999;
+
             myCharacterPunch[i] = 0f;
             myCharacterSwing[i] = 0f;
             enemyCharacterPunch[i] = 0f;
@@ -3771,6 +3783,9 @@ public class BattleManager : MonoBehaviour
             myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
             enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
+        updateEnemyDiceUI();
+        updateMyDiceUI();
+
         adventureStartChk = true;
         StartCoroutine(startPhaseManage());
     }

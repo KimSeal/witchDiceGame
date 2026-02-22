@@ -166,7 +166,7 @@ public class AdventureReadyManager : MonoBehaviour
             backgroundSpark[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 0f);
         }
 
-        if (jsonDataManager.Instance.getCharacterSelect(0) == 0)
+        if (jsonDataManager.Instance.getCharacterSelect(0) == 0 || jsonDataManager.Instance.getChapterRead(0,2) != 2)
         {
             enterCharacterMove[1] = 200;
             enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");

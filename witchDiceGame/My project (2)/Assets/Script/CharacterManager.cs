@@ -98,7 +98,7 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(1);
         emptyMyCharacter(2);
         emptyMyCharacter(3);
-        if (jsonDataManager.Instance.getCharacterSelect(0) != 0)
+        if (jsonDataManager.Instance.getChapterRead(0,2) == 2 && jsonDataManager.Instance.getCharacterSelect(0) != 0)
         {
             setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
         }
@@ -136,7 +136,21 @@ public class CharacterManager : MonoBehaviour
     }
     public int getRandomCharacterDestinyIdx()
     {
-        return Random.Range(1, destinyList.Count) ;
+        int resultVal = 1;
+        if (jsonDataManager.Instance.getChapterRead(0, 2) < 2)
+        {
+            resultVal = Random.Range(1, 10);
+        }
+        else
+        {
+            resultVal =  Random.Range(1, destinyList.Count);
+        }
+        Debug.Log(resultVal);
+        return resultVal;
+    }
+    public void testRandom()
+    {
+        Debug.Log(getRandomCharacterDestinyIdx());
     }
     public int getCharacterState(int idx)
     {

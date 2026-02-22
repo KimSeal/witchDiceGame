@@ -501,7 +501,6 @@ public class itemManager : MonoBehaviour
         characterDescText.text = temp.getCommand();
         for (int j = 0; j < 4; j++)
         {
-            Debug.Log("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
             characterDescDice[j].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + temp.getNeedDice(j).ToString());
         }
     }

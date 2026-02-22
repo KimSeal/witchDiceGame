@@ -430,7 +430,7 @@ public class upDownManager : MonoBehaviour
         if (idx == 0 || idx == 1 || idx == 7) {
             return true;
         }
-        if (idx == 2) { //&& jsonDataManager.Instance.getChapterRead(1, 2) >= 2) {
+        if (idx == 2 && jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
             return true;
         }
         return false;

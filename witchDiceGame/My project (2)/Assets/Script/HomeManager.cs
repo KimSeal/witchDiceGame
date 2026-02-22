@@ -224,7 +224,7 @@ public class HomeManager : MonoBehaviour
 
     public void clickJewel(int num)
     {
-        if (curChapterIdx != 0)// 데모에선 1챕터만 봐야하니 다른거 막아두기
+        if (!(curChapterIdx == 3 && num % 3 == 1) && curChapterIdx != 0)// 데모에선 1챕터만 봐야하니 다른거 막아두기
         {
             fullUI.showFull(4);
             return;
@@ -234,7 +234,11 @@ public class HomeManager : MonoBehaviour
             int detailIdx = num % 3;
             Debug.Log("jewel test");
             Debug.Log(jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx));
-            if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
+            if (chapterNum == 3 && detailIdx == 1 && jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 0)
+            {
+                StartCoroutine(jewelTalk(52));
+            }
+            else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapterTalk[chapterNum,detailIdx]));
             }
             else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 1)
@@ -248,10 +252,6 @@ public class HomeManager : MonoBehaviour
                     StartCoroutine(jewelTalk(chapterNum, detailIdx));
                     jsonDataManager.Instance.setChapterRead(chapterNum, detailIdx);
                 }
-            }
-            else if (chapterNum == 3 && detailIdx == 1)
-            {
-                StartCoroutine(jewelTalk(52));
             }
             else
             {
