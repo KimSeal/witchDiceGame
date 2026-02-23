@@ -909,6 +909,7 @@ public class itemManager : MonoBehaviour
         itemBoxInitPoint[11] = itemBoxInitPointInit[11].transform.position;
         descObj[0].SetActive(false);
 
+
         
         /*
         for (int i = 0; i < 10; i++)
@@ -1050,7 +1051,14 @@ public class itemManager : MonoBehaviour
                 takeSkillPacketList.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 0, item.getVal(3), -999)); returnVal = new passiveReturn(true, "none", item.getVal(3)); break;
             case 27:
                 sumDiceVal = 1;
-                for (int i = 0; i < 4; i++) if (diceArr[i] == 4) {sumDiceVal *= 2; } takeSkillPacket.mulVal(sumDiceVal);
+                for (int i = 0; i < 4; i++)
+                {
+                    if (diceArr[i] == 4) { 
+                        sumDiceVal *= 2;
+                        takeSkillPacket.mulVal(sumDiceVal);
+                        break;
+                    }
+                }
                 returnVal = new passiveReturn(true, "X", sumDiceVal); break;
             case 28:
                 takeSkillPacket.addVal(item.getVal(3)); returnVal = new passiveReturn(true, "+", item.getVal(3)); break;

@@ -3233,7 +3233,7 @@ public class BattleManager : MonoBehaviour
         else if (result == 1)
         {
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
-            upDownManager.Instance.changeOption(1, false);
+
             if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(9);
@@ -3248,9 +3248,9 @@ public class BattleManager : MonoBehaviour
 
             if (bossPhase == 0)
             {
-                
-                
-                
+
+                upDownManager.Instance.changeOption(1, false);
+
                 for (int i = 0; i < 4; i++)
                 {
                     myHpUI[i].GetComponent<TextMeshPro>().text = "";
