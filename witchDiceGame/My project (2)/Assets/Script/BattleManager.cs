@@ -3198,11 +3198,18 @@ public class BattleManager : MonoBehaviour
             upDownManager.Instance.changeOption(1, false);
             itemManager.Instance.endOfBattlePhase();
             //AdventureManager.Instance.loseGame();
-            CameraManager.Instance.resultScreenActive(0);
+            if (!giveUpChk)
+            {
+                TalkManager.Instance.setDescClickLock(false);
+                TalkManager.Instance.setLostChk(true);
+                TalkManager.Instance.setDescIdx(126);
+                CameraManager.Instance.resultScreenActive(0);
+            }
             getLoseChk = true;
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
             getLoseChk = false;
-
+            TalkManager.Instance.setLostChk(false);
+            TalkManager.Instance.setDescString("");
             //CameraManager.Instance.loseScreenUnActive();
 
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
@@ -3227,7 +3234,6 @@ public class BattleManager : MonoBehaviour
         {
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
             upDownManager.Instance.changeOption(1, false);
-            if (AdventureManager.Instance.getTutorial() == 2) AdventureManager.Instance.setTutorial(3);
             if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(9);
@@ -3242,12 +3248,9 @@ public class BattleManager : MonoBehaviour
 
             if (bossPhase == 0)
             {
-                itemManager.Instance.endOfBattlePhase();
-                TalkManager.Instance.setDescClickLock(true);
-                TalkManager.Instance.setDescIdx(92);
                 
                 
-                yield return new WaitForSeconds(0.2f);
+                
                 for (int i = 0; i < 4; i++)
                 {
                     myHpUI[i].GetComponent<TextMeshPro>().text = "";
@@ -3259,14 +3262,22 @@ public class BattleManager : MonoBehaviour
                 
                 if (AdventureManager.Instance.getTutorial() != 10)
                 {
+                    itemManager.Instance.endOfBattlePhase();
+                    TalkManager.Instance.setDescClickLock(true);
+                    TalkManager.Instance.setDescIdx(92);
                     //랜덤 아이템 배정하고 출력
                     makeRandomResult();
                     resultItemTemp = 0.0f;
                     resultItemPopChk = true;
+                    resultItemPopChk_2 = true;
                     resultObj_all.transform.position = new Vector3(0f, 0f, resultObj_all.transform.position.z);
                     resultObj_all.GetComponent<Animator>().Play("Change");
                     yield return new WaitUntil(() => !resultItemPopChk); // 튀어오른 아이템이 0에 도달시
                     for (int i = 0; i < 3; i++) printRandomResult(i, false); //eff 시작
+
+                    yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
+                    resultItemPopChk_2 = false;
+                    for (int i = 0; i < 3; i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
 
                     if (AdventureManager.Instance.getTutorial() == 17)
                     {
@@ -3274,11 +3285,6 @@ public class BattleManager : MonoBehaviour
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         AdventureManager.Instance.setTutorial(18);
                     }
-                    
-
-                    yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
-
-                    for(int i=0;i<3;i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
 
                     
                 }
@@ -3364,7 +3370,7 @@ public class BattleManager : MonoBehaviour
     {
         if (i == -1)
         {
-            if (!resultItemPopChk)
+            if (!resultItemPopChk && !resultItemPopChk_2)
             {
                 SoundManager_Sfx.Instance.playSound(7);
                 resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
@@ -3543,6 +3549,7 @@ public class BattleManager : MonoBehaviour
         
     }
     private bool resultItemPopChk = false;
+    private bool resultItemPopChk_2 = false;
     private float resultItemTemp=0;
     void FixedUpdate()
     {

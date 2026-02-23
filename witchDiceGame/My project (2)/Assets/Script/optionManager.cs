@@ -68,6 +68,7 @@ public class optionManager : MonoBehaviour
 
     public void clickOptionButton()
     {
+        AdventureManager.Instance.activeGiveUpBoard(false);
         if (optionOn)
         {
             unactiveOptionBoard();

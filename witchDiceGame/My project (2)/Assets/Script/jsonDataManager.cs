@@ -31,7 +31,7 @@ public class jsonDataManager : MonoBehaviour
     // Start is called before the first frame update
     private PlayerPlayData playerPlayData;
     private int[] witchPowerMoney = {0, 0, 0, 500, 100, 200, 500, 100, 200, 500, 100, 200, 500 };
-    private string jsonFileName = "playerData2.json";
+    private string jsonFileName = "playerData3.json";
     void Start()
     {
         string fileName = Path.Combine(Application.persistentDataPath, jsonFileName);
@@ -430,7 +430,7 @@ public class jsonDataManager : MonoBehaviour
         public PlayerPlayData()
         {
             this.screenSize = 1;
-            this.language = 0;
+            this.language = 1;
             this.money = 0;
             this.SFXVolume = 1.0f;
             this.backgroundVolume = 1.0f;

@@ -185,6 +185,12 @@ public class TalkManager : MonoBehaviour
     }
 
     private int[] lifeStartIdx = {3,  -99999, -99999};
+
+    public bool loseChk = false;
+
+    public void setLostChk(bool onOff) { 
+        loseChk = onOff;
+    }
     public bool stageStart(int stageStart)
     {
         //스테이지가 0이 아니면서(다시 튜토리얼 시도 할때 대사 보여줘야 하니까) 기존에 방문했던 stage가 아니면
@@ -203,6 +209,10 @@ public class TalkManager : MonoBehaviour
         if (talkingChk)
         {   
             goToNextTalk();
+        }
+        else if (loseChk)
+        {
+            CameraManager.Instance.loseScreenUnActive();
         }
         else
         {
@@ -224,6 +234,7 @@ public class TalkManager : MonoBehaviour
         // Start is called before the first frame update
         void Start()
         {
+            loseChk = false;
             characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
             libraryEntry = false;
             talkList = CSVReader.Read<TalkReader>("Talk_2");
@@ -414,16 +425,13 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
-            Debug.Log("cur idx : " + curIdx.ToString());
             SoundManager_Sfx.Instance.playSound(0);
             if (talkList[curIdx].talkIdx != talkList[curIdx + 1].talkIdx)
             {
-                Debug.Log("case 1");
                 stopTalk();
             }
             else
             {
-                Debug.Log("case 2");
                 curIdx++;
                 printTalk(curIdx);
             }

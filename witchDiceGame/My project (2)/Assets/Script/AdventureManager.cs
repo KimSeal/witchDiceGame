@@ -630,7 +630,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 1; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -792,6 +792,7 @@ public class AdventureManager : MonoBehaviour
             return;
         }
         activeGiveUpBoard(true);
+        optionManager.Instance.unactiveOptionBoard();
     }
     public void activeGiveUpBoard(bool onOff)
     {
@@ -1812,14 +1813,20 @@ public class AdventureManager : MonoBehaviour
         storeEntityObj.SetActive(false);
         resultObj.SetActive(false);
         closeTryBuyItem(true);
+        clearBalpan();
+       
+
 
         if (gameOverChk) //게임오버로 왔을 경우.
         {
+            
             SoundManager_Main.Instance.stopSound(2); //기본 브금 제거
             SoundManager_Main.Instance.playSound(3); //기본 브금 제거
-            TalkManager.Instance.setDescIdx(-1);
+            TalkManager.Instance.setDescClickLock(false);
+            TalkManager.Instance.setLostChk(true);
+            TalkManager.Instance.setDescIdx(126);
             //selectInfo.GetComponent<TextMeshPro>().text = "";
-            if (demoEndChk != 0)
+            if (demoEndChk != 0 || (giveUpChk == true && !battleEventTrigger))
             { //스테이지 보스 잡은 경우 스테이지 클리어 띄우기
                 if (demoEndChk == 1) //올빼미 선배 전투 종료시
                 {
@@ -1831,8 +1838,13 @@ public class AdventureManager : MonoBehaviour
                     }
                     //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
-
-                CameraManager.Instance.resultScreenActive(2);
+                if (giveUpChk && !battleEventTrigger) {
+                    CameraManager.Instance.resultScreenActive(1);
+                }
+                else
+                {
+                    CameraManager.Instance.resultScreenActive(2);
+                }
                 if (demoEndChk == 2) { //튜토리얼 종료
                     TalkManager.Instance.startTalk(50);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1907,8 +1919,13 @@ public class AdventureManager : MonoBehaviour
             
             adventureJewel =  0;
             addMoney(1, 0);
+
+            TalkManager.Instance.setLostChk(false);
+            TalkManager.Instance.setDescString("");
         }
         adventureStartChk = false;
+
+        
     }
 
     [SerializeField]
