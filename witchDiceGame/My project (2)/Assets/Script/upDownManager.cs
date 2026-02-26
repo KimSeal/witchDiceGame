@@ -433,6 +433,9 @@ public class upDownManager : MonoBehaviour
         if (idx == 2 && jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
             return true;
         }
+        if (idx == 4) {
+            return true;
+        }
         return false;
     }
     public void clickUnderTownButton(int idx)

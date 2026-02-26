@@ -366,7 +366,8 @@ public class jsonDataManager : MonoBehaviour
         this.playerPlayData.setCharacterSelect(idx, val);
         SavePlayerDataToJson();
     }
-    public bool getEventMeet(int idx) { return playerPlayData.eventMeet[idx]; }
+    public bool getEventMeet(int idx) { if (idx < 8) return false;
+        return playerPlayData.eventMeet[idx]; }
     public void setEventMeet(int idx) { playerPlayData.eventMeet[idx] = true; SavePlayerDataToJson(); }
 
     public class PlayerPlayData

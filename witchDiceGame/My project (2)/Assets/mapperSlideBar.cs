@@ -4,16 +4,19 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class mapperSlideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class slideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    private float initX;
+    GameObject woodBar;
+    private float initY;
     private Vector3 initWoodPosition;
     private bool chkBegin = false;
     Vector3 defaultPoint;
     // Start is called before the first frame update
     void Start()
     {
-        initX = this.transform.position.x;
+        woodBar = GameObject.Find("obj_library_woodSet");
+        initWoodPosition = woodBar.transform.position;
+        initY = this.transform.position.y;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -30,11 +33,11 @@ public class mapperSlideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         //currentPos.y -= 160f;
         if (chkBegin)
         { //이동중이면 움직임 X
-            float mouseX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x;
-            if(mouseX > -860) mouseX = -860;
-            if(mouseX < -1075) mouseX = -1075;
-            MapperManager.Instance.setEventIdxText(mouseX);
-            this.transform.position = new Vector3( mouseX, this.transform.position.y, this.transform.position.z);//eventData.position;//currentPos;
+            float mouseY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
+            if(mouseY > 75) mouseY = 75;
+            if(mouseY < -45) mouseY = -45;
+            this.transform.position = new Vector3(this.transform.position.x, mouseY, this.transform.position.z);//eventData.position;//currentPos;
+            woodBar.transform.position = initWoodPosition + new Vector3(0f,  3 * (initY -this.transform.position.y ),0f);
         }
     }
    

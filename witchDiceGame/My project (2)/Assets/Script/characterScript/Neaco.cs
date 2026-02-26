@@ -260,13 +260,15 @@ public class Betaca : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1) //고블린의 두번째 스킬이 호출된 경우
         {
-            if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
-            {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
-            }
-            else if (sendSkillPacket.targetIdx[0] >= 0 && sendSkillPacket.targetIdx[0] < 4)
+            if (sendSkillPacket.targetIdx[0] >= 0 && sendSkillPacket.targetIdx[0] < 4)
             {
                 packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0, 2)); //아군 대상에게 공격력 1 추가
+            }
+            else
+            {
+
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+
             }
         }
 

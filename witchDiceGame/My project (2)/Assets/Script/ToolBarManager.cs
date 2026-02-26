@@ -186,6 +186,23 @@ public class ToolBarManager : MonoBehaviour
 
     private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121 };
     private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122};
+
+    public void setToolBarRandom(int idx)
+    {
+        toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
+        toolBarCharacterInfo.SetActive(false);
+
+        for (int i = 0; i < 6; i++)
+        {
+            toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+
+        toolBarTitle.text = TalkManager.Instance.getDesc(128 + idx);
+        toolBarDesc.text = TalkManager.Instance.getDesc(130 + idx);
+    }
+
     public void setToolBar(int idx)
     {
         toolBarOnOff(1);

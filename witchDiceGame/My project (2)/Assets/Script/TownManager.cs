@@ -121,7 +121,11 @@ public class TownManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(0);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
+        if (i == 4) {
+            CameraManager.Instance.updateInitPosition(new Vector3(-1000f, 0f, CameraManager.Instance.cameraPointZ()));
+        }
        
+
         if (i == 7) {
             for (int newMarkIdx=0;newMarkIdx<7;newMarkIdx++)
             {

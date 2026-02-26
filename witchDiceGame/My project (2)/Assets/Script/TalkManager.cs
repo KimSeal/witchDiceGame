@@ -73,8 +73,14 @@ public class TalkManager : MonoBehaviour
 
     private bool libraryEntry = false;
 
+    public int MapperLock = 0;
+
     [SerializeField] public GameObject skipButton;
 
+    public void setMapperLock(int opt)
+    {
+        MapperLock = opt;
+    }
     public void changeLan()
     {
         if (talkingChk)
@@ -206,6 +212,38 @@ public class TalkManager : MonoBehaviour
     }
     public void clickDescBox()
     {
+        if (!descClickLock)
+        {
+            if (MapperLock != 0)
+            {
+                if (MapperLock == 1)
+                { //첫번째 일경우
+                    MapperManager.Instance.makeSecondEvent(0);
+                    setMapperLock(2);
+                }
+                else if (MapperLock == 2)
+                {
+                    if (MapperManager.Instance.getEventTalkMaxDepth() == 3)
+                    {
+                        setMapperLock(3);
+                        MapperManager.Instance.makeThirdEvent();
+                    }
+                    else
+                    {
+                        MapperManager.Instance.makeFirstEvent();
+                        setMapperLock(1);
+                    }
+                }
+                else if (MapperLock == 3)
+                {
+                    MapperManager.Instance.makeFirstEvent();
+                    setMapperLock(1);
+                }
+                return;
+            }
+        } 
+
+
         if (talkingChk)
         {   
             goToNextTalk();

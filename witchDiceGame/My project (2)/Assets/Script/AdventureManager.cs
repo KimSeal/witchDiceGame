@@ -208,6 +208,16 @@ public class AdventureManager : MonoBehaviour
         gameObjectTemp.GetComponent<hoverRotate>().shakeStart();
     }
 
+    public int getAdventureEventLen(int stageNum)
+    {
+        return adventureEventList[stageNum].Count;
+    }
+    public adventureEvent getAdventureEvent(int stageNum, int stageIdx)
+    {
+        return new adventureEvent(adventureEventList[stageNum][stageIdx]);
+
+//        return new adventureEvent(adventureEventList[stageNum][adventureEventArr[stageIdx]]);
+    }
     public int getTutorial()
     {
         return tutorialVal;
@@ -462,7 +472,6 @@ public class AdventureManager : MonoBehaviour
                 ToolBarManager.Instance.setToolBar(hoverItem);
             }
         }
-
     }
     public void hoverOutItem()
     {
