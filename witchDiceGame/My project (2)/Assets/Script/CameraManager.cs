@@ -269,6 +269,8 @@ public class CameraManager : MonoBehaviour
 
     public void loseScreenUnActive()
     {
+        upDownManager.Instance.clickItem(-1);
+        upDownManager.Instance.clickItem(-1);
         loseChk = false;
         loseUI.transform.position = new Vector3(0,300, loseUI.transform.position.z);
         AdventureManager.Instance.exitBattleCanvas(false);

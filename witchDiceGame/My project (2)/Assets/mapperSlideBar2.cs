@@ -35,9 +35,9 @@ public class mapperSlideBar2 : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         { //이동중이면 움직임 X
             float mouseY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
             if(mouseY > 60) mouseY = 60;
-            if(mouseY < -60) mouseY = -60;
+            if(mouseY < -64) mouseY = -64;
             this.transform.position = new Vector3(this.transform.position.x, mouseY, this.transform.position.z);//eventData.position;//currentPos;
-            woodBar.transform.position = initWoodPosition + new Vector3(0f,  3 * (initY -this.transform.position.y ),0f);
+            woodBar.transform.position = initWoodPosition + new Vector3(0f,  2 * (initY -this.transform.position.y ),0f);
         }
     }
    

@@ -28,6 +28,8 @@ public class MapperManager : MonoBehaviour
             return instance;
         }
     }
+    [SerializeField] public GameObject slideBarEntity;
+    [SerializeField] public GameObject[] slideBar = new GameObject[2];
 
     [SerializeField] public GameObject[] stageNumButton = new GameObject[2];
     [SerializeField] public Sprite[] stageNumButtonOn = new Sprite[2];
@@ -71,6 +73,7 @@ public class MapperManager : MonoBehaviour
     void Start()
     {
         initMapper();
+        slideBarEntity.SetActive(false);
     }
 
     // Update is called once per frame
@@ -88,9 +91,21 @@ public class MapperManager : MonoBehaviour
         {
             curPoint -= 1;
         }
+        if (curPoint < 0) curPoint = 0;
         stageIdx = curPoint;
         makeFirstEvent();
         stageIdxText.text = (stageIdx+1).ToString() + " / " + AdventureManager.Instance.getAdventureEventLen(stageNum).ToString();
+        int clearStageNum = 0;
+        for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum); i++)
+
+        {
+            if (jsonDataManager.Instance.getEventMeet(AdventureManager.Instance.getAdventureEvent(stageNum, i).getEventIdx()))
+            {
+                clearStageNum += 1;
+            }
+        }
+        if (clearStageNum == 0) stagePercentText.text = "";
+        else stagePercentText.text = ((float)clearStageNum * 100f / (float)AdventureManager.Instance.getAdventureEventLen(stageNum)).ToString() + " %";
     }
     public int getEventTalkMaxDepth()
     {
@@ -194,8 +209,12 @@ public class MapperManager : MonoBehaviour
     public void clickStageNumButton(int idx)
     {
         if (idx > 2) return;
+        
         stageNum = idx;
-
+        stageIdx = 0;
+        slideBar[1].transform.position = new Vector3(-1075, slideBar[1].transform.position.y, slideBar[1].transform.position.z);
+        initMapper();
+        
 
         int clearStageNum = 0;
         for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum); i++)
@@ -205,10 +224,7 @@ public class MapperManager : MonoBehaviour
                 clearStageNum += 1;
             }
         }
-
-        if (clearStageNum == 0) stagePercentText.text = "";
-        else stagePercentText.text = ((float)clearStageNum * 100f / (float)AdventureManager.Instance.getAdventureEventLen(stageNum)).ToString() + " %";
-        initMapper();
+        
 
         for (int i=0;i<stageNumButton.Length;i++)
         {
@@ -216,7 +232,7 @@ public class MapperManager : MonoBehaviour
             {
                 stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonLock;
             }
-            else if (i == stageNum)
+            else if (i+1 == idx)
             {
                 stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonOn[i];
             }
@@ -225,7 +241,9 @@ public class MapperManager : MonoBehaviour
                 stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonOff[i];
             }
         }
-        
+
+        MapperManager.Instance.setEventIdxText(-1075f);
+
     }
 
     public void hoverDice(int inputNum)
@@ -263,6 +281,7 @@ public class MapperManager : MonoBehaviour
 
         }
     }
+
     public void initMapper()
     {
         storeEntityObj.SetActive(false);
@@ -275,6 +294,9 @@ public class MapperManager : MonoBehaviour
         TalkManager.Instance.setDescString("");
         TalkManager.Instance.setDescClickLock(false);
         noWatchText.text = "";
+
+        stagePercentText.text = "";
+        stageIdxText.text = "";
 
         for (int i = 0; i < 4; i++)
         {
@@ -652,5 +674,16 @@ public class MapperManager : MonoBehaviour
     public void hoverOutItem()
     {
         ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
+    public void enterMapper()
+    {
+        slideBarEntity.SetActive(true);
+        initMapper();
+        clickStageNumButton(2);
+    }
+    public void exitMapper()
+    {
+        slideBarEntity.SetActive(false);
     }
 }

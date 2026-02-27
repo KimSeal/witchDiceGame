@@ -1903,8 +1903,8 @@ public class AdventureManager : MonoBehaviour
                     if (newDestinyChk)
                     {
                         jsonDataManager.Instance.firstGetCharacterPart();
-                        TalkManager.Instance.startTalk(20);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        //TalkManager.Instance.startTalk(20);
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                     }
                 }
 

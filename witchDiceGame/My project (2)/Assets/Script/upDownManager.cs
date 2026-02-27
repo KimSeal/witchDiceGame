@@ -818,10 +818,14 @@ public class upDownManager : MonoBehaviour
         }
     }
 
-    public void hoverInCharacterButton(int idx)
+    public void hoverInCharacterButton(int i)
     {
-        underCharacterOutline[idx].GetComponent<Image>().sprite
-            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        Character tempCharacter = getCharacter(i);
+        if (!(tempCharacter == null || tempCharacter.getCurState() != 0))
+        {
+            underCharacterOutline[i].GetComponent<Image>().sprite
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        }
     }
     public void hoverOutCharacterButton()
     {
@@ -962,7 +966,9 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverInUnderBarSkill(int idx)
     {
-        if (BattleManager.Instance.getCharacter(idx / 2) != null)
+
+        Character tempCharacter = getCharacter(idx/2);
+        if (!(tempCharacter == null || tempCharacter.getCurState() != 0))
         {
             underSkillOutline[idx].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
@@ -1137,6 +1143,10 @@ public class upDownManager : MonoBehaviour
 
     public void clickBigDiceItemCharacter(int idx)
     {
+        if (AdventureManager.Instance.getTutorial() == 4)
+        {
+            return;
+        }
         if (getCharacterExist(idx))
         {
             curCharacterIdx = idx;

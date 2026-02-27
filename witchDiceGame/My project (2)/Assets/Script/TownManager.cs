@@ -78,6 +78,7 @@ public class TownManager : MonoBehaviour
         int curTownTemp2 = curTownIdx;
         AdventureReadyManager.Instance.exitAdventureReady();
         upDownManager.Instance.clickCharacterButton(-1);
+        MapperManager.Instance.exitMapper();
         //0 : 타워 1 : 집 2: 도서관 3: 마을  7: 로비
         if (i == 0)
         {
@@ -122,6 +123,8 @@ public class TownManager : MonoBehaviour
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
         if (i == 4) {
+            MapperManager.Instance.enterMapper();
+            SoundManager_Sfx.Instance.playSound(70);
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, 0f, CameraManager.Instance.cameraPointZ()));
         }
        
@@ -188,7 +191,7 @@ public class TownManager : MonoBehaviour
     {
         curTownIdx = 7;
         townSound[0] = 7; townSound[1] = 19; townSound[2] = 20; townSound[3] = 7;
-        townSound[4] = 7; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;
+        townSound[4] = 20; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;
         townSound[7] = 7;
         setTownActive(false);
         //Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
