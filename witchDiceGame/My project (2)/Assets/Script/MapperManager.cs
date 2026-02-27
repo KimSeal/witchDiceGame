@@ -29,6 +29,11 @@ public class MapperManager : MonoBehaviour
         }
     }
 
+    [SerializeField] public GameObject[] stageNumButton = new GameObject[2];
+    [SerializeField] public Sprite[] stageNumButtonOn = new Sprite[2];
+    [SerializeField] public Sprite[] stageNumButtonOff = new Sprite[2];
+    [SerializeField] public Sprite stageNumButtonLock;
+
     [SerializeField] private GameObject adventureBackground, adventureNPC, adventureBackBoard; //ui_adventure Back_0/ NPC_0 / backBoard
     [SerializeField] private GameObject[] watchNumObject = new GameObject[6]; //obj_adventureBtn_selectBtn_(number)
     [SerializeField] public GameObject watchNumObjectEntity; //obj_adventureBtn_selectBtn
@@ -188,17 +193,39 @@ public class MapperManager : MonoBehaviour
 
     public void clickStageNumButton(int idx)
     {
+        if (idx > 2) return;
         stageNum = idx;
+
+
         int clearStageNum = 0;
-        for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum);i++) {
-            if(jsonDataManager.Instance.getEventMeet(AdventureManager.Instance.getAdventureEvent(stageNum, i).getEventIdx()))
+        for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum); i++)
+        {
+            if (jsonDataManager.Instance.getEventMeet(AdventureManager.Instance.getAdventureEvent(stageNum, i).getEventIdx()))
             {
                 clearStageNum += 1;
             }
         }
-        
-        stagePercentText.text = ((float)clearStageNum * 100f / (float)AdventureManager.Instance.getAdventureEventLen(stageNum)).ToString() + " %";
+
+        if (clearStageNum == 0) stagePercentText.text = "";
+        else stagePercentText.text = ((float)clearStageNum * 100f / (float)AdventureManager.Instance.getAdventureEventLen(stageNum)).ToString() + " %";
         initMapper();
+
+        for (int i=0;i<stageNumButton.Length;i++)
+        {
+            if (clearStageNum == 0)
+            {
+                stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonLock;
+            }
+            else if (i == stageNum)
+            {
+                stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonOn[i];
+            }
+            else
+            {
+                stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonOff[i];
+            }
+        }
+        
     }
 
     public void hoverDice(int inputNum)
