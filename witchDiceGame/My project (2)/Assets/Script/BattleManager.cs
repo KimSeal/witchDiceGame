@@ -1605,6 +1605,11 @@ public class BattleManager : MonoBehaviour
     //스킬 선택 중 주사위 클릭에 대한 코드
     private void click_characterSkill_Dice(int diceIdx)
     {
+        if (curPhase == 3 && (myCharacter[diceIdx] == null || myCharacter[diceIdx].getCurState() != 0))
+        {
+            setCurClickSkill(-1);
+            return;
+        }
         if (curPhase == 3 && myCharacter[diceIdx] != null && myCharacter[diceIdx].getCurState() == 0 && currentLightUI == 0 && currentMoveUI == 0)
         {
 

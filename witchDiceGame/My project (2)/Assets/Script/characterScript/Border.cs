@@ -31,14 +31,15 @@ public class Border : Character
 
         if (sendSkillPacket.useSkillIdx == 0) //보더 기본 스킬
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, sendSkillPacket.diceNum[0], -999)); //스킬을 사용한 대상에게 / 0변화 / 상태변화를 현재 주사위 값으로 / 스킬은 버프류
+
         }
 
         if (sendSkillPacket.useSkillIdx == 1) //보더 특수 스킬(스킬기억)
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, sendSkillPacket.diceNum[0], -999)); //스킬을 사용한 대상에게 / 0변화 / 상태변화를 현재 주사위 값으로 / 스킬은 버프류
-
+            
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.getPhyAtk() + this.getPhyAtk(), 0)); //한명에게 주사위 * 공격력 데미지
         }
 
         return packets;
