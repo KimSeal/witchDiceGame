@@ -555,6 +555,8 @@ public class upDownManager : MonoBehaviour
 
     public void clickChangeBtn(int i)
     {
+        
+
         changeChkEntity.SetActive(false);
         if (i != -1)
         {
@@ -583,8 +585,9 @@ public class upDownManager : MonoBehaviour
     }
     public void clickChangeInitBtn()
     {
-        if (AdventureManager.Instance.getBattleEventChk()) {
-
+        if (AdventureManager.Instance.getBattleEventChk())
+        {
+            clickCharacterButton(-1);
             return;
         }
         changeChkEntity.SetActive(true);
@@ -628,7 +631,6 @@ public class upDownManager : MonoBehaviour
 
     public void clickDeleteBtn()
     {
-        
         itemManager.Instance.deleteCharacter();
         hoverOutDeleteBtn();
         cancleDeleteBtn();
@@ -660,6 +662,7 @@ public class upDownManager : MonoBehaviour
     {
         if (AdventureManager.Instance.getBattleEventChk())
         {
+            clickCharacterButton(-1);
             return;
         }
         deleteChkText.text = TalkManager.Instance.getDesc(18);
@@ -865,10 +868,15 @@ public class upDownManager : MonoBehaviour
         if (AdventureManager.Instance.getBattleEventChk())
         {
             changeBtnInit.GetComponent<Image>().sprite
+                    = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            deleteBtnInit.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            /*
+            changeBtnInit.GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn_off");
             deleteBtnInit.GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn_off");
-
+            */
             curCharacterIdx = itemManager.Instance.click_Character_battle(input);
             BattleManager.Instance.hoverOutCharacter(0);
 
