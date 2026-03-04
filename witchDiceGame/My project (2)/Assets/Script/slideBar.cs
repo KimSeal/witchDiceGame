@@ -48,6 +48,10 @@ public class mapperSlideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     }
 
 
+    public void moveToNextIdx(float movePoint)
+    {
+        this.transform.position = new Vector3(movePoint, this.transform.position.y, this.transform.position.z);
+    }
 
     // Update is called once per frame
     void Update()

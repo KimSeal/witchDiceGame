@@ -51,7 +51,6 @@ public class slideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
     }
 
 
-
     // Update is called once per frame
     void Update()
     {

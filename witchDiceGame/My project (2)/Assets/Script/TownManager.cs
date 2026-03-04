@@ -60,6 +60,10 @@ public class TownManager : MonoBehaviour
             (jsonDataManager.Instance.getChapterRead(0,2) == 2 && !jsonDataManager.Instance.getLibraryMeet())) {//library
             return true;
         }
+        if (idx == 3 &&
+            (jsonDataManager.Instance.getChapterRead(0, 2) == 2 && !jsonDataManager.Instance.getRecordArchiveMeet())){
+            return true;
+        }
 
         if (idx == 7)//
         {
@@ -117,16 +121,23 @@ public class TownManager : MonoBehaviour
         }
         if (i == 3)
         {
+            if (!jsonDataManager.Instance.getRecordArchiveMeet())
+            {
+                jsonDataManager.Instance.recordArchiveMeet();
+                TalkManager.Instance.startTalk(53);
+            }
+            MapperManager.Instance.enterMapper();
+            SoundManager_Sfx.Instance.playSound(70);
+            CameraManager.Instance.updateInitPosition(new Vector3(-1000f, 0f, CameraManager.Instance.cameraPointZ()));
+        }
+        if (i == 4)
+        {
             //SoundManager_Main.Instance.stopSound(7);
             fullUI.showFull(6);
             SoundManager_Sfx.Instance.playSound(0);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
         }
-        if (i == 4) {
-            MapperManager.Instance.enterMapper();
-            SoundManager_Sfx.Instance.playSound(70);
-            CameraManager.Instance.updateInitPosition(new Vector3(-1000f, 0f, CameraManager.Instance.cameraPointZ()));
-        }
+        
        
 
         if (i == 7) {
@@ -153,7 +164,8 @@ public class TownManager : MonoBehaviour
         if (i == 0) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_tower_on");
         if (i == 1) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_homeNew_on");
         if (i == 2) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_library_on");
-        if (i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
+        if(i == 3) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_Record Archieve_on");
+        if (i == 4) clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
     }
     public void hoverOutUIBtn()
     {

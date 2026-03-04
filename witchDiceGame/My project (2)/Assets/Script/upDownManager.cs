@@ -181,8 +181,8 @@ public class upDownManager : MonoBehaviour
         townName[0] = "Tower";
         townName[1] = "Home";
         townName[2] = "Library";
-        townName[3] = "Market Street";
-        townName[4] = "???";
+        townName[3] = "Archive";
+        townName[4] = "Town";
         townName[5] = "???";
         townName[6] = "???";
         townName[7] = "Hill";
@@ -285,6 +285,7 @@ public class upDownManager : MonoBehaviour
     {
         ToolBarManager.Instance.setToolBar(TalkManager.Instance.getDesc(91), TalkManager.Instance.getDesc(48),
            Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change"));
+        ToolBarManager.Instance.setToolBarJewelImage(2);
     }
     public void hoverOutAdventureWitchPowerButton()
     {
@@ -294,19 +295,21 @@ public class upDownManager : MonoBehaviour
     {
         int powerIdx = BattleManager.Instance.getCurWitchPower();
         ToolBarManager.Instance.setToolBar(powerName[powerIdx], TalkManager.Instance.getDesc(41 + powerIdx), Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerSmall/spr_witchPowerSmall_" + powerName[powerIdx]));
+        ToolBarManager.Instance.setToolBarJewelImage(BattleManager.Instance.getCurWitchPowerNeedJewel());
     }
     public void hoverOutWitchPowerButton()
     {
         ToolBarManager.Instance.toolBarOnOff(0);
     }
 
-    public string[] townName = {"Tower", "Home", "Library", "Market Street", "???", "???", "???", "Hill"};
+    public string[] townName = {"Tower", "Home", "Library", "Archieve", "Town", "???", "???", "Hill"};
     
     public void hoverInUnderTownButton(int idx)
     {
         if (idx == 0 || idx == 1 || idx == 7 ||
-            (idx == 2 && townCondition(idx)) // chapter1 clear
-            ) {
+            (idx == 2 && townCondition(idx) ||
+            (idx == 3 && townCondition(idx)) // chapter1 clear
+            )) {
             
             skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
             underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + townName[idx]);
@@ -323,7 +326,13 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutUnderTownButton()
     {
-        for (int i=0;i<underTownButton.Length;i++) {
+        for (int i = 0; i < underTownButton.Length; i++) {
+            if (townCondition(i)) { 
+                underTownButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + townName[i]);
+            }else
+            {
+                underTownButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + "lock");
+            }
             underTownOutline[i].GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
@@ -344,6 +353,7 @@ public class upDownManager : MonoBehaviour
                 underTownNewMark[i].GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
             }
+
         }
        
     }
@@ -433,7 +443,7 @@ public class upDownManager : MonoBehaviour
         if (idx == 2 && jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
             return true;
         }
-        if (idx == 4) {
+        if (idx == 3 && jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
             return true;
         }
         return false;
@@ -847,6 +857,10 @@ public class upDownManager : MonoBehaviour
             return;
         }
         else if (AdventureManager.Instance.getTutorial() == 2 && !AdventureManager.Instance.getTutorialVal4ErrorChk())            
+        {
+            return;
+        }
+        if (BattleManager.Instance.curPhase == 5)
         {
             return;
         }

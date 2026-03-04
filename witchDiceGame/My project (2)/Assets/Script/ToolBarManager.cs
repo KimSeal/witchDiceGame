@@ -245,6 +245,14 @@ public class ToolBarManager : MonoBehaviour
         toolBarTitle.text = title;
         toolBarDesc.text = content;
     }
+    public void setToolBarJewelImage(int num)
+    {
+        for (int i=0;i<num;i++)
+        {
+            toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_jewel_11_11");
+        }
+        
+    }
     public void setToolBarDiceInfo()
     {
         if(!AdventureManager.Instance.getBattleEventChk()){

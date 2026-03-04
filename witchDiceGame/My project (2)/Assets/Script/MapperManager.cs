@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
 public class MapperManager : MonoBehaviour
 {
 
@@ -74,6 +75,8 @@ public class MapperManager : MonoBehaviour
     {
         initMapper();
         slideBarEntity.SetActive(false);
+
+        notMeetChk = false;
     }
 
     // Update is called once per frame
@@ -82,22 +85,37 @@ public class MapperManager : MonoBehaviour
 
     }
 
+    public void goNextEventIdx()
+    {
+        stageIdx += 1;
+        float movePoint = ((float)(stageIdx) + 0.5f ) * (215f / (float)(AdventureManager.Instance.getAdventureEventLen(stageNum)-1)); 
+        slideBar[1].GetComponent<mapperSlideBar>().moveToNextIdx(movePoint - 1075f);
+        setEventIdx(stageIdx);
+    }
+
     public void setEventIdxText(float curX)
     {
         curX -= (-1075f);
+        int curPoint = (int)(curX / (215f / (float)(AdventureManager.Instance.getAdventureEventLen(stageNum)-1)));
+        
+        setEventIdx(curPoint);
+    }
 
-        int curPoint = (int)(curX / (215f / (float)(AdventureManager.Instance.getAdventureEventLen(stageNum))));
-        if(curPoint == AdventureManager.Instance.getAdventureEventLen(stageNum))
+    public void setEventIdx(int curIdx)
+    {
+        if (curIdx >= AdventureManager.Instance.getAdventureEventLen(stageNum)-1) //마지막 부분에 대한 처리.
         {
-            curPoint -= 1;
+            initMapper();
+            TalkManager.Instance.setMapperLock(0);
+            noWatchText.text = TalkManager.Instance.getDesc(133);
+            return;
         }
-        if (curPoint < 0) curPoint = 0;
-        stageIdx = curPoint;
+        if (curIdx < 0) curIdx = 0;
+        stageIdx = curIdx;
         makeFirstEvent();
-        stageIdxText.text = (stageIdx+1).ToString() + " / " + AdventureManager.Instance.getAdventureEventLen(stageNum).ToString();
+        stageIdxText.text = (stageIdx + 1).ToString() + " / " + (AdventureManager.Instance.getAdventureEventLen(stageNum) - 1).ToString();
         int clearStageNum = 0;
-        for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum); i++)
-
+        for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum)-1; i++)
         {
             if (jsonDataManager.Instance.getEventMeet(AdventureManager.Instance.getAdventureEvent(stageNum, i).getEventIdx()))
             {
@@ -105,8 +123,9 @@ public class MapperManager : MonoBehaviour
             }
         }
         if (clearStageNum == 0) stagePercentText.text = "";
-        else stagePercentText.text = ((float)clearStageNum * 100f / (float)AdventureManager.Instance.getAdventureEventLen(stageNum)).ToString() + " %";
+        else stagePercentText.text = ((float)clearStageNum * 100f / (float)(AdventureManager.Instance.getAdventureEventLen(stageNum)-1)).ToString() + " %";
     }
+
     public int getEventTalkMaxDepth()
     {
         if (curDiceEventPacket.getItemExist() > 0 && curDiceEventPacket.getSelectType() == 6) {
@@ -311,23 +330,31 @@ public class MapperManager : MonoBehaviour
             upgradeTagText[i].GetComponent<TextMeshPro>().text = "";
         }
     }
+    public bool notMeetChk = false;
+    public bool getNotMeetChk()
+    {
+        return notMeetChk;
+    }
     public void makeFirstEvent()
     {
         //TalkManager.Instance.setDescString("");
         initMapper();
-
+        notMeetChk = false;
 
         curDiceEvent = AdventureManager.Instance.getAdventureEvent(stageNum, stageIdx);
         selectDepth = 1;
+
+        TalkManager.Instance.setDescClickLock(false);
+        watchNumObjectEntity.SetActive(false);
         TalkManager.Instance.setMapperLock(1);
 
         if (!jsonDataManager.Instance.getEventMeet(curDiceEvent.getEventIdx()))
         {
+            notMeetChk = true;
             noWatchText.text = TalkManager.Instance.getDesc(132);
+            TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(132));
             return;
         }
-
-        
 
         
         if (curDiceEvent.getEventType() == 6)
@@ -339,11 +366,6 @@ public class MapperManager : MonoBehaviour
             {
                 watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             }
-        }
-        else
-        {
-            TalkManager.Instance.setDescClickLock(false);
-            watchNumObjectEntity.SetActive(false);
         }
 
 
@@ -407,6 +429,11 @@ public class MapperManager : MonoBehaviour
         if (curDiceEventPacket.getSelectType() == 8)
         { //상점 시스템
             storeEntityObj.SetActive(true);
+            for (int i=0;i<4;i++)
+            {
+                storeImageObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                storePriceObj[i].text = "???";
+            }
         }
 
         if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
@@ -546,9 +573,9 @@ public class MapperManager : MonoBehaviour
                         CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]); //getCharacter(resultItemArr[i, 1]);
                         for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
 
-                        resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                        resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
                     }
-                    else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                    else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
                 }
             }
         }
@@ -563,12 +590,8 @@ public class MapperManager : MonoBehaviour
             {
                 if (curDiceEventPacket.getItemExist() % 10 > i) //아이템 수 만큼만 지급.
                 {
-                    int j = Random.Range(0, 3);
-                    if (j == 2) j++; //데모버젼이니까 장비 아이템은 안나오도록
-                    int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
-
-                    resultItemArr[i, 0] = j;
-                    resultItemArr[i, 1] = k;
+                    resultItemArr[i, 0] = -1;
+                    resultItemArr[i, 1] = -1;
                 }
                 else
                 {
@@ -586,7 +609,7 @@ public class MapperManager : MonoBehaviour
                 {
                     clickAbleObjSet(resultObjArr[i], true, 1);
                     clickAbleObjSet(resultObjArr[i], true, 2);
-                    resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                    resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
                 }
             }
         }
@@ -595,12 +618,11 @@ public class MapperManager : MonoBehaviour
             resultObj.SetActive(true);
             for (int i = 0; i < 4; i++)
             {
+
                 if (curDiceEventPacket.getItemExist() % 10 > i) // 지정된 캐릭터 보상 수만큼 해주기
                 {
                     resultItemArr[i, 0] = 4;
-                    resultItemArr[i, 1] = CharacterManager.Instance.getRandomCharacterDestinyIdx();
-                    CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]);
-                    for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
+                    resultItemArr[i, 1] = -1;
                 }
                 else
                 {
@@ -618,7 +640,7 @@ public class MapperManager : MonoBehaviour
                 {
                     clickAbleObjSet(resultObjArr[i], true, 1);
                     clickAbleObjSet(resultObjArr[i], true, 2);
-                    resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                    resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
                 }
             }
         }
@@ -638,6 +660,7 @@ public class MapperManager : MonoBehaviour
 
     public void hoverInStore(int idx)
     {
+        ToolBarManager.Instance.setToolBarRandom(0);
     }
     public void hoverInItem(int idx)
     {
@@ -678,12 +701,21 @@ public class MapperManager : MonoBehaviour
 
     public void enterMapper()
     {
+        notMeetChk = false;
         slideBarEntity.SetActive(true);
-        initMapper();
         clickStageNumButton(2);
+        clickExitButton();
+    }
+    public void clickExitButton()
+    {
+        initMapper();
+        setEventIdxText(-860f);
+        slideBar[1].GetComponent<mapperSlideBar>().moveToNextIdx(-860f);
     }
     public void exitMapper()
     {
+        notMeetChk = false;
+        TalkManager.Instance.setMapperLock(0);
         slideBarEntity.SetActive(false);
     }
 }

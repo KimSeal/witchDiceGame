@@ -216,7 +216,12 @@ public class TalkManager : MonoBehaviour
         {
             if (MapperLock != 0)
             {
-                if (MapperLock == 1)
+                if (MapperManager.Instance.getNotMeetChk())
+                {
+                    MapperManager.Instance.goNextEventIdx();
+                    setMapperLock(1);
+                }
+                else if (MapperLock == 1)
                 { //첫번째 일경우
                     MapperManager.Instance.makeSecondEvent(0);
                     setMapperLock(2);
@@ -230,13 +235,13 @@ public class TalkManager : MonoBehaviour
                     }
                     else
                     {
-                        MapperManager.Instance.makeFirstEvent();
+                        MapperManager.Instance.goNextEventIdx();
                         setMapperLock(1);
                     }
                 }
                 else if (MapperLock == 3)
                 {
-                    MapperManager.Instance.makeFirstEvent();
+                    MapperManager.Instance.goNextEventIdx();
                     setMapperLock(1);
                 }
                 return;

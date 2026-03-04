@@ -370,6 +370,16 @@ public class jsonDataManager : MonoBehaviour
         return playerPlayData.eventMeet[idx]; }
     public void setEventMeet(int idx) { playerPlayData.eventMeet[idx] = true; SavePlayerDataToJson(); }
 
+    public void recordArchiveMeet()
+    {
+        playerPlayData.recordArchiveMeet = true;
+        SavePlayerDataToJson();
+    }
+    public bool getRecordArchiveMeet()
+    {
+        return playerPlayData.recordArchiveMeet;
+    }
+
     public class PlayerPlayData
     {
         public int language;
@@ -397,6 +407,7 @@ public class jsonDataManager : MonoBehaviour
         public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
         public int[] characterSelect = new int[2];
         public bool[] eventMeet = new bool[300];
+        public bool recordArchiveMeet = false;
         public void setCharacterSelect(int idx, int val)
         {
             characterSelect[idx] = val;
@@ -430,6 +441,7 @@ public class jsonDataManager : MonoBehaviour
         }
         public PlayerPlayData()
         {
+            this.recordArchiveMeet = false;
             this.screenSize = 1;
             this.language = 1;
             this.money = 0;
@@ -473,6 +485,7 @@ public class jsonDataManager : MonoBehaviour
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
+            this.recordArchiveMeet = playerPlayerData.recordArchiveMeet;
             this.screenSize = playerPlayerData.screenSize;
             this.money = playerPlayerData.money;
 

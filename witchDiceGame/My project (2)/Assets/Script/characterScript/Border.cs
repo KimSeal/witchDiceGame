@@ -38,8 +38,9 @@ public class Border : Character
 
         if (sendSkillPacket.useSkillIdx == 1) //보더 특수 스킬(스킬기억)
         {
-            
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] * this.getPhyAtk() + this.getPhyAtk(), 0)); //한명에게 주사위 * 공격력 데미지
+            int bigVal = (sendSkillPacket.diceNum[0] > sendSkillPacket.diceNum[1]) ? sendSkillPacket.diceNum[0] : sendSkillPacket.diceNum[1]; //더 큰수
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], bigVal * this.getPhyAtk() + this.getPhyAtk(), 0)); //한명에게 주사위 * 공격력 데미지
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, bigVal, -999));
         }
 
         return packets;

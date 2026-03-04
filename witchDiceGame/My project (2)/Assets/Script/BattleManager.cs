@@ -194,6 +194,10 @@ public class BattleManager : MonoBehaviour
 
     public void hoverInCharacter(int idx)
     {
+        if (curPhase == 5)
+        {
+            return;
+        }
         if (idx < 4 && myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
         {
             ToolBarManager.Instance.setToolBar(myCharacter[idx]);
@@ -328,6 +332,10 @@ public class BattleManager : MonoBehaviour
 
     #endregion  
 
+    public int getCurPhase()
+    {
+        return curPhase;
+    }
     public void updateHp()
     {
         for (int i = 0; i < 4; i++)
@@ -1119,6 +1127,10 @@ public class BattleManager : MonoBehaviour
     public int getCurWitchPower()
     {
         return witchPowerState;
+    }
+    public int getCurWitchPowerNeedJewel()
+    {
+        return needJewel[witchPowerState];
     }
     public void hoverInWitchPowerNum(int idx)
     {
@@ -2338,6 +2350,9 @@ public class BattleManager : MonoBehaviour
                 GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(2);
             }
+
+            GameObject temp2 = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+            temp2.GetComponent<coinMove>().changeDest(3);
             /*
             
             int jewelTemp = 1;

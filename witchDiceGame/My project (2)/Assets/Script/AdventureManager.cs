@@ -649,7 +649,8 @@ public class AdventureManager : MonoBehaviour
             //레벨이 달리지는경우 혹은 
             if (i == 1 || adventureEventList[stageNum][i].getLevel() != adventureEventList[stageNum][i - 1].getLevel())
             {
-                randomMake(i, EndPoint);
+                if (i != 1) randomMake(i, EndPoint);
+                else randomMake(0, EndPoint);
                 EndPoint = i - 1;
             }
             /*
@@ -1199,15 +1200,12 @@ public class AdventureManager : MonoBehaviour
                 if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
                 { shakeObject(diceObject[i]); }
             }
-            /*
-            if (selectDiceCharacterIdx != -1 && CharacterManager.Instance.getCharacterState(selectDiceCharacterIdx) == 0)
-            {
-                balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(selectDiceCharacterIdx));
-            }
-            */
+
+            //error 발생 지점.
             balpanUpDownButton[0].SetActive(true);
             balpanUpDownButton[1].SetActive(true);
             balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length ).ToString();
+
             if (stageIdx == -1) balpanCurPointText.GetComponent<TextMeshPro>().text = "START!";
             balpanArrow.GetComponent<Animator>().Play("Idle");
             balpanArrow.transform.position = balpanObj[2].transform.position; //+ new Vector3(0, 8, 0);
@@ -1219,6 +1217,7 @@ public class AdventureManager : MonoBehaviour
             nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
 
             TalkManager.Instance.setDescClickLock(true);
+
             TalkManager.Instance.setDescIdx(1);
             
 
@@ -2246,7 +2245,11 @@ public class AdventureManager : MonoBehaviour
             {
                 //if (cost == 0) CharacterManager.Instance.throwDice(i);
                 //else 
+                if (cost != 0)
+                {
                     CharacterManager.Instance.throwDiceExcept(i);
+                }
+                else CharacterManager.Instance.throwDice(i);
                 int temp = Random.Range(0, 4) * 90;
                 Debug.Log("roll!!!");
                 Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp)); //사용된 아이템에 대해 effect
