@@ -1081,7 +1081,7 @@ public class AdventureManager : MonoBehaviour
 
         adventureGold = jsonDataManager.Instance.getMoney();
         adventureJewelMax = 9999;
-        adventureJewel = 0;
+        adventureJewel = 5;
         upDownManager.Instance.setInit(adventureGold, adventureJewel);
 
         meetDiceEvent(false);

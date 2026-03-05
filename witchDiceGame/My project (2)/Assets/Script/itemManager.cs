@@ -516,7 +516,7 @@ public class itemManager : MonoBehaviour
         {
             characterDescTitle.text = TalkManager.Instance.getDesc(88);
             characterDescText.text = TalkManager.Instance.getDesc(90);
-            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+            characterDescImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_getOutButton_active");
         }
         
         for (int j = 0; j < 4; j++)

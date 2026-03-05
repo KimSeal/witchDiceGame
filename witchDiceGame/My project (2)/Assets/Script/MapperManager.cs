@@ -364,7 +364,7 @@ public class MapperManager : MonoBehaviour
             watchNumObjectEntity.SetActive(true);
             for (int i = 0; i < 6; i++)
             {
-                watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
             }
         }
 
@@ -388,6 +388,11 @@ public class MapperManager : MonoBehaviour
         
         selectDepth = 2;
         adventureBackground.GetComponent<hoverRotate>().shakeStart(10.0f);
+
+        for (int i = 0; i < 6; i++)
+        {
+            watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        }
         watchNumObjectEntity.SetActive(false);
 
         int eventWatchNum = selectDiceNum - 1;

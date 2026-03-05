@@ -197,7 +197,7 @@ public class ToolBarManager : MonoBehaviour
         {
             toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
-        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
 
         toolBarTitle.text = TalkManager.Instance.getDesc(128 + idx);
         toolBarDesc.text = TalkManager.Instance.getDesc(130 + idx);
@@ -213,7 +213,7 @@ public class ToolBarManager : MonoBehaviour
         {
             toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
-        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
         toolBarTitle.text = TalkManager.Instance.getDesc(toolBarTitleIdx[idx]);
         toolBarDesc.text = TalkManager.Instance.getDesc(toolBarContentIdx[idx]);
     }
@@ -227,7 +227,7 @@ public class ToolBarManager : MonoBehaviour
         {
             toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
-        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
         toolBarTitle.text = TalkManager.Instance.getDesc(toolBarStatTitleIdx[idx]);
         toolBarDesc.text = TalkManager.Instance.getDesc(toolBarStatContentIdx[idx]);
     }
@@ -266,7 +266,7 @@ public class ToolBarManager : MonoBehaviour
         {
             toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
-        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+        toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
 
         toolBarTitle.text = TalkManager.Instance.getDesc(116);
         toolBarDesc.text = "";

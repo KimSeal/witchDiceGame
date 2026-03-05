@@ -885,12 +885,6 @@ public class upDownManager : MonoBehaviour
                     = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             deleteBtnInit.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-            /*
-            changeBtnInit.GetComponent<Image>().sprite
-                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn_off");
-            deleteBtnInit.GetComponent<Image>().sprite
-                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn_off");
-            */
             curCharacterIdx = itemManager.Instance.click_Character_battle(input);
             BattleManager.Instance.hoverOutCharacter(0);
 
@@ -900,7 +894,7 @@ public class upDownManager : MonoBehaviour
             changeBtnInit.GetComponent<Image>().sprite
                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn");
             deleteBtnInit.GetComponent<Image>().sprite
-                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+                = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_getOutButton_active");
 
             curCharacterIdx = itemManager.Instance.click_Character(input);
            
