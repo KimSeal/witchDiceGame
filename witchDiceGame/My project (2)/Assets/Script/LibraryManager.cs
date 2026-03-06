@@ -160,37 +160,70 @@ public class LibraryManager : MonoBehaviour
     private bool smokeSound = false;
     public void clickCurCharacter(int idx) {
 
-        if (curCharacterIdx == curCharacterSelectIdx[idx])//같은 경우 캐릭터 정보 출력
+        if(curCharacterIdx == 0 && idx == 0 && curCharacterSelectIdx[idx] == 0)
         {
-            upDownManager.Instance.clickCharacterButton(idx + 1);
+            fullUI.showFull(139);
             return;
         }
-        if (curCharacterIdx != -1) {
-            if (curCharacterIdx != curCharacterSelectIdx[idx]) {
-                if(smokeSound) SoundManager_Sfx.Instance.playSound(72);
-                characterSelectSmoke[idx].GetComponent<Animator>().Play("Smoke");
-            }
-            
-            if (idx == 0 && curCharacterIdx == 0) //만약 두번째 캐릭터에게 주인공운명을 입힐 경우, 불가능.
+
+        if (curCharacterIdx != curCharacterSelectIdx[idx])
+        {
+            if (smokeSound) SoundManager_Sfx.Instance.playSound(72);
+            characterSelectSmoke[idx].GetComponent<Animator>().Play("Smoke");
+
+            if (curCharacterIdx == 0 && idx == 0)
             {
-                curCharacterSelectIdx[idx] = 0;
+                curCharacterSelectIdx[idx] = curCharacterIdx;
                 jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
                 hoverInCurCharacter(idx);
                 curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
                 CharacterManager.Instance.emptyMyCharacter(1);
                 return;
             }
-            Destiny destinyTemp = CharacterManager.Instance.getDestiny(curCharacterIdx);
-            curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + destinyTemp.getName() + "/animator_" + destinyTemp.getName());
-            curCharacterSelectIdx[idx] = curCharacterIdx;
-            
-            jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
-            CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+            else {
+                //해당 운명으로 변경.
+                Destiny destinyTemp = CharacterManager.Instance.getDestiny(curCharacterIdx);
+                curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + destinyTemp.getName() + "/animator_" + destinyTemp.getName());
+                curCharacterSelectIdx[idx] = curCharacterIdx;
 
-            if (idx == 1 && curCharacterIdx == 0) {
-                curCharacter[idx].GetComponent<Animator>().Play("library");
+                jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
+                CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+                if (curCharacterSelectIdx[idx] == 0 && idx == 1)
+                {
+                    curCharacter[idx].GetComponent<Animator>().Play("library");
+                }
+                hoverInCurCharacter(idx);
             }
-            hoverInCurCharacter(idx);
+        }
+        else //같은 경우, 해제 필요.
+        {
+            if (curCharacterSelectIdx[idx] == 0) return; //이미 0인 경우, 변경 X
+            else
+            {
+                if (smokeSound) SoundManager_Sfx.Instance.playSound(72);
+                characterSelectSmoke[idx].GetComponent<Animator>().Play("Smoke");
+                if (idx == 0) //첫번째일 경우,
+                {
+                    curCharacterSelectIdx[idx] = 0;
+                    jsonDataManager.Instance.setCharacterSelect(idx, 0);
+                    hoverInCurCharacter(idx);
+                    curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
+                    CharacterManager.Instance.emptyMyCharacter(1);
+                    return;
+                }
+                else
+                {
+                    Destiny destinyTemp = CharacterManager.Instance.getDestiny(0);
+                    curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + destinyTemp.getName() + "/animator_" + destinyTemp.getName());
+                    curCharacterSelectIdx[idx] = 0;
+
+                    jsonDataManager.Instance.setCharacterSelect(idx, 0);
+                    CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+                    curCharacter[idx].GetComponent<Animator>().Play("library");
+
+                    hoverInCurCharacter(idx);
+                }
+            }
         }
 
     }
@@ -202,11 +235,13 @@ public class LibraryManager : MonoBehaviour
             {
                 Destiny destinyTemp = CharacterManager.Instance.getDestiny(curCharacterBigIdx * 9 + i);
                 characterSelectButton[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + destinyTemp.getName() + "_face");
+                /*
                 if (curCharacterBigIdx * 9 + i == 0)
                 {
                     characterSelectButton[i].GetComponent<SpriteRenderer>().sprite =
                         Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop");
                 }
+                */
                 characterSelectButton[i].GetComponent<hoverRotate>().shakeStart();
             }
             else
@@ -272,7 +307,7 @@ public class LibraryManager : MonoBehaviour
         //SoundManager_Main.Instance.stopSound(7);
         jsonDataManager.Instance.addMoney(0);
         curCharacterBigIdx = 0;
-        curCharacterIdx = -1;
+        curCharacterIdx = 0;
         updateCharacterSelectImage();
         hoverOutCharacterSelectButton();
         hoverOutCharacterSkill();
@@ -286,7 +321,7 @@ public class LibraryManager : MonoBehaviour
         curCharacterSelectIdx[1] = -1;
         clickCurCharacter(1);
         smokeSound = true;
-        curCharacterIdx = -1;
+        curCharacterIdx = 0;
         hoverOutCurCharacter();
     }
     public void exitLibrary() {

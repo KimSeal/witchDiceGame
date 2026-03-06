@@ -605,7 +605,6 @@ public class TalkManager : MonoBehaviour
         else characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextEN;
         */
 
-        Debug.Log(talkList[a].TextKR);
         preBackground = talkList[a].backGround;
         setPreCharacterName();
     }
@@ -613,7 +612,6 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
-            Debug.Log("case 123");
             changeTalkState(0, true);
             if (preSound >= 0) SoundManager_Main.Instance.stopSound(preSound);
             for (int i = 0; i < characterImage.Length; i++)

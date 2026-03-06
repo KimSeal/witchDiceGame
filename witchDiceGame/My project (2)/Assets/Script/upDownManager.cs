@@ -81,6 +81,15 @@ public class upDownManager : MonoBehaviour
     public bool itemTypeOnOff = false;
     public bool itemTypeButtonLock = false;
 
+    public GameObject[] upperItemTypeButtonConsume = new GameObject[11];
+    public GameObject[] upperItemTypeButtonDice = new GameObject[11];
+    public GameObject[] upperItemTypeButtonEquip = new GameObject[11];
+    public GameObject[] upperItemTypeButtonPassive = new GameObject[11];
+
+    public GameObject[] upperItemTypeOutlineConsume = new GameObject[11];
+    public GameObject[] upperItemTypeOutlineDice = new GameObject[11];
+    public GameObject[] upperItemTypeOutlineEquip = new GameObject[11];
+    public GameObject[] upperItemTypeOutlinePassive = new GameObject[11];
 
     [SerializeField]
     public GameObject backBlackSkill;
@@ -166,7 +175,7 @@ public class upDownManager : MonoBehaviour
         backBlackItem.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
         bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
         bigDicePowerCancleObj.SetActive(false);
-        hoverInItemTypeButton(curItemType);
+        //hoverInItemTypeButton(curItemType);
         cancleChangeBtn();
         cancleDeleteBtn();
         changeOption(3, true);
@@ -190,6 +199,11 @@ public class upDownManager : MonoBehaviour
     }
 
     private bool initSet = false;
+
+    [SerializeField]
+    public GameObject optionButton;
+    public GameObject exitButton;
+
     void Update()
     {
         if (!initSet) {
@@ -229,6 +243,56 @@ public class upDownManager : MonoBehaviour
             
     }
 
+    public void clickExitButton()
+    {
+        if (AdventureManager.Instance.getAdventureStartChk())
+        {
+            Debug.Log("text Exit");
+            Debug.Log(AdventureManager.Instance.getAdventureStartChk());
+            AdventureManager.Instance.clickGiveUpButton();
+        }
+        else if(TownManager.Instance.getTownActive())
+        {
+            TownManager.Instance.backToMain();
+        }
+        else
+        {
+            AdventureManager.Instance.mainExitButton();
+        }
+    }
+    
+    public void hoverInExitButton()
+    {
+        if (AdventureManager.Instance.getAdventureStartChk())
+        {
+            AdventureManager.Instance.hoverInExitButton();
+        }
+        else
+        {
+            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
+        }
+    }
+    public void hoverOutExitButton()
+    {
+        if (AdventureManager.Instance.getAdventureStartChk())
+        {
+            AdventureManager.Instance.hoverOutExitButton();
+        }
+        else
+        {
+            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
+        }
+    }
+    public void hoverInOptionButton()
+    {
+        optionButton.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionButton_on");
+    }
+    public void hoverOutOptionButton()
+    {
+        optionButton.GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionButton_off");
+    }
     
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
     {
@@ -359,6 +423,7 @@ public class upDownManager : MonoBehaviour
     }
     public void clickUnderTitleButton(int idx)
     {
+        clickUpperItemTypeInit(false);
         if (idx == 0) {
             if (jsonDataManager.Instance.getTutorialDid()) {
                 AdventureManager.Instance.activeTutorialButton(true);
@@ -450,6 +515,7 @@ public class upDownManager : MonoBehaviour
     }
     public void clickUnderTownButton(int idx)
     {
+        clickUpperItemTypeInit(false);
         if (townCondition(idx))
         {
             curTownIdx = idx;
@@ -485,7 +551,7 @@ public class upDownManager : MonoBehaviour
     public void hoverInUpperItemTypeInit()
     {
         upperItemTypeInitOutline.GetComponent<Image>().sprite
-                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+                = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_bagOutline");
     }
     public void hoverOutUpperItemTypeInit() {
         upperItemTypeInitOutline.GetComponent<Image>().sprite
@@ -517,6 +583,30 @@ public class upDownManager : MonoBehaviour
         jewelText.text = jewel.ToString();
     }
 
+    public void clickUpperItemTypeInit(bool onOff)
+    {
+        if (onOff && itemTypeButtonLock)
+        {
+            Debug.Log("why?");
+            return;
+        }
+        itemTypeOnOff = onOff;
+        if (!onOff)
+        {
+            upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-150f, 2700f, 0f);
+        }
+        else
+        {
+            clickItem(-1);
+            clickItem(-1);
+            if (AdventureManager.Instance.getBattleEventChk())
+            {
+                BattleManager.Instance.setCurClickSkill(-1);
+            }
+            itemManager.Instance.updateTypeInventory();
+            upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-150f, 158f, 0f);
+        }
+    }
     public void clickUpperItemTypeInit()
     {
         if (itemTypeButtonLock)
@@ -526,18 +616,9 @@ public class upDownManager : MonoBehaviour
         }
 
         itemTypeOnOff = !itemTypeOnOff;
-        if (itemTypeOnOff)
-        {
-            upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-108f, 0f, 0f);
-        }
-        else
-        {
-            upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-108f, 200f, 0f);
-        }
-
-            
-
+        clickUpperItemTypeInit(itemTypeOnOff);
     }
+
 
     public void hoverInChangeBtn(int i)
     {
@@ -758,7 +839,8 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInBigDiceSkill(int idx)
     {
-        if (BattleManager.Instance.getCharacter(idx) != null)
+        if (getCharacterExist(idx))
+        //if (BattleManager.Instance.getCharacter(idx) != null && BattleManager.Instance.getCharacter(idx).getCurState() == 0)
         {
             bigDiceSkillOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
@@ -772,6 +854,107 @@ public class upDownManager : MonoBehaviour
 
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" }; //item type string 
     string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
+
+    public void hoverInUpperTypeItem(int idx) 
+    {
+        int itemType = idx / 11;
+        int itemIdx = idx % 11;
+        if (itemType == 0) { 
+            upperItemTypeOutlineConsume[itemIdx].GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        }
+        if (itemType == 1)
+        {
+            upperItemTypeOutlineDice[itemIdx].GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        }
+        if (itemType == 2)
+        {
+            upperItemTypeOutlineEquip[itemIdx].GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        }
+        if (itemType == 3)
+        {
+            upperItemTypeOutlinePassive[itemIdx].GetComponent<Image>().sprite
+               = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        }
+        ToolBarManager.Instance.setToolBar(itemManager.Instance.getItemFromBag(itemType, itemIdx));
+    }
+    public void hoverOutUpperTypeItem()
+    {
+        for (int i=0;i<11;i++)
+        {
+            upperItemTypeOutlineConsume[i].GetComponent<Image>().sprite 
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            upperItemTypeOutlineDice[i].GetComponent<Image>().sprite 
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            upperItemTypeOutlineEquip[i].GetComponent<Image>().sprite 
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            upperItemTypeOutlinePassive[i].GetComponent<Image>().sprite 
+                = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void clickUpperTypeItem(int idx)
+    {
+        int itemType = idx / 11;
+        int itemIdx = idx % 11;
+        clickItemTypeButton(itemType);
+        clickItem(itemIdx);
+        //외곽선 제거.
+        hoverOutUpperTypeItem();
+        hoverOutItemTypeButton(itemType);
+        hoverOutUpperBar(itemIdx);
+
+        //clickUpperItemTypeInit();
+    }
+    public void updateUpperTypeItem(bool deleteChk, int idx, int typeIdx, string name)
+    {
+
+        if (deleteChk)
+        {
+            if (typeIdx == 0)
+            {
+                upperItemTypeButtonConsume[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+            if (typeIdx == 1)
+            {
+                upperItemTypeButtonDice[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+            if (typeIdx == 2)
+            {
+                upperItemTypeButtonEquip[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+            if (typeIdx == 3)
+            {
+                upperItemTypeButtonPassive[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+        }
+        else
+        {
+            if (typeIdx == 0)
+            {
+                upperItemTypeButtonConsume[idx].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[typeIdx] + "ItemSprite/spr_item_" + typeArr[typeIdx] + "_" + name);
+            }
+            if (typeIdx == 1)
+            {
+                upperItemTypeButtonDice[idx].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[typeIdx] + "ItemSprite/spr_item_" + typeArr[typeIdx] + "_" + name);
+            }
+            if (typeIdx == 2)
+            {
+                upperItemTypeButtonEquip[idx].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[typeIdx] + "ItemSprite/spr_item_" + typeArr[typeIdx] + "_" + name);
+            }
+            if (typeIdx == 3)
+            {
+                upperItemTypeButtonPassive[idx].GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[typeIdx] + "ItemSprite/spr_item_" + typeArr[typeIdx] + "_" + name);
+            }
+        }
+    }
+
     public void updateUpperItem(bool deleteChk, int idx, int typeIdx, string name)
     {
         if (deleteChk)
@@ -926,15 +1109,17 @@ public class upDownManager : MonoBehaviour
     {
         upperItemTypeOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        ToolBarManager.Instance.setToolBarItemType(idx);
 
     }
     public void hoverOutItemTypeButton(int idx)
     {
-        if (curItemType != idx)
-        {
+        //if (curItemType != idx)
+        //{
             upperItemTypeOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
-        }
+        //}
+        ToolBarManager.Instance.toolBarOnOff(0);
         
     }
 
@@ -1038,6 +1223,8 @@ public class upDownManager : MonoBehaviour
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
 
+        
+
         deleteOtherLock(1);
         for (int idx = 0; idx < 8; idx++) {
             underSkillOutline[idx].GetComponent<Image>().sprite
@@ -1083,6 +1270,10 @@ public class upDownManager : MonoBehaviour
 
     public void clickTrashButton()
     {
+        if (AdventureManager.Instance.getTutorial() == 4)
+        {
+            return;
+        }
         if (AdventureManager.Instance.getTutorial() == 12 || AdventureManager.Instance.getTutorial() == 11) {
             fullUI.showFull(65);
             return;
@@ -1122,6 +1313,8 @@ public class upDownManager : MonoBehaviour
         if (input != -1)
         {
             curItemIdx = input;
+            clickUpperItemTypeInit(false);
+
 
             if (itemSelectDepth == 0)
             {
@@ -1423,7 +1616,7 @@ public class upDownManager : MonoBehaviour
             upperItemOutline[i].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
-        hoverInItemTypeButton(idx);
+        //hoverInItemTypeButton(idx);
 
         if (curItemType != idx) {
             updateUpperHoverBar(0, null);
@@ -1431,7 +1624,7 @@ public class upDownManager : MonoBehaviour
 
         curItemType = idx;
         curItemIdx = -1;
-
+        /*
         if (curItemType == 0) upperItemTypeInitButton.GetComponent<Image>().sprite
                  = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_consume");
         if (curItemType == 1) upperItemTypeInitButton.GetComponent<Image>().sprite
@@ -1440,10 +1633,9 @@ public class upDownManager : MonoBehaviour
                  = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_equip");
         if (curItemType == 3) upperItemTypeInitButton.GetComponent<Image>().sprite
                  = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_passive");
-
+        */
         itemTypeOnOff = false;
-        upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-108f, 200f, 0f);
-
+        clickUpperItemTypeInit(false);
         //deleteOtherLock(0);
 
         //item use ui랑 호환 맞추기.

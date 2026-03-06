@@ -839,7 +839,14 @@ public class itemManager : MonoBehaviour
     {
         return itemList[itemType][itemIndex];
     }
-
+    public Item getItemFromBag(int type, int idx)
+    {
+        if (ItemExistArr[type, idx] == true)
+        {
+            return ItemArr[type, idx];
+        }
+        return null;
+    }
 
     string [] typeArr = { "consume", "dice", "equip", "passive", "destiny"}; //item type string 
     string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
@@ -859,6 +866,28 @@ public class itemManager : MonoBehaviour
                 //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];
+        }
+    }
+
+    public void updateTypeInventory()
+    {
+        for (int typeIdx = 0; typeIdx < 4; typeIdx++)
+        {
+            for (int i = 0; i < 11; i++)
+            {
+                if (ItemExistArr[typeIdx, i]) //아이템이 있는 경우 해당 아이템으로 변경
+                {
+                    upDownManager.Instance.updateUpperTypeItem(false, i, typeIdx, ItemArr[typeIdx, i].getItemName());
+                    //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/"+ typeArr[curSelectItemType]+"ItemSprite/spr_item_" + typeArr[curSelectItemType]+
+                    //    "_" + ItemArr[curSelectItemType, i].getItemName());
+                }
+                else
+                {
+                    upDownManager.Instance.updateUpperTypeItem(true, i, typeIdx, "0");
+                    //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                }
+                //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];
+            }
         }
     }
 

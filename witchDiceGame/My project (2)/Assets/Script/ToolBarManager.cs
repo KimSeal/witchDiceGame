@@ -160,6 +160,20 @@ public class ToolBarManager : MonoBehaviour
         toolBarDiceInfo.SetActive(false);
         toolBarCharacterInfo.SetActive(false);
 
+
+        if(item == null)
+        {
+            toolBarImage.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            toolBarTitle.text = "Empty";
+            toolBarDesc.text = " ";
+            for (int i = 0; i < 6; i++)
+            {
+                toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            }
+            return;
+        }
+
         if (item.getType() == 0) toolBarImage.GetComponent<Image>().sprite
                  = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_consume");
         if (item.getType() == 1) toolBarImage.GetComponent<Image>().sprite
@@ -187,6 +201,8 @@ public class ToolBarManager : MonoBehaviour
     private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121 };
     private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122};
 
+    private int[] toolBarItemTypeTitleIdx = { 78,79,80,81};
+    private int[] toolBarItemTypeContentIdx = { 134,135,136, 137};
     public void setToolBarRandom(int idx)
     {
         toolBarOnOff(1);
@@ -230,6 +246,27 @@ public class ToolBarManager : MonoBehaviour
         toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
         toolBarTitle.text = TalkManager.Instance.getDesc(toolBarStatTitleIdx[idx]);
         toolBarDesc.text = TalkManager.Instance.getDesc(toolBarStatContentIdx[idx]);
+    }
+    public void setToolBarItemType(int idx)
+    {
+        if (idx == 0) toolBarImage.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_consume");
+        if (idx == 1) toolBarImage.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_dice");
+        if (idx == 2) toolBarImage.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_equip");
+        if (idx == 3) toolBarImage.GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_passive");
+        toolBarOnOff(1);
+        toolBarDiceInfo.SetActive(false);
+        toolBarCharacterInfo.SetActive(false);
+
+        for (int i = 0; i < 6; i++)
+        {
+            toolBarDice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+        toolBarTitle.text = TalkManager.Instance.getDesc(toolBarItemTypeTitleIdx[idx]);
+        toolBarDesc.text = TalkManager.Instance.getDesc(toolBarItemTypeContentIdx[idx]);
     }
     public void setToolBar(string title, string content, Sprite spriteImage)
     {

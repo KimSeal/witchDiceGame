@@ -191,7 +191,25 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     public GameObject upperUI;
 
+    [SerializeField]
+    public GameObject itemNotGetEntity;
+    public TextMeshProUGUI itemNotGetText;
 
+
+    public void clickItemNotGetYesButton()
+    {
+        click_bosang(-1);
+    }
+    public void clickItemNotGetNoButton()
+    {
+        itemNotGetEntity.SetActive(false);
+    }
+    public void clickItemNotGetActive()
+    {
+        Debug.Log("click this");
+        itemNotGetText.text = TalkManager.Instance.getDesc(138);
+        itemNotGetEntity.SetActive(true);
+    }
     public void hoverInCharacter(int idx)
     {
         if (curPhase == 5)
@@ -1561,6 +1579,8 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            upDownManager.Instance.clickUpperItemTypeInit(false);
+
             int characterIdx = input / 10;
             int skillIdx = input % 10;
             for (int i = 0; i < 4; i++) {
@@ -1892,13 +1912,60 @@ public class BattleManager : MonoBehaviour
     private bool[] characterClickAble = new bool[8]; //스킬 타겟 설정시 클릭이 가능한지
     private int characterTargetIdx = -999;                           //지금까지 스킬 타겟팅을 위해 클릭한 character의 수
 
+    public void drawDiceSkillForTarget(int opt)
+    {
+        if(opt == 0) //diceNum
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                shakeObject(myDiceUI[i]);
+                shakeObject(enemyDiceUI[i]);
+
+                if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                else if (myDiceNum[i] >= 1 && myDiceNum[i] <= 6) myDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[myDiceNum[i] - 1];
+                else myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+
+                if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() != 0) enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                else if (enemyDiceNum[i] >= 1 && enemyDiceNum[i] <= 6) enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = diceSprite[enemyDiceNum[i] - 1];
+                else enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+            }
+        }
+        if(opt == 1) //skill image
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                shakeObject(myDiceUI[i]);
+                shakeObject(enemyDiceUI[i]);
+
+                if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                else if (myDiceTake[i] < 0) myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                else
+                {
+                    int curDiceNum = myDiceTake[i];
+                    string skillNameTake = myCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
+                    myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake);
+                }
+
+                if (enemyCharacter[i] == null || enemyCharacter[i].getCurState() != 0) enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                else if (enemyDiceTake[i] < 0) enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+                else
+                {
+                    int curDiceNum = enemyDiceTake[i];
+                    string skillNameTake = enemyCharacter[curDiceNum / 10].skillUse(curDiceNum % 10).getSkillName();
+                    enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + skillNameTake);
+                }
+            }
+        }
+    }
     public void hoverInTarget(int idx)
     {
         battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+        drawDiceSkillForTarget(0);
     }
     public void hoverOutTarget(int idx)
     {
         battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        drawDiceSkillForTarget(1);
     }
     private IEnumerator clickEnemy_Coroutine(int clickEnemyNum, int clickAbleTeam) //clickAbleTeam은 0 : 아군 대상 / 1: 적군대상 / 2 : 전체 대상을 의미한다.
     { //캐릭터 클릭을 위한 코루틴(입력된 갯수만큼 반복될 예정)
@@ -2929,7 +2996,9 @@ public class BattleManager : MonoBehaviour
                             //if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         }
                     }
+                    drawDiceSkillForTarget(1);
                     updateMyDiceUI();
+                    
                     //
                     nextSkill = 0;
 
@@ -3290,6 +3359,7 @@ public class BattleManager : MonoBehaviour
                     resultItemTemp = 0.0f;
                     resultItemPopChk = true;
                     resultItemPopChk_2 = true;
+                    clickItemNotGetNoButton();
                     resultObj_all.transform.position = new Vector3(0f, 0f, resultObj_all.transform.position.z);
                     resultObj_all.GetComponent<Animator>().Play("Change");
                     yield return new WaitUntil(() => !resultItemPopChk); // 튀어오른 아이템이 0에 도달시
@@ -3326,6 +3396,7 @@ public class BattleManager : MonoBehaviour
 
 
                 yield return new WaitUntil(() => !bosang_click);
+                clickItemNotGetNoButton();
                 TalkManager.Instance.setDescIdx(0);
                 TalkManager.Instance.setDescClickLock(false);
                 for (int i = 0; i < 3; i++)
@@ -3444,6 +3515,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
+        clickItemNotGetNoButton();
         resultItemPopChk = false;
         resultItemTemp = 0;
     //캐릭터 정보하고 아이템 창 control을 위한 변수

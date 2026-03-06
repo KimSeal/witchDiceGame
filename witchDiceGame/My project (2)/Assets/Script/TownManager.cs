@@ -77,6 +77,8 @@ public class TownManager : MonoBehaviour
     {
         townText[idx].GetComponent<hoverRotate>().shakeStart();
     }
+
+
     public void clickTownUI(int i)
     {
         int curTownTemp2 = curTownIdx;
@@ -183,10 +185,12 @@ public class TownManager : MonoBehaviour
     }
     public void backToMain()
     {
+        clickTownUI(7);
         SoundManager_Sfx.Instance.playSound(0);
         CameraManager.Instance.updateInitPosition(new Vector3(-1500f, -500f, CameraManager.Instance.cameraPointZ()));
         SoundManager_Main.Instance.stopSound(7);
         SoundManager_Main.Instance.playSound(0);
+        upDownManager.Instance.changeOption(3, true);
         setTownActive(false);
     }
     public void setTownActive(bool idx)
@@ -201,6 +205,7 @@ public class TownManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        townActive = false;
         curTownIdx = 7;
         townSound[0] = 7; townSound[1] = 19; townSound[2] = 20; townSound[3] = 7;
         townSound[4] = 20; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;

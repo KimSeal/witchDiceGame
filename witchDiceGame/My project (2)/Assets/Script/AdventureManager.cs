@@ -136,7 +136,7 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     public GameObject itemRemainChk;
     public TextMeshPro itemRemainText;
-
+    
     private int[] lastCharacter = new int[4];
 
     private int tutorialVal = 0;
@@ -480,7 +480,7 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        adventureStartChk = false;
+        
         remainItemOnOff(false);
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0, 0);
@@ -548,7 +548,11 @@ public class AdventureManager : MonoBehaviour
         storeCheckEntityObj.SetActive(false);
 
         resetItemResult();
-        giveUpBtnAble(false);
+        giveUpBtnAble(true);
+        adventureStartChk = false;
+
+        activeGiveUpBoard(false);
+        //activeTutorialButton(false);
 
     }
 
@@ -609,6 +613,7 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     public GameObject boardObj;
 
+    public bool adventureStart = false;
     public IEnumerator jumpCharacter(){ 
         for(int i=3; i>=0; i--){
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
@@ -624,6 +629,7 @@ public class AdventureManager : MonoBehaviour
 
     public void randomMake(int start, int end) //이 중간에 있는 stage를 섞는다
     {
+        if (start == end) return;
         for (int i = end; i > start; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
             int j = Random.Range(start, i + 1);
@@ -647,7 +653,7 @@ public class AdventureManager : MonoBehaviour
         for (int i = adventureEventArr.Length - 1; i > 0; i--) //나중에 보스 전은 무조건 마지막에 올수 있도록 편성한다.
         {
             //레벨이 달리지는경우 혹은 
-            if (i == 1 || adventureEventList[stageNum][i].getLevel() != adventureEventList[stageNum][i - 1].getLevel())
+            if (adventureEventList[stageNum][i].getLevel() != adventureEventList[stageNum][i - 1].getLevel())
             {
                 if (i != 1) randomMake(i, EndPoint);
                 else randomMake(0, EndPoint);
@@ -695,6 +701,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void startAdventure()
     {
+        adventureStart = true;
         giveUpBtnAble(false);
         tagInit();
         adventureGold = jsonDataManager.Instance.getMoney();
@@ -772,6 +779,11 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     public GameObject giveUpText;
 
+    public bool getAdventureSter()
+    {
+        return adventureStart;
+    }
+
     public void giveUpBtnAble(bool onOff)
     {
 
@@ -779,15 +791,42 @@ public class AdventureManager : MonoBehaviour
         {
             giveUpAble = false;
             activeGiveUpBoard(false);
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_giveUp_unactive");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
         }
         else if (tutorialVal == 0)
         {
             giveUpText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(13);
             giveUpAble = true;
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_giveUp_active_0");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
         }
     }
+
+    public void hoverInExitButton()
+    {
+        if (giveUpAble)
+        {
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
+        }
+        else
+        {
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
+        }
+    }
+    public void hoverOutExitButton()
+    {
+        if (giveUpAble)
+        {
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
+        }
+        else
+        {
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
+        }
+    }
+
+    
+
+
     public bool getGameOverChk()
     {
         return gameOverChk;
@@ -1812,6 +1851,7 @@ public class AdventureManager : MonoBehaviour
             }
         }
         giveUpBtnAble(false);
+        adventureStart = true;
 
         //종료시 기본적으로 해줘야할 처리.
         balpanArrow.transform.position = new Vector3(balpanArrow.transform.position.x, 300, balpanArrow.transform.position.z);
@@ -1933,7 +1973,7 @@ public class AdventureManager : MonoBehaviour
         }
         adventureStartChk = false;
 
-        
+        giveUpBtnAble(true);
     }
 
     [SerializeField]

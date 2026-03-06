@@ -271,6 +271,7 @@ public class CameraManager : MonoBehaviour
     {
         upDownManager.Instance.clickItem(-1);
         upDownManager.Instance.clickItem(-1);
+        upDownManager.Instance.clickUpperItemTypeInit(false);
         loseChk = false;
         loseUI.transform.position = new Vector3(0,300, loseUI.transform.position.z);
         AdventureManager.Instance.exitBattleCanvas(false);

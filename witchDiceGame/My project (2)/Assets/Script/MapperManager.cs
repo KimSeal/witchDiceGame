@@ -554,6 +554,7 @@ public class MapperManager : MonoBehaviour
         TalkManager.Instance.setDescIdx(127);
 
         adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
         if (curDiceEventPacket.getItemExist() == 1)
         { //이벤트 결과로 정해진 아이템을 준다.
             resultObj.SetActive(true);
@@ -578,12 +579,13 @@ public class MapperManager : MonoBehaviour
                         CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]); //getCharacter(resultItemArr[i, 1]);
                         for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
 
-                        resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                        resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
                     }
-                    else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_noImage");
+                    else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
                 }
             }
         }
+
 
         if (curDiceEventPacket.getItemExist() >= 11 && curDiceEventPacket.getItemExist() <= 14) // 랜덤한 아이템을 준다.
         {
@@ -719,6 +721,7 @@ public class MapperManager : MonoBehaviour
     }
     public void exitMapper()
     {
+        clickExitButton();
         notMeetChk = false;
         TalkManager.Instance.setMapperLock(0);
         slideBarEntity.SetActive(false);
