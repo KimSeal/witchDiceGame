@@ -152,9 +152,9 @@ public class SHA : Character
                 packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 3,-999));
             }
         }
-        if (sendSkillPacket.useSkillIdx == 1) // 스피드 만큼 데미지
+        if (sendSkillPacket.useSkillIdx == 1) //
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 3 + this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 3 * this.getPhyAtk() + this.getPhyAtk(), 0));
             packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 3, -999));
         }
         return packets;
