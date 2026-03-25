@@ -274,41 +274,44 @@ public class TalkManager : MonoBehaviour
         }
     }
 
-        // Start is called before the first frame update
-        void Start()
+    // Start is called before the first frame update
+    void Start()
+    {
+        loseChk = false;
+        characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
+        libraryEntry = false;
+        talkList = CSVReader.Read<TalkReader>("Talk_2");
+        for (int i = 0; i < talkList.Count; i++)
         {
-            loseChk = false;
-            characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
-            libraryEntry = false;
-            talkList = CSVReader.Read<TalkReader>("Talk_2");
-            for (int i = 0; i < talkList.Count; i++)
+            talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
+            talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN);
+            talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP);
+        }
+        descList = CSVReader.Read<DescReader>("Desc");
+        for (int i = 0; i < descList.Count; i++)
+        {
+            descList[i].KR = SpecialTextChange(descList[i].KR);
+            descList[i].EN = SpecialTextChange(descList[i].EN);
+            descList[i].JP = SpecialTextChange(descList[i].JP);
+        }
+
+        initIdx = -1;
+
+        for (int i = 0; i < talkList.Count; i++)
+        {
+            if (talkList[i].talkIdx != initIdx)
             {
-                talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
-                talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN);
-                talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP);
+                initIdx = talkList[i].talkIdx;
+                listIdx.Add(i);
             }
-            descList = CSVReader.Read<DescReader>("Desc");
-            for (int i = 0; i < descList.Count; i++)
-            {
-                descList[i].KR = SpecialTextChange(descList[i].KR);
-                descList[i].EN = SpecialTextChange(descList[i].EN);
-                descList[i].JP = SpecialTextChange(descList[i].JP);
-            }
+        }
 
-            initIdx = -1;
+        for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
 
-            for (int i = 0; i < talkList.Count; i++)
-            {
-                if (talkList[i].talkIdx != initIdx)
-                {
-                    initIdx = talkList[i].talkIdx;
-                    listIdx.Add(i);
-                }
-            }
-
-            for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
-
-            for (int i = 0; i < 4; i++) material[i] = characterImage[i].GetComponent<Image>().material;
+        for (int i = 0; i < 4; i++) {
+            Debug.Log("material make");
+            material[i] = characterImage[i].GetComponent<Image>().material; 
+        }
 
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -329,16 +332,22 @@ public class TalkManager : MonoBehaviour
                 //투명도 조정
                 for (int i = 0; i < characterImage.Length; i++)
                 {
-                    if (lightingArr[i] != '0')
+                if (lightingArr[i] != '0')
+                {
+                    if (material[i] != null)
                     {
                         if (material[i].GetFloat("_Transparency") > 0.0f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") - 0.1f);
                         else material[i].SetFloat("_Transparency", 0.0f);
                     }
-                    else
+                }
+                else
+                {
+                    if (material[i] != null)
                     {
                         if (material[i].GetFloat("_Transparency") < 0.7f) material[i].SetFloat("_Transparency", material[i].GetFloat("_Transparency") + 0.1f);
                         else material[i].SetFloat("_Transparency", 0.7f);
                     }
+                }
                 }
                 jumpFlag = false;
                 //움직임 조정
@@ -383,6 +392,9 @@ public class TalkManager : MonoBehaviour
 
     public string getDesc(int idx)
     {
+        if (descList.Count == 0) {
+            return "";
+        }
         if(jsonDataManager.Instance.getLanguage() == 0) return descList[idx].KR;
         if (jsonDataManager.Instance.getLanguage() == 1) return descList[idx].EN;
         if (jsonDataManager.Instance.getLanguage() == 2) return descList[idx].JP;
@@ -586,9 +598,9 @@ public class TalkManager : MonoBehaviour
         background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + talkList[a].backGround);
 
         //언어따라 다른 text
-        characterName.GetComponent<TextMeshProUGUI>().text = talkList[a].Name;
+        characterName.GetComponent<TextMeshProUGUI>().text = SpecialTextChange(talkList[a].Name);
 
-        if (talkList[a].Name == "" || talkList[a].Name == " ") { 
+        if (talkList[a].Name == "" || talkList[a].Name == " " || talkList[a].Name == "  " || talkList[a].Name == "   ") { 
             nameBackground.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
         else
