@@ -1581,12 +1581,24 @@ public class AdventureManager : MonoBehaviour
                 {
                     SoundManager_Main.Instance.stopSound(2);
                     int battleSoundTemp = 5;
-                    if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100 && jsonDataManager.Instance.setChapterDid(0, 4))
+                    if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100)
                     { // ¿Ã»©¹Ì ¼±¹è
-                        TalkManager.Instance.startTalk(21);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        if (jsonDataManager.Instance.setChapterDid(0, 4)) { 
+                            TalkManager.Instance.startTalk(21);
+                            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        }
                         battleSoundTemp = 17;
                     }
+                    /*
+                    else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100)
+                    { // ¿Ã»©¹Ì ¼±¹è
+                        if (false)//jsonDataManager.Instance.setChapterDid(0, 4))
+                        {
+                            TalkManager.Instance.startTalk(21);
+                            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        }
+                        battleSoundTemp = 17;
+                    }*/
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101) {

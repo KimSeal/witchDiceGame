@@ -163,10 +163,11 @@ public class TalkManager : MonoBehaviour
     }
 
     private void setPoint(TalkReader talkReader){
-        pointArr[0] = new Vector3(talkReader.characterLeftestX, 0, 0);
-        pointArr[1] = new Vector3(talkReader.characterLeftX, 0, 0);
-        pointArr[2] = new Vector3(talkReader.characterRightX, 0, 0);
-        pointArr[3] = new Vector3(talkReader.characterRightestX, 0, 0);
+        float yDefault = -20f;
+        pointArr[0] = new Vector3(talkReader.characterLeftestX, yDefault, 0);
+        pointArr[1] = new Vector3(talkReader.characterLeftX, yDefault, 0);
+        pointArr[2] = new Vector3(talkReader.characterRightX, yDefault, 0);
+        pointArr[3] = new Vector3(talkReader.characterRightestX, yDefault, 0);
     }
     private void setCharacterName(TalkReader talkReader) {
         nameArr[0] = talkReader.characterLeftest;

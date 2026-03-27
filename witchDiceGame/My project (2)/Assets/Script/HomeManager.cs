@@ -42,9 +42,9 @@ public class HomeManager : MonoBehaviour
     private List<DescReader> homeNPCText = new List<DescReader>();
 
     private int[] chapterIdx = { 6, 1, 2 };
-    private int[,] chapterTalkBefore = { { 57, 58, 58}, { 23, 26, 29 }, { 0, 0, 0 } };
-    private int[,] chapterTalk = { { 24, 27, 30 }, { 0, 0, 0 } };
-    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 0,0,0} };
+    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 } };
+    private int[,] chapterTalk = {{ 24, 27, 30 }, { 56, 59, 62 } };
+    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63} };
     private int[] chapterClear = { 19,0 };
 
     private int homeSoundIdx = 19;
