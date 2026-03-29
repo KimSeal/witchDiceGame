@@ -296,6 +296,7 @@ public class BattleManager : MonoBehaviour
 
         if (a == 100) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
         else if (a == 101) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
+        else if (a == 102) bossPhase = a; //bard boss
         else bossPhase = 0;
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
@@ -1775,26 +1776,16 @@ public class BattleManager : MonoBehaviour
         if (characterIdx >= 0 && characterIdx < 4) { thisSkill = myCharacter[characterIdx].skillUse(skillIdx); }
         else if (characterIdx >= 4 && characterIdx < 8) { thisSkill = enemyCharacter[characterIdx - 4].skillUse(skillIdx); }
 
-        //적군 스킬이면서 본적 없는 스킬인 경우
-        if (characterIdx >= 4 && characterIdx < 8 && !jsonDataManager.Instance.getMonsterSkill(enemyCharacter[characterIdx - 4].getDestiny().DestinyIdx, skillIdx))
+        if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
         {
-            upDownManager.Instance.skillDescUpdate("noImage", thisSkill.getNeedDice(0), thisSkill.getNeedDice(1),
-                thisSkill.getNeedDice(2), thisSkill.getNeedDice(3), "Not Found", TalkManager.Instance.getDesc(17));
+            upDownManager.Instance.skillDescUpdate(thisSkill.getSkillName(), thisSkill.getNeedDice(0), thisSkill.getNeedDice(1),
+            thisSkill.getNeedDice(2), thisSkill.getNeedDice(3), thisSkill.getSkillName(), thisSkill.getCommand());
         }
         else
         {
-            if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + thisSkill.getSkillName()) != null)
-            {
-                upDownManager.Instance.skillDescUpdate(thisSkill.getSkillName(), thisSkill.getNeedDice(0), thisSkill.getNeedDice(1),
-                thisSkill.getNeedDice(2), thisSkill.getNeedDice(3), thisSkill.getSkillName(), thisSkill.getCommand());
-            }
-            else
-            {
-                upDownManager.Instance.skillDescUpdate("noImage", thisSkill.getNeedDice(0), thisSkill.getNeedDice(1),
-                thisSkill.getNeedDice(2), thisSkill.getNeedDice(3), thisSkill.getSkillName(), thisSkill.getCommand());
-            }
+            upDownManager.Instance.skillDescUpdate("noImage", thisSkill.getNeedDice(0), thisSkill.getNeedDice(1),
+            thisSkill.getNeedDice(2), thisSkill.getNeedDice(3), thisSkill.getSkillName(), thisSkill.getCommand());
         }
-
     }
     void deleteSkillCommand()
     {
@@ -2450,13 +2441,15 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    private string makeBattleFontSize(int input) //상단 텍스트 폰트 사이즈 생성을 담당. 1050뎀 이상일때 520을 최대로 둔다.
+    private int makeBattleFontSize(int input) //상단 텍스트 폰트 사이즈 생성을 담당. 1050뎀 이상일때 520을 최대로 둔다.
     {
-        int result;
-        if (input < 50) result = 120;
-        else result = 120 + (input - 50) * 2 / 5;
-        if (result > 500) result = 500;
-        return result.ToString();
+        int result =0;
+        if (input < 50) result = 100;
+        else if (input > 500) result = 230;
+        else result = 100 + (input - 50) * 130 / 450;
+        
+        
+        return result;
     }
 
     private void changeDiceState(int characterIdx, int stateChange)
@@ -2521,7 +2514,7 @@ public class BattleManager : MonoBehaviour
                         {
                             if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
                             {
-                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal()) + fontSizeIdx*3).ToString() + ">" +
                                     takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
                                 + "</size>";
                             }
@@ -2531,7 +2524,7 @@ public class BattleManager : MonoBehaviour
                         {
                             if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
                             {
-                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal() + fontSizeIdx * fontSizeIdx * 2) + ">" +
+                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal()) + fontSizeIdx*3).ToString() + ">" +
                                  takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
                              + "</size>";
                                 yield return new WaitForSeconds(activeTime / 5.0f);
@@ -2745,14 +2738,20 @@ public class BattleManager : MonoBehaviour
             Debug.Log(tempTargetIdx);
             if (tempTargetIdx < 4) //아군이 타겟일 경우
             {
-                if (skillResult != 2) //회피가 아닌 경우
+                if (skillResult == 2) //회피
                 {
-                    if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])){
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx, textHeight[tempTargetIdx]++);
+                }
+                else if (skillResult == 4) //가드
+                {
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamGuard(tempTargetIdx, textHeight[tempTargetIdx]++);
+                }
+                else
+                {  //회피가 아닌경우
+                    if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx]))
+                    {
                         textHeight[tempTargetIdx]++;
                     }
-                }
-                else{  //회피
-                    specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamMiss(tempTargetIdx, textHeight[tempTargetIdx]++);
                 }
 
                 if (skillResult == 1) {
@@ -2777,11 +2776,14 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                if (skillResult != 2) {
-                    if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                if (skillResult == 2) { //회피
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
+                }
+                else if(skillResult == 4) { //가드
+                    specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamGuard(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
                 }
                 else {
-                    specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
+                    if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
                 }
                 if (skillResult == 1) //사망한 경우
                 {
@@ -3031,7 +3033,6 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
                     yield return new WaitForSeconds(0.2f);
 
-                    jsonDataManager.Instance.meetMonsterSkill(enemyCharacter[skillUseCharacter].getDestiny().DestinyIdx, skillUseIdx);
                     bool boomChk = false;
                     chainChk = false;
                     for (int i = 0; i < curSkill.getTargetChance(); i++)
@@ -3331,6 +3332,12 @@ public class BattleManager : MonoBehaviour
             if (bossPhase == 101 ) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(12);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                bossPhase = 0;
+            }
+            if(bossPhase == 102) //bard 이긴경우.
+            {
+                TalkManager.Instance.startTalk(65);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 bossPhase = 0;
             }

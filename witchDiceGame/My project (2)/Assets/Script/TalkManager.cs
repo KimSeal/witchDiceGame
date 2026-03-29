@@ -191,7 +191,9 @@ public class TalkManager : MonoBehaviour
         return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("£¿", "?")/*.Replace("¡£", ".").Replace("¡¢", ", ")*/.Replace("£¡", "!").Replace("£©",")").Replace("£¨", "(");
     }
 
-    private int[] lifeStartIdx = {3,  -99999, -99999};
+    private int[] lifeStartIdx = {3,  -99999, -99999, -99999, -99999, 
+        -99999, -99999, -99999, -99999, -99999, 
+        -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999 };
 
     public bool loseChk = false;
 
@@ -474,7 +476,7 @@ public class TalkManager : MonoBehaviour
                 skipButton.SetActive(true);
             }
             else { skipButton.SetActive(false); }
-            
+
         }
     }
     public void goToNextTalk()
@@ -640,6 +642,14 @@ public class TalkManager : MonoBehaviour
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             entity.SetActive(false);
             changeTalkState(0, false);
+
+            if (talkList[curIdx].talkIdx == 54) {
+                if (TownManager.Instance.curTownIdx == 7)
+                {
+                    SoundManager_Main.Instance.playSound(7);
+                }
+                FadeUIScript.fadeIn();
+            }
         }
     }
     public bool getTalkChk()

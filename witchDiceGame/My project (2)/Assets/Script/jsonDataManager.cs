@@ -181,21 +181,7 @@ public class jsonDataManager : MonoBehaviour
             Debug.Log("no you cant buy  extra money :" + getMoney().ToString());
         }
     }
-    public bool getMonsterSkill(int destinyIdx, int skillIdx)
-    {
-        if(skillIdx == 0) return this.playerPlayData.monsterSkill0Meet[destinyIdx - 10001];
-        if (skillIdx == 1) return this.playerPlayData.monsterSkill1Meet[destinyIdx - 10001];
-        return false;
-    }
-    public void meetMonsterSkill(int destinyIdx, int skillIdx)
-    {
-        if (getMonsterSkill(destinyIdx, skillIdx)) return;
-        else {
-            if(skillIdx == 0) this.playerPlayData.monsterSkill0Meet[destinyIdx - 10001] = true;
-            if (skillIdx == 1) this.playerPlayData.monsterSkill1Meet[destinyIdx - 10001] = true;
-            SavePlayerDataToJson();
-        } 
-    }
+
     public int getCurWitchPower(int idx)
     {
         return playerPlayData.curWitchPower[idx];
@@ -244,11 +230,11 @@ public class jsonDataManager : MonoBehaviour
         return playerPlayData.chapterDid[idx];
     }
     
-    public bool setChapterDid(int idx, int num)
+    public bool setChapterDid(int chapterIdx, int num)
     {
-        if (playerPlayData.chapterDid[idx] < num)
+        if (playerPlayData.chapterDid[chapterIdx] < num)
         {
-            playerPlayData.chapterDid[idx] = num;
+            playerPlayData.chapterDid[chapterIdx] = num;
             SavePlayerDataToJson();
             return true;
         }
@@ -340,14 +326,22 @@ public class jsonDataManager : MonoBehaviour
     public int getChapterRead(int chapterIdx, int idx)
     {
         if (chapterIdx == 0) return playerPlayData.chapter1Read[idx];
+        if (chapterIdx == 1) return playerPlayData.chapter2Read[idx];
+        if (chapterIdx == 2) return playerPlayData.chapter3Read[idx];
+        if (chapterIdx == 3) return playerPlayData.chapter4Read[idx];
+        if (chapterIdx == 4) return playerPlayData.chapter5Read[idx];
+        if (chapterIdx == 5) return playerPlayData.chapter6Read[idx];
         else return 0;
     }
     public void setChapterRead(int chapterIdx, int idx) {
-        if (chapterIdx == 0)
-        {
-            playerPlayData.chapter1Read[idx]++;
-            SavePlayerDataToJson();
-        }
+        if (chapterIdx == 0) playerPlayData.chapter1Read[idx]++;
+        if (chapterIdx == 1) playerPlayData.chapter2Read[idx]++;
+        if (chapterIdx == 2) playerPlayData.chapter3Read[idx]++;
+        if (chapterIdx == 3) playerPlayData.chapter4Read[idx]++;
+        if (chapterIdx == 4) playerPlayData.chapter5Read[idx]++;
+        if (chapterIdx == 5) playerPlayData.chapter6Read[idx]++;
+        SavePlayerDataToJson();
+
     }
     public int getLanguage()
     {
@@ -391,8 +385,6 @@ public class jsonDataManager : MonoBehaviour
         public bool[] witchPower = new bool[100];
         public bool[] playCharacterAble = new bool[100];
         public int[] playCharacterToken = new int[100];
-        public bool[] monsterSkill0Meet = new bool[100];
-        public bool[] monsterSkill1Meet = new bool[100];
         public bool[] stageWatched = new bool[100];
         public bool downGradeRevive = false;
         public bool tutorialRevive = false;
@@ -405,6 +397,12 @@ public class jsonDataManager : MonoBehaviour
         public bool firstGetCharacterPart = false;
         public int[] chapterDid = new int[6];
         public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
+        public int[] chapter2Read = new int[3];
+        public int[] chapter3Read = new int[3];
+        public int[] chapter4Read = new int[3];
+        public int[] chapter5Read = new int[3];
+        public int[] chapter6Read = new int[3];
+
         public int[] characterSelect = new int[2];
         public bool[] eventMeet = new bool[300];
         public bool recordArchiveMeet = false;
@@ -464,11 +462,6 @@ public class jsonDataManager : MonoBehaviour
             {
                 stageWatched[i] = false;
             }
-            for (int i = 0; i < monsterSkill0Meet.GetLength(0); i++)
-            {
-                monsterSkill0Meet[i] = false;
-                monsterSkill1Meet[i] = false;
-            }
             for(int i=0;i<eventMeet.Length;i++) eventMeet[i] = false;
             downGradeRevive = false;
             tutorialRevive = false;
@@ -480,7 +473,15 @@ public class jsonDataManager : MonoBehaviour
             owlBattleWin = false;
             firstGetCharacterPart = false;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = 0;
-            for (int i = 0; i < 3; i++) chapter1Read[i] = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                chapter1Read[i] = 0;
+                chapter2Read[i] = 0;
+                chapter3Read[i] = 0;
+                chapter4Read[i] = 0;
+                chapter5Read[i] = 0;
+                chapter6Read[i] = 0;
+            }
             characterSelect[0] = 0; characterSelect[1] = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
@@ -502,11 +503,6 @@ public class jsonDataManager : MonoBehaviour
                 playCharacterAble[i] = playerPlayerData.playCharacterAble[i];
                 playCharacterToken[i] = playerPlayerData.playCharacterToken[i];
             }
-            for (int i = 0; i < playCharacterAble.GetLength(0); i++)
-            {
-                monsterSkill0Meet[i] = playerPlayerData.monsterSkill0Meet[i];
-                monsterSkill1Meet[i] = playerPlayerData.monsterSkill1Meet[i];
-            }
             for (int i = 0; i < stageWatched.GetLength(0); i++)
             {
                 stageWatched[i] = playerPlayerData.stageWatched[i];
@@ -523,8 +519,15 @@ public class jsonDataManager : MonoBehaviour
             firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
             this.language = playerPlayerData.language;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = playerPlayerData.chapterDid[i];
-            for (int i = 0; i < 3; i++) chapter1Read[i] = playerPlayerData.chapter1Read[i];
-
+            for (int i = 0; i < 3; i++)
+            {
+                chapter1Read[i] = playerPlayerData.chapter1Read[i];
+                chapter2Read[i] = playerPlayerData.chapter2Read[i];
+                chapter3Read[i] = playerPlayerData.chapter3Read[i];
+                chapter4Read[i] = playerPlayerData.chapter4Read[i];
+                chapter5Read[i] = playerPlayerData.chapter5Read[i];
+                chapter6Read[i] = playerPlayerData.chapter6Read[i];
+            }
             characterSelect[0] = playerPlayerData.characterSelect[0]; 
             characterSelect[1] = playerPlayerData.characterSelect[1];
         }

@@ -940,7 +940,7 @@ public class itemManager : MonoBehaviour
 
 
         
-        /*
+        
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
@@ -986,7 +986,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
-        */
+        
         updateInventory();
     }
 

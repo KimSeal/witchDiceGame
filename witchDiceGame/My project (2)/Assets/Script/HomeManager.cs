@@ -42,11 +42,11 @@ public class HomeManager : MonoBehaviour
     private List<DescReader> homeNPCText = new List<DescReader>();
 
     private int[] chapterIdx = { 6, 1, 2 };
-    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 } };
-    private int[,] chapterTalk = {{ 24, 27, 30 }, { 56, 59, 62 } };
-    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63} };
-    private int[] chapterClear = { 19,0 };
-
+    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 }, { 0,0,0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    private int[,] chapterTalk = {{ 24, 27, 30 }, { 56, 59, 62 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63}, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    private int[] chapterClear = { 19, 0, 0, 0, 0, 0};
+    private int[] chapterStartIdx = { 54, 0, 0, 0, 0, 0 };
     private int homeSoundIdx = 19;
     private float textBoxTimer = 0f;
 
@@ -212,8 +212,17 @@ public class HomeManager : MonoBehaviour
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         Debug.Log("Item is true 3 ");
         if (detailIdx == 2) {
-            TalkManager.Instance.startTalk(chapterClear[chapterNum]);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            if (chapterClear[chapterNum] != 0) {
+                TalkManager.Instance.startTalk(chapterClear[chapterNum]);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            }
+            if (chapterStartIdx[chapterNum] != 0)
+            {
+                TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                jsonDataManager.Instance.setChapterDid(diceIdxToChapter[chapterNum] + 1, 1);
+            }
         }
 
         FadeUIScript.fadeIn();
@@ -224,26 +233,28 @@ public class HomeManager : MonoBehaviour
 
     public void clickJewel(int num)
     {
+        /*
         if (!(curChapterIdx == 3 && num % 3 == 1) && curChapterIdx != 0)// 데모에선 1챕터만 봐야하니 다른거 막아두기
         {
             fullUI.showFull(4);
             return;
         }
+        */
         if (num >= 0 && num < 3) {
             int chapterNum = curChapterIdx;
             int detailIdx = num % 3;
             Debug.Log("jewel test");
-            Debug.Log(jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx));
-            if (chapterNum == 3 && detailIdx == 1 && jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 0)
+            Debug.Log(jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx));
+            if (chapterNum == 3 && detailIdx == 1 && jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 0)
             {
                 StartCoroutine(jewelTalk(52));
             }
-            else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
+            else if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapterTalk[chapterNum,detailIdx]));
             }
-            else if (jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx) == 1)
+            else if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 1)
             {//스토리 진행된 부분이라면 틀어주기.
-                if (detailIdx > 0 && jsonDataManager.Instance.getChapterRead(chapterNum, detailIdx - 1) < 2) //이전 스토리를 읽지 않았다면 읽을 수 없도록.
+                if (detailIdx > 0 && jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx - 1) < 2) //이전 스토리를 읽지 않았다면 읽을 수 없도록.
                 {
                     fullUI.showFull(50);
                 }
@@ -294,7 +305,7 @@ public class HomeManager : MonoBehaviour
     {
         for (int i=0;i<3;i++)
         {
-            if (jsonDataManager.Instance.getChapterRead(curChapterIdx, i) >= 1) { 
+            if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[curChapterIdx], i) >= 1) { 
                 jewel1[i].GetComponent<SpriteRenderer>().sprite = jewelSprite[2*i]; 
             }
             else { 
@@ -304,7 +315,7 @@ public class HomeManager : MonoBehaviour
                 }
             };
 
-            if (jsonDataManager.Instance.getChapterRead(curChapterIdx, i) == 1) { 
+            if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[curChapterIdx], i) == 1) { 
                 newMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
             }
             else
@@ -314,9 +325,9 @@ public class HomeManager : MonoBehaviour
         }
         for (int i=0;i<6;i++)
         {
-            if (jsonDataManager.Instance.getChapterRead(i, 0) == 1 ||
-                jsonDataManager.Instance.getChapterRead(i, 1) == 1 ||
-                jsonDataManager.Instance.getChapterRead(i, 2) == 1 )
+            if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[i], 0) == 1 ||
+                jsonDataManager.Instance.getChapterRead(diceIdxToChapter[i], 1) == 1 ||
+                jsonDataManager.Instance.getChapterRead(diceIdxToChapter[i], 2) == 1 )
             {
                 chapterDiceNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
             }
@@ -325,9 +336,9 @@ public class HomeManager : MonoBehaviour
                 chapterDiceNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
 
-            if (jsonDataManager.Instance.getChapterRead(i, 0) == 0 &&
-                jsonDataManager.Instance.getChapterRead(i, 1) == 0 &&
-                jsonDataManager.Instance.getChapterRead(i, 2) == 0)
+            if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[i], 0) == 0 &&
+                jsonDataManager.Instance.getChapterRead(diceIdxToChapter[i], 1) == 0 &&
+                jsonDataManager.Instance.getChapterRead(diceIdxToChapter[i], 2) == 0)
             {
                 chapterDiceObject[i].GetComponent<SpriteRenderer>().sprite = diceSpriteOff[i];
                 if(i == 3) chapterDiceObject[i].GetComponent<SpriteRenderer>().sprite = diceSpriteOn[i];
@@ -338,6 +349,8 @@ public class HomeManager : MonoBehaviour
             }
         }
     }
+
+    int[] diceIdxToChapter = {0,1, 5, 3, 2, 4 };
 
     public void exitHome() {
         boardYVal = 1.1f;

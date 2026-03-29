@@ -208,13 +208,6 @@ public class CameraManager : MonoBehaviour
             money.text += AdventureManager.Instance.getAdventureGold().ToString();
         }
         
-        /*
-        if (caseVal == 2)
-        {
-            
-        }
-        */
-
         if(caseVal == 0) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_lose");
         if(caseVal == 1) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_giveUp");
         if (caseVal == 2) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");

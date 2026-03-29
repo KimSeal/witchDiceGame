@@ -52,6 +52,9 @@ public class Character_battle{
     {
         return armor;
     }
+    public void setArmor(int a) {
+        this.armor = a;
+    }
     public int getSpecialVal()
     {
         return specialVal;
@@ -74,21 +77,13 @@ public class Character_battle{
         {  //스피드업
             this.spd += val;
         }
-    }
-    public int damage(int val)
-    {
-        if (val <= armor)
-        {
-            armor -= val;
-            return 0;
-        }
-        else
-        {
-            val -= armor;
-            armor = 0;
-            return val;
+        if (idx == 6) {
+            this.armor += val;
+            if (this.armor > 5) this.armor = 5;
+            if (this.armor < 0) this.armor = 0;
         }
     }
+   
 }
 public abstract class Character
 {
@@ -338,12 +333,16 @@ public abstract class Character
 
     public abstract List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket);
 
-    public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -2 : state변화만  -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 
+    public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -2 : state변화만  -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 4: 방어구로 가드
     {
         if (takeSkillPacket.getSkillType() == 0 )//|| takeSkillPacket.getSkillType() == 1000)
         {
             if (this.getSpeed() >= Random.Range(1, 101)) { return 2; }
-            this.hp -= this.character_battle.damage(takeSkillPacket.getVal());
+            if (this.character_battle.getArmor() > 0) {
+                this.character_battle.setArmor(this.character_battle.getArmor() - 1);
+                return 4;
+            }
+            this.hp -= takeSkillPacket.getVal();
             //Debug.Log("this damage is : " + takeSkillPacket.getVal());
             //Debug.Log("my remain Hp is : " + this.hp);
 
@@ -386,9 +385,14 @@ public abstract class Character
             this.character_battle.upgrade(4, takeSkillPacket.getVal());
             return 3;
         }
-        else if (takeSkillPacket.getSkillType() == 5) //공격력 업인 경우
+        else if (takeSkillPacket.getSkillType() == 5) //스피드 업인 경우
         {
             this.character_battle.upgrade(5, takeSkillPacket.getVal());
+            return 3;
+        }
+        else if (takeSkillPacket.getSkillType() == 6) //방어구 획득인 경우
+        {
+            this.character_battle.upgrade(6, takeSkillPacket.getVal());
             return 3;
         }
 
