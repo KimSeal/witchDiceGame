@@ -143719,11 +143719,14 @@ MonoBehaviour:
   stageNumButton:
   - {fileID: 140765025}
   - {fileID: 1722918289}
+  - {fileID: 1883482207}
   stageNumButtonOn:
   - {fileID: 21300000, guid: d6ba2e06d0ef484429354503b704bd66, type: 3}
   - {fileID: 21300000, guid: 9476fe7ac1b736c47a5b894148c81eb6, type: 3}
+  - {fileID: 21300000, guid: 9476fe7ac1b736c47a5b894148c81eb6, type: 3}
   stageNumButtonOff:
   - {fileID: 21300000, guid: f298ba595d33ef44f90af2287ab54280, type: 3}
+  - {fileID: 21300000, guid: 58cb032e4762e574eb6e1a2321a7d55d, type: 3}
   - {fileID: 21300000, guid: 58cb032e4762e574eb6e1a2321a7d55d, type: 3}
   stageNumButtonLock: {fileID: 21300000, guid: ecac089895198b048b743e80cd5b276c, type: 3}
   adventureBackground: {fileID: 283511737}

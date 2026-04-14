@@ -32,9 +32,9 @@ public class MapperManager : MonoBehaviour
     [SerializeField] public GameObject slideBarEntity;
     [SerializeField] public GameObject[] slideBar = new GameObject[2];
 
-    [SerializeField] public GameObject[] stageNumButton = new GameObject[2];
-    [SerializeField] public Sprite[] stageNumButtonOn = new Sprite[2];
-    [SerializeField] public Sprite[] stageNumButtonOff = new Sprite[2];
+    [SerializeField] public GameObject[] stageNumButton = new GameObject[3];
+    [SerializeField] public Sprite[] stageNumButtonOn = new Sprite[3];
+    [SerializeField] public Sprite[] stageNumButtonOff = new Sprite[3];
     [SerializeField] public Sprite stageNumButtonLock;
 
     [SerializeField] private GameObject adventureBackground, adventureNPC, adventureBackBoard; //ui_adventure Back_0/ NPC_0 / backBoard
@@ -227,7 +227,7 @@ public class MapperManager : MonoBehaviour
 
     public void clickStageNumButton(int idx)
     {
-        if (idx > 2) return;
+        if (idx > 3) return;
         
         stageNum = idx;
         stageIdx = 0;
