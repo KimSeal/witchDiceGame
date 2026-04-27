@@ -345,6 +345,30 @@ public class CharacterManager : MonoBehaviour
                     character = new FlyingBook(0, destinyList_monster[characterIdx]); break;
                 case 22:
                     character = new EagleWizard(0, destinyList_monster[characterIdx]); break;
+                case 23:
+                    character = new WoodDummy(0, destinyList_monster[characterIdx]); break;
+                case 24:
+                    character = new IronDummy(0, destinyList_monster[characterIdx]); break;
+                case 25:
+                    character = new FastFoot(0, destinyList_monster[characterIdx]); break;
+                case 26:
+                    character = new BigHammer(0, destinyList_monster[characterIdx]); break;
+                case 27:
+                    character = new Undead(0, destinyList_monster[characterIdx]); break;
+                case 28:
+                    character = new DeadChunk(0, destinyList_monster[characterIdx]); break;
+                case 29:
+                    character = new BombHead(0, destinyList_monster[characterIdx]); break;
+                case 30:
+                    character = new GrandKnight(0, destinyList_monster[characterIdx]); break;
+                case 31:
+                    character = new NoHead(0, destinyList_monster[characterIdx]); break;
+                case 32:
+                    character = new Bard(0, destinyList_monster[characterIdx]); break;
+                case 33:
+                    character = new SoulShield(0, destinyList_monster[characterIdx]); break;
+                case 34:
+                    character = new SoulFlag(0, destinyList_monster[characterIdx]); break;
             }
         }
     }
