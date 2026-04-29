@@ -347,6 +347,7 @@ public abstract class Character
             if (this.getSpeed() >= Random.Range(1, 101)) { return 2; }
             if (this.character_battle.getArmor() > 0) {
                 this.character_battle.setArmor(this.character_battle.getArmor() - 1);
+                BattleManager.Instance.updateHpCover(takeSkillPacket.getTargetIdx(), 1);
                 return 4;
             }
             this.hp -= takeSkillPacket.getVal();
@@ -400,6 +401,7 @@ public abstract class Character
         else if (takeSkillPacket.getSkillType() == 6) //¹æ¾î±¸ È¹µæÀÎ °æ¿ì
         {
             this.character_battle.upgrade(6, takeSkillPacket.getVal());
+            BattleManager.Instance.updateHpCover(takeSkillPacket.getTargetIdx(), 0);
             return 3;
         }
 

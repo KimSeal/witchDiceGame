@@ -73338,15 +73338,15 @@ MonoBehaviour:
   - {fileID: 16145744}
   - {fileID: 421619373}
   myHpUIBackCover:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1736969806}
+  - {fileID: 326570120}
+  - {fileID: 1912987409}
+  - {fileID: 941455036}
   enemyHpUIBackCover:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 785043996}
+  - {fileID: 85094758}
+  - {fileID: 1504956438}
+  - {fileID: 172552053}
   battleTextObj: {fileID: 500459151}
   giveUpBtn: {fileID: 1345126367}
   battleBagBtn: {fileID: 386159704}

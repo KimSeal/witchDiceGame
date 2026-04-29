@@ -26,12 +26,13 @@ public class WoodDummy : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket())
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * 5  + this.getPhyAtk(), 0)); 
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 6));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * this.getPhyAtk() + this.getPhyAtk(), 0)); 
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
          // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 2, 0, 6));
         }
         return packets;
     }
@@ -60,11 +61,13 @@ public class IronDummy : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 6));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * this.getPhyAtk() + this.getPhyAtk(), 0));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
          // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 3, 0, 6));
         }
         return packets;
     }
@@ -93,11 +96,15 @@ public class FastFoot : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getPhyAtk(), 0, 5));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            
+
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSpeed() + this.getPhyAtk(), 0));
+            AdventureManager.Instance.addMoney(0, -1 * this.getSpeed());
         }
         return packets;
     }
@@ -126,11 +133,12 @@ public class BigHammer : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 2 * this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 2 * this.getPhyAtk(), 0));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 2 * this.getPhyAtk(), 0));
         }
         return packets;
     }
@@ -159,11 +167,14 @@ public class Undead : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, sendSkillPacket.diceNum[0], 0, 2));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1+ this.getPhyAtk(), 0));
             //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getPhyAtk(), 0, 2));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1 + this.getPhyAtk(), 0));
         }
         return packets;
     }
@@ -192,11 +203,12 @@ public class DeadChunk : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 10 + this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 10 + this.getPhyAtk(), 0, 1));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getHp() + this.getPhyAtk(), 0));
         }
         return packets;
     }
@@ -224,12 +236,17 @@ public class BombHead : Character
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
 
         if (sendSkillPacket.useSkillIdx == 0)
-        { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getHp(), 0, 1));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            int tempDamage = this.getHp() / 2 + this.getPhyAtk();
+            for (int i = 0; i < 4; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, tempDamage, 0));
+            }
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getHp(), 0));
         }
         return packets;
     }
@@ -256,13 +273,25 @@ public class GrandKnight : Character
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
 
-        if (sendSkillPacket.useSkillIdx == 0)
-        { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        if (sendSkillPacket.useSkillIdx == 0) { 
+            int atkVal = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                if (i != sendSkillPacket.useCharacterIdx && 
+                    BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                {
+                    atkVal += 1;
+                    packets.Add(new TakeSkillPacket(i, 1 + this.getPhyAtk(), 0));
+                }
+            }
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, atkVal, 0, 2)); //공격된 대상 숫자 만큼 공격력 업
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            for (int i=0;i<4;i++)
+            {
+                packets.Add(new TakeSkillPacket(i, this.getPhyAtk() + this.getPhyAtk(), 0));
+            }
         }
         return packets;
     }
@@ -292,11 +321,17 @@ public class NoHead : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            for (int i = 0; i < 4; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, this.getPhyAtk() + this.getPhyAtk(), 0));
+            }
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            for (int i = 4; i < 8; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, 1, 0, 6));
+            }
         }
         return packets;
     }
@@ -327,12 +362,28 @@ public class Bard : Character
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
 
         if (sendSkillPacket.useSkillIdx == 0)
-        { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        {
+            if (BattleManager.Instance.getCharacter(4) == null ||
+                BattleManager.Instance.getCharacter(4).getCurState() == 0)
+            {
+                BattleManager.Instance.setEnemyCharacter(4, 10034);
+            }
+            else if (BattleManager.Instance.getCharacter(6) == null ||
+                BattleManager.Instance.getCharacter(6).getCurState() == 0)
+            {
+                BattleManager.Instance.setEnemyCharacter(6, 10035);
+            }
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
-        {//고블린의 두번째 스킬이 호출된 경우
-           // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j <= this.getArmor(); j++)
+                {
+                    packets.Add(new TakeSkillPacket(i, this.getPhyAtk() + this.getPhyAtk(), 0));
+                }
+            }
         }
         return packets;
     }
@@ -361,12 +412,18 @@ public class SoulShield : Character
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
 
         if (sendSkillPacket.useSkillIdx == 0)
-        { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        {
+            for (int i=4;i<8;i++)
+            {
+                packets.Add(new TakeSkillPacket(i, 0, 1));
+            }
         }
         else if (sendSkillPacket.useSkillIdx == 1)
-        {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        {
+            for (int i = 4; i < 8; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, 1, 0, 6));
+            }
         }
         return packets;
     }
@@ -395,12 +452,18 @@ public class SoulFlag : Character
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
 
         if (sendSkillPacket.useSkillIdx == 0)
-        { //고블린의 첫번째 스킬이 호출된 경우
-            //packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        { 
+            for (int i = 4; i < 8; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, 0, 1));
+            }
         }
         else if (sendSkillPacket.useSkillIdx == 1)
-        {//고블린의 두번째 스킬이 호출된 경우
-         // packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 8 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+        {
+            for (int i = 4; i < 8; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, 1, 0, 2));
+            }
         }
         return packets;
     }

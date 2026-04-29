@@ -214,8 +214,6 @@ public class BattleManager : MonoBehaviour
     }
     public void updateEquipUI(int characterIdx, int itemIdx)
     {
-        Debug.Log(characterIdx * 2 + itemIdx);
-        Debug.Log(getCharacter(characterIdx));
         if (getCharacter(characterIdx) != null) Debug.Log(getCharacter(characterIdx).getItem(itemIdx).getIdx());
         if (characterIdx < 4)
         {
@@ -409,6 +407,19 @@ public class BattleManager : MonoBehaviour
     public int getCurPhase()
     {
         return curPhase;
+    }
+    public void updateHpCover(int characterIdx, int opt)
+    {
+        if (characterIdx < 4)
+        {
+            if(opt == 0) myHpUIBackCover[characterIdx].GetComponent<Animator>().Play("ArmorCreate");
+            if(opt == 1) myHpUIBackCover[characterIdx].GetComponent<Animator>().Play("ArmorBreak");
+        }
+        else if (characterIdx < 8)
+        {
+            if (opt == 0) enemyHpUIBackCover[characterIdx-4].GetComponent<Animator>().Play("ArmorCreate");
+            if (opt == 1) enemyHpUIBackCover[characterIdx-4].GetComponent<Animator>().Play("ArmorBreak");
+        }
     }
     public void updateHp()
     {
@@ -2676,18 +2687,23 @@ public class BattleManager : MonoBehaviour
         Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
         SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
     }
+    private void makeGuardEffect(int tempTargetIdx)
+    {
+        GameObject temp = Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+        temp.GetComponent<Animator>().Play("ArmorBreak");
+    }
 
     public bool makeCalculateText(bool myTeam, int skillType, int idx, int val, int height)
     {
         if (val == 0) return false;
         else
         {
-            if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }
-            if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; }
-            if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, val, height); return true; }
-            if (skillType == 4) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(6, myTeam, idx, val, height); return true; }
-            if (skillType == 5) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(7, myTeam, idx, val, height); return true; }
-
+            if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }    //damage
+            if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; } //heal
+            if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, val, height); return true; } //atk
+            if (skillType == 4) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(6, myTeam, idx, val, height); return true; } //mag
+            if (skillType == 5) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(7, myTeam, idx, val, height); return true; } //speed
+            if (skillType == 6) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(4, myTeam, idx, val, height); return true; } //armor
             /*
             if (myTeam) //아군 대상일 경우
             {
@@ -2773,7 +2789,8 @@ public class BattleManager : MonoBehaviour
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
         {
-            if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <= 4) check[takeSkillPackets[i].getSkillType()] = true;
+            if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <= 4 
+                && takeSkillPackets[i].getVal() != 0) check[takeSkillPackets[i].getSkillType()] = true;
         }
         for (int i = 0; i < check.Length; i++)
         {
@@ -2792,7 +2809,8 @@ public class BattleManager : MonoBehaviour
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
         {
-            if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <= 4) check[takeSkillPackets[i].getSkillType()] = true;
+            if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <= 4 &&
+                takeSkillPackets[i].getVal() != 0) check[takeSkillPackets[i].getSkillType()] = true;
         }
         initTextHeight();
         for (int i = 0; i < check.Length; i++)
@@ -2806,13 +2824,14 @@ public class BattleManager : MonoBehaviour
 
 
     private void attackAddBySpeed(Character character, List<TakeSkillPacket> takeSkillPackets) {
-        for (int i = 0; i < takeSkillPackets.Count; i++)
+        int initLen = takeSkillPackets.Count;
+        for (int i = 0; i < initLen; i++)
         {
-            if (takeSkillPackets[i].getSkillType() == 0) {
+            if (takeSkillPackets[i].getSkillType() == 0 && takeSkillPackets[i].getVal() > 0) {
                 int randomValTemp = Random.Range(0,100);
                 if (randomValTemp < character.getSpeed())
                 {
-                    takeSkillPackets.Insert(0, new TakeSkillPacket(takeSkillPackets[i].getTargetIdx(), 1 + character.getPhyAtk(), 0));
+                    takeSkillPackets.Add(new TakeSkillPacket(takeSkillPackets[i].getTargetIdx(), 1 + character.getPhyAtk(), 0));
                 }
             }
         }
@@ -2863,6 +2882,7 @@ public class BattleManager : MonoBehaviour
                 else if (skillResult == 4) //가드
                 {
                     specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamGuard(tempTargetIdx, textHeight[tempTargetIdx]++);
+                    makeGuardEffect(tempTargetIdx);
                 }
                 else
                 {  //회피가 아닌경우
@@ -2902,6 +2922,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else if(skillResult == 4) { //가드
                     specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamGuard(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
+                    makeGuardEffect(tempTargetIdx);
                 }
                 else {
                     if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;

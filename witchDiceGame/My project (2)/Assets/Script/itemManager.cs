@@ -1033,6 +1033,10 @@ public class itemManager : MonoBehaviour
                 BattleManager.Instance.makeCalculateText(myTeam, 2, useCharacterIdx % 4, 1, heightArr[useCharacterIdx]++);
                 useCharacter.getCharacter_battle().upgrade(2, 1);
                 break;
+            case 3:
+                BattleManager.Instance.makeCalculateText(myTeam, 6, useCharacterIdx % 4, 1, heightArr[useCharacterIdx]++);
+                useCharacter.getCharacter_battle().upgrade(6, 1);
+                break;
         }
 
         item.useDurability();

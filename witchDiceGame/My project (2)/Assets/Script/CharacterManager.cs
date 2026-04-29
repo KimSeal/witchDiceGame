@@ -375,7 +375,7 @@ public class CharacterManager : MonoBehaviour
                     character = new SoulFlag(0, destinyList_monster[characterIdx]); break;
             }
             character.changeEquip(0, 1);
-            character.changeEquip(1, 2);
+            character.changeEquip(1, 3);
         }
     }
 
