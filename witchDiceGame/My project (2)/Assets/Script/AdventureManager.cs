@@ -138,7 +138,32 @@ public class AdventureManager : MonoBehaviour
     [SerializeField]
     public GameObject itemRemainChk;
     public TextMeshPro itemRemainText;
-    
+
+
+    public int atkMaxVal = 30;
+    public int magMaxVal = 30;
+    public int spdMaxVal = 30;
+    public int armorMaxVal = 3;
+    public int getAtkMaxVal() { return atkMaxVal; }
+    public int getMagMaxVal() { return magMaxVal; }
+    public int getSpdMaxVal() { return spdMaxVal; }
+    public int getArmorMaxVal() { return armorMaxVal; }
+    public void initMaxVal()
+    {
+        atkMaxVal = 30;
+        magMaxVal = 30;
+        spdMaxVal = 30;
+        armorMaxVal = 3;
+    }
+    public void addMaxVal(int opt, int val) // 0 : 공격력 최대 1 : 감응력 2 : 스피드 3: 방어도
+    {
+        if (opt == 0) atkMaxVal += val;
+        if (opt == 1) magMaxVal += val;
+        if (opt == 2) spdMaxVal += val;
+        if (opt == 3) armorMaxVal += val;
+    }
+
+
     private int[] lastCharacter = new int[4];
 
     private int tutorialVal = 0;
@@ -489,7 +514,7 @@ public class AdventureManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        initMaxVal();
         remainItemOnOff(false);
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0, 0);
@@ -733,6 +758,7 @@ public class AdventureManager : MonoBehaviour
         adventureJewelMax = 9999;
         adventureJewel = 5;
         addMoney(1, 0);
+        initMaxVal();
 
         stageDepthMax = 1;
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
@@ -2019,18 +2045,23 @@ public class AdventureManager : MonoBehaviour
 
                 TalkManager.Instance.setLostChk(false);
                 TalkManager.Instance.setDescString("");
+
+                initMaxVal();
             }
             
         }
         adventureStartChk = false;
         giveUpBtnAble(true);
-        if (nextStageGo) {
+        if (nextStageGo)
+        {
             if (stageDepth == 1)
             {
-                if (jsonDataManager.Instance.getChapterRead(1,2) != 2) {// 2챕터 클리어전 depth 1
+                if (jsonDataManager.Instance.getChapterRead(1, 2) != 2)
+                {// 2챕터 클리어전 depth 1
                     StartCoroutine(phase_Manage_Coroutine(3));
                 }
-                else{// 2챕터 클리어후 depth 1
+                else
+                {// 2챕터 클리어후 depth 1
                     StartCoroutine(phase_Manage_Coroutine(3));
                 }
             }

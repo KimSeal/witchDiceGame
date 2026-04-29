@@ -11,8 +11,9 @@ public class Item
     private string[] content = new string[10];
     private int[] val = new int[8];
     private int activeTiming =0;
+    private int durability = 0;
 
-    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7, int activeTiming)
+    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7, int activeTiming, int durability)
     {
         this.type = type;
         this.idx = idx;
@@ -29,6 +30,7 @@ public class Item
         this.val[6] = val6;
         this.val[7] = val7;
         this.activeTiming = activeTiming;
+        this.durability = durability;
     }
     public Item(ItemReader itemReader)
     {
@@ -50,8 +52,10 @@ public class Item
         this.val[7] = itemReader.val7;
         this.rare = itemReader.rare;
         this.activeTiming = itemReader.activeTiming;
+        this.durability = itemReader.durability;
     }
 
+    
     public Item(Item item)
     {
         this.idx = item.idx;
@@ -64,7 +68,10 @@ public class Item
         }
         this.rare = item.rare;
         this.activeTiming = item.activeTiming;
+        this.durability = item.durability;
     }
+    public int getDurability() { return durability; }
+    public void useDurability() { this.durability -= 1; }
     public int getActiveTiming()
     {
         return activeTiming;
@@ -87,7 +94,9 @@ public class Item
     }
     public string getContent()
     {
-        return content[jsonDataManager.Instance.getLanguage()];
+        string returnString = content[jsonDataManager.Instance.getLanguage()];
+        if (type == 2) returnString += "(+" + TalkManager.Instance.getDesc(141) + " "+ this.durability +")";
+        return returnString;
     }
     public int getVal(int idx)
     {

@@ -441,9 +441,9 @@ public class itemManager : MonoBehaviour
 
         characterInfoEntity.SetActive(true);
         characterName.text = tempCharacter.getName();
-        characterAtk.text = tempCharacter.getPhyAtk().ToString();
-        characterMag.text = tempCharacter.getMagAtk().ToString();
-        characterSpd.text = tempCharacter.getSpeed().ToString();
+        characterAtk.text = tempCharacter.getPhyAtk().ToString() + "(" + tempCharacter.getPhyAtk(0).ToString() + "/" + tempCharacter.getPhyAtk(1) + ")";
+        characterMag.text = tempCharacter.getMagAtk().ToString() + "(" + tempCharacter.getMagAtk(0).ToString() + "/" + tempCharacter.getMagAtk(1) + ")"; ;
+        characterSpd.text = tempCharacter.getSpeed().ToString() + "(" + tempCharacter.getSpeed(0).ToString() + "/" + tempCharacter.getSpeed(1) + ")"; ;
         characterArmor.text = tempCharacter.getArmor().ToString();
         characterDescTitle.text = "";
         for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
@@ -798,7 +798,7 @@ public class itemManager : MonoBehaviour
     {   //주사위 변수 값은 val1으로 변경했습니다
         if (itemBagIdx != -1&& idx != -1 && ItemArr[2, itemBagIdx] != null && ItemExistArr[2, itemBagIdx]) 
         {
-            CharacterManager.Instance.changeEquip(characterIdx, idx, 2, ItemArr[2, itemBagIdx].getIdx());
+            CharacterManager.Instance.changeEquip(characterIdx, idx, ItemArr[2, itemBagIdx].getIdx());
 
             //equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, itemBagIdx].getItemName().ToString());
             //equipBoardObj[idx * 3 + 1].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getItemName();
@@ -958,7 +958,7 @@ public class itemManager : MonoBehaviour
             ItemExistArr[3, i] = true;
             ItemArr[3, i] = new Item(itemList[3][i+1]);
         }
-        ItemArr[3, 0] = new Item(itemList[3][2]);
+        ItemArr[3, 0] = new Item(itemList[3][21]);
         ItemArr[3, 1] = new Item(itemList[3][8]);
         ItemArr[3, 2] = new Item(itemList[3][7]);
         ItemArr[3, 3] = new Item(itemList[3][10]);
@@ -1002,6 +1002,46 @@ public class itemManager : MonoBehaviour
         //return inventoryUIArr[idx].transform.position;
     }
 
+    //0 : 공격/회복/공격력... 스킬 사용시 능력치 변화.
+    //100: 데미지를 입을 시
+    public void useEquipItem(int[] heightArr, int timing, int useCharacterIdx, TakeSkillPacket takeSkillPacket)
+    {
+        for (int i=0;i<2;i++) {
+            activeEquipItem(heightArr, timing, useCharacterIdx, i, takeSkillPacket);
+        }
+    }
+    public int activeEquipItem(int[] heightArr, int timing, int useCharacterIdx, int itemNum, TakeSkillPacket takeSkillPacket)
+    {
+        Debug.Log("equip test");
+
+        int returnValue = 0;
+        Character useCharacter = BattleManager.Instance.getCharacter(useCharacterIdx);
+        if (useCharacter == null || useCharacter.getCurState() != 0) return 0;
+        Item item = useCharacter.getItem(itemNum);
+        if (item == null || item.getIdx() == 0 || timing != item.getActiveTiming()) return 0;
+
+        bool myTeam = false;
+        if (useCharacterIdx < 4) myTeam = true;
+
+        switch (item.getIdx())
+        {
+            case 1:
+                BattleManager.Instance.makeCalculateText(myTeam, 2, useCharacterIdx % 4, 1, heightArr[useCharacterIdx]++);
+                useCharacter.getCharacter_battle().upgrade(2,1);
+                break;
+            case 2:
+                BattleManager.Instance.makeCalculateText(myTeam, 2, useCharacterIdx % 4, 1, heightArr[useCharacterIdx]++);
+                useCharacter.getCharacter_battle().upgrade(2, 1);
+                break;
+        }
+
+        item.useDurability();
+        if (item.getDurability() == 0) {
+            useCharacter.changeEquip(itemNum, 0);
+            BattleManager.Instance.updateEquipUI(useCharacterIdx, itemNum);
+        }
+        return returnValue;
+    }
     //passive Item use function start
     public passiveReturn usePassiveItem(List<TakeSkillPacket> takeSkillPacketList, TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTime)
     {

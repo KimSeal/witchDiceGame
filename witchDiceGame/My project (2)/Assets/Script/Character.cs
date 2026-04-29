@@ -68,18 +68,24 @@ public class Character_battle{
     {
         if (idx == 2) {  //공격력업
             this.atk += val;
+            if (this.atk > 99) this.atk = 99;
+            if (this.atk < -99) this.atk = -99;
         }
         if (idx == 4)
         {  //마법감응력업
             this.mag += val;
+            if (this.mag > 99) this.mag = 99;
+            if (this.mag < -99) this.mag = -99;
         }
         if (idx == 5)
         {  //스피드업
             this.spd += val;
+            if (this.spd > 99) this.spd = 99;
+            if (this.spd < -99) this.spd = -99;
         }
         if (idx == 6) {
             this.armor += val;
-            if (this.armor > 5) this.armor = 5;
+            if (this.armor > AdventureManager.Instance.getArmorMaxVal()) this.armor = AdventureManager.Instance.getArmorMaxVal();
             if (this.armor < 0) this.armor = 0;
         }
     }
@@ -290,9 +296,10 @@ public abstract class Character
         this.dice.setNum(idx, val);
     }
 
-    public void changeEquip(int itemNum,int itemType, int itemIdx)
+    public void changeEquip(int itemNum, int itemIdx)
     {
-        item[itemNum] = new Item(itemManager.Instance.getItem(itemType, itemIdx));
+        item[itemNum] = new Item(itemManager.Instance.getItem(2, itemIdx));
+        
     }
     public Item getItem(int idx)
     {
@@ -402,19 +409,35 @@ public abstract class Character
         }
         return -1;
     }
-
+    public int getPhyAtk(int opt)
+    {
+        if (opt == 0) return phyAtk;
+        if (opt == 1) return character_battle.getAtk();
+        return 0;
+    }
+    public int getMagAtk(int opt)
+    {
+        if (opt == 0) return magAtk;
+        if (opt == 1) return character_battle.getMag();
+        return 0;
+    }
+    public int getSpeed(int opt) {
+        if (opt == 0) return speed;
+        if (opt == 1) return character_battle.getSpeed();
+        return 0;
+    }
     public int getPhyAtk(){
         if (phyAtk + character_battle.getAtk() < 0) return 0;
-        if (phyAtk + character_battle.getAtk() > 99) return 99;
+        if (phyAtk + character_battle.getAtk() > AdventureManager.Instance.getAtkMaxVal()) return AdventureManager.Instance.getAtkMaxVal();
         return phyAtk + character_battle.getAtk(); 
     }
     public int getMagAtk() {
         if (magAtk + character_battle.getMag() < 0) return 0;
-        if (magAtk + character_battle.getMag() > 99) return 99;
+        if (magAtk + character_battle.getMag() > AdventureManager.Instance.getMagMaxVal()) return AdventureManager.Instance.getMagMaxVal();
         return magAtk + character_battle.getMag(); }
     public int getSpeed() {
         if (speed + character_battle.getSpeed() < 0) return 0;
-        if (speed + character_battle.getSpeed() > 99) return 99;
+        if (speed + character_battle.getSpeed() > AdventureManager.Instance.getSpdMaxVal()) return AdventureManager.Instance.getSpdMaxVal();
         return speed + character_battle.getSpeed(); 
     }
     public int damage(int damage)
@@ -481,19 +504,31 @@ public abstract class Character
         if (idx == 5)
         {
             this.phyAtk += val;
-            if (this.phyAtk > 99) this.phyAtk = 99;
+            if (this.phyAtk > AdventureManager.Instance.getAtkMaxVal())
+            {
+                fullUI.showFull(140);
+                this.phyAtk = AdventureManager.Instance.getAtkMaxVal();
+            }
             if (this.phyAtk < 0) this.phyAtk = 0;
         }
         if (idx == 6)
         {
             this.magAtk += val;
-            if (this.magAtk > 99) this.magAtk = 99;
-            if (this.magAtk < 0) this.magAtk = 0;
+            if (this.magAtk > AdventureManager.Instance.getMagMaxVal())
+            {
+                fullUI.showFull(140);
+                this.magAtk = AdventureManager.Instance.getMagMaxVal();
+            }
+                if (this.magAtk < 0) this.magAtk = 0;
         }
         if (idx == 7)
         {
             this.speed += val;
-            if (this.speed > 99) this.speed = 99;
+            if (this.speed > AdventureManager.Instance.getSpdMaxVal())
+            {
+                fullUI.showFull(140);
+                this.speed = AdventureManager.Instance.getSpdMaxVal();
+            }
             if (this.speed < 0) this.speed = 0;
         }
         return 0;
@@ -538,19 +573,19 @@ public abstract class Character
         if (idx == 5)
         {
             this.phyAtk -= val;
-            if (this.phyAtk > 99) this.phyAtk = 99;
+            if (this.phyAtk > AdventureManager.Instance.getAtkMaxVal()) this.phyAtk = AdventureManager.Instance.getAtkMaxVal();
             if (this.phyAtk < 0) this.phyAtk = 0;
         }
         if (idx == 6)
         {
             this.magAtk -= val;
-            if (this.magAtk > 99) this.magAtk = 99;
+            if (this.magAtk > AdventureManager.Instance.getMagMaxVal()) this.magAtk = AdventureManager.Instance.getMagMaxVal();
             if (this.magAtk < 0) this.magAtk = 0;
         }
         if (idx == 7)
         {
             this.speed -= val;
-            if (this.speed > 99) this.speed = 99;
+            if (this.speed > AdventureManager.Instance.getSpdMaxVal()) this.speed = AdventureManager.Instance.getSpdMaxVal();
             if (this.speed < 0) this.speed = 0;
         }
         return 0;

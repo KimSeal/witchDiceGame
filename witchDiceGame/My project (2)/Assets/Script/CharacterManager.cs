@@ -189,20 +189,24 @@ public class CharacterManager : MonoBehaviour
         myCharacter[characterIdx].throwDiceExcept();
     }
 
-    public void changeEquip(int characterIdx, int itemNum, int itemType, int itemIdx)
+    public void changeEquip(int characterIdx, int itemNum, int itemIdx)
     {
         if (AdventureManager.Instance.getBattleEventChk())
         {
             if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
             {
-                BattleManager.Instance.getCharacter(characterIdx).changeEquip(itemNum, itemType, itemIdx);
+                BattleManager.Instance.getCharacter(characterIdx).changeEquip(itemNum, itemIdx);
+                BattleManager.Instance.updateEquipUI(characterIdx, 0);
+                BattleManager.Instance.updateEquipUI(characterIdx, 1);
             }
         }
         else
         {
             if (myCharacter[characterIdx] != null && myCharacter[characterIdx].getCurState() == 0)
             {
-                myCharacter[characterIdx].changeEquip(itemNum, itemType, itemIdx);
+                myCharacter[characterIdx].changeEquip(itemNum, itemIdx);
+                BattleManager.Instance.updateEquipUI(characterIdx, 0);
+                BattleManager.Instance.updateEquipUI(characterIdx, 1);
             }
         }
     }
@@ -370,6 +374,8 @@ public class CharacterManager : MonoBehaviour
                 case 34:
                     character = new SoulFlag(0, destinyList_monster[characterIdx]); break;
             }
+            character.changeEquip(0, 1);
+            character.changeEquip(1, 2);
         }
     }
 

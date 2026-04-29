@@ -59,8 +59,8 @@ public class upDownManager : MonoBehaviour
     public TextMeshProUGUI bigDiceItemCharacterHpText;
     public TextMeshProUGUI bigDiceItemCharacterArmorText;
     public TextMeshProUGUI bigDiceItemCharacterAtkText;
-    public TextMeshProUGUI bigDiceItemCharacterVal0Text;
-    public TextMeshProUGUI bigDiceItemCharacterVal1Text;
+    public TextMeshProUGUI bigDiceItemCharacterMagText;
+    public TextMeshProUGUI bigDiceItemCharacterSpdText;
 
     public GameObject bigDiceItemCharacterDiceEntity;
     public GameObject[] bigDiceItemCharacterDiceButton = new GameObject[6];
@@ -1083,7 +1083,7 @@ public class upDownManager : MonoBehaviour
            
         }
         AdventureManager.Instance.updateAdventureDice();
-
+        itemManager.Instance.hoverOutDesc();
         if (curCharacterIdx == -1)
         {
             changeOption(2, false);
@@ -1423,8 +1423,8 @@ public class upDownManager : MonoBehaviour
             bigDiceItemCharacterHpText.text = "";
             bigDiceItemCharacterArmorText.text = "";
             bigDiceItemCharacterAtkText.text = "";
-            bigDiceItemCharacterVal0Text.text = "";
-            bigDiceItemCharacterVal1Text.text = "";
+            bigDiceItemCharacterMagText.text = "";
+            bigDiceItemCharacterSpdText.text = "";
             //character Face
             for (int i = 0; i < 4; i++)
             {
@@ -1462,8 +1462,10 @@ public class upDownManager : MonoBehaviour
             //character info
             bigDiceItemCharacterHpText.text = getCharacter(characterIdx).getHp().ToString() + " / "
                 + getCharacter(characterIdx).getMaxHp().ToString();
-            bigDiceItemCharacterArmorText.text = "0";
-            bigDiceItemCharacterAtkText.text = getCharacter(characterIdx).getPhyAtk().ToString();
+            bigDiceItemCharacterArmorText.text = getCharacter(characterIdx).getArmor().ToString();
+            bigDiceItemCharacterAtkText.text = getCharacter(characterIdx).getPhyAtk().ToString() +"(" + getCharacter(characterIdx).getPhyAtk(0) + "/" + getCharacter(characterIdx).getPhyAtk(1) + ")";
+            bigDiceItemCharacterMagText.text = getCharacter(characterIdx).getMagAtk().ToString() + "(" + getCharacter(characterIdx).getMagAtk(0) + "/" + getCharacter(characterIdx).getMagAtk(1) + ")";
+            bigDiceItemCharacterSpdText.text = getCharacter(characterIdx).getSpeed().ToString() + "(" + getCharacter(characterIdx).getSpeed(0) + "/" + getCharacter(characterIdx).getSpeed(1) + ")";
 
             //character dice
             for (int i = 0; i < 6; i++)
@@ -1486,8 +1488,8 @@ public class upDownManager : MonoBehaviour
             bigDiceItemCharacterHpText.text = "";
             bigDiceItemCharacterArmorText.text = "";
             bigDiceItemCharacterAtkText.text = "";
-            bigDiceItemCharacterVal0Text.text = "";
-            bigDiceItemCharacterVal1Text.text = "";
+            bigDiceItemCharacterMagText.text = "";
+            bigDiceItemCharacterSpdText.text = "";
             //character Face
             for (int i = 0; i < 4; i++)
             {

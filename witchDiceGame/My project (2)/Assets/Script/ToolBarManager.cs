@@ -130,9 +130,9 @@ public class ToolBarManager : MonoBehaviour
         }
         toolBarCharacterInfoText[0].text = character.getHp().ToString() + "/" + character.getMaxHp().ToString();
         toolBarCharacterInfoText[1].text = character.getArmor().ToString();
-        toolBarCharacterInfoText[2].text = character.getPhyAtk().ToString();
-        toolBarCharacterInfoText[3].text = character.getMagAtk().ToString();
-        toolBarCharacterInfoText[4].text = character.getSpeed().ToString();
+        toolBarCharacterInfoText[2].text = character.getPhyAtk().ToString() + "(" + character.getPhyAtk(0) + "/" + character.getPhyAtk(1) + ")";
+        toolBarCharacterInfoText[3].text = character.getMagAtk().ToString() + "(" + character.getMagAtk(0) + "/" + character.getMagAtk(1) + ")"; ;
+        toolBarCharacterInfoText[4].text = character.getSpeed().ToString() + "(" + character.getSpeed(0) + "/" + character.getSpeed(1) + ")"; ;
         toolBarTitle.text = character.getName();
         for (int i=0;i<6;i++)
         {
@@ -245,7 +245,12 @@ public class ToolBarManager : MonoBehaviour
         }
         toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
         toolBarTitle.text = TalkManager.Instance.getDesc(toolBarStatTitleIdx[idx]);
+       
         toolBarDesc.text = TalkManager.Instance.getDesc(toolBarStatContentIdx[idx]);
+        if (idx == 0) toolBarDesc.text += AdventureManager.Instance.getAtkMaxVal() + " )";
+        if (idx == 1) toolBarDesc.text += AdventureManager.Instance.getMagMaxVal() + " )";
+        if (idx == 2) toolBarDesc.text += AdventureManager.Instance.getSpdMaxVal() + " )";
+        if (idx == 3) toolBarDesc.text += AdventureManager.Instance.getArmorMaxVal() + " )";
     }
     public void setToolBarItemType(int idx)
     {

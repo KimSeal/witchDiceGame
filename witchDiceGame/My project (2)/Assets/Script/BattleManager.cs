@@ -7,7 +7,9 @@ using AnimatedBattleText.Examples;
 public class BattleManager : MonoBehaviour
 {
 
-    
+
+    [SerializeField]
+    public GameObject[] equipUI = new GameObject[16];
 
     [SerializeField]
     public Sprite[] diceSprite = new Sprite[6];
@@ -171,6 +173,8 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField] private GameObject[] myHpUIBack = new GameObject[4];
     [SerializeField] private GameObject[] enemyHpUIBack = new GameObject[4];
+    [SerializeField] private GameObject[] myHpUIBackCover = new GameObject[4];
+    [SerializeField] private GameObject[] enemyHpUIBackCover = new GameObject[4];
 
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
     [SerializeField] private GameObject battleTextObj;
@@ -195,6 +199,57 @@ public class BattleManager : MonoBehaviour
     public GameObject itemNotGetEntity;
     public TextMeshProUGUI itemNotGetText;
 
+    public void hoverInEquip(int input) {
+        int characterIdx = input / 2;
+        int itemIdx = input % 2;
+        if ( characterIdx < 4 && myCharacter[characterIdx] != null && 
+            myCharacter[characterIdx].getItem(itemIdx) != null && myCharacter[characterIdx].getItem(itemIdx).getIdx() != 0) {
+            ToolBarManager.Instance.setToolBar(myCharacter[characterIdx].getItem(itemIdx));
+        }
+        else if (characterIdx >= 4 && enemyCharacter[characterIdx-4] != null &&
+            enemyCharacter[characterIdx-4].getItem(itemIdx) != null && enemyCharacter[characterIdx-4].getItem(itemIdx).getIdx() != 0)
+        {
+            ToolBarManager.Instance.setToolBar(enemyCharacter[characterIdx-4].getItem(itemIdx));
+        }
+    }
+    public void updateEquipUI(int characterIdx, int itemIdx)
+    {
+        Debug.Log(characterIdx * 2 + itemIdx);
+        Debug.Log(getCharacter(characterIdx));
+        if (getCharacter(characterIdx) != null) Debug.Log(getCharacter(characterIdx).getItem(itemIdx).getIdx());
+        if (characterIdx < 4)
+        {
+            if (getCharacter(characterIdx) != null && getCharacter(characterIdx).getCurState() == 0 &&
+                getCharacter(characterIdx).getItem(itemIdx) != null && getCharacter(characterIdx).getItem(itemIdx).getIdx() != 0)
+            {
+
+                Item itemTemp = getCharacter(characterIdx).getItem(itemIdx);
+                if (itemTemp.getActiveTiming() < 100) equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/equipImage/spr_equip_sword");
+                else if (itemTemp.getActiveTiming() < 200) equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/equipImage/spr_equip_shield");
+                else if (itemTemp.getActiveTiming() < 300) equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/equipImage/spr_equip_flag");
+
+            }
+            else
+            {
+                equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+        }
+        if (characterIdx >= 4)
+        {
+            if (enemyCharacter[characterIdx - 4] != null && enemyCharacter[characterIdx - 4].getCurState() == 0 &&
+            enemyCharacter[characterIdx - 4].getItem(itemIdx) != null && enemyCharacter[characterIdx - 4].getItem(itemIdx).getIdx() != 0)
+            {
+                Item itemTemp = enemyCharacter[characterIdx - 4].getItem(itemIdx);
+                if (itemTemp.getActiveTiming() < 100) equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/equipImage/spr_equip_sword");
+                else if (itemTemp.getActiveTiming() < 200) equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/equipImage/spr_equip_shield");
+                else if (itemTemp.getActiveTiming() < 300) equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/equipImage/spr_equip_flag");
+            }
+            else
+            {
+                equipUI[characterIdx * 2 + itemIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            }
+        }
+    }
 
     public void clickItemNotGetYesButton()
     {
@@ -364,7 +419,12 @@ public class BattleManager : MonoBehaviour
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
                 myHpUI[i].GetComponent<TextMeshPro>().text = myCharacter[i].getHp().ToString();
-                if (myCharacter[i].getHp() <= 0)
+                if (myCharacter[i].getArmor() > 0)
+                {
+                    if (myCharacter[i].getArmor() > 9) myHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_armor_full");
+                    else myHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_armor_" + myCharacter[i].getArmor());
+                }
+                else if (myCharacter[i].getHp() <= 0)
                 {
                     myHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
                 }
@@ -385,7 +445,12 @@ public class BattleManager : MonoBehaviour
             if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
             {
                 enemyHpUI[i].GetComponent<TextMeshPro>().text = enemyCharacter[i].getHp().ToString();
-                if (enemyCharacter[i].getHp() <= 0)
+                if (enemyCharacter[i].getArmor() > 0)
+                {
+                    if (enemyCharacter[i].getArmor() > 9) enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_armor_full");
+                    else enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_armor_" + enemyCharacter[i].getArmor());
+                }
+                else if (enemyCharacter[i].getHp() <= 0)
                 {
                     enemyHpUIBack[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/hpUI/spr_hp_0");
                 }
@@ -858,10 +923,14 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator startPhaseManage()
     {
+       
+
         witchHatButton.SetActive(false);
         upDownManager.Instance.setItemTypeButtonLock(false);
         startBattlePhase();
         itemManager.Instance.enterBattlePhase();
+       
+
         do {
             
             infoBtn.GetComponent<BoxCollider2D>().enabled = true;
@@ -899,11 +968,15 @@ public class BattleManager : MonoBehaviour
         updateMoveUI(0);
         upDownManager.Instance.resetUI();
 
+        
     }
 
     //DiceThrow Phase  Start (phase 1- dice throw start)//
     private IEnumerator diceThrowPhase()
     {
+        for (int i = 0; i < 16; i++){
+            updateEquipUI(i / 2, i % 2);
+        }
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 2; j++)
@@ -2316,6 +2389,8 @@ public class BattleManager : MonoBehaviour
             
         }
 
+        
+
         if (idx < 4)
         {
 
@@ -2355,6 +2430,9 @@ public class BattleManager : MonoBehaviour
 
             updateMyDiceUI();
             myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+            updateEquipUI(idx, 0);
+            updateEquipUI(idx, 1);
         }
         else
         {
@@ -2430,8 +2508,11 @@ public class BattleManager : MonoBehaviour
                     enemyChainAnim[i].GetComponent<Animator>().Play("breakChain_" + Random.Range(0, 6).ToString());
                 }
             }
-            
+            updateEquipUI(idx+4, 0);
+            updateEquipUI(idx+4, 1);
         }
+
+        
     }
 
     public void makeCoin(int dest, Vector3 point)
@@ -2596,7 +2677,7 @@ public class BattleManager : MonoBehaviour
         SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
     }
 
-    private bool makeCalculateText(bool myTeam, int skillType, int idx, int val, int height)
+    public bool makeCalculateText(bool myTeam, int skillType, int idx, int val, int height)
     {
         if (val == 0) return false;
         else
@@ -2687,7 +2768,7 @@ public class BattleManager : MonoBehaviour
     {
         return sendSkillPacketTemp;
     }
-    private void takeSkillPacketLastFix(List<TakeSkillPacket> takeSkillPackets) //패시브 등 조건에 따른 추가 효과 세팅
+    private void takeSkillPacketLastFix(int skillUseCharacter, List<TakeSkillPacket> takeSkillPackets) //패시브 등 조건에 따른 추가 효과 세팅
     {
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
@@ -2699,6 +2780,40 @@ public class BattleManager : MonoBehaviour
             if (check[i])
             {
                 takeSkillPackets.Insert(0, new TakeSkillPacket(0, 0, 0, 1000 + i));
+                //if(skillUseCharacter >= 0 )itemManager.Instance.useEquipItem(0, skillUseCharacter, null);
+            }
+        }
+    }
+
+    private void activeEquipBeforeSkillUse(int skillUseCharacter, List<TakeSkillPacket> takeSkillPackets, int[] useDiceArr) //패시브 등 조건에 따른 추가 효과 세팅
+    {
+        Debug.Log("enemy equip test");
+        Debug.Log(skillUseCharacter);
+        bool[] check = { false, false, false, false, false };
+        for (int i = 0; i < takeSkillPackets.Count; i++)
+        {
+            if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <= 4) check[takeSkillPackets[i].getSkillType()] = true;
+        }
+        initTextHeight();
+        for (int i = 0; i < check.Length; i++)
+        {
+            if (check[i])
+            {
+                if (skillUseCharacter >= 0) itemManager.Instance.useEquipItem(textHeight, i, skillUseCharacter, null);
+            }
+        }
+    }
+
+
+    private void attackAddBySpeed(Character character, List<TakeSkillPacket> takeSkillPackets) {
+        for (int i = 0; i < takeSkillPackets.Count; i++)
+        {
+            if (takeSkillPackets[i].getSkillType() == 0) {
+                int randomValTemp = Random.Range(0,100);
+                if (randomValTemp < character.getSpeed())
+                {
+                    takeSkillPackets.Insert(0, new TakeSkillPacket(takeSkillPackets[i].getTargetIdx(), 1 + character.getPhyAtk(), 0));
+                }
             }
         }
     }
@@ -2706,7 +2821,10 @@ public class BattleManager : MonoBehaviour
     private int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
     private Queue<int> skillResultQueueForAnim = new Queue<int>();  //return -1 : 처리하지 않음. 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프
     private bool battleHitAnimEndChk = false;
-
+    public void initTextHeight()
+    {
+        for (int i = 0; i < 8; i++) textHeight[i] = 0;
+    }
     private IEnumerator battleHitAnim(int lastAttack, int lastDead)
     {
         int skillResult = 0;
@@ -2767,10 +2885,13 @@ public class BattleManager : MonoBehaviour
                     changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
 
                     if (skillResult == 0)
-                    {  //대미지는 주었지만한 경우(현재 버프에 대한 구분이 없어서 추후 수정필요)
+                    {  
                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                         backGroundObj[4].GetComponent<Animator>().Play("BattleHit");
                         battleAnimationControl(tempTargetIdx, 1);
+
+                        itemManager.Instance.useEquipItem(textHeight, 100, tempTargetIdx, null);
+                        //여기에 피격 아이템 관련 처리 필요.
                     }
                 }
             }
@@ -2800,6 +2921,8 @@ public class BattleManager : MonoBehaviour
                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                         backGroundObj[4].GetComponent<Animator>().Play("BattleShine");
                         battleAnimationControl(tempTargetIdx, 1);
+
+                        itemManager.Instance.useEquipItem(textHeight, 100, tempTargetIdx, null);
                     }
                 }
 
@@ -2877,9 +3000,12 @@ public class BattleManager : MonoBehaviour
                     sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, myCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                     takeSkillPacketArr.Clear();
                     takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-                    takeSkillPacketLastFix(takeSkillPacketArr);
+                    takeSkillPacketLastFix(skillUseCharacter, takeSkillPacketArr);
+                    activeEquipBeforeSkillUse(skillUseCharacter, takeSkillPacketArr, usedDiceArr); //스킬 사용시 타입에 해당하는 장비 시전.
+
                     //skill기반의 takeSkillPacket의 값 얻고 이벤트 보여주기
                     // 활성화 보여주고, 클릭 전 패시브 대상으로 하며
+
 
                     StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
                     yield return new WaitUntil(() => !passiveItemChk);
@@ -2896,6 +3022,7 @@ public class BattleManager : MonoBehaviour
                     bool boomChk = false;
                     chainChk = false;
                     for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
+                        
                         boomChk = false;
                         characterTargetIdx = 0;
                         for (int heightIdx = 0; heightIdx < textHeight.Length; heightIdx++) textHeight[heightIdx] = 0;
@@ -2915,11 +3042,15 @@ public class BattleManager : MonoBehaviour
                         sendSkillPacketTemp.addClickCharacter(clickCharacter);
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-                        takeSkillPacketLastFix(takeSkillPacketArr);
+                        takeSkillPacketLastFix(skillUseCharacter, takeSkillPacketArr);
+                        
+
                         //패시브 아이템들이 적용되는 연출 출력
                         StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false));
                         yield return new WaitUntil(() => !passiveItemChk);
                         passiveUpdateAfterClick(takeSkillPacketArr, usedDiceArr, true);
+                        attackAddBySpeed(myCharacter[skillUseCharacter], takeSkillPacketArr);
+
 
                         int tempTargetIdx;
                         int lastAtk = -1;
@@ -2985,7 +3116,7 @@ public class BattleManager : MonoBehaviour
                         {
                             yield return new WaitForSeconds(0.5f);
                         }
-
+                        initTextHeight();
                     }
 
                     for (int i = 0; i < 4; i++)
@@ -3031,13 +3162,27 @@ public class BattleManager : MonoBehaviour
 
                     skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                     yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
+
+                    //// 공격 전 장비 버프 관련
+                    for (int i = 0; i < clickCharacter.Length; i++)
+                    { //모든 클릭된 캐릭터 초기화
+                        clickCharacter[i] = -999;
+                    }
+                    makeEnemyDice_BattlePhase(nextDice, nextDice + curSkill.getNeedDiceNum());
+                    sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
+                    takeSkillPacketArr.Clear();
+                    takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                    activeEquipBeforeSkillUse(skillUseCharacter + 4, takeSkillPacketArr, makeDiceArrToMakePacket); //스킬 사용시 타입에 해당하는 장비 시전.
+                    
+                    ////
                     yield return new WaitForSeconds(0.2f);
 
                     bool boomChk = false;
                     chainChk = false;
                     for (int i = 0; i < curSkill.getTargetChance(); i++)
                     { // 해당 스킬이 공격하는 숫자
-                        int[] textHeight = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                        
                         makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
 
                         //스킬에 대한 공격용 Packet 생성
@@ -3046,6 +3191,8 @@ public class BattleManager : MonoBehaviour
 
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                        
+                        attackAddBySpeed(enemyCharacter[skillUseCharacter], takeSkillPacketArr);
 
                         int tempTargetIdx;
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
@@ -3104,7 +3251,7 @@ public class BattleManager : MonoBehaviour
                             skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                             yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
                         }
-
+                        initTextHeight();
                     }
                     //diceArrowAnimationControl(nextDice + 4, false);
                     for (int i = 0; i < 4; i++)
