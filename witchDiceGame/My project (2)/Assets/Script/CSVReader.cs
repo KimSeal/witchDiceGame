@@ -78,6 +78,7 @@ public class ItemReader
     public int type;
     public int rare;
     public string itemName;
+    public int chapterClear;
     
     public int val0, val1, val2, val3, val4, val5, val6, val7;
     public int activeTiming;

@@ -323,6 +323,17 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+
+    public int getCurChapter()
+    {
+        if (playerPlayData.chapter1Read[2] == 2) return 1;
+        if (playerPlayData.chapter2Read[2] == 2) return 2;
+        if (playerPlayData.chapter3Read[2] == 2) return 3;
+        if (playerPlayData.chapter4Read[2] == 2) return 4;
+        if (playerPlayData.chapter5Read[2] == 2) return 5;
+        if (playerPlayData.chapter6Read[2] == 2) return 6;
+        return 0;
+    }
     public int getChapterRead(int chapterIdx, int idx)
     {
         if (chapterIdx == 0) return playerPlayData.chapter1Read[idx];

@@ -40,10 +40,6 @@ public class Harfy : Character
         }
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1)
         {
-            Debug.Log("target, diceNum, and targetDiceNum");
-            Debug.Log(sendSkillPacket.targetIdx[0]);
-            Debug.Log(sendSkillPacket.diceNum[0]);
-            Debug.Log(BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]));
             //타겟이 있고, 주사위 숫자가 같으면 강한 공격!
             if (sendSkillPacket.targetIdx[0] != -999 && sendSkillPacket.diceNum[0] == BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]))
             {

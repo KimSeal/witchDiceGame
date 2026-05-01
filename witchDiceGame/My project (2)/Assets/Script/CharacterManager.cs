@@ -369,13 +369,14 @@ public class CharacterManager : MonoBehaviour
                     character = new NoHead(0, destinyList_monster[characterIdx]); break;
                 case 32:
                     character = new Bard(0, destinyList_monster[characterIdx]); break;
+                    character.changeEquip(0, 1);
+                    character.changeEquip(1, 3);
                 case 33:
                     character = new SoulShield(0, destinyList_monster[characterIdx]); break;
                 case 34:
                     character = new SoulFlag(0, destinyList_monster[characterIdx]); break;
             }
-            character.changeEquip(0, 1);
-            character.changeEquip(1, 3);
+            
         }
     }
 

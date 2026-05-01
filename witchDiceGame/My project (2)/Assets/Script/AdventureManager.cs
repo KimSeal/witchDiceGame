@@ -675,7 +675,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void makeStageEventArr(int stageNum) //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
     {
-
+        /*
         if (tutorialVal > 0)
         {
             adventureEventArr = new int[adventureEventList[stageNum].Count];
@@ -685,7 +685,7 @@ public class AdventureManager : MonoBehaviour
             }
             return;
         }
-
+        */
         // stage 순서를 랜덤으로 만든다.
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
@@ -776,7 +776,9 @@ public class AdventureManager : MonoBehaviour
         //지금은 시작 버튼 누르면 바로 시작
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
-            StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
+            StartCoroutine(phase_Manage_Coroutine(3));
+
+            //StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
         else
         {
@@ -1597,15 +1599,10 @@ public class AdventureManager : MonoBehaviour
                     storeEntityObj.SetActive(true);
                     for (int tempIdx=0;tempIdx<4;tempIdx++)
                     {
-                        storeItemArr[tempIdx, 0] = Random.Range(0,4);
-
-                        if (storeItemArr[tempIdx, 0] == 2) { // 장비인경우 일단 데모에서는 제거.
-                            storeItemArr[tempIdx, 0] = Random.Range(0, 3);
-                            if (storeItemArr[tempIdx, 0] == 2) storeItemArr[tempIdx, 0]++;
-                        }
-                        
-                        storeItemArr[tempIdx, 1] = Random.Range(1,itemManager.Instance.getItemListCount(storeItemArr[tempIdx, 0]));
-                        storeItemArr[tempIdx, 2] = itemManager.Instance.getItem(storeItemArr[tempIdx, 0], storeItemArr[tempIdx, 1]).getRare() * 10 + 5;
+                        Item itemTemp = itemManager.Instance.getRandomItemByChapter(-1, -1);
+                        storeItemArr[tempIdx, 0] = itemTemp.getType();
+                        storeItemArr[tempIdx, 1] = itemTemp.getIdx();
+                        storeItemArr[tempIdx, 2] = itemTemp.getRare() * 10 + 5;
                     }
                     updateStore();
                 }
@@ -1800,12 +1797,10 @@ public class AdventureManager : MonoBehaviour
                         resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         if (curDiceEventPacket.getItemExist() % 10 > i) //아이템 수 만큼만 지급.
                         {
-                            int j = Random.Range(0, 3);
-                            if (j == 2) j++; //데모버젼이니까 장비 아이템은 안나오도록
-                            int k = Random.Range(1, itemManager.Instance.getItemListCount(j));
+                            Item itemTemp = itemManager.Instance.getRandomItemByChapter(-1, -1);
 
-                            resultItemArr[i, 0] = j;
-                            resultItemArr[i, 1] = k;
+                            resultItemArr[i, 0] = itemTemp.getType();
+                            resultItemArr[i, 1] = itemTemp.getIdx();
                         }
                         else
                         {

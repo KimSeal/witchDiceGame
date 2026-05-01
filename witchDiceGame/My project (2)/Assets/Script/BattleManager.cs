@@ -327,9 +327,16 @@ public class BattleManager : MonoBehaviour
     }
     public int getDiceNum(int a)
     {
-        if (a < 4) return myDiceNum[a];
-        a -= 4;
-        return enemyDiceNum[a];
+        if (0 <= a && a < 4)
+        {
+            return myDiceNum[a];
+        }
+        else if (4 <= a && a < 8)
+        {
+            a -= 4;
+            return enemyDiceNum[a];
+        }
+        return 0;
     }
     public int getDiceTake(int a)
     {
@@ -3367,6 +3374,7 @@ public class BattleManager : MonoBehaviour
 
     private void makeRandomResult()
     {
+        /*
         int resultType0, resultType1, resultType2;
         int resultIdx0, resultIdx1, resultIdx2;
 
@@ -3403,6 +3411,12 @@ public class BattleManager : MonoBehaviour
         resultItemTypeObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType0]);
         resultItemTypeObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType1]);
         resultItemTypeObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType2]);
+        */
+        Item[] itemArr = itemManager.Instance.get3RandomItemByChapter();
+        resultItem[0] = itemArr[0]; resultItem[1] = itemArr[1]; resultItem[2] = itemArr[2];
+        resultItemTypeObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[0].getType()]);
+        resultItemTypeObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[1].getType()]);
+        resultItemTypeObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[2].getType()]);
 
     }
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
@@ -4005,7 +4019,6 @@ public class BattleManager : MonoBehaviour
 
     private void characterDamageMove(int idx, int damage)
     {
-        Debug.Log(idx.ToString() + ":::" + damage.ToString());
         if (damage < 0)
         {
             Debug.Log("Error Damage : " + damage.ToString());
@@ -4024,7 +4037,6 @@ public class BattleManager : MonoBehaviour
             enemyCharacterSwing[idx - 4] = temp;
         }
 
-        Debug.Log("shakeAmount");
         if(idx < 4) CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage));
         else CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage) * -1);
 
