@@ -71,7 +71,7 @@ public class Item
         this.durability = item.durability;
     }
     public int getDurability() { return durability; }
-    public void useDurability() { this.durability -= 1; }
+    public void useDurability() { this.durability -= 1; if (this.durability < 0) this.durability = 0; }
     public int getActiveTiming()
     {
         return activeTiming;
@@ -95,7 +95,7 @@ public class Item
     public string getContent()
     {
         string returnString = content[jsonDataManager.Instance.getLanguage()];
-        if (type == 2) returnString += "(+" + TalkManager.Instance.getDesc(141) + " "+ this.durability +")";
+        if (type == 2 && this.durability > 0) returnString += "(+" + TalkManager.Instance.getDesc(141) + " "+ this.durability +")";
         return returnString;
     }
     public int getVal(int idx)

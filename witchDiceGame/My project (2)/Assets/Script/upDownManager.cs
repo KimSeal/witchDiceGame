@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using AnimatedBattleText.Examples;
 public class upDownManager : MonoBehaviour
 {
     [SerializeField]
@@ -55,6 +55,9 @@ public class upDownManager : MonoBehaviour
     public GameObject bigDiceItemCharacterEntity;
     public GameObject[] bigDiceItemCharacterButton = new GameObject[4];
     public GameObject[] bigDiceItemCharacterOutline = new GameObject[4];
+    public GameObject[] bigDiceItemCharacterEffOrigin = new GameObject[4];
+    public GameObject[] bigDiceItemCharacterEff = new GameObject[4];
+
     public GameObject bigDiceItemCharacterInfo;
     public TextMeshProUGUI bigDiceItemCharacterHpText;
     public TextMeshProUGUI bigDiceItemCharacterArmorText;
@@ -65,10 +68,15 @@ public class upDownManager : MonoBehaviour
     public GameObject bigDiceItemCharacterDiceEntity;
     public GameObject[] bigDiceItemCharacterDiceButton = new GameObject[6];
     public GameObject[] bigDiceItemCharacterDiceOutline = new GameObject[6];
+    public GameObject[] bigDiceItemCharacterDiceEffOrigin = new GameObject[6];
+    public GameObject[] bigDiceItemCharacterDiceEff = new GameObject[6];
 
     public GameObject bigDiceItemCharacterEquipEntity;
     public GameObject[] bigDiceItemCharacterEquipButton = new GameObject[2];
     public GameObject[] bigDiceItemCharacterEquipOutline = new GameObject[2];
+    public GameObject[] bigDiceItemCharacterEquipEffOrigin = new GameObject[2];
+    public GameObject[] bigDiceItemCharacterEquipEff = new GameObject[2];
+    
 
     private int itemSelectDepth = 0;
 
@@ -144,6 +152,8 @@ public class upDownManager : MonoBehaviour
 
     private static upDownManager instance = null;
 
+    [SerializeField]
+    public GameObject exampleTextManager;
 
     private void Awake()
     {
@@ -206,7 +216,8 @@ public class upDownManager : MonoBehaviour
 
     void Update()
     {
-        if (!initSet) {
+        if (!initSet)
+        {
             initSet = true;
             hoverOutUnderTitleButton();
         }
@@ -214,12 +225,27 @@ public class upDownManager : MonoBehaviour
         {
             upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
         }
-        for (int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
             bigDicePowerButtonEff[i].GetComponent<Image>().sprite =
                bigDicePowerButtonEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
         }
-
+        for (int i = 0; i < 4; i++)
+        {
+            bigDiceItemCharacterEff[i].GetComponent<Image>().sprite =
+               bigDiceItemCharacterEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+        }
+        for (int i = 0; i < 6; i++)
+        {
+            bigDiceItemCharacterDiceEff[i].GetComponent<Image>().sprite =
+               bigDiceItemCharacterDiceEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+        }
+       
+        for (int i = 0; i < 2; i++)
+        {
+            bigDiceItemCharacterEquipEff[i].GetComponent<Image>().sprite =
+                   bigDiceItemCharacterEquipEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+        }
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -243,6 +269,28 @@ public class upDownManager : MonoBehaviour
             
     }
 
+    public void makeItemCharacterEff(int characterIdx, int opt, int val, int height)
+    {
+        if (opt > 0)
+        {
+            bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("2");//("Active");
+            bigDiceItemCharacterEff[characterIdx].GetComponent<Image>().sprite =
+                  bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<SpriteRenderer>().sprite;
+            exampleTextManager.GetComponent<ExampleTextManager>().printConSumeItemUpgrade(characterIdx, opt, val, height);
+        }
+    }
+    public void makeItemCharacterDiceEff(int diceIdx)
+    {
+        bigDiceItemCharacterDiceEffOrigin[diceIdx].GetComponent<Animator>().Play("Active");
+        bigDiceItemCharacterDiceEff[diceIdx].GetComponent<Image>().sprite =
+              bigDiceItemCharacterDiceEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
+    }
+    public void makeItemCharacterEquipEff(int equipIdx)
+    {
+        bigDiceItemCharacterEquipEffOrigin[equipIdx].GetComponent<Animator>().Play("Active");
+        bigDiceItemCharacterEquipEff[equipIdx].GetComponent<Image>().sprite =
+              bigDiceItemCharacterEquipEffOrigin[equipIdx].GetComponent<SpriteRenderer>().sprite;
+    }
     public void clickExitButton()
     {
         if (AdventureManager.Instance.getAdventureStartChk())

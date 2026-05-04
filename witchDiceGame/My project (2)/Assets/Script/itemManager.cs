@@ -661,20 +661,33 @@ public class itemManager : MonoBehaviour
         //단일
         if (useItemIdx == 0 || useItemIdx == 1 || useItemIdx == 2 || useItemIdx == 5 || useItemIdx == 6 || useItemIdx == 13 || useItemIdx == 14){
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
+            upDownManager.Instance.makeItemCharacterEff(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
         }
         if (useItemIdx == 3 || useItemIdx == 4 || useItemIdx == 7 || useItemIdx == 8) // 2개의 stat에 대하여 업그레이드
         {
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
+            upDownManager.Instance.makeItemCharacterEff(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
+            upDownManager.Instance.makeItemCharacterEff(characterIdx, 0, ItemArr[0, itemIdx].getVal(3), 1);
         }
-        if (useItemIdx == 9 || useItemIdx == 10 || useItemIdx == 15) { //모든 캐릭터에 대하여 1개 stat 업그레이드
-            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0) CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
+        if (useItemIdx == 9 || useItemIdx == 10 || useItemIdx == 15)
+        { //모든 캐릭터에 대하여 1개 stat 업그레이드
+            for (int i = 0; i < 4; i++)
+            {
+                if (CharacterManager.Instance.getCharacterState(i) == 0)
+                {
+                    CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
+                    upDownManager.Instance.makeItemCharacterEff(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
+                }
+            }
         }
         if (useItemIdx == 11 || useItemIdx == 12){ //모든 캐릭터에 대하여 1개 stat 업그레이드
             for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0){
                     CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
                     CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
-            }
+                    upDownManager.Instance.makeItemCharacterEff(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
+                    upDownManager.Instance.makeItemCharacterEff(i, 0, ItemArr[0, itemIdx].getVal(3), 1);
+                }
         }
     }
 
@@ -717,36 +730,68 @@ public class itemManager : MonoBehaviour
             if (itemIdx == 1)
             { //랜덤한 숫자로 변경 
                 changeDice(characterIdx, idx, Random.Range(1, 7));
+                upDownManager.Instance.makeItemCharacterDiceEff(idx);
             }
             else if (itemIdx >= 2 && itemIdx <= 7) //해당 숫자로 변경
             {
                 changeDice(characterIdx, idx, ItemArr[1, itemBagIdx].getVal(0));
+                upDownManager.Instance.makeItemCharacterDiceEff(idx);
             }
             else if (itemIdx == 8)
             { //현재 선택한 캐릭터에 대해 보통 주사위로 변경
                 AdventureManager.Instance.setUseFairDice(true);
-                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, i + 1);
+                for (int i = 0; i < 6; i++)
+                {
+                    upDownManager.Instance.makeItemCharacterDiceEff(i);
+                    changeDice(characterIdx, i, i + 1);
+                }
             }
             else if (itemIdx == 9)
             {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
-                for (int chIdx = 0; chIdx < 4; chIdx++) for (int i = 0; i < 6; i++) changeDice(chIdx, i, i + 1);
+                for (int chIdx = 0; chIdx < 4; chIdx++)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        changeDice(chIdx, i, i + 1);
+                        upDownManager.Instance.makeItemCharacterDiceEff(i);
+                    }
+                }
             }
             else if (itemIdx == 10)
             {
-                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, Random.Range(1, 7));
+                for (int i = 0; i < 6; i++)
+                {
+                    changeDice(characterIdx, i, Random.Range(1, 7));
+                    upDownManager.Instance.makeItemCharacterDiceEff(i);
+                }
             }
             else if (itemIdx == 11)
             { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
-                for (int chIdx = 0; chIdx < 4; chIdx++) for (int i = 0; i < 6; i++) changeDice(chIdx, i, Random.Range(1, 7));
+                for (int chIdx = 0; chIdx < 4; chIdx++)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        changeDice(chIdx, i, Random.Range(1, 7));
+                        upDownManager.Instance.makeItemCharacterDiceEff(i);
+                    }
+                }
             }
             else if (itemIdx == 12)
             {
                 int tempRandom = Random.Range(1, 7);
-                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, tempRandom);
+                for (int i = 0; i < 6; i++)
+                {
+                    changeDice(characterIdx, i, tempRandom);
+                    upDownManager.Instance.makeItemCharacterDiceEff(i);
+                }
             }
             else if (itemIdx >= 13 && itemIdx <= 18)
             {
-                for (int i = 0; i < 6; i++) changeDice(characterIdx, i, itemIdx - 12);
+                for (int i = 0; i < 6; i++)
+                {
+                    changeDice(characterIdx, i, itemIdx - 12);
+                    upDownManager.Instance.makeItemCharacterDiceEff(i);
+                }
             }
             else if (itemIdx == 19)
             {
@@ -755,6 +800,7 @@ public class itemManager : MonoBehaviour
                     if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
                         changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) + 1);
+                        upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
                 }
                 else
@@ -762,6 +808,7 @@ public class itemManager : MonoBehaviour
                     if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
                         changeDice(characterIdx, idx, BattleManager.Instance.getCharacter(characterIdx).getDice(idx) + 1);
+                        upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
                 }
             }
@@ -772,6 +819,7 @@ public class itemManager : MonoBehaviour
                     if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
                         changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) - 1);
+                        upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
                 }
                 else
@@ -779,18 +827,20 @@ public class itemManager : MonoBehaviour
                     if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
                         changeDice(characterIdx, idx, BattleManager.Instance.getCharacter(characterIdx).getDice(idx) - 1);
+                        upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
                 }
             }
             else if (itemIdx == 21)
             {
-                for (int i=0;i<6;i++)
+                for (int i = 0; i < 6; i++)
                 {
                     if (!AdventureManager.Instance.getBattleEventChk())
                     {
                         if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
                             changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) + 1);
+                            upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
                     }
                     else
@@ -798,6 +848,7 @@ public class itemManager : MonoBehaviour
                         if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
                             changeDice(characterIdx, i, BattleManager.Instance.getCharacter(characterIdx).getDice(i) + 1);
+                            upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
                     }
                 }
@@ -811,6 +862,7 @@ public class itemManager : MonoBehaviour
                         if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
                             changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) - 1);
+                            upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
                     }
                     else
@@ -818,6 +870,7 @@ public class itemManager : MonoBehaviour
                         if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
                             changeDice(characterIdx, i, BattleManager.Instance.getCharacter(characterIdx).getDice(i) - 1);
+                            upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
                     }
                 }
@@ -834,7 +887,7 @@ public class itemManager : MonoBehaviour
         if (itemBagIdx != -1&& idx != -1 && ItemArr[2, itemBagIdx] != null && ItemExistArr[2, itemBagIdx]) 
         {
             CharacterManager.Instance.changeEquip(characterIdx, idx, ItemArr[2, itemBagIdx].getIdx());
-
+            upDownManager.Instance.makeItemCharacterEquipEff(idx);
             //equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, itemBagIdx].getItemName().ToString());
             //equipBoardObj[idx * 3 + 1].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getItemName();
             //equipBoardObj[idx * 3 + 2].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getContent();
