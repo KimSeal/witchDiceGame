@@ -73,8 +73,10 @@ public class KillAnimationManager : MonoBehaviour
         Vector3 deadEndPoint = new Vector3(82f, -69f, 0f);
         if(deadCharacter.getShadow() == 2) deadEndPoint = new Vector3(82f, -105f, 0f);
         int stateTemp = 0;
-        int changePoint = 66;
-        for (int i = 0; i < 100; i++)
+        int changePoint = 30;
+        float maxPoint = 50;
+        WaitForSeconds delayTemp = new WaitForSeconds(0.01f);
+        for (int i = 0; i < maxPoint; i++)
         {
             if (i == changePoint - 10) {
                 SoundManager_Sfx.Instance.playSound(19);
@@ -88,16 +90,16 @@ public class KillAnimationManager : MonoBehaviour
             if (stateTemp == 0)
             {
                 if(i % 20 == 0) SoundManager_Sfx.Instance.playSound(17);
-                attackCharacterBackObj.transform.position = Vector3.Lerp(attackInitPoint, attackEndPoint, i / 100.0f) + new Vector3(Random.Range(-4f + i / 20f, 4f + i / 20f), Random.Range(-2f + i / 20f, 2f + i / 20f), 0f);
+                attackCharacterBackObj.transform.position = Vector3.Lerp(attackInitPoint, attackEndPoint, i / maxPoint) + new Vector3(Random.Range(-4f + i / 20f, 4f + i / 20f), Random.Range(-2f + i / 20f, 2f + i / 20f), 0f);
             }
             else if (stateTemp == 1)
             {
-                attackCharacterBackObj.transform.position = Vector3.Lerp(attackInitPoint, attackEndPoint, (i - changePoint) / (100.0f - changePoint)) + new Vector3(Random.Range(-2f + i / 20f, 2f + i / 20f), Random.Range(-2f + i / 20f, 2f + i / 20f), 0f);
+                attackCharacterBackObj.transform.position = Vector3.Lerp(attackInitPoint, attackEndPoint, (i - changePoint) / (maxPoint - changePoint)) + new Vector3(Random.Range(-2f + i / 20f, 2f + i / 20f), Random.Range(-2f + i / 20f, 2f + i / 20f), 0f);
             }
-            deadCharacterObj.transform.position = Vector3.Lerp(deadInitPoint, deadEndPoint, i / 100.0f) + new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), 0f);
-            attackCharacterBackObj.transform.localScale = new Vector3(1f + (i / 100f), 1f + (i / 100f), 0f);
-            deadCharacterObj.transform.localScale = new Vector3(1 + (i / 100f) * (i / 100f), 1 + (i / 100f) * (i / 100f), 0f);
-            yield return new WaitForSeconds(0.005f);
+            deadCharacterObj.transform.position = Vector3.Lerp(deadInitPoint, deadEndPoint, i / maxPoint) + new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), 0f);
+            attackCharacterBackObj.transform.localScale = new Vector3(1f + (i / maxPoint), 1f + (i / maxPoint), 0f);
+            deadCharacterObj.transform.localScale = new Vector3(1 + (i / maxPoint) * (i / maxPoint), 1 + (i / maxPoint) * (i / maxPoint), 0f);
+            yield return delayTemp;
         }
         background.SetActive(false);
         killAnimationPlay = false;

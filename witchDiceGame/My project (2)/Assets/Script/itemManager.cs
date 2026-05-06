@@ -659,18 +659,18 @@ public class itemManager : MonoBehaviour
         Item useItem = ItemArr[0, itemIdx];
         int useItemIdx = useItem.getIdx();
         //단일
-        if (useItemIdx == 0 || useItemIdx == 1 || useItemIdx == 2 || useItemIdx == 5 || useItemIdx == 6 || useItemIdx == 13 || useItemIdx == 14){
+        if (useItem.getActiveTiming() == 1){
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
             upDownManager.Instance.makeItemCharacterEff(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
         }
-        if (useItemIdx == 3 || useItemIdx == 4 || useItemIdx == 7 || useItemIdx == 8) // 2개의 stat에 대하여 업그레이드
-        {
+        if (useItem.getActiveTiming() == 2)
+        {// 2개의 stat에 대하여 업그레이드
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
             upDownManager.Instance.makeItemCharacterEff(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
             upDownManager.Instance.makeItemCharacterEff(characterIdx, 0, ItemArr[0, itemIdx].getVal(3), 1);
         }
-        if (useItemIdx == 9 || useItemIdx == 10 || useItemIdx == 15)
+        if (useItem.getActiveTiming() == 41)
         { //모든 캐릭터에 대하여 1개 stat 업그레이드
             for (int i = 0; i < 4; i++)
             {
@@ -681,13 +681,18 @@ public class itemManager : MonoBehaviour
                 }
             }
         }
-        if (useItemIdx == 11 || useItemIdx == 12){ //모든 캐릭터에 대하여 1개 stat 업그레이드
-            for (int i = 0; i < 4; i++) if (CharacterManager.Instance.getCharacterState(i) == 0){
+        if (useItem.getActiveTiming() == 42)
+        { //모든 캐릭터에 대하여 2개 stat 업그레이드
+            for (int i = 0; i < 4; i++)
+            {
+                if (CharacterManager.Instance.getCharacterState(i) == 0)
+                {
                     CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
                     CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
                     upDownManager.Instance.makeItemCharacterEff(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
                     upDownManager.Instance.makeItemCharacterEff(i, 0, ItemArr[0, itemIdx].getVal(3), 1);
                 }
+            }
         }
     }
 
@@ -1039,13 +1044,16 @@ public class itemManager : MonoBehaviour
             }
         }
 
+        ItemExistArr[1, 3] = true;
+        ItemArr[1, 3] = new Item(itemList[1][18]);
+        //test Sample
 
+        /*
         for (int i = 0; i < 10; i++)
         {
             ItemExistArr[1, i] = true;
             ItemArr[1, i] = new Item(itemList[1][i+13]);
         }
-        //test Sample
         
         for (int i = 0; i < 10; i++)
         {
@@ -1085,7 +1093,7 @@ public class itemManager : MonoBehaviour
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
         
-        
+        */
         updateInventory();
     }
 

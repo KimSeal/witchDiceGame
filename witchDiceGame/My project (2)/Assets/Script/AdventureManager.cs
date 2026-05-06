@@ -776,9 +776,9 @@ public class AdventureManager : MonoBehaviour
         //지금은 시작 버튼 누르면 바로 시작
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
-            StartCoroutine(phase_Manage_Coroutine(3));
+            //StartCoroutine(phase_Manage_Coroutine(3));
 
-            //StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
+            StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
         else
         {
@@ -1957,6 +1957,7 @@ public class AdventureManager : MonoBehaviour
                     stageDepth = 1;
                     //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
+                if(demoEndChk == 2) { stageDepth = 1; stageDepthMax = 1; }
                 if(demoEndChk == 3)
                 {
                     stageDepth = 2;
