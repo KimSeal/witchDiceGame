@@ -151,6 +151,7 @@ public class TownManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(0);
             CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, CameraManager.Instance.cameraPointZ()));
             curTownIdx = 7;
+            for (int cloudIdx = 0; cloudIdx < cloudObj.Length; cloudIdx++) cloudObj[cloudIdx].GetComponent<cloudMove>().cloudActive();
         }
 
         if (townSound[curTownIdx] != townSound[curTownTemp2]) {
@@ -182,6 +183,7 @@ public class TownManager : MonoBehaviour
         setTownActive(true);
         clickTownUI(7);
 
+        
     }
     public void backToMain()
     {

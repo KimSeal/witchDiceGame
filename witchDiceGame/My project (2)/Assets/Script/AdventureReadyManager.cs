@@ -180,6 +180,11 @@ public class AdventureReadyManager : MonoBehaviour
         enterCharacterMove[0] = 200;
         enterCharacterMove[1] = 200;
         //TownManager.Instance.backToTownUI();
+        enterCharacterObj[0].transform.position = new Vector3(-1032f, -514f, 0f);
+        enterCharacterObj[1].transform.position = new Vector3(-1032f, -514f, 0f);
+
+        //enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        //enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
 
     public void hoverInCurPower(int i)
