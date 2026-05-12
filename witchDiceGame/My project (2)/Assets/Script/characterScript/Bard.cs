@@ -471,3 +471,163 @@ public class SoulFlag : Character
         return packets;
     }
 }
+
+public class Enzi : Character
+{
+    public Enzi(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+
+        if (sendSkillPacket.useSkillIdx == 0)
+        { //고블린의 첫번째 스킬이 호출된 경우
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 6));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * this.getPhyAtk() + this.getPhyAtk(), 0));
+        }
+        else if (sendSkillPacket.useSkillIdx == 1)
+        {//고블린의 두번째 스킬이 호출된 경우
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 2, 0, 6));
+        }
+        return packets;
+    }
+}
+public class Nubi : Character
+{
+    public Nubi(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+
+        if (sendSkillPacket.useSkillIdx == 0)
+        { //고블린의 첫번째 스킬이 호출된 경우
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], AdventureManager.Instance.getDeadEnemyCount() + this.getPhyAtk(), 0));
+        }
+        else if (sendSkillPacket.useSkillIdx == 1)
+        {//고블린의 두번째 스킬이 호출된 경우
+            for (int i=4;i<8;i++)
+            {
+                packets.Add(new TakeSkillPacket(i, 6 + this.getPhyAtk(), 0));
+            }
+            if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
+            {
+                for (int i = 4; i < 8; i++)
+                {
+                    if (BattleManager.Instance.getCharacter(i) == null ||
+                        BattleManager.Instance.getCharacter(i).getCurState() != 0)
+                    {
+                        BattleManager.Instance.setEnemyCharacter(i-4, 10034);
+                        break;
+                    }
+                }
+            }
+        }
+        return packets;
+    }
+}
+
+public class Munk : Character
+{
+    public Munk(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+
+        if (sendSkillPacket.useSkillIdx == 0)
+        { //고블린의 첫번째 스킬이 호출된 경우
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1, 0, 6));
+
+        }
+        else if (sendSkillPacket.useSkillIdx == 1)
+        {//고블린의 두번째 스킬이 호출된 경우
+            for (int i=0;i<=this.getArmor(); i++) {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1 + this.getPhyAtk(), 0));
+            } 
+        }
+        return packets;
+    }
+}
+
+public class Pimpi : Character
+{
+    public Pimpi(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+
+        if (sendSkillPacket.useSkillIdx == 0)
+        { //고블린의 첫번째 스킬이 호출된 경우
+            int itemNum = itemManager.Instance.getItemNum(0) + 
+                itemManager.Instance.getItemNum(1) +
+                itemManager.Instance.getItemNum(2) +
+                itemManager.Instance.getItemNum(3);
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0],itemNum + this.getPhyAtk(), 0));
+        }
+        else if (sendSkillPacket.useSkillIdx == 1)
+        {//고블린의 두번째 스킬이 호출된 경우
+            for (int i = 0; i <= 4; i++){
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], itemManager.Instance.getItemNum(i) + this.getPhyAtk(), 0));
+            }
+        }
+        return packets;
+    }
+}

@@ -144,6 +144,17 @@ public class AdventureManager : MonoBehaviour
     public int magMaxVal = 30;
     public int spdMaxVal = 30;
     public int armorMaxVal = 3;
+
+    public int deadEnemyCount = 0;
+    public void addDeadEnemyCount()
+    {
+        deadEnemyCount += 1;
+    }
+    public int getDeadEnemyCount()
+    {
+        return deadEnemyCount;
+    }
+
     public int getAtkMaxVal() { return atkMaxVal; }
     public int getMagMaxVal() { return magMaxVal; }
     public int getSpdMaxVal() { return spdMaxVal; }
@@ -154,6 +165,7 @@ public class AdventureManager : MonoBehaviour
         magMaxVal = 30;
         spdMaxVal = 30;
         armorMaxVal = 3;
+        deadEnemyCount = 0;
     }
     public void addMaxVal(int opt, int val) // 0 : 공격력 최대 1 : 감응력 2 : 스피드 3: 방어도
     {

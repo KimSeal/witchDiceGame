@@ -292,6 +292,14 @@ public class CharacterManager : MonoBehaviour
                     character = new Neaco(0, destinyList[characterIdx]); break;
                 case 13:
                     character = new Druid(0, destinyList[characterIdx]); break;
+                case 14:
+                    character = new Pimpi(0, destinyList[characterIdx]); break;
+                case 15:
+                    character = new Nubi(0, destinyList[characterIdx]); break;
+                case 16:
+                    character = new Munk(0, destinyList[characterIdx]); break;
+                case 17:
+                    character = new Enzi(0, destinyList[characterIdx]); break;
             }
             if (!jsonDataManager.Instance.getPlayerCharacterAble(characterIdx)) {
                 jsonDataManager.Instance.setPlayerCharacterAble(characterIdx);

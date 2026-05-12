@@ -145,6 +145,16 @@ public class itemManager : MonoBehaviour
             characterOrigin.GetComponent<SpriteRenderer>().sprite.bounds.size.x,
            characterOrigin.GetComponent<SpriteRenderer>().sprite.bounds.size.y);
     }
+
+    public int getItemNum(int itemType)
+    {
+        int result = 0;
+        for (int i=0;i<11;i++)
+        {
+            if (ItemExistArr[itemType, i]) result++;
+        }
+        return result;
+    }
     public Item getCurItem(int idx)
     {
         return ItemArr[curSelectItemType, idx];

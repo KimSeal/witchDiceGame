@@ -2327,13 +2327,18 @@ public class BattleManager : MonoBehaviour
             {
                 myCharacterObjUIAnim[characterIdx].Play("Hit");
             }
-            else if (option == 2) myCharacterObjUIAnim[characterIdx].Play("Dead");
+            else if (option == 2)
+            {
+                myCharacterObjUIAnim[characterIdx].Play("Dead");
+            }
         }
         else
         {
             characterIdx -= 4;
             if (option == 1) enemyCharacterObjUIAnim[characterIdx].Play("Hit");
-            else if (option == 2) enemyCharacterObjUIAnim[characterIdx].Play("Dead");
+            else if (option == 2) { 
+                enemyCharacterObjUIAnim[characterIdx].Play("Dead");
+            } 
         }
     }
 
@@ -2454,6 +2459,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            AdventureManager.Instance.addDeadEnemyCount();
             idx -= 4;
             int[] beforeDiceTake = { 0, 0, 0, 0 };
             for (int i = 0; i < 4; i++) beforeDiceTake[i] = enemyDiceTake[i]; // chain 애니메이션 발동을 위해 이전 상태 저장.
