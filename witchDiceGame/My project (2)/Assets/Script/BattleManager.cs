@@ -133,7 +133,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject[] resultObjInit = new GameObject[12]; //obj_resultUI _board, _itemLogo, _itemName, _itemDesc + (number)
     private GameObject[,] resultObj = new GameObject[3, 4];
     private Item[] resultItem = new Item[3];
-
+    private int[] resultPower = new int[3];
+    private int[] resultPowerNameArr = { 143,145,147,149,151};
+    private int[] resultPowerDescArr = { 144,146,148,150,152};
     //phase버튼 누를수 있는지
     //private bool clickAble = true;
     public int curPhase = -1;
@@ -349,14 +351,22 @@ public class BattleManager : MonoBehaviour
         return myCharacter[skillIdx / 10].skillUse(skillIdx % 10).getSkillName();
     }
 
-
+    int bossResult = 0;
     int bossPhase = 0;
     public void changeBossPhase(int a)
     {
-
-        if (a == 100) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
-        else if (a == 101) bossPhase = a; // 부엉이 보스인 경우.(2페이즈)
-        else if (a == 102) bossPhase = a; //bard boss
+        bossResult = 1;
+        if (a == 100)
+        {
+            bossPhase = a; // 부엉이 보스
+            bossResult = 1;
+        }
+        else if (a == 101) bossPhase = a; // 튜토리얼 보스
+        else if (a == 102)
+        {
+            bossPhase = a; //bard boss
+            bossResult = 1;
+        }
         else bossPhase = 0;
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
@@ -2711,6 +2721,9 @@ public class BattleManager : MonoBehaviour
         if (val == 0) return false;
         else
         {
+            Debug.Log("target Test");
+            Debug.Log(myTeam);
+            Debug.Log(idx);
             if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }    //damage
             if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; } //heal
             if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, val, height); return true; } //atk
@@ -3380,44 +3393,23 @@ public class BattleManager : MonoBehaviour
 
     private void makeRandomResult()
     {
-        /*
-        int resultType0, resultType1, resultType2;
-        int resultIdx0, resultIdx1, resultIdx2;
-
-        resultType0 = Random.Range(0, 3);
-        if (resultType0 == 2) resultType0++;
-        resultIdx0 = Random.Range(1, itemManager.Instance.getItemListCount(resultType0));
-        resultItem[0] = itemManager.Instance.getItem(resultType0, resultIdx0);
-
-        resultType1 = Random.Range(0, 3);
-        if (resultType1 == 2) resultType1++;
-        resultIdx1 = Random.Range(1, itemManager.Instance.getItemListCount(resultType1));
-        if (resultType0 == resultType1 && resultIdx0 == resultIdx1)
+        if (bossResult == 1)
         {
-            resultIdx1 += 1;
-            if (itemManager.Instance.getItemListCount(resultType1) == resultIdx1) resultIdx1 = 1;
-        }
-        resultItem[1] = itemManager.Instance.getItem(resultType1, resultIdx1);
-
-        resultType2 = Random.Range(0, 3);
-        if (resultType2 == 2) resultType2++;
-        resultIdx2 = Random.Range(1, itemManager.Instance.getItemListCount(resultType2));
-        if ((resultType2 == resultType0 && resultIdx2 == resultIdx0) || (resultType2 == resultType1 && resultIdx2 == resultIdx1))
-        {
-            resultIdx2 += 1;
-            if (itemManager.Instance.getItemListCount(resultType2) == resultIdx2) resultIdx2 = 1;
-            if ((resultType2 == resultType0 && resultIdx2 == resultIdx0) || (resultType2 == resultType1 && resultIdx2 == resultIdx1))
-            {
-                resultIdx2 += 1;
-                if (itemManager.Instance.getItemListCount(resultType2) == resultIdx2) resultIdx2 = 1;
+            
+            for (int i = 0; i < 3; i++) {
+                resultPower[i] = 9999;
+                resultItemTypeObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
             }
-        }
-        resultItem[2] = itemManager.Instance.getItem(resultType2, resultIdx2);
+            int resultPowerLen = resultPowerNameArr.Length;
+            resultPower[0] = Random.Range(0,resultPowerLen);
+            resultPower[1] = Random.Range(0, resultPowerLen - 1);
+            if (resultPower[1] >= resultPower[0]) resultPower[1] += 1;
+            resultPower[2] = Random.Range(0, resultPowerLen - 2);
+            if (resultPower[2] >= resultPower[0]) resultPower[2] += 1;
+            if (resultPower[2] >= resultPower[1]) resultPower[2] += 1;
 
-        resultItemTypeObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType0]);
-        resultItemTypeObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType1]);
-        resultItemTypeObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultType2]);
-        */
+            return;
+        }
         Item[] itemArr = itemManager.Instance.get3RandomItemByChapter();
         resultItem[0] = itemArr[0]; resultItem[1] = itemArr[1]; resultItem[2] = itemArr[2];
         resultItemTypeObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[0].getType()]);
@@ -3427,20 +3419,43 @@ public class BattleManager : MonoBehaviour
     }
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     int[] typeArr2 = { 78, 79, 80, 81, 82 };
+    private string getAddPowerResultText(int idx)
+    {
+        if (idx == 0) return AdventureManager.Instance.getAtkMaxVal().ToString() + ")";
+        if (idx == 1) return AdventureManager.Instance.getMagMaxVal().ToString() + ")";
+        if (idx == 2) return AdventureManager.Instance.getSpdMaxVal().ToString() + ")";
+        if (idx == 3) return AdventureManager.Instance.getArmorMaxVal().ToString() + ")";
+        if (idx == 4) return itemManager.Instance.getItemMaxNum().ToString() + ")";
+        return "0)";
+    }
     private void printRandomResult(int i, bool pointOn)
     {
         resultEff[i].transform.position = new Vector3(100f * i - 100f, 0f, 0f);
         resultItemTypeObj[i].transform.position = new Vector3(100f * i - 100, 300f, 0f);
         resultEff[i].GetComponent<Animator>().Play("Eff");
-        //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
-        //else
+        if (bossResult == 1)
         {
-            resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/140/spr_selectUI_board_" + resultItem[i].getRare() + "_140");
+            for (int j = 0; j < 3; j++)
+            {
+                resultObj[j, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/140/spr_selectUI_board_" + "4" + "_140");
+                resultObj[j, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
+                resultObj[j, 2].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(resultPowerNameArr[resultPower[j]]);
+                resultObj[j, 3].GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(resultPowerDescArr[resultPower[j]]) + getAddPowerResultText(resultPower[j]);
+            }
+            return;
         }
+        else
+        {
+            //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
+            //else
+            {
+                resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/140/spr_selectUI_board_" + resultItem[i].getRare() + "_140");
+            }
 
-        resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
-        resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
-        resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- "+ TalkManager.Instance.getDesc(typeArr2[resultItem[i].getType()]) + " -</size>" + "\n\n" + resultItem[i].getContent();
+            resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
+            resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
+            resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[resultItem[i].getType()]) + " -</size>" + "\n\n" + resultItem[i].getContent();
+        }
     }
     public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1f); }
     // printRandomResult(i, true);}
@@ -3665,6 +3680,50 @@ public class BattleManager : MonoBehaviour
             }
             return;
         }
+
+        if (bossResult == 1)//boss 보상일 경우
+        {
+            if (resultPower[i] ==0) {
+                if (AdventureManager.Instance.getAtkMaxVal() < 99){
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 10); bosang_click = false;
+                }
+                else { fullUI.showFull(140); }
+            }
+            else if (resultPower[i] == 1){
+                if (AdventureManager.Instance.getMagMaxVal() < 99){
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 10); bosang_click = false;
+                }
+                else { fullUI.showFull(140); }
+            }
+            else if (resultPower[i] == 2)
+            {
+                if (AdventureManager.Instance.getSpdMaxVal() < 99){
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 10); bosang_click = false;
+                }
+                else { fullUI.showFull(140); }
+            }
+            else if (resultPower[i] == 3){
+                if (AdventureManager.Instance.getArmorMaxVal() < 9)
+                {
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 1); bosang_click = false;
+                }
+                else { fullUI.showFull(140); }
+            }
+            else if (resultPower[i] == 4)
+            {
+                if (itemManager.Instance.getItemMaxNum() < 11){ //bag expand
+                    itemManager.Instance.setItemMaxNum(itemManager.Instance.getItemMaxNum() + 1);
+                    bosang_click = false;
+                }
+                else {
+                    fullUI.showFull(19);
+                }
+            }
+
+            if(bosang_click == false) resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
+            return;
+        }
+
         int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
         if (result == 0)
         {

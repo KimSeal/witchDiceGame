@@ -534,10 +534,8 @@ public class Nubi : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-            for (int i=4;i<8;i++)
-            {
-                packets.Add(new TakeSkillPacket(i, 6 + this.getPhyAtk(), 0));
-            }
+            int emptySpace = -999;
+            
             if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
             {
                 for (int i = 4; i < 8; i++)
@@ -545,12 +543,43 @@ public class Nubi : Character
                     if (BattleManager.Instance.getCharacter(i) == null ||
                         BattleManager.Instance.getCharacter(i).getCurState() != 0)
                     {
-                        BattleManager.Instance.setEnemyCharacter(i-4, 10034);
+                        emptySpace = i-4;
                         break;
                     }
                 }
             }
+            for (int i = 4; i < 8; i++){
+                if(emptySpace+4 != i) packets.Add(new TakeSkillPacket(i, 6 + this.getPhyAtk(), 0));
+            }
+            if(emptySpace>=0) BattleManager.Instance.setEnemyCharacter(emptySpace, 10036);
         }
+        return packets;
+    }
+}
+
+public class DeadGuy : Character
+{
+    public DeadGuy(int curState, Destiny destiny) : base(curState, destiny)
+    {
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
+    {
+        List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
+
+        packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, this.hp, 0));
         return packets;
     }
 }

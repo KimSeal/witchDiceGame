@@ -166,13 +166,27 @@ public class AdventureManager : MonoBehaviour
         spdMaxVal = 30;
         armorMaxVal = 3;
         deadEnemyCount = 0;
+        itemManager.Instance.setItemMaxNum(6);
     }
     public void addMaxVal(int opt, int val) // 0 : 공격력 최대 1 : 감응력 2 : 스피드 3: 방어도
     {
-        if (opt == 0) atkMaxVal += val;
-        if (opt == 1) magMaxVal += val;
-        if (opt == 2) spdMaxVal += val;
+        if (opt == 0){
+            atkMaxVal += val;
+            if (atkMaxVal >= 100) atkMaxVal = 99;
+        }
+        if (opt == 1)
+        {
+            magMaxVal += val;
+            if (magMaxVal >= 100) magMaxVal = 99;
+        }
+        if (opt == 2)
+        {
+            spdMaxVal += val;
+            if (spdMaxVal >= 100) spdMaxVal = 99;
+        }
         if (opt == 3) armorMaxVal += val;
+        
+
     }
 
 
@@ -771,7 +785,6 @@ public class AdventureManager : MonoBehaviour
         adventureJewel = 5;
         addMoney(1, 0);
         initMaxVal();
-
         stageDepthMax = 1;
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
             stageDepthMax = 2;
@@ -1176,7 +1189,10 @@ public class AdventureManager : MonoBehaviour
         }
         else
         {
-            balpanObj[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventTemp.getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
+            if(adventureEventTemp.getEventType() < 100) balpanObj[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_" + adventureEventTemp.getEventType().ToString());//이벤트에 관련된 발판으로 이미지 변경
+            else if (adventureEventTemp.getEventType() >= 100) {
+                balpanObj[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/balpan/newBalpan/spr_balpanNew_100");//이벤트에 관련된 발판으로 이미지 변경
+            }
             balpanNewMark[balpanIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
     }

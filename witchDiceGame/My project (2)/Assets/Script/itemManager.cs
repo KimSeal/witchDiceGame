@@ -134,6 +134,8 @@ public class itemManager : MonoBehaviour
 
     private int[,] itemArrLengthByChapter = new int[5,10];
 
+    private int itemMaxNum = 6;
+
     //string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" };
     [SerializeField]
     public GameObject changeDiceEff;
@@ -144,6 +146,26 @@ public class itemManager : MonoBehaviour
         characterSprite.GetComponent<RectTransform>().sizeDelta = new Vector2(
             characterOrigin.GetComponent<SpriteRenderer>().sprite.bounds.size.x,
            characterOrigin.GetComponent<SpriteRenderer>().sprite.bounds.size.y);
+    }
+
+    public int getItemMaxNum()
+    {
+        return itemMaxNum;
+    }
+    public void setItemMaxNum(int number)
+    {
+        if (itemMaxNum > number) {
+            for (int i = itemMaxNum - 1; i >= number; i--) {
+                upDownManager.Instance.activePassiveItem(i);
+            }
+        }
+        if (itemMaxNum < number) {
+            for (int i=itemMaxNum; i<number; i++) {
+                upDownManager.Instance.activePassiveItem(i);
+            } 
+        }
+        itemMaxNum = number;
+        updateInventory();
     }
 
     public int getItemNum(int itemType)
@@ -220,7 +242,7 @@ public class itemManager : MonoBehaviour
     {
         for (int i=0;i<11;i++)
         {
-            if (!ItemExistArr[type, i]) return i;
+            if (!ItemExistArr[type, i] && i <itemMaxNum) return i;
         }
         return 999; // 공간 내 넣을 자리가 없음.
     }
@@ -914,7 +936,7 @@ public class itemManager : MonoBehaviour
     private void useItem(int itemIdx)
     {
         //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-        upDownManager.Instance.updateUpperItem(true, itemIdx, -1, "0");
+        upDownManager.Instance.updateUpperItem(1, itemIdx, -1, "0");
         //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         ItemArr[curSelectItemType, itemIdx] = null;
         ItemExistArr[curSelectItemType, itemIdx] = false;
@@ -923,7 +945,7 @@ public class itemManager : MonoBehaviour
     private void useItem()
     {
         //changeAlpha(inventoryUIArr[curSelectItemIndex], 0.0f);
-        upDownManager.Instance.updateUpperItem(true, curSelectItemIndex, -1, "0");
+        upDownManager.Instance.updateUpperItem(1, curSelectItemIndex, -1, "0");
         //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         ItemArr[curSelectItemType, curSelectItemIndex] = null;
         ItemExistArr[curSelectItemType, curSelectItemIndex] = false;
@@ -932,7 +954,7 @@ public class itemManager : MonoBehaviour
     }
     public void useItem(int itemType, int itemIdx)
     {
-        upDownManager.Instance.updateUpperItem(true, itemIdx, itemType, "0");
+        upDownManager.Instance.updateUpperItem(1, itemIdx, itemType, "0");
         //inventoryUIArr[curSelectItemIndex].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
         ItemArr[itemType, itemIdx] = null;
         ItemExistArr[itemType, itemIdx] = false;
@@ -957,15 +979,19 @@ public class itemManager : MonoBehaviour
     {
         for (int i = 0; i < 11; i++)
         {
-            if (ItemExistArr[curSelectItemType, i]) //아이템이 있는 경우 해당 아이템으로 변경
+            if (i >= itemMaxNum)
             {
-                upDownManager.Instance.updateUpperItem(false, i, curSelectItemType, ItemArr[curSelectItemType, i].getItemName());
+                upDownManager.Instance.updateUpperItem(2, i, -1, "0");
+            }
+            else if (ItemExistArr[curSelectItemType, i]) //아이템이 있는 경우 해당 아이템으로 변경
+            {
+                upDownManager.Instance.updateUpperItem(0, i, curSelectItemType, ItemArr[curSelectItemType, i].getItemName());
                 //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/"+ typeArr[curSelectItemType]+"ItemSprite/spr_item_" + typeArr[curSelectItemType]+
                 //    "_" + ItemArr[curSelectItemType, i].getItemName());
             }
             else
             {
-                upDownManager.Instance.updateUpperItem(true, i, -1, "0");
+                upDownManager.Instance.updateUpperItem(1, i, -1, "0");
                 //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
             }
             //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];
@@ -978,15 +1004,19 @@ public class itemManager : MonoBehaviour
         {
             for (int i = 0; i < 11; i++)
             {
-                if (ItemExistArr[typeIdx, i]) //아이템이 있는 경우 해당 아이템으로 변경
+                if (i>=itemMaxNum)
                 {
-                    upDownManager.Instance.updateUpperTypeItem(false, i, typeIdx, ItemArr[typeIdx, i].getItemName());
+                    upDownManager.Instance.updateUpperTypeItem(2, i, typeIdx, "0");
+                }
+                else if (ItemExistArr[typeIdx, i]) //아이템이 있는 경우 해당 아이템으로 변경
+                {
+                    upDownManager.Instance.updateUpperTypeItem(0, i, typeIdx, ItemArr[typeIdx, i].getItemName());
                     //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/"+ typeArr[curSelectItemType]+"ItemSprite/spr_item_" + typeArr[curSelectItemType]+
                     //    "_" + ItemArr[curSelectItemType, i].getItemName());
                 }
                 else
                 {
-                    upDownManager.Instance.updateUpperTypeItem(true, i, typeIdx, "0");
+                    upDownManager.Instance.updateUpperTypeItem(1, i, typeIdx, "0");
                     //inventoryUIArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                 }
                 //inventoryUIArr[i].transform.position = itemBoxInitPoint[i];
@@ -1020,7 +1050,8 @@ public class itemManager : MonoBehaviour
     {
         curSelectItemType = 0;  // 현재 선택한 아이템 종류 선택
         curSelectItemIndex = -1; // 현재 선택한 아이템의 인덱스
-
+        itemMaxNum = 6;
+        
         for (int i = 0; i < 5; i++)
         {
             itemList[i] = new List<Item>();

@@ -383,6 +383,8 @@ public class CharacterManager : MonoBehaviour
                     character = new SoulShield(0, destinyList_monster[characterIdx]); break;
                 case 34:
                     character = new SoulFlag(0, destinyList_monster[characterIdx]); break;
+                case 35:
+                    character = new DeadGuy(0, destinyList_monster[characterIdx]); break;
             }
             
         }
