@@ -213,24 +213,26 @@ public class CameraManager : MonoBehaviour
         if (caseVal == 2) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
         for (int i = 0; i < 4; i++) {
             int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
-            if (destinyIdx != -99999) {
-                
+            if (destinyIdx != -99999)
+            {
+
                 if (caseVal == 0)
                 {
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = " Adventure Last Member ";
+                    partGet.text = "Enemies you defeated : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
                 }
-                if (caseVal == 1) {
-                    
+                if (caseVal == 1)
+                {
+
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = " Adventure Last Member ";
+                    partGet.text = "Enemies you defeated : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
                 }
                 if (caseVal == 2) //데모 클리어시 5배로 준다.
                 {
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = " Adventure Last Member ";
+                    partGet.text = "Enemies you defeated : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
                 }
-                characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
             }
             else
             {

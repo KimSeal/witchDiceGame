@@ -472,40 +472,35 @@ public class upDownManager : MonoBehaviour
     public void clickUnderTitleButton(int idx)
     {
         clickUpperItemTypeInit(false);
-        if (idx == 0) {
-            if (jsonDataManager.Instance.getTutorialDid()) {
-                AdventureManager.Instance.activeTutorialButton(true);
-            }
+        if (jsonDataManager.Instance.getTutorialDid())
+        {
+            if(idx == 0) AdventureManager.Instance.activeTutorialButton(true);
+            if (idx == 1) TalkManager.Instance.clickWishlist();
+            if(idx == 7) AdventureManager.Instance.mainPlayButton(false);
         }
-        if (idx == 7) {
-            if (jsonDataManager.Instance.getTutorialDid()) {
-                AdventureManager.Instance.mainPlayButton(false);
-            }
-            else
-            {
-                AdventureManager.Instance.mainPlayButton(true);
-            }
+        else
+        {
+            if (idx == 0) TalkManager.Instance.clickWishlist();
+            if (idx == 7) AdventureManager.Instance.mainPlayButton(true);
         }
     } 
     public void hoverInUnderTitleButton(int idx)
     {
-        if (idx == 0 && jsonDataManager.Instance.getTutorialDid())
+        if (jsonDataManager.Instance.getTutorialDid())
         {
-            skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
-        }
-        else if (idx == 7 && !jsonDataManager.Instance.getTutorialDid()) {
-            skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
-        }
-        else if (idx == 7 && jsonDataManager.Instance.getTutorialDid())
-        {
-            skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
+            if(idx == 0) skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
+            else if(idx == 1) skillDescUpdate("none", 0, 0, 0, 0, "Steam Wishlist", TalkManager.Instance.getDesc(153));
+            else if(idx == 7) skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
+            else skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
         }
         else
         {
-            skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
+            if(idx == 7) skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
+            else if (idx == 0) skillDescUpdate("none", 0, 0, 0, 0, "Steam Wishlist", TalkManager.Instance.getDesc(153));
+            else skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
         }
-        underHoverBar[1].GetComponent<Image>().sprite = underTitleButton[idx].GetComponent<Image>().sprite;
 
+        underHoverBar[1].GetComponent<Image>().sprite = underTitleButton[idx].GetComponent<Image>().sprite;
 
         underTitleOutline[idx].GetComponent<Image>().sprite
              = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
@@ -513,7 +508,6 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutUnderTitleButton()
     {
-       
         for (int i = 0; i < 8; i++) //new mark 다 초기화
         {
             underTitleOutline[i].GetComponent<Image>().sprite
@@ -527,10 +521,12 @@ public class upDownManager : MonoBehaviour
             underTitleNewMark[7].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
             underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+            underTitleButton[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_SteamBtn");
         }
         else
         {
             underTitleButton[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
+            underTitleButton[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_SteamBtn");
             underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_Hill");
         }
         skillDescUpdate("none", 0, 0, 0, 0, "", "");

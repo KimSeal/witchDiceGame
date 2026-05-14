@@ -193,6 +193,7 @@ public class CSVReader
                 System.Reflection.FieldInfo fieldInfo = typeof(T).GetField(header[j]);
                 //Debug.Log(header[j]);
                 //Debug.Log(fieldInfo.FieldType);
+                //Debug.Log(values[j]);
                 TypeConverter typeConverter = TypeDescriptor.GetConverter(fieldInfo.FieldType);
                 fieldInfo.SetValue(entry, typeConverter.ConvertFrom(values[j]));
             }

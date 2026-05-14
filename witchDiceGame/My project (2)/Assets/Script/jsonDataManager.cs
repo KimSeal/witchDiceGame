@@ -57,6 +57,10 @@ public class jsonDataManager : MonoBehaviour
         optionManager.Instance.changeOption(2);
         optionManager.Instance.changeOption(0);
 
+        if (getChapterRead(1, 2) != 2) {
+            setCharacterSelect(1,0);
+        }
+
         //TalkManager.Instance.setDescIdx(39);
 
     }

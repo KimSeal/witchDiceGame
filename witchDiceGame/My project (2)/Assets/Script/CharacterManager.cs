@@ -358,31 +358,77 @@ public class CharacterManager : MonoBehaviour
                 case 22:
                     character = new EagleWizard(0, destinyList_monster[characterIdx]); break;
                 case 23:
-                    character = new WoodDummy(0, destinyList_monster[characterIdx]); break;
+                    character = new WoodDummy(0, destinyList_monster[characterIdx]); 
+                    character.changeDiceNum(2,4); break;
                 case 24:
-                    character = new IronDummy(0, destinyList_monster[characterIdx]); break;
+                    character = new IronDummy(0, destinyList_monster[characterIdx]); 
+                    character.changeDiceNum(2, 4);
+                    character.changeDiceNum(3, 5);
+                    character.changeDiceNum(4, 5); break;
                 case 25:
-                    character = new FastFoot(0, destinyList_monster[characterIdx]); break;
+                    character = new FastFoot(0, destinyList_monster[characterIdx]); 
+                    character.changeDiceNum(0, 3);
+                    character.changeDiceNum(1, 4);
+                    character.changeDiceNum(2, 4);
+                    character.changeDiceNum(3, 5);break;
                 case 26:
-                    character = new BigHammer(0, destinyList_monster[characterIdx]); break;
+                    character = new BigHammer(0, destinyList_monster[characterIdx]); 
+                    character.changeDiceNum(0, 3);
+                    character.changeDiceNum(1, 4);
+                    character.changeDiceNum(2, 5);
+                    character.changeDiceNum(3, 5);
+                    character.changeDiceNum(4, 6); break;
                 case 27:
-                    character = new Undead(0, destinyList_monster[characterIdx]); break;
+                    character = new Undead(0, destinyList_monster[characterIdx]);
+                    character.changeDiceNum(0, 2);
+                    character.changeDiceNum(2, 2);
+                    character.changeDiceNum(3, 5); break;
                 case 28:
-                    character = new DeadChunk(0, destinyList_monster[characterIdx]); break;
+                    character = new DeadChunk(0, destinyList_monster[characterIdx]);
+                    character.changeDiceNum(0, 2);
+                    character.changeDiceNum(2, 5);
+                    character.changeDiceNum(3, 5);
+                    character.changeDiceNum(4, 6); break;
                 case 29:
-                    character = new BombHead(0, destinyList_monster[characterIdx]); break;
+                    character = new BombHead(0, destinyList_monster[characterIdx]);
+                    character.changeDiceNum(0, 2);
+                    character.changeDiceNum(2, 2);
+                    character.changeDiceNum(3, 2); break;
                 case 30:
-                    character = new GrandKnight(0, destinyList_monster[characterIdx]); break;
+                    character = new GrandKnight(0, destinyList_monster[characterIdx]); 
+                    character.changeDiceNum(1, 1);
+                    character.changeDiceNum(2, 1);
+                    character.changeDiceNum(3, 6);
+                    character.changeDiceNum(4, 6); break;
                 case 31:
-                    character = new NoHead(0, destinyList_monster[characterIdx]); break;
+                    character = new NoHead(0, destinyList_monster[characterIdx]);
+                    character.changeDiceNum(1, 1);
+                    character.changeDiceNum(2, 2);
+                    character.changeDiceNum(3, 5);
+                    character.changeDiceNum(4, 6); break;
                 case 32:
-                    character = new Bard(0, destinyList_monster[characterIdx]); break;
-                    character.changeEquip(0, 1);
-                    character.changeEquip(1, 3);
+                    character = new Bard(0, destinyList_monster[characterIdx]); 
+                    character.changeDiceNum(1, 1);
+                    character.changeDiceNum(2, 1);
+                    character.changeDiceNum(3, 1);
+                    character.changeDiceNum(4, 1); 
+                    character.changeDiceNum(5, 5);break;
+                //character.changeEquip(0, 1);
+                //character.changeEquip(1, 3);
                 case 33:
-                    character = new SoulShield(0, destinyList_monster[characterIdx]); break;
+                    character = new SoulShield(0, destinyList_monster[characterIdx]);
+                    character.changeDiceNum(1, 1);
+                    character.changeDiceNum(2, 1);
+                    character.changeDiceNum(3, 1);
+                    character.changeDiceNum(4, 5);
+                    character.changeDiceNum(5, 5); break;
                 case 34:
-                    character = new SoulFlag(0, destinyList_monster[characterIdx]); break;
+                    character = new SoulFlag(0, destinyList_monster[characterIdx]);
+                    character.changeDiceNum(1, 1);
+                    character.changeDiceNum(2, 1);
+                    character.changeDiceNum(3, 1);
+                    character.changeDiceNum(4, 2);
+                    character.changeDiceNum(5, 2); break;
                 case 35:
                     character = new DeadGuy(0, destinyList_monster[characterIdx]); break;
             }

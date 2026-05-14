@@ -143,6 +143,10 @@ public class LibraryManager : MonoBehaviour
 
     public void hoverInCurCharacter(int idx)
     {
+        if (idx == 1 && jsonDataManager.Instance.getChapterRead(1, 2) != 2)
+        {
+            return;
+        }
         if (!(idx == 0 && curCharacterSelectIdx[idx] == 0) )
         {
             updateBlackBoard(curCharacterSelectIdx[idx]);
@@ -160,6 +164,29 @@ public class LibraryManager : MonoBehaviour
     private bool smokeSound = false;
     public void clickCurCharacter(int idx) {
 
+        if (idx == 1 && jsonDataManager.Instance.getChapterRead(1,2) != 2)
+        {
+            Destiny destinyTemp = CharacterManager.Instance.getDestiny(0);
+            curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + destinyTemp.getName() + "/animator_" + destinyTemp.getName());
+            curCharacterSelectIdx[idx] = curCharacterIdx;
+
+            jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
+            CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+            if (curCharacterSelectIdx[idx] == 0 && idx == 1)
+            {
+                if (jsonDataManager.Instance.getChapterRead(1, 2) == 2)
+                {
+                    curCharacter[idx].GetComponent<Animator>().Play("library");
+                }
+                else if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
+                {
+                    curCharacter[idx].GetComponent<Animator>().Play("right");
+                }
+
+            }
+            hoverInCurCharacter(idx);
+            return;
+        }
         if(curCharacterIdx == 0 && idx == 0 && curCharacterSelectIdx[idx] == 0)
         {
             fullUI.showFull(139);
@@ -190,7 +217,14 @@ public class LibraryManager : MonoBehaviour
                 CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
                 if (curCharacterSelectIdx[idx] == 0 && idx == 1)
                 {
-                    curCharacter[idx].GetComponent<Animator>().Play("library");
+                    if (jsonDataManager.Instance.getChapterRead(1, 2) == 2) {
+                        curCharacter[idx].GetComponent<Animator>().Play("library");
+                    }
+                    else if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
+                    {
+                        curCharacter[idx].GetComponent<Animator>().Play("right");
+                    }
+
                 }
                 hoverInCurCharacter(idx);
             }
@@ -208,6 +242,7 @@ public class LibraryManager : MonoBehaviour
                     jsonDataManager.Instance.setCharacterSelect(idx, 0);
                     hoverInCurCharacter(idx);
                     curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
+
                     CharacterManager.Instance.emptyMyCharacter(1);
                     return;
                 }
@@ -219,7 +254,14 @@ public class LibraryManager : MonoBehaviour
 
                     jsonDataManager.Instance.setCharacterSelect(idx, 0);
                     CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
-                    curCharacter[idx].GetComponent<Animator>().Play("library");
+                    if (jsonDataManager.Instance.getChapterRead(1, 2) == 2)
+                    {
+                        curCharacter[idx].GetComponent<Animator>().Play("library");
+                    }
+                    else if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
+                    {
+                        curCharacter[idx].GetComponent<Animator>().Play("right");
+                    }
 
                     hoverInCurCharacter(idx);
                 }

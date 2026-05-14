@@ -39,6 +39,9 @@ public class TalkManager : MonoBehaviour
 
     [SerializeField] public GameObject talkClickButton;
     [SerializeField] public GameObject talkClickButtonOriginal;
+
+    [SerializeField] public GameObject wishlistButton;
+    [SerializeField] public Sprite[] wishlistSprite = new Sprite[2];
     private List<TalkReader> talkList = new List<TalkReader>();
     private List<DescReader> descList = new List<DescReader>();
     private Material[] material = new Material[4];
@@ -280,6 +283,8 @@ public class TalkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        wishlistButton.SetActive(false);
+
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
@@ -511,6 +516,10 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        if (talkList[a].eventType == 3){
+            wishlistButton.SetActive(true);
+        }
+
         if (talkList[a].SFX >= 0) SoundManager_Sfx.Instance.playSound(talkList[a].SFX);
 
         if (preSound != talkList[a].BackSnd) { //배경음 변경 타이밍
@@ -627,6 +636,8 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
+            wishlistButton.SetActive(false);
+
             changeTalkState(0, true);
             if (preSound >= 0) SoundManager_Main.Instance.stopSound(preSound);
             for (int i = 0; i < characterImage.Length; i++)
@@ -655,5 +666,18 @@ public class TalkManager : MonoBehaviour
     public bool getTalkChk()
     {
         return talkingChk;
+    }
+
+    public void hoverInWishlist()
+    {
+        wishlistButton.GetComponent<Image>().sprite = wishlistSprite[1];
+    }
+    public void hoverOutWishlist()
+    {
+        wishlistButton.GetComponent<Image>().sprite = wishlistSprite[0];
+    }
+    public void clickWishlist()
+    {
+        Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
     }
 }

@@ -1179,7 +1179,8 @@ public class BattleManager : MonoBehaviour
     public bool witchPowerAble(int powerIdx)
     {
         if (powerIdx == 1) return true;
-        if ((powerIdx == 2 || powerIdx == 3) && jsonDataManager.Instance.getChapterRead(0, 2) ==2 ) return true;
+        if ((powerIdx == 2) && jsonDataManager.Instance.getChapterRead(0, 2) == 2) return true;
+        if ((powerIdx == 3) && jsonDataManager.Instance.getChapterRead(1, 2) == 2) return true;
         return false;
     }
     //witch Power 선택 시작!

@@ -215,6 +215,10 @@ public class HomeManager : MonoBehaviour
             if (chapterClear[chapterNum] != 0) {
                 TalkManager.Instance.startTalk(chapterClear[chapterNum]);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                if (chapterNum == 1) {// 데모 종료 임시
+                    TalkManager.Instance.startTalk(68);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
             }
             if (chapterStartIdx[chapterNum] != 0)
             {
