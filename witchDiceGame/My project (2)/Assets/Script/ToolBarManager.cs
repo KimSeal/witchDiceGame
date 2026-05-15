@@ -194,9 +194,9 @@ public class ToolBarManager : MonoBehaviour
         toolBarDesc.text = item.getContent();
     }
     //공격력, 마법감응력, 스피드, 방어도, HP, 최대 HP
-    //전투, 보물, 불운, 행운, 랜덤, 상점, 보스, ???, 미확인 이벤트, 우연, 성장
-    private int[] toolBarStatTitleIdx = { 72, 73, 74, 83, 85, 124 };
-    private int[] toolBarStatContentIdx = { 75, 76, 77, 84, 86, 125 };
+    //전투, 보물, 불운, 행운, 랜덤, 상점, 보스, ???, 미확인 이벤트, 우연, 성장,
+    private int[] toolBarStatTitleIdx = { 72, 73, 74, 83, 85, 124, 155 };
+    private int[] toolBarStatContentIdx = { 75, 76, 77, 84, 86, 125, 154 };
 
     private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121 };
     private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122};

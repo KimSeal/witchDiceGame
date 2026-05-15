@@ -19,15 +19,21 @@ public class FoodStreetManager : MonoBehaviour
 
     [SerializeField] public GameObject[] upgradeAnim = new GameObject[4];
 
+    [SerializeField] public GameObject ailBodyObj;
     [SerializeField] public GameObject ailFaceObj;
     [SerializeField] public GameObject grinFaceObj;
     [SerializeField] public GameObject womanFaceObj;
+
+    [SerializeField] public GameObject[] skillObj = new GameObject[2];
+    [SerializeField] public GameObject[] skillOutline = new GameObject[2];
 
     private float FoodTowerInitY = 0;
     public int[] statArr = { 0, 0, 0, 0 };
     public int[] preArr = { 0,0,0,0};
     public int maxRemainFood = 0;
     public int curRemainFood = 0;
+
+    public Character ailCharacter;
 
     private void Awake()
     {
@@ -89,11 +95,14 @@ public class FoodStreetManager : MonoBehaviour
     {
         foodTower[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
         foodTowerBowl[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+        if (idx == 0) itemManager.Instance.hoverInInfo(4);
+        else itemManager.Instance.hoverInInfo(idx - 1);
     }
     public void hoverOutFoodTower(int idx)
     {
         foodTower[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         foodTowerBowl[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
     public void clickWoman()
     {
@@ -109,13 +118,50 @@ public class FoodStreetManager : MonoBehaviour
     public void hoverInWoman()
     {
         foodInHand.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+        ToolBarManager.Instance.setToolBarStat(6);
+
     }
     public void hoverOutWoman()
     {
         foodInHand.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
+    public void hoverInAil()
+    {
+        ailBodyObj.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+        ToolBarManager.Instance.setToolBar(ailCharacter);
+    }
+    public void hoverOutAil()
+    {
+        ailBodyObj.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void clickAil()
+    {
+
+    }
+
+    public void hoverInSkill(int skillIdx)
+    {
+        Skill thisSkill = null;
+        thisSkill = ailCharacter.skillUse(skillIdx);
+        ToolBarManager.Instance.setToolBar(thisSkill);
+        //skillObj[skillIdx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+        skillOutline[skillIdx].SetActive(true);
+    }
+    public void hoverOutSkill()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        skillOutline[0].SetActive(false);
+        skillOutline[1].SetActive(false);
+        //skillObj[0].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        //skillObj[1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
     }
     public void enterFoodStreet()
     {
+        
+        
         for (int i = 5; i >= 0; i--)
         {
             if (jsonDataManager.Instance.getChapterRead(i, 2) == 2) { maxRemainFood = i + 2; break; }
@@ -126,6 +172,7 @@ public class FoodStreetManager : MonoBehaviour
             statArr[i] = jsonDataManager.Instance.getFoodStreetStat(i);
             curRemainFood -= statArr[i]; 
         }
+        for (int i = 0; i < skillOutline.Length; i++) skillOutline[i].SetActive(false);
         updateFoodTowerChange();
     }
     public void exitFoodStreet()
@@ -134,16 +181,25 @@ public class FoodStreetManager : MonoBehaviour
     }
     public void updateFoodTowerChange()
     {
+        CharacterManager.Instance.setCharacter_destinyBase(ref ailCharacter, jsonDataManager.Instance.getCharacterSelect(1));
         for (int i=0;i<statArr.Length;i++){ //food tower Y update
             foodTower[i].transform.position = new Vector3(foodTower[i].transform.position.x,
                 FoodTowerInitY + (-15f * (7 - statArr[i])), foodTower[i].transform.position.z);
-            if(i==0) statText[i].GetComponent<TextMeshPro>().text = "+" + (statArr[i]*10).ToString();
+            if(i==0) statText[i].GetComponent<TextMeshPro>().text = "+" + (statArr[i]*5).ToString();
             else statText[i].GetComponent<TextMeshPro>().text = "+" + statArr[i].ToString();
         }
+
+        ailCharacter.upGrade(1, statArr[0] * 5);
+        ailCharacter.upGrade(5, statArr[1]);
+        ailCharacter.upGrade(6, statArr[2]);
+        ailCharacter.upGrade(7, statArr[3]);
 
         ailFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
         grinFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
         foodInHand.GetComponent<SpriteRenderer>().sprite = foodInHandSpriteArr[curRemainFood];
+
+        skillObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + ailCharacter.skillUse(0).getSkillName());
+        skillObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + ailCharacter.skillUse(1).getSkillName());
     }
     public void animAboutWoman()
     {

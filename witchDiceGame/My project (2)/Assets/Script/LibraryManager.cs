@@ -140,7 +140,7 @@ public class LibraryManager : MonoBehaviour
             characterInfo[3].GetComponent<TextMeshPro>().text = destinyTemp.phyDef.ToString();
         }
     }
-
+    public Character characterTemp;
     public void hoverInCurCharacter(int idx)
     {
         if (idx == 1 && jsonDataManager.Instance.getChapterRead(1, 2) != 2)
@@ -149,6 +149,8 @@ public class LibraryManager : MonoBehaviour
         }
         if (!(idx == 0 && curCharacterSelectIdx[idx] == 0) )
         {
+            CharacterManager.Instance.setCharacter_destinyBase(ref characterTemp, curCharacterSelectIdx[idx]);
+            ToolBarManager.Instance.setToolBar(characterTemp);
             updateBlackBoard(curCharacterSelectIdx[idx]);
         }
         curCharacter[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
@@ -160,6 +162,7 @@ public class LibraryManager : MonoBehaviour
         curCharacter[1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         updateBlackBoard(-1);
         hoverOutCharacterSelectButton();
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
     private bool smokeSound = false;
     public void clickCurCharacter(int idx) {
@@ -205,6 +208,7 @@ public class LibraryManager : MonoBehaviour
                 hoverInCurCharacter(idx);
                 curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
                 CharacterManager.Instance.emptyMyCharacter(1);
+                ToolBarManager.Instance.toolBarOnOff(0);
                 return;
             }
             else {
@@ -242,7 +246,7 @@ public class LibraryManager : MonoBehaviour
                     jsonDataManager.Instance.setCharacterSelect(idx, 0);
                     hoverInCurCharacter(idx);
                     curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
-
+                    ToolBarManager.Instance.toolBarOnOff(0);
                     CharacterManager.Instance.emptyMyCharacter(1);
                     return;
                 }
