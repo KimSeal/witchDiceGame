@@ -85,7 +85,7 @@ public class TownManager : MonoBehaviour
         AdventureReadyManager.Instance.exitAdventureReady();
         upDownManager.Instance.clickCharacterButton(-1);
         MapperManager.Instance.exitMapper();
-        //0 : 타워 1 : 집 2: 도서관 3: 마을  7: 로비
+        //0 : 타워 1 : 집 2: 도서관 3: 아카이브 4:음식거리   7: 로비
         if (i == 0)
         {
             if (!jsonDataManager.Instance.getTowerMeet())
@@ -129,19 +129,23 @@ public class TownManager : MonoBehaviour
                 TalkManager.Instance.startTalk(53);
             }
             MapperManager.Instance.enterMapper();
+            curTownIdx = 3;
             SoundManager_Sfx.Instance.playSound(70);
             CameraManager.Instance.updateInitPosition(new Vector3(-1000f, 0f, CameraManager.Instance.cameraPointZ()));
         }
         if (i == 4)
         {
-            //SoundManager_Main.Instance.stopSound(7);
+            curTownIdx = 4;
+            FoodStreetManager.Instance.enterFoodStreet();
+            SoundManager_Sfx.Instance.playSound(70);
+            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -1000f, CameraManager.Instance.cameraPointZ()));
+            /*
             fullUI.showFull(6);
             SoundManager_Sfx.Instance.playSound(0);
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
+            */
         }
         
-       
-
         if (i == 7) {
             for (int newMarkIdx=0;newMarkIdx<7;newMarkIdx++)
             {
@@ -209,8 +213,8 @@ public class TownManager : MonoBehaviour
     {
         townActive = false;
         curTownIdx = 7;
-        townSound[0] = 7; townSound[1] = 19; townSound[2] = 20; townSound[3] = 7;
-        townSound[4] = 20; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;
+        townSound[0] = 7; townSound[1] = 19; townSound[2] = 20; townSound[3] = 20;
+        townSound[4] = 7; townSound[5] = 7; townSound[6] = 7; townSound[7] = 7;
         townSound[7] = 7;
         setTownActive(false);
         //Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);

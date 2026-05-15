@@ -418,11 +418,8 @@ public class upDownManager : MonoBehaviour
     
     public void hoverInUnderTownButton(int idx)
     {
-        if (idx == 0 || idx == 1 || idx == 7 ||
-            (idx == 2 && townCondition(idx) ||
-            (idx == 3 && townCondition(idx)) // chapter1 clear
-            )) {
-            
+        if (townCondition(idx) ) // chapter1 clear
+        {
             skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
             underHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + townName[idx]);
         }
@@ -553,6 +550,10 @@ public class upDownManager : MonoBehaviour
             return true;
         }
         if (idx == 3 && jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
+            return true;
+        }
+        if (idx == 4 && jsonDataManager.Instance.getChapterRead(1,2) == 2)
+        {
             return true;
         }
         return false;

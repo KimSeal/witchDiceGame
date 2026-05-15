@@ -388,6 +388,8 @@ public class jsonDataManager : MonoBehaviour
     {
         return playerPlayData.recordArchiveMeet;
     }
+    public int getFoodStreetStat(int idx) { return playerPlayData.getFoodStreetStat(idx); }
+    public void setFoodStreetStat(int idx, int val) { playerPlayData.setFoodStreetStat(idx, val); SavePlayerDataToJson(); }
 
     public class PlayerPlayData
     {
@@ -421,6 +423,17 @@ public class jsonDataManager : MonoBehaviour
         public int[] characterSelect = new int[2];
         public bool[] eventMeet = new bool[300];
         public bool recordArchiveMeet = false;
+
+        public int[] foodStreetStat = new int[4]; //음식 거리에서 분배된 스탯값.
+        public int getFoodStreetStat(int idx)
+        {
+            return foodStreetStat[idx];
+        }
+        public void setFoodStreetStat(int idx, int val)
+        {
+            this.foodStreetStat[idx] = val;
+        }
+
         public void setCharacterSelect(int idx, int val)
         {
             characterSelect[idx] = val;
@@ -498,6 +511,7 @@ public class jsonDataManager : MonoBehaviour
                 chapter6Read[i] = 0;
             }
             characterSelect[0] = 0; characterSelect[1] = 0;
+            for(int i=0;i<foodStreetStat.Length;i++) foodStreetStat[i] = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -545,6 +559,7 @@ public class jsonDataManager : MonoBehaviour
             }
             characterSelect[0] = playerPlayerData.characterSelect[0]; 
             characterSelect[1] = playerPlayerData.characterSelect[1];
+            for (int i = 0; i < foodStreetStat.Length; i++) foodStreetStat[i] = playerPlayerData.foodStreetStat[i];
         }
         public bool getFirstGetCharacterPart()
         {
