@@ -182,17 +182,21 @@ public class FoodStreetManager : MonoBehaviour
     public void updateFoodTowerChange()
     {
         CharacterManager.Instance.setCharacter_destinyBase(ref ailCharacter, jsonDataManager.Instance.getCharacterSelect(1));
-        for (int i=0;i<statArr.Length;i++){ //food tower Y update
-            foodTower[i].transform.position = new Vector3(foodTower[i].transform.position.x,
-                FoodTowerInitY + (-15f * (7 - statArr[i])), foodTower[i].transform.position.z);
-            if(i==0) statText[i].GetComponent<TextMeshPro>().text = "+" + (statArr[i]*5).ToString();
-            else statText[i].GetComponent<TextMeshPro>().text = "+" + statArr[i].ToString();
-        }
-
         ailCharacter.upGrade(1, statArr[0] * 5);
         ailCharacter.upGrade(5, statArr[1]);
         ailCharacter.upGrade(6, statArr[2]);
         ailCharacter.upGrade(7, statArr[3]);
+
+        for (int i=0;i<statArr.Length;i++){ //food tower Y update
+            foodTower[i].transform.position = new Vector3(foodTower[i].transform.position.x,
+                FoodTowerInitY + (-15f * (7 - statArr[i])), foodTower[i].transform.position.z);
+            if(i==0) statText[i].GetComponent<TextMeshPro>().text = ailCharacter.getMaxHp().ToString() + "(+" + (statArr[i]*5).ToString() + ")";
+            else if(i==1) statText[i].GetComponent<TextMeshPro>().text    = ailCharacter.getPhyAtk() + "(+" + statArr[i].ToString() + ")";
+            else if (i == 2) statText[i].GetComponent<TextMeshPro>().text = ailCharacter.getMagAtk() + "(+" + statArr[i].ToString() + ")";
+            else if (i == 3) statText[i].GetComponent<TextMeshPro>().text = ailCharacter.getSpeed() + "(+" + statArr[i].ToString() + ")";
+        }
+
+        
 
         ailFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
         grinFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
@@ -214,8 +218,8 @@ public class FoodStreetManager : MonoBehaviour
         }
         for (int i=0;i<4;i++)
         {
-            if(statArr[i] > preArr[i]) upgradeAnim[i].GetComponent<Animator>().Play("2");
-            else if(statArr[i] < preArr[i]) upgradeAnim[i].GetComponent<Animator>().Play("3");
+            //if(statArr[i] > preArr[i]) upgradeAnim[i].GetComponent<Animator>().Play("2");
+            //else if(statArr[i] < preArr[i]) upgradeAnim[i].GetComponent<Animator>().Play("3");
         }
     }
 }

@@ -137,7 +137,7 @@ public class LibraryManager : MonoBehaviour
             characterInfo[0].GetComponent<TextMeshPro>().text = destinyTemp.maxHp.ToString();
             characterInfo[1].GetComponent<TextMeshPro>().text = destinyTemp.phyAtk.ToString();
             characterInfo[2].GetComponent<TextMeshPro>().text = destinyTemp.magAtk.ToString();
-            characterInfo[3].GetComponent<TextMeshPro>().text = destinyTemp.phyDef.ToString();
+            characterInfo[3].GetComponent<TextMeshPro>().text = destinyTemp.speed.ToString();
         }
     }
     public Character characterTemp;
