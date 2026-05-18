@@ -23,6 +23,8 @@ public class LibraryManager : MonoBehaviour
     [SerializeField]
     public GameObject[] curCharacter = new GameObject[2];
 
+    public Character[] curCharacterInfo = new Character[2];
+
     public int curCharacterBigIdx = 0;
     public int curCharacterIdx = 0;
     public int[] curCharacterSelectIdx = { 0, 0 };
@@ -140,7 +142,7 @@ public class LibraryManager : MonoBehaviour
             characterInfo[3].GetComponent<TextMeshPro>().text = destinyTemp.speed.ToString();
         }
     }
-    public Character characterTemp;
+
     public void hoverInCurCharacter(int idx)
     {
         if (idx == 1 && jsonDataManager.Instance.getChapterRead(1, 2) != 2)
@@ -149,8 +151,7 @@ public class LibraryManager : MonoBehaviour
         }
         if (!(idx == 0 && curCharacterSelectIdx[idx] == 0) )
         {
-            CharacterManager.Instance.setCharacter_destinyBase(ref characterTemp, curCharacterSelectIdx[idx]);
-            ToolBarManager.Instance.setToolBar(characterTemp);
+            ToolBarManager.Instance.setToolBar(curCharacterInfo[idx]);
             updateBlackBoard(curCharacterSelectIdx[idx]);
         }
         curCharacter[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
@@ -174,7 +175,9 @@ public class LibraryManager : MonoBehaviour
             curCharacterSelectIdx[idx] = curCharacterIdx;
 
             jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
-            CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+            CharacterManager.Instance.setCharacter_destinyBase(ref curCharacterInfo[idx], jsonDataManager.Instance.getCharacterSelect(idx));
+            if (idx == 1) FoodStreetManager.Instance.upgradeInitStat(ref curCharacterInfo[idx]);
+
             if (curCharacterSelectIdx[idx] == 0 && idx == 1)
             {
                 if (jsonDataManager.Instance.getChapterRead(1, 2) == 2)
@@ -207,7 +210,7 @@ public class LibraryManager : MonoBehaviour
                 jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
                 hoverInCurCharacter(idx);
                 curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
-                CharacterManager.Instance.emptyMyCharacter(1);
+                curCharacterInfo[idx] = null;
                 ToolBarManager.Instance.toolBarOnOff(0);
                 return;
             }
@@ -218,7 +221,9 @@ public class LibraryManager : MonoBehaviour
                 curCharacterSelectIdx[idx] = curCharacterIdx;
 
                 jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
-                CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+                CharacterManager.Instance.setCharacter_destinyBase(ref curCharacterInfo[idx], jsonDataManager.Instance.getCharacterSelect(idx));
+                if (idx == 1) FoodStreetManager.Instance.upgradeInitStat(ref curCharacterInfo[idx]);
+
                 if (curCharacterSelectIdx[idx] == 0 && idx == 1)
                 {
                     if (jsonDataManager.Instance.getChapterRead(1, 2) == 2) {
@@ -247,7 +252,7 @@ public class LibraryManager : MonoBehaviour
                     hoverInCurCharacter(idx);
                     curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/libraryDoll/animCon_libraryDoll");
                     ToolBarManager.Instance.toolBarOnOff(0);
-                    CharacterManager.Instance.emptyMyCharacter(1);
+                    curCharacterInfo[idx] = null;
                     return;
                 }
                 else
@@ -257,7 +262,9 @@ public class LibraryManager : MonoBehaviour
                     curCharacterSelectIdx[idx] = 0;
 
                     jsonDataManager.Instance.setCharacterSelect(idx, 0);
-                    CharacterManager.Instance.setCharacter(1 + idx, jsonDataManager.Instance.getCharacterSelect(idx));
+                    CharacterManager.Instance.setCharacter_destinyBase(ref curCharacterInfo[idx], jsonDataManager.Instance.getCharacterSelect(idx));
+                    if (idx == 1) FoodStreetManager.Instance.upgradeInitStat(ref curCharacterInfo[idx]);
+
                     if (jsonDataManager.Instance.getChapterRead(1, 2) == 2)
                     {
                         curCharacter[idx].GetComponent<Animator>().Play("library");

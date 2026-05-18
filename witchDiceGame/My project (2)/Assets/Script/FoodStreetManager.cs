@@ -179,13 +179,18 @@ public class FoodStreetManager : MonoBehaviour
     {
 
     }
+
+    public void upgradeInitStat(ref Character character)
+    {
+        character.upGrade(1, statArr[0] * 5);
+        character.upGrade(5, statArr[1]);
+        character.upGrade(6, statArr[2]);
+        character.upGrade(7, statArr[3]);
+    }
     public void updateFoodTowerChange()
     {
         CharacterManager.Instance.setCharacter_destinyBase(ref ailCharacter, jsonDataManager.Instance.getCharacterSelect(1));
-        ailCharacter.upGrade(1, statArr[0] * 5);
-        ailCharacter.upGrade(5, statArr[1]);
-        ailCharacter.upGrade(6, statArr[2]);
-        ailCharacter.upGrade(7, statArr[3]);
+        upgradeInitStat(ref ailCharacter);
 
         for (int i=0;i<statArr.Length;i++){ //food tower Y update
             foodTower[i].transform.position = new Vector3(foodTower[i].transform.position.x,
