@@ -64,6 +64,10 @@ public class TownManager : MonoBehaviour
             (jsonDataManager.Instance.getChapterRead(0, 2) == 2 && !jsonDataManager.Instance.getRecordArchiveMeet())){
             return true;
         }
+        if(idx == 4 &&
+             (jsonDataManager.Instance.getChapterRead(1, 2) == 2 && !jsonDataManager.Instance.getFoodStreetMeet())){
+            return true;
+        }
 
         if (idx == 7)//
         {
@@ -135,6 +139,11 @@ public class TownManager : MonoBehaviour
         }
         if (i == 4)
         {
+            if (!jsonDataManager.Instance.getFoodStreetMeet())
+            {
+                jsonDataManager.Instance.foodStreetMeet();
+                TalkManager.Instance.startTalk(71);
+            }
             curTownIdx = 4;
             FoodStreetManager.Instance.enterFoodStreet();
             SoundManager_Sfx.Instance.playSound(70);

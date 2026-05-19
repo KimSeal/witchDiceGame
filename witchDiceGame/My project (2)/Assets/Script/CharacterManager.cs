@@ -104,6 +104,7 @@ public class CharacterManager : MonoBehaviour
         }
         setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
         myCharacter[2].setReviveUnit(true);
+        setFoodStreetInfo();
         //setCharacter(1, 1);
         //setCharacter(3, 8);
         //setCharacter(1, 1);
@@ -485,6 +486,11 @@ public class CharacterManager : MonoBehaviour
         return enemyCharacter[idx];
     }
 
+
+    public void setFoodStreetInfo()
+    {
+        FoodStreetManager.Instance.upgradeInitStat(ref myCharacter[2]);
+    }
 
     public string getName_itemManager(int idx)
     {

@@ -206,6 +206,7 @@ public class FoodStreetManager : MonoBehaviour
         ailFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
         grinFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
         foodInHand.GetComponent<SpriteRenderer>().sprite = foodInHandSpriteArr[curRemainFood];
+        animAboutWoman();
 
         skillObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + ailCharacter.skillUse(0).getSkillName());
         skillObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + ailCharacter.skillUse(1).getSkillName());

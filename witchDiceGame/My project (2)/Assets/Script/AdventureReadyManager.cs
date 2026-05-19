@@ -148,11 +148,15 @@ public class AdventureReadyManager : MonoBehaviour
 
         
         CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
+        CharacterManager.Instance.setFoodStreetInfo();
+
         if (jsonDataManager.Instance.getCharacterSelect(0) > 0) CharacterManager.Instance.setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
         else CharacterManager.Instance.emptyMyCharacter(1);
 
+       
+
         //FoodStreetManager.Instance.upgradeInitStat(ref CharacterManager.Instance.getCharacter(2) );
-        
+
         hoverOutTower();
 
         enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getDestiny(jsonDataManager.Instance.getCharacterSelect(1)).getName() + "_back");
