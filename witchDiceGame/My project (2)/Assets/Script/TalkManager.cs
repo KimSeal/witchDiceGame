@@ -194,7 +194,7 @@ public class TalkManager : MonoBehaviour
         return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("？", "?")/*.Replace("。", ".").Replace("、", ", ")*/.Replace("！", "!").Replace("）",")").Replace("（", "(");
     }
 
-    private int[] lifeStartIdx = {3,  -99999, -99999, -99999, -99999, 
+    private int[] lifeStartIdx = {3,  -99999, -99999, 69, -99999, 
         -99999, -99999, -99999, -99999, -99999, 
         -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999 };
 
@@ -205,15 +205,23 @@ public class TalkManager : MonoBehaviour
     }
     public bool stageStart(int stageStart)
     {
-        //스테이지가 0이 아니면서(다시 튜토리얼 시도 할때 대사 보여줘야 하니까) 기존에 방문했던 stage가 아니면
-        if (stageStart != 0 && (lifeStartIdx[stageStart] == -99999 || jsonDataManager.Instance.getStageWatched(stageStart))) {
+        if(stageStart == 0)
+        {
+            startTalk(lifeStartIdx[stageStart]);
+            return true;
+        }
+        else if (jsonDataManager.Instance.getStageWatched(stageStart) || lifeStartIdx[stageStart] < 0)
+        {
             return false;
         }
         else
         {
             startTalk(lifeStartIdx[stageStart]);
+            jsonDataManager.Instance.setStageWatched(stageStart);
             return true;
         }
+
+        return false;
         
     }
     public void clickDescBox()
