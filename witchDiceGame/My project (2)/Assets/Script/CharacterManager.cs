@@ -142,6 +142,10 @@ public class CharacterManager : MonoBehaviour
         {
             resultVal = Random.Range(1, 10);
         }
+        else if (jsonDataManager.Instance.getChapterRead(1, 2) < 2)
+        {
+            resultVal = Random.Range(1, 14);
+        }
         else
         {
             resultVal =  Random.Range(1, destinyList.Count);

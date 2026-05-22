@@ -355,19 +355,9 @@ public class BattleManager : MonoBehaviour
     int bossPhase = 0;
     public void changeBossPhase(int a)
     {
-        bossResult = 1;
-        if (a == 100)
-        {
-            bossPhase = a; // 부엉이 보스
-            bossResult = 1;
-        }
-        else if (a == 101) bossPhase = a; // 튜토리얼 보스
-        else if (a == 102)
-        {
-            bossPhase = a; //bard boss
-            bossResult = 1;
-        }
-        else bossPhase = 0;
+        bossResult = 0;
+        if(a >= 98){bossResult = 1;}
+        if (a >= 100) bossPhase = a;
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
     {
@@ -1630,15 +1620,15 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(59);
             itemManager.Instance.getItemResult(1, 9);
-            TalkManager.Instance.startTalk(43);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            //TalkManager.Instance.startTalk(43);
+            //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 12);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(60);
-            TalkManager.Instance.startTalk(44);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            //TalkManager.Instance.startTalk(44);
+            //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 13);
             TalkManager.Instance.setDescClickLock(true);
@@ -1647,8 +1637,8 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 14);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(62);
-            TalkManager.Instance.startTalk(45);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            //TalkManager.Instance.startTalk(45);
+            //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 15);
             TalkManager.Instance.setDescClickLock(true);
@@ -1701,12 +1691,23 @@ public class BattleManager : MonoBehaviour
                         //스킬 배치 가능한 곳이 흔들림.
                         hoverRotateAble(myDiceUI[diceIdx], 1, true);
                         shakeObject(myDiceUI[diceIdx]);
+                        upDownManager.Instance.underSkillClickAble(diceIdx, 1);
+                    }
+                    else if(myCharacter[diceIdx] != null && myCharacter[diceIdx].getCurState() == 0)
+                    {
+                        upDownManager.Instance.underSkillClickAble(diceIdx, 0);
+                    }
+                    else
+                    {
+                        upDownManager.Instance.underSkillClickAble(diceIdx, -1);
                     }
                 }
+                
                 setCurClickSkill(input);
                 makeSkillCommand(characterIdx, skillIdx);
                 SoundManager_Sfx.Instance.playSound(0);
             }
+            
 
             for (int i = 0; i < 4; i++) //이미 스킬이 있는 경우는 해제할 수 있어야 하므로
             {
@@ -1816,6 +1817,32 @@ public class BattleManager : MonoBehaviour
             //주사위에 할당된 스킬도 클릭된 스킬도 없다면 아무것도 하지 않는다.
 
             upDownManager.Instance.updateBigDiceSkill();
+
+            Debug.Log("wowowo");
+            Debug.Log(curClickSkill);
+            //skill use able update
+            if (curClickSkill != -1) {
+                int characterIdxTemp = curClickSkill / 10;
+                int skillIdxTemp = curClickSkill % 10;
+                for (int idx = 0; idx < 4; idx++)
+                {
+                    if (myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
+                    {
+                        if (MakeMyAttackSet(true, characterIdxTemp, skillIdxTemp, idx))
+                        {
+                            upDownManager.Instance.underSkillClickAble(idx, 1);
+                        }
+                        else
+                        {
+                            upDownManager.Instance.underSkillClickAble(idx, 0);
+                        }
+                    }
+                    else
+                    {
+                        upDownManager.Instance.underSkillClickAble(idx, -1);
+                    }
+                }
+            }
         }
     }
 
@@ -2656,8 +2683,22 @@ public class BattleManager : MonoBehaviour
                         activeTime /= 1.5f;
                     }
                 }
+                else if(!updateLook)
+                {
+                    if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                    {
+                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal())).ToString() + ">" +
+                         takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                     + "</size>";
+                    }
+                }
             }
         }
+        /*
+        battleTextObj.GetComponent<TextMeshPro>().text = battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillPacketArr.Count-1].getVal()) ).ToString() + ">" +
+                                 takeSkillPacketArr[takeSkillPacketArr.Count-1].getVal().ToString() //상단부에 적용될 text값 적기
+                             + "</size>";
+        */
         passiveItemChk = false;
     }
 
@@ -2679,9 +2720,16 @@ public class BattleManager : MonoBehaviour
                         if (tempPassiveReturn.cal != "none")
                         {
                             specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
+                            if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
+                            {
+                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal())).ToString() + ">" +
+                                     takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
+                                 + "</size>";
+                            }
                         }
                         //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
                         upDownManager.Instance.activePassiveItem(passiveItemIdx);
+                        
                         //GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                         effectChk[passiveItemIdx] = true;
                     }
@@ -3069,7 +3117,18 @@ public class BattleManager : MonoBehaviour
 
                     bool boomChk = false;
                     chainChk = false;
-                    for (int i = 0; i < curSkill.getTargetChance(); i++) { // 해당 스킬이 공격하는 숫자
+
+                    int targetChance = curSkill.getTargetChance();
+                    if (targetChance < 0) targetChance = myCharacter[skillUseCharacter].getTargetChance(skillUseIdx);
+
+                    for (int i = 0; i < targetChance; i++) { // 해당 스킬이 공격하는 숫자
+
+                        
+                        takeSkillPacketArr.Clear(); // 그저 데미지 Text를 보여주기 위한 부분 
+                        takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                        takeSkillPacketLastFix(skillUseCharacter, takeSkillPacketArr);
+                        activeEquipBeforeSkillUse(skillUseCharacter, takeSkillPacketArr, usedDiceArr); //스킬 사용시 타입에 해당하는 장비 시전.
+                        StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false));
                         
                         boomChk = false;
                         characterTargetIdx = 0;
@@ -3154,7 +3213,7 @@ public class BattleManager : MonoBehaviour
                             break;
                         }
 
-                        if (i + 1 < curSkill.getTargetChance()) { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
+                        if (i + 1 < targetChance) { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
                             skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                             yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
                         }
@@ -3165,6 +3224,7 @@ public class BattleManager : MonoBehaviour
                             yield return new WaitForSeconds(0.5f);
                         }
                         initTextHeight();
+                        sendSkillPacketTemp.addChanceNum();
                     }
 
                     for (int i = 0; i < 4; i++)
@@ -3227,7 +3287,11 @@ public class BattleManager : MonoBehaviour
 
                     bool boomChk = false;
                     chainChk = false;
-                    for (int i = 0; i < curSkill.getTargetChance(); i++)
+
+                    int targetChance = curSkill.getTargetChance();
+                    if (targetChance < 0) targetChance = enemyCharacter[skillUseCharacter].getTargetChance(skillUseIdx);
+
+                    for (int i = 0; i < targetChance; i++)
                     { // 해당 스킬이 공격하는 숫자
 
                         
@@ -3293,7 +3357,7 @@ public class BattleManager : MonoBehaviour
                         //공격할 아군이 더 남아있지 않으면 종료
                         if (winningCheck() != 0) break;
 
-                        if (i + 1 < curSkill.getTargetChance())
+                        if (i + 1 < targetChance)
                         { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
                             yield return new WaitForSeconds(0.2f);
                             skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
@@ -3539,10 +3603,12 @@ public class BattleManager : MonoBehaviour
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 bossPhase = 0;
             }
-            if(bossPhase == 102) //bard 이긴경우.
+            if(bossPhase == 102 ) //bard 이긴경우.
             {
-                TalkManager.Instance.startTalk(65);
-                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) {
+                    TalkManager.Instance.startTalk(65);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
                 bossPhase = 0;
             }
 
@@ -3686,20 +3752,20 @@ public class BattleManager : MonoBehaviour
         {
             if (resultPower[i] ==0) {
                 if (AdventureManager.Instance.getAtkMaxVal() < 99){
-                    AdventureManager.Instance.addMaxVal(resultPower[i], 10); bosang_click = false;
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 5); bosang_click = false;
                 }
                 else { fullUI.showFull(140); }
             }
             else if (resultPower[i] == 1){
                 if (AdventureManager.Instance.getMagMaxVal() < 99){
-                    AdventureManager.Instance.addMaxVal(resultPower[i], 10); bosang_click = false;
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 5); bosang_click = false;
                 }
                 else { fullUI.showFull(140); }
             }
             else if (resultPower[i] == 2)
             {
                 if (AdventureManager.Instance.getSpdMaxVal() < 99){
-                    AdventureManager.Instance.addMaxVal(resultPower[i], 10); bosang_click = false;
+                    AdventureManager.Instance.addMaxVal(resultPower[i], 5); bosang_click = false;
                 }
                 else { fullUI.showFull(140); }
             }

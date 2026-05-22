@@ -236,17 +236,19 @@ public class MapperManager : MonoBehaviour
         
 
         int clearStageNum = 0;
-        for (int i = 0; i < AdventureManager.Instance.getAdventureEventLen(stageNum); i++)
-        {
-            if (jsonDataManager.Instance.getEventMeet(AdventureManager.Instance.getAdventureEvent(stageNum, i).getEventIdx()))
-            {
-                clearStageNum += 1;
-            }
-        }
         
 
         for (int i=0;i<stageNumButton.Length;i++)
         {
+            clearStageNum = 0;
+            for (int j = 0; j < AdventureManager.Instance.getAdventureEventLen(i+1); j++)
+            {
+                if (jsonDataManager.Instance.getEventMeet(AdventureManager.Instance.getAdventureEvent(i+1, j).getEventIdx()))
+                {
+                    clearStageNum += 1;
+                }
+            }
+
             if (clearStageNum == 0)
             {
                 stageNumButton[i].GetComponent<SpriteRenderer>().sprite = stageNumButtonLock;

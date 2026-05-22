@@ -28,6 +28,7 @@ public class upDownManager : MonoBehaviour
     public GameObject underSkillEntity;
     public GameObject[] underSkillButton = new GameObject[8];
     public GameObject[] underSkillOutline = new GameObject[8];
+    public GameObject[] underSkillAble = new GameObject[4];
     public GameObject underBattleOutline;
     public GameObject[] underSkillDiceDescImage = new GameObject[4];
     public TextMeshProUGUI[] underSkillDiceDescText = new TextMeshProUGUI[4];
@@ -1296,7 +1297,12 @@ public class upDownManager : MonoBehaviour
             }
         }
     }
-
+    public void underSkillClickAble(int idx, int opt)
+    {
+        if(opt == 1) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on");
+        else if(opt == 0)underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off");
+        else underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
     public void clickSkill(int input)
     {
         //전투 중에는 추가 잠금 불가능하게

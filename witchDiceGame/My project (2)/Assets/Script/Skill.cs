@@ -8,6 +8,7 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
     public int useSkillIdx; //사용된 스킬이 플레이어의 몇번째 스킬인지 Idx
     public int[] targetIdx = new int[8]; // 대상이 되는 캐릭터의 index
     public int[] diceNum = new int[4];  // 현재 사용되는 주사위들에 배치된 값
+    public int curChanceNum = 0;
     public SendSkillPacket(int useCharacterIdx, int useSkillIdx, int[] targetIdx,  int[] diceNum2)
     {
         this.useCharacterIdx = useCharacterIdx;
@@ -29,6 +30,7 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
                 curIdx++;
             }
         }
+        curChanceNum = 0;
     }
     public int getClickCharacter(int idx)
     {
@@ -39,6 +41,10 @@ public class SendSkillPacket //단일 공격에 대한 Packet이다.
         for (int i = 0; i < targetIdx.Length; i++) { 
             targetIdx[i] = characterArr[i];
         }
+    }
+    public void addChanceNum()
+    {
+        curChanceNum += 1;
     }
     
 }

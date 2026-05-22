@@ -45,7 +45,7 @@ public class HomeManager : MonoBehaviour
     private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 }, { 0,0,0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
     private int[,] chapterTalk = {{ 24, 27, 30 }, { 56, 59, 62 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
     private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63}, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    private int[] chapterClear = { 19, 0, 0, 0, 0, 0};
+    private int[] chapterClear = { 19, 70, 0, 0, 0, 0};
     private int[] chapterStartIdx = { 54, 0, 0, 0, 0, 0 };
     private int homeSoundIdx = 19;
     private float textBoxTimer = 0f;

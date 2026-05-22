@@ -1759,8 +1759,8 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(51);
 
-                        TalkManager.Instance.startTalk(35);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        //TalkManager.Instance.startTalk(35);
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         eventEndClick = true;
                         clickAble = false;
                         clickAbleObjSet(nextBtnObj, false, 1);
@@ -1772,8 +1772,8 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(52);
 
-                        TalkManager.Instance.startTalk(36);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        //TalkManager.Instance.startTalk(36);
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         setTutorialVal4ErrorChk(true);
                         yield return new WaitUntil(() => tutorialVal == 3);
                         setTutorialVal4ErrorChk(false);
@@ -1918,7 +1918,7 @@ public class AdventureManager : MonoBehaviour
                     gameOverChk = true;
                 }
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 102 && !gameOverChk)
-                { // 올빼미 선배 클리어
+                { // 바르드 클리어
                     if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) jsonDataManager.Instance.setChapterRead(1, 2);
                     giveUpBtnAble(false);
                     demoEndChk = 3;

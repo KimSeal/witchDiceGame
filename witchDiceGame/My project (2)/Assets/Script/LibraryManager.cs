@@ -170,11 +170,12 @@ public class LibraryManager : MonoBehaviour
 
         if (idx == 1 && jsonDataManager.Instance.getChapterRead(1,2) != 2)
         {
+           
             Destiny destinyTemp = CharacterManager.Instance.getDestiny(0);
             curCharacter[idx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + destinyTemp.getName() + "/animator_" + destinyTemp.getName());
             curCharacterSelectIdx[idx] = curCharacterIdx;
 
-            jsonDataManager.Instance.setCharacterSelect(idx, curCharacterIdx);
+            jsonDataManager.Instance.setCharacterSelect(idx, 0);
             CharacterManager.Instance.setCharacter_destinyBase(ref curCharacterInfo[idx], jsonDataManager.Instance.getCharacterSelect(idx));
             if (idx == 1) FoodStreetManager.Instance.upgradeInitStat(ref curCharacterInfo[idx]);
 
@@ -192,6 +193,7 @@ public class LibraryManager : MonoBehaviour
             }
             hoverInCurCharacter(idx);
             return;
+            
         }
         if(curCharacterIdx == 0 && idx == 0 && curCharacterSelectIdx[idx] == 0)
         {

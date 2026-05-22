@@ -612,12 +612,22 @@ public class Munk : Character
 
         }
         else if (sendSkillPacket.useSkillIdx == 1)
-        {//고블린의 두번째 스킬이 호출된 경우
-            for (int i=0;i<=this.getArmor(); i++) {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1 + this.getPhyAtk(), 0));
-            } 
+        {//고블린의 두번째 스킬이 호출된 경우  
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5 + this.getPhyAtk(), 0));
         }
         return packets;
+    }
+
+    public override int getTargetChance(int idx)
+    {
+        Debug.Log("Check");
+
+        if (idx == 1)
+        {
+            Debug.Log(this.getArmor() + 1);
+            return this.getArmor() + 1;
+        }
+        return 0;
     }
 }
 
@@ -653,10 +663,16 @@ public class Pimpi : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-            for (int i = 0; i <= 4; i++){
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], itemManager.Instance.getItemNum(i) + this.getPhyAtk(), 0));
-            }
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], itemManager.Instance.getItemNum(sendSkillPacket.curChanceNum) + this.getPhyAtk(), 0));
         }
         return packets;
+    }
+    public override int getTargetChance(int idx)
+    {
+        if (idx == 1)
+        {
+            return 4;
+        }
+        return 0;
     }
 }
