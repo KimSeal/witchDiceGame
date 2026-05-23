@@ -198,8 +198,10 @@ public class ToolBarManager : MonoBehaviour
     private int[] toolBarStatTitleIdx = { 72, 73, 74, 83, 85, 124, 155 };
     private int[] toolBarStatContentIdx = { 75, 76, 77, 84, 86, 125, 154 };
 
-    private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121 };
-    private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122};
+    private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121,
+                                     156,156,159 };
+    private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122,
+                                     157,158,160};
 
     private int[] toolBarItemTypeTitleIdx = { 78,79,80,81};
     private int[] toolBarItemTypeContentIdx = { 134,135,136, 137};

@@ -85,6 +85,16 @@ public class MapperManager : MonoBehaviour
 
     }
 
+    public void hoverInSlider(int idx)
+    {
+        if (idx == 0) ToolBarManager.Instance.setToolBar(11);
+        if (idx == 1) ToolBarManager.Instance.setToolBar(12);
+        if (idx == 2) ToolBarManager.Instance.setToolBar(13);
+    }
+    public void hoverOutSlider()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
     public void goNextEventIdx()
     {
         stageIdx += 1;
