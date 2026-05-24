@@ -2540,8 +2540,11 @@ public class BattleManager : MonoBehaviour
             enemySkillDiceNum[idx + 4] = -999;
 
             int moneyTemp = enemyCharacter[idx].getMoney();
-            moneyTemp = Random.Range(moneyTemp - (moneyTemp * 2 / 5), moneyTemp + (moneyTemp * 2 / 5));
-            if (moneyTemp <= 0) moneyTemp = 1;
+            if (moneyTemp != 0)
+            {
+                moneyTemp = Random.Range(moneyTemp - (moneyTemp * 2 / 5), moneyTemp + (moneyTemp * 2 / 5));
+                if (moneyTemp <= 0) moneyTemp = 1;
+            }
 
             for (int i = 0; i < moneyTemp; i++)
             {
@@ -3470,8 +3473,11 @@ public class BattleManager : MonoBehaviour
             resultPower[1] = Random.Range(0, resultPowerLen - 1);
             if (resultPower[1] >= resultPower[0]) resultPower[1] += 1;
             resultPower[2] = Random.Range(0, resultPowerLen - 2);
-            if (resultPower[2] >= resultPower[0]) resultPower[2] += 1;
-            if (resultPower[2] >= resultPower[1]) resultPower[2] += 1;
+            if (resultPower[2] >= resultPower[0] && resultPower[2] + 1 >= resultPower[1]) resultPower[2] += 2;
+            else if (resultPower[2] >= resultPower[1] && resultPower[2] + 1 >= resultPower[0]) resultPower[2] += 2;
+            else if (resultPower[2] >= resultPower[0] && resultPower[2]  >= resultPower[1]) resultPower[2] += 2;
+            else if (resultPower[2] >= resultPower[0] && resultPower[2] + 1 < resultPower[1]) resultPower[2] += 1;
+            else if (resultPower[2] >= resultPower[1] && resultPower[2] + 1 < resultPower[0]) resultPower[2] += 1;
 
             return;
         }

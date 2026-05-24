@@ -535,23 +535,30 @@ public class Nubi : Character
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
             int emptySpace = -999;
-            
-            if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
+            if (this.getCharacter_battle().getSpecialVal() == 0)
             {
-                for (int i = 4; i < 8; i++)
+                if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
                 {
-                    if (BattleManager.Instance.getCharacter(i) == null ||
-                        BattleManager.Instance.getCharacter(i).getCurState() != 0)
+                    for (int i = 4; i < 8; i++)
                     {
-                        emptySpace = i-4;
-                        break;
+                        if (BattleManager.Instance.getCharacter(i) == null ||
+                            BattleManager.Instance.getCharacter(i).getCurState() != 0)
+                        {
+                            emptySpace = i - 4;
+                            break;
+                        }
                     }
                 }
             }
+            
             for (int i = 4; i < 8; i++){
                 if(emptySpace+4 != i) packets.Add(new TakeSkillPacket(i, 6 + this.getPhyAtk(), 0));
             }
-            if(emptySpace>=0) BattleManager.Instance.setEnemyCharacter(emptySpace, 10036);
+            if (emptySpace >= 0)
+            {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 3)); //본인 특수 변수를 1으로 만든다.
+                BattleManager.Instance.setEnemyCharacter(emptySpace, 10036);
+            }
         }
         return packets;
     }

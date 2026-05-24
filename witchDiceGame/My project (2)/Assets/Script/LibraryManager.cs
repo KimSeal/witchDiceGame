@@ -79,7 +79,7 @@ public class LibraryManager : MonoBehaviour
 
     public void clickCharacterSelectButton(int idx)
     {
-        if(false)//!jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + idx))
+        if(!jsonDataManager.Instance.getPlayerCharacterAble(curCharacterBigIdx * 9 + idx))
         {
             fullUI.showFull(66);
         }
