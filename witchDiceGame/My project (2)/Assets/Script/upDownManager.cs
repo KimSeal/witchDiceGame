@@ -1123,8 +1123,12 @@ public class upDownManager : MonoBehaviour
         {
             return;
         }
+        
         if (BattleManager.Instance.curPhase == 5)
         {
+            if (input == -1) {
+                itemManager.Instance.click_Character_battle(input);
+            }
             return;
         }
         for (int i = 0; i < 4; i++)
