@@ -177,7 +177,10 @@ public class FoodStreetManager : MonoBehaviour
     }
     public void exitFoodStreet()
     {
-
+        for (int i = 0; i < statArr.Length; i++)
+        {
+            statArr[i] = jsonDataManager.Instance.getFoodStreetStat(i);
+        }
     }
 
     public void upgradeInitStat(ref Character character)

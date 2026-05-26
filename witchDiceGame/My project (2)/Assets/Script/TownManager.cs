@@ -89,6 +89,7 @@ public class TownManager : MonoBehaviour
         AdventureReadyManager.Instance.exitAdventureReady();
         upDownManager.Instance.clickCharacterButton(-1);
         MapperManager.Instance.exitMapper();
+        FoodStreetManager.Instance.exitFoodStreet();
         //0 : 타워 1 : 집 2: 도서관 3: 아카이브 4:음식거리   7: 로비
         if (i == 0)
         {

@@ -180,6 +180,7 @@ public class BattleManager : MonoBehaviour
 
     //전투 위에 뜨는 밸류(공격전에 몇 들어가는 지 보여주는 거)
     [SerializeField] private GameObject battleTextObj;
+    [SerializeField] public GameObject[] battleTextObjBack = new GameObject[3];
 
 
     private int[] myDiceState = { 0, 0, 0, 0 };
@@ -941,8 +942,8 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator startPhaseManage()
     {
-       
 
+        setBattleFontSize(0,0);
         witchHatButton.SetActive(false);
         upDownManager.Instance.setItemTypeButtonLock(false);
         startBattlePhase();
@@ -2619,6 +2620,48 @@ public class BattleManager : MonoBehaviour
     }
 
     bool passiveItemChk = false;
+
+    public void setBattleFontSize(int val, int widthNum)
+    {
+        if(val == 0)
+        {
+            battleTextObj.GetComponent<TextMeshPro>().text = "";
+            for (int i = 0; i < 3; i++) battleTextObjBack[i].SetActive(false);
+            return;
+        }
+
+        for (int i = 0; i < 3; i++) battleTextObjBack[i].SetActive(true);
+        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(val) + widthNum * 3).ToString() + ">" +
+                                                val.ToString() //상단부에 적용될 text값 적기
+                                            + "</size>";
+        int textLen = 0;
+        int tempNum = 10;
+        while(true)
+        {
+            textLen++;
+            if (tempNum > val) break;
+            tempNum *= 10;
+        }
+        
+        battleTextObjBack[0].transform.localScale = new Vector3(textLen,
+            1 + (widthNum * 0.1f),
+            1);
+
+        battleTextObjBack[0].transform.localPosition = new Vector3(
+            this.battleTextObjBack[0].transform.localPosition.x,
+            4 - ((makeBattleFontSize(val) - 100) / 10),
+            this.battleTextObjBack[0].transform.localPosition.z);
+        
+
+        battleTextObjBack[1].transform.localPosition = new Vector3(-27 - ((textLen-1) * 12) - widthNum,
+           2 - ((makeBattleFontSize(val) - 100) / 10) ,
+           this.battleTextObjBack[0].transform.position.z);
+
+        battleTextObjBack[2].transform.localPosition = new Vector3(-27 + ((textLen-1) * 12) + widthNum,
+           2 - ((makeBattleFontSize(val) - 100) / 10),
+           this.battleTextObjBack[0].transform.position.z);
+
+    }
     private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArr, int[] usedDiceArr, bool updateLook)
     {
         float activeTime = 0.1f;
@@ -2631,9 +2674,7 @@ public class BattleManager : MonoBehaviour
             {
                 if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0 && takeSkillPacketArr[takeSkillArrIdx].getVal() > 0)
                 {
-                    battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal()) + ">" +
-                                                takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                                            + "</size>";
+                    setBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal(), 0);
                     break;
                 }
             }
@@ -2660,9 +2701,7 @@ public class BattleManager : MonoBehaviour
                         {
                             if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
                             {
-                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal()) + fontSizeIdx*3).ToString() + ">" +
-                                    takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                                + "</size>";
+                                setBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal(), fontSizeIdx);
                             }
                             yield return new WaitForSeconds(activeTime / 5.0f);
                         }
@@ -2670,9 +2709,7 @@ public class BattleManager : MonoBehaviour
                         {
                             if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
                             {
-                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal()) + fontSizeIdx*3).ToString() + ">" +
-                                 takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                             + "</size>";
+                                setBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal(), fontSizeIdx);
                                 yield return new WaitForSeconds(activeTime / 5.0f);
                             }
                         }
@@ -2690,9 +2727,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
                     {
-                        battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal())).ToString() + ">" +
-                         takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                     + "</size>";
+                        setBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal(), 0);
                     }
                 }
             }
@@ -2725,9 +2760,7 @@ public class BattleManager : MonoBehaviour
                             specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                             if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() % 1000 == 0)
                             {
-                                battleTextObj.GetComponent<TextMeshPro>().text = "<size=" + (makeBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal())).ToString() + ">" +
-                                     takeSkillPacketArr[takeSkillArrIdx].getVal().ToString() //상단부에 적용될 text값 적기
-                                 + "</size>";
+                                setBattleFontSize(takeSkillPacketArr[takeSkillArrIdx].getVal(), 0);
                             }
                         }
                         //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
