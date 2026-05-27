@@ -42,6 +42,9 @@ public class TalkManager : MonoBehaviour
 
     [SerializeField] public GameObject wishlistButton;
     [SerializeField] public Sprite[] wishlistSprite = new Sprite[2];
+
+    [SerializeField] public GameObject[] tutorialArrow = new GameObject[5];
+    [SerializeField] public GameObject[] tutorialArrowOrigin = new GameObject[5];
     private List<TalkReader> talkList = new List<TalkReader>();
     private List<DescReader> descList = new List<DescReader>();
     private Material[] material = new Material[4];
@@ -288,10 +291,112 @@ public class TalkManager : MonoBehaviour
         }
     }
 
+    public void makeTutorialArrow(int idx, Vector3 position, int opt, int rotation)
+    {
+        this.tutorialArrow[idx].GetComponent<RectTransform>().localPosition = position;
+        this.tutorialArrowOrigin[idx].GetComponent<Animator>().Play(opt.ToString() + "_" + rotation.ToString());
+        tutorialArrow[idx].GetComponent<Image>().sprite = tutorialArrowOrigin[idx].GetComponent<SpriteRenderer>().sprite;
+    }
+    public void offTutorialArrow(int idx)
+    {
+        this.tutorialArrow[idx].GetComponent<RectTransform>().localPosition = new Vector3(0f, 200f, 0f);
+    }
+    public void resetTutorialArrow()
+    {
+        for(int idx=0;idx<tutorialArrow.Length;idx++) this.tutorialArrow[idx].GetComponent<RectTransform>().localPosition = new Vector3(0f, 200f, 0f);
+    }
+    public void setTutorialArrow(int opt)
+    {
+        resetTutorialArrow();
+        if(opt == 1) {
+            makeTutorialArrow(0, new Vector3(-77,50,0), 0, 2);
+            makeTutorialArrow(1, new Vector3(80, 20, 0), 1, 2);
+            makeTutorialArrow(2, new Vector3(160, 60, 0), 1, 2);
+        }
+        if(opt == 2)
+        {
+            makeTutorialArrow(0, new Vector3(-77, 50, 0), 0, 2);
+            makeTutorialArrow(1, new Vector3(35, -20, 0), 1, 2);
+        }
+        if(opt == 3) {
+            makeTutorialArrow(0, new Vector3(60, 18, 0), 0, 1);
+        }
+        if (opt == 4)
+        {
+            makeTutorialArrow(0, new Vector3(-75, 0, 0), 0, 2);
+            makeTutorialArrow(1, new Vector3(-135, 0, 0), 0, 2);
+        }
+        if(opt == 5)
+        {
+            makeTutorialArrow(0, new Vector3(-72, -29, 0), 1, 2);
+            makeTutorialArrow(1, new Vector3(55, -30, 0), 1, 1);
+            makeTutorialArrow(2, new Vector3(105, 53, 0), 1, 1);
+        }
+        if (opt == 6)
+        {
+            makeTutorialArrow(0, new Vector3(60, 18, 0), 0, 1);
+            makeTutorialArrow(1, new Vector3(150, 18, 0), 0, 3);
+        }
+        if (opt == 7)
+        {
+            makeTutorialArrow(0, new Vector3(-100, 65, 0), 0, 0);
+            makeTutorialArrow(1, new Vector3(-130, 65, 0), 0, 0);
+        }
+        if (opt == 8)
+        {
+            makeTutorialArrow(0, new Vector3(121, 65, 0), 0, 0);
+            makeTutorialArrow(1, new Vector3(-135, 0, 0), 0, 1);
+        }
+        if(opt == 9)
+        {
+            int tempIdx = 0;
+            for (int i=0;i<4;i++)
+            {
+                if(BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                {
+                    makeTutorialArrow(tempIdx, new Vector3(-112 + (i * 64), -55, 0), 0, 2);
+                    makeTutorialArrow(tempIdx + 1, new Vector3(-112 + (64 * i) + 32, -55, 0), 0, 2);
+                    tempIdx += 2;
+                }
+            }
+        }
+        if(opt == 10) 
+        {
+            makeTutorialArrow(1, new Vector3(110, -10, 0), 1, 2);
+            
+        }
+        if(opt == 11)
+        {
+            //makeTutorialArrow(0, new Vector3(-135, 20, 0), 0, 1);
+            makeTutorialArrow(0, new Vector3(152, -55, 0), 0, 2);// 전투 시작 버튼 관련
+        }
+        if(opt == 12) makeTutorialArrow(0, new Vector3(5, -20, 0), 0, 1);
+        if(opt == 13) makeTutorialArrow(0, new Vector3(-100, 65, 0), 0, 0); //주사위 획득
+        if(opt == 14) makeTutorialArrow(0, new Vector3(-5, 15, 0), 0, 0);//마녀 모자 클릭
+        if(opt == 15)
+        {
+            int tempIdx = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                {
+                    makeTutorialArrow(tempIdx, new Vector3(-125 + (i * 30), 0, 0), 0, 2);
+                    tempIdx += 1;
+                }
+            }
+            for (int i=0;i<3;i++)
+            {
+                makeTutorialArrow(i+2, new Vector3(35 + (i * 30), 0, 0), 0, 2);
+            }
+        }
+        if(opt == 16) makeTutorialArrow(0, new Vector3(-60, 50, 0), 0, 3);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         wishlistButton.SetActive(false);
+        resetTutorialArrow();
 
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
@@ -342,7 +447,12 @@ public class TalkManager : MonoBehaviour
         {
 
             talkClickButton.GetComponent<Image>().sprite = talkClickButtonOriginal.GetComponent<SpriteRenderer>().sprite;
+            for (int i = 0; i < tutorialArrow.Length; i++)
+            {
+                tutorialArrow[i].GetComponent<Image>().sprite = tutorialArrowOrigin[i].GetComponent<SpriteRenderer>().sprite;
+            }
             float yDefault = -20f;
+            
             if (entity.activeSelf)
             {
                 //투명도 조정

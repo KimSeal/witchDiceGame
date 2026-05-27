@@ -251,11 +251,17 @@ public class itemManager : MonoBehaviour
         if (type == -99999 || idx == -99999 || type>4 || idx >= itemList[type].Count || itemList[type][idx] == null) {
             return 2; //존재 하지 않는 아이템 호출
         }
+
+        int originType = type;
+        if (type < 3) type = 0; //임시 테스트를 위해 배치. 만약 원래대로 아이템마다 배치할거면 이거 지우면 됩니다.
+
         int emptyIdx = findEmptyIdx(type);
         if (emptyIdx == 999) {
             return 1; //빈 공간이 없는 경우.
         }
-        setItem(type, emptyIdx, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
+
+        
+        setItem(type, emptyIdx, originType, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
         upDownManager.Instance.activePassiveItem(emptyIdx);
         upDownManager.Instance.clickItemTypeButton(type);
         updateInventory();
@@ -267,14 +273,18 @@ public class itemManager : MonoBehaviour
     {
         int curChapter = jsonDataManager.Instance.getCurChapter();
         int randomType = 0;
-        if (curChapter <= 1) { // before chapter 2 clear( equip lock )
+        if (AdventureManager.Instance.getTutorial() > 0) randomType = 3;
+        else// if (curChapter <= 1)
+        { // before chapter 2 clear( equip lock )
             randomType = Random.Range(0, 3);
             if (randomType == 2) randomType++;
         }
-        else{
+        /*
+        else
+        {
             randomType = Random.Range(0, 4);
         }
-
+        */
         int randomItemIdx = Random.Range(1, itemArrLengthByChapter[randomType, curChapter]); //현재 챕터에서 얻을 수 있는, 해당 종류의 모든 아이템 수 
         //escape same item idx
         if (itemListChapter[randomType, curChapter][randomItemIdx].getIdx() == exceptItem0 ||
@@ -761,8 +771,9 @@ public class itemManager : MonoBehaviour
     }
     public void click_dice_changeNum(int characterIdx, int idx,int itemBagIdx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
-        if (itemBagIdx != -1 && idx != -1 && ItemArr[1, itemBagIdx] != null && ItemExistArr[1, itemBagIdx]) {
-            int itemIdx = ItemArr[1, itemBagIdx].getIdx();
+        
+        if (itemBagIdx != -1 && idx != -1 && ItemArr[curSelectItemType, itemBagIdx] != null && ItemExistArr[curSelectItemType, itemBagIdx]) {
+            int itemIdx = ItemArr[curSelectItemType, itemBagIdx].getIdx();
             if (AdventureManager.Instance.getTutorial() == 12) AdventureManager.Instance.setTutorial(13);
             if (itemIdx == 1)
             { //랜덤한 숫자로 변경 
@@ -771,7 +782,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx >= 2 && itemIdx <= 7) //해당 숫자로 변경
             {
-                changeDice(characterIdx, idx, ItemArr[1, itemBagIdx].getVal(0));
+                changeDice(characterIdx, idx, ItemArr[curSelectItemType, itemBagIdx].getVal(0));
                 upDownManager.Instance.makeItemCharacterDiceEff(idx);
             }
             else if (itemIdx == 8)
@@ -913,7 +924,7 @@ public class itemManager : MonoBehaviour
                 }
             }
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
-            useItem(1, itemBagIdx);
+            useItem(curSelectItemType, itemBagIdx);
 
         }
     }
@@ -921,16 +932,16 @@ public class itemManager : MonoBehaviour
     
     public void click_equip_changeNum(int characterIdx, int itemBagIdx, int idx) //
     {   //주사위 변수 값은 val1으로 변경했습니다
-        if (itemBagIdx != -1&& idx != -1 && ItemArr[2, itemBagIdx] != null && ItemExistArr[2, itemBagIdx]) 
+        if (itemBagIdx != -1&& idx != -1 && ItemArr[curSelectItemType, itemBagIdx] != null && ItemExistArr[curSelectItemType, itemBagIdx]) 
         {
-            CharacterManager.Instance.changeEquip(characterIdx, idx, ItemArr[2, itemBagIdx].getIdx());
+            CharacterManager.Instance.changeEquip(characterIdx, idx, ItemArr[curSelectItemType, itemBagIdx].getIdx());
             upDownManager.Instance.makeItemCharacterEquipEff(idx);
             //equipBoardObj[idx * 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + ItemArr[2, itemBagIdx].getItemName().ToString());
             //equipBoardObj[idx * 3 + 1].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getItemName();
             //equipBoardObj[idx * 3 + 2].GetComponent<TextMeshPro>().text = ItemArr[2, itemBagIdx].getContent();
 
             //주사위 클릭해서 바뀐후 아이템 삭제 및 선택한거 초기화(일단 item은 안건들이긴합니다. 나중에 빈 아이템 만들어서 배정해야할듯?)
-            useItem(2, itemBagIdx);
+            useItem(curSelectItemType, itemBagIdx);
         }
     }
     private void useItem(int itemIdx)
@@ -1087,7 +1098,7 @@ public class itemManager : MonoBehaviour
 
         
         //test Sample
-
+        /*
         
          ItemExistArr[1, 3] = true;
         ItemArr[1, 3] = new Item(itemList[1][18]);
@@ -1135,15 +1146,19 @@ public class itemManager : MonoBehaviour
         ItemArr[2, 0] = new Item(itemList[2][1]);
         ItemExistArr[2, 1] = true;
         ItemArr[2, 1] = new Item(itemList[2][2]);
-        
-        
+
+        ItemArr[0, 1] = new Item(itemList[1][2]);
+        ItemArr[0, 2] = new Item(itemList[2][1]);
+        ItemArr[0, 3] = new Item(itemList[2][1]);
+        ItemArr[0, 4] = new Item(itemList[2][1]);
+        */
         updateInventory();
     }
 
-    private void setItem(int type, int index, int ItemIndex) //실제로 아이템을 배치하는 코드
+    private void setItem(int type, int index, int itemType, int ItemIndex) //실제로 아이템을 배치하는 코드
     {
         ItemExistArr[type, index] = true;
-        ItemArr[type, index] = new Item(itemList[type][ItemIndex]);
+        ItemArr[type, index] = new Item(itemList[itemType][ItemIndex]);
     }
 
     public Vector3 getItemInventoryPosition(int idx)

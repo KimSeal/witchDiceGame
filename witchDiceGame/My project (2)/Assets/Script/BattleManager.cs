@@ -964,6 +964,7 @@ public class BattleManager : MonoBehaviour
 
             StartCoroutine(skillSelectPhase());
             yield return new WaitUntil(() => phaseMoveChk(4) || giveUpChk);
+            TalkManager.Instance.resetTutorialArrow();
             AdventureManager.Instance.giveUpBtnAble(false);
             if (!giveUpChk)
             {
@@ -1059,6 +1060,7 @@ public class BattleManager : MonoBehaviour
             if (AdventureManager.Instance.getTutorial() == 7) {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
                 TalkManager.Instance.startTalk(5);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.setTutorialArrow(9);
             }
             else if (AdventureManager.Instance.getTutorial() == 11) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
@@ -1604,28 +1606,34 @@ public class BattleManager : MonoBehaviour
 
         if (AdventureManager.Instance.getTutorial() == 7)
         {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
-            TalkManager.Instance.startTalk(39);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
+            //TalkManager.Instance.startTalk(39);
+            //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            TalkManager.Instance.setTutorialArrow(9);
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 8);
-
+            TalkManager.Instance.resetTutorialArrow();
+            
             TalkManager.Instance.startTalk(40);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            TalkManager.Instance.setTutorialArrow(10);
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 9);
+            TalkManager.Instance.resetTutorialArrow();
             TalkManager.Instance.startTalk(41);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            TalkManager.Instance.setTutorialArrow(11);
         }
         if (AdventureManager.Instance.getTutorial() == 11)
         {//주사위 변경, 운명 마법 사용 관련
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(59);
             itemManager.Instance.getItemResult(1, 9);
+            TalkManager.Instance.setTutorialArrow(13);
             //TalkManager.Instance.startTalk(43);
             //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 12);
+            TalkManager.Instance.resetTutorialArrow();
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(60);
             //TalkManager.Instance.startTalk(44);
@@ -1638,16 +1646,20 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 14);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(62);
+            TalkManager.Instance.setTutorialArrow(14);
             //TalkManager.Instance.startTalk(45);
             //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 15);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(63);
-            TalkManager.Instance.startTalk(46);
-            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            TalkManager.Instance.setTutorialArrow(15);
+            //TalkManager.Instance.startTalk(46);
+            //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 16);
+            TalkManager.Instance.resetTutorialArrow();
+
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(64);
 
@@ -1941,6 +1953,7 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
+            
             upDownManager.Instance.clickItemTypeButton(3);
             upDownManager.Instance.setItemTypeButtonLock(true);
             witchHatButton.SetActive(false);
@@ -3148,6 +3161,7 @@ public class BattleManager : MonoBehaviour
                         TalkManager.Instance.startTalk(42);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         AdventureManager.Instance.setTutorial(10);
+                        TalkManager.Instance.setTutorialArrow(12);
                     }
 
 
@@ -3179,6 +3193,7 @@ public class BattleManager : MonoBehaviour
                             StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
                             yield return new WaitUntil(() => (characterTargetIdx == curSkill.getTargetNum())); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
                         }
+                        TalkManager.Instance.resetTutorialArrow();
                         characterTargetIdx = -999;
 
                         //스킬에 대한 공격용 Packet 생성
@@ -3245,7 +3260,7 @@ public class BattleManager : MonoBehaviour
 
                         if (winningCheck() != 0) //게임이 승리하여 공격할 적이 더이상 없는 경우
                         {
-                            battleTextObj.GetComponent<TextMeshPro>().text = "";
+                            setBattleFontSize(0, 0);
                             break;
                         }
 
@@ -3254,7 +3269,7 @@ public class BattleManager : MonoBehaviour
                             yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
                         }
 
-                        battleTextObj.GetComponent<TextMeshPro>().text = "";
+                        setBattleFontSize(0, 0);
                         if (curSkill.TargetAuto == 0)
                         {
                             yield return new WaitForSeconds(0.5f);
@@ -3687,8 +3702,8 @@ public class BattleManager : MonoBehaviour
 
                     if (AdventureManager.Instance.getTutorial() == 17)
                     {
-                        TalkManager.Instance.startTalk(48);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        //TalkManager.Instance.startTalk(48);
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         AdventureManager.Instance.setTutorial(18);
                     }
 
@@ -3905,7 +3920,7 @@ public class BattleManager : MonoBehaviour
             myCharacterInitPosition[i] = myCharacterObjEntityUI[i].transform.position;
             enemyCharacterInitPosition[i] = enemyCharacterObjEntityUI[i].transform.position;
         }
-        battleTextObj.GetComponent<TextMeshPro>().text = "";
+        setBattleFontSize(0, 0);
 
         for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) resultObj[i, j] = resultObjInit[i * 4 + j];
 

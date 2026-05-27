@@ -1344,7 +1344,8 @@ public class AdventureManager : MonoBehaviour
             
 
             diceBtnFire.Play();
-            if (tutorialVal == 1) { 
+            if (tutorialVal == 1) {
+                
                 TalkManager.Instance.startTalk(4); //4
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
@@ -1356,8 +1357,9 @@ public class AdventureManager : MonoBehaviour
 
             if (tutorialVal == 1)
             {
-                TalkManager.Instance.startTalk(34);
-                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                //TalkManager.Instance.startTalk(34);
+                //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                TalkManager.Instance.setTutorialArrow(1);
                 setTutorial(2);
                 setTutorialVal4ErrorChk(false);
             }
@@ -1367,14 +1369,17 @@ public class AdventureManager : MonoBehaviour
                 TalkManager.Instance.setDescIdx(62);
                 TalkManager.Instance.startTalk(47);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
+                TalkManager.Instance.setTutorialArrow(16);
                 yield return new WaitUntil(() => tutorialVal == 20);
+                TalkManager.Instance.resetTutorialArrow();
                 TalkManager.Instance.setDescClickLock(true);
                 TalkManager.Instance.setDescIdx(1);
             }
 
             giveUpBtnAble(true);
             yield return new WaitUntil(() => selectDiceNum > 0 || gameOverChk);
+            TalkManager.Instance.resetTutorialArrow();
+
             if (gameOverChk) { continue; }
             giveUpBtnAble(false);
 
@@ -1536,14 +1541,17 @@ public class AdventureManager : MonoBehaviour
 
                     if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
                     {
-                        TalkManager.Instance.startTalk(49);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                        //TalkManager.Instance.startTalk(49);
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        TalkManager.Instance.setTutorialArrow(2);
                         setTutorialVal4ErrorChk(false);
                     }
 
                 }
                 giveUpBtnAble(true);
                 yield return new WaitUntil(() => selectDiceNum > 0 || gameOverChk); // 주사위 쓸 영웅 선택 대기
+                TalkManager.Instance.resetTutorialArrow();
                 if (gameOverChk) continue;
                 giveUpBtnAble(false);
 
@@ -1758,7 +1766,7 @@ public class AdventureManager : MonoBehaviour
                         setTutorialVal4ErrorChk(false);
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(51);
-
+                        TalkManager.Instance.setTutorialArrow(3);
                         //TalkManager.Instance.startTalk(35);
                         //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         eventEndClick = true;
@@ -1768,21 +1776,26 @@ public class AdventureManager : MonoBehaviour
 
                         yield return new WaitUntil(() => (resultItemArr[0, 0] == -99999 && resultItemArr[1, 0] == -99999 && resultItemArr[2, 0] == -99999 && resultItemArr[3, 0] == -99999 &&
                                                         resultItemArr[0, 1] == -99999 && resultItemArr[1, 1] == -99999 && resultItemArr[2, 1] == -99999 && resultItemArr[3, 1] == -99999 ));
-
+                        TalkManager.Instance.resetTutorialArrow();
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(52);
-
+                        TalkManager.Instance.setTutorialArrow(4);
                         //TalkManager.Instance.startTalk(36);
                         //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         setTutorialVal4ErrorChk(true);
                         yield return new WaitUntil(() => tutorialVal == 3);
+                        TalkManager.Instance.resetTutorialArrow();
                         setTutorialVal4ErrorChk(false);
+                        
                         TalkManager.Instance.startTalk(37);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        TalkManager.Instance.setTutorialArrow(5);
+                        
                         setTutorialVal4ErrorChk(true);
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(53);
                         yield return new WaitUntil(() => tutorialVal == 4);
+                        TalkManager.Instance.resetTutorialArrow();
                         setTutorialVal4ErrorChk(false);
                         TalkManager.Instance.setDescClickLock(false);
                         TalkManager.Instance.setDescIdx(54);
@@ -1791,6 +1804,7 @@ public class AdventureManager : MonoBehaviour
                     }
                     else if (tutorialVal == 4)
                     {
+                        TalkManager.Instance.setTutorialArrow(6);
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(55);
                         eventEndClick = true;
@@ -1798,16 +1812,19 @@ public class AdventureManager : MonoBehaviour
                         clickAbleObjSet(nextBtnObj, false, 1);
                         yield return new WaitUntil(() => (resultItemArr[0, 0] == -99999 && resultItemArr[1, 0] == -99999 && resultItemArr[2, 0] == -99999 && resultItemArr[3, 0] == -99999 &&
                                                         resultItemArr[0, 1] == -99999 && resultItemArr[1, 1] == -99999 && resultItemArr[2, 1] == -99999 && resultItemArr[3, 1] == -99999));
+                        TalkManager.Instance.setTutorialArrow(7);
 
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(56);
-                        TalkManager.Instance.startTalk(38);
+                        //TalkManager.Instance.startTalk(38);
                         setTutorialVal4ErrorChk(true);
-                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         yield return new WaitUntil(() => tutorialVal == 5);
+                        TalkManager.Instance.setTutorialArrow(8);
                         TalkManager.Instance.setDescClickLock(true);
                         TalkManager.Instance.setDescIdx(57);
                         yield return new WaitUntil(() => tutorialVal == 6);
+                        TalkManager.Instance.resetTutorialArrow();
                         TalkManager.Instance.setDescIdx(53);
                         yield return new WaitUntil(() => tutorialVal == 7);
                         TalkManager.Instance.setDescClickLock(false);
