@@ -29,6 +29,7 @@ public class upDownManager : MonoBehaviour
     public GameObject[] underSkillButton = new GameObject[8];
     public GameObject[] underSkillOutline = new GameObject[8];
     public GameObject[] underSkillAble = new GameObject[4];
+    public GameObject underBattleButton;
     public GameObject underBattleOutline;
     public GameObject[] underSkillDiceDescImage = new GameObject[4];
     public TextMeshProUGUI[] underSkillDiceDescText = new TextMeshProUGUI[4];
@@ -308,7 +309,7 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-            AdventureManager.Instance.mainExitButton();
+            AdventureManager.Instance.activeExitButton();
         }
     }
     
@@ -472,6 +473,7 @@ public class upDownManager : MonoBehaviour
     public void clickUnderTitleButton(int idx)
     {
         clickUpperItemTypeInit(false);
+        AdventureManager.Instance.mainExitButton(false);
         if (jsonDataManager.Instance.getTutorialDid())
         {
             if(idx == 0) AdventureManager.Instance.activeTutorialButton(true);
@@ -600,10 +602,12 @@ public class upDownManager : MonoBehaviour
     {
         upperItemTypeInitOutline.GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_bagSelect_outline");
+        ToolBarManager.Instance.setToolBar(16);
     }
     public void hoverOutUpperItemTypeInit() {
         upperItemTypeInitOutline.GetComponent<Image>().sprite
                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     public void addGold(int a)
@@ -1253,7 +1257,8 @@ public class upDownManager : MonoBehaviour
         }
         if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 ||
             AdventureManager.Instance.getTutorial() == 11 || AdventureManager.Instance.getTutorial() == 12 ||
-                AdventureManager.Instance.getTutorial() == 13 || AdventureManager.Instance.getTutorial() == 14) {
+                AdventureManager.Instance.getTutorial() == 13 || AdventureManager.Instance.getTutorial() == 14 ||
+                AdventureManager.Instance.getTutorial() == 15 || AdventureManager.Instance.getTutorial() == 16) {
             return;
         }
         clickItem(-1);
@@ -1266,13 +1271,15 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInUnderBarBattle()
     {
-        underBattleOutline.GetComponent<Image>().sprite
-                    = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        underBattleButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_battleButton_3840_on");
+        ToolBarManager.Instance.setToolBar(17);
+        //underBattleOutline.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
     }
     public void hoverOutUnderBarBattle()
     {
-        underBattleOutline.GetComponent<Image>().sprite
-                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        underBattleButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_battleButton_3840_off");
+        ToolBarManager.Instance.toolBarOnOff(0);
+        // underBattleOutline.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
     public void hoverInUnderBarSkill(int idx)
     {

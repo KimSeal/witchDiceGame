@@ -328,6 +328,11 @@ public class AdventureManager : MonoBehaviour
     public GameObject tutorialUI;
     [SerializeField]
     public GameObject tutorialUIText;
+
+    [SerializeField]
+    public GameObject exitButtonEntity;
+    [SerializeField]
+    public GameObject exitButtonText;
     public void activeTutorialButton(bool onOff)
     {
         if (onOff)
@@ -345,7 +350,8 @@ public class AdventureManager : MonoBehaviour
 
     public void changeLanguage()
     {
-        tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
+        tutorialUI.transform.position = new Vector3(-2000f, -500f, 0f);
+        mainExitButton(false);
         closeTryBuyItem(false);
         remainItemOnOff(false);
     }
@@ -382,11 +388,19 @@ public class AdventureManager : MonoBehaviour
 
         tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
     }
-    public void mainExitButton()
+    public void mainExitButton(bool onOff)
     {
-
-        Application.Quit();
+        if (onOff) Application.Quit();
+        else exitButtonEntity.transform.position = new Vector3(-2000f, -500f, 0f);
     }
+
+    public void activeExitButton()
+    {
+        exitButtonEntity.transform.position = new Vector3(-1500f, -500f, 0f);
+        exitButtonText.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(169);
+        activeTutorialButton(false);
+    }
+
     public void resetItemResult()
     {
         for (int i = 0; i < 4; i++)
@@ -545,6 +559,8 @@ public class AdventureManager : MonoBehaviour
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0, 0);
 
+
+        mainExitButton(false);
         tutorialUI.transform.position = new Vector3(-1500f, -250f, 0f);
 
         lastCharacter[0] = -99999;
@@ -954,9 +970,11 @@ public class AdventureManager : MonoBehaviour
 
     public void hoverInBalpanUpDownButton(int idx) {
         hoverOutBalpanUpDownButton();
+        ToolBarManager.Instance.setToolBar(14);
         balpanUpDownButton[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
     }
     public void hoverOutBalpanUpDownButton() {
+        ToolBarManager.Instance.toolBarOnOff(0);
         balpanUpDownButton[0].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         balpanUpDownButton[1].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
     }
@@ -2272,6 +2290,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
                 }
+                ToolBarManager.Instance.toolBarOnOff(0);
                 TalkManager.Instance.setDescSelectText(curDiceEvent);
                 //TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
             }
@@ -2289,6 +2308,7 @@ public class AdventureManager : MonoBehaviour
                         //watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                     }
                 }
+                ToolBarManager.Instance.setToolBar(15);
                 eventWatchNum = inputNum - 1;
                 TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(eventWatchNum));
                 //TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());//선택지 텍스트 변경    

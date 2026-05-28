@@ -61,6 +61,7 @@ public class FoodStreetManager : MonoBehaviour
     void Start()
     {
         FoodTowerInitY = foodTower[0].transform.position.y;
+        for(int i=0;i<4;i++) upgradeAnim[i].GetComponent<Animator>().Play("0_2");
     }
 
     // Update is called once per frame

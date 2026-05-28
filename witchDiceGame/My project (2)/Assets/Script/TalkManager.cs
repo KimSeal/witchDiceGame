@@ -37,6 +37,8 @@ public class TalkManager : MonoBehaviour
     [SerializeField] private GameObject background;
     [SerializeField] public GameObject nameBackground;
 
+    [SerializeField] public GameObject curTalkIdx;
+
     [SerializeField] public GameObject talkClickButton;
     [SerializeField] public GameObject talkClickButtonOriginal;
 
@@ -82,7 +84,11 @@ public class TalkManager : MonoBehaviour
     public int MapperLock = 0;
 
     [SerializeField] public GameObject skipButton;
+    [SerializeField] public GameObject skipButtonOutline;
+    [SerializeField] public GameObject prevButtonOutline;
 
+    [SerializeField] public GameObject fontSizeButton;
+    [SerializeField] public GameObject fontSizeButtonOutline;
     public void setMapperLock(int opt)
     {
         MapperLock = opt;
@@ -104,7 +110,7 @@ public class TalkManager : MonoBehaviour
     }
 
     public void setDescString(string str) {
-
+        
         if (str == "")
         {
             descString = "";
@@ -112,6 +118,8 @@ public class TalkManager : MonoBehaviour
         }
         else
         {
+            clickFontSize(false);
+            curTalkIdx.GetComponent<TextMeshProUGUI>().text = "";
             if (descClickLock)
             {
                 characterTalkBack.GetComponent<Image>().color = new Color(48f, 38f, 38f);
@@ -563,15 +571,27 @@ public class TalkManager : MonoBehaviour
             characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         }
     }
+
+    public int curTalkLastVal = 0;
+    public int curTalkStartVal = 0;
     public void startTalk(int a)
     {
         if (a < 0) return;
         if (!talkingChk)
         {
+            
+
+            curTalkLastVal = listIdx[a + 1] - listIdx[a];
+            curTalkStartVal = listIdx[a];
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
             characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
 
             entity.SetActive(true);
+            clickFontSize(false);
+
+            hoverOutSkipButton();
+            hoverOutPrevButton();
+            hoverOutFontSize();
 
             curIdx = listIdx[a];
             setCharacterName(talkList[a]);
@@ -598,7 +618,9 @@ public class TalkManager : MonoBehaviour
             {
                 skipButton.SetActive(true);
             }
-            else { skipButton.SetActive(false); }
+            else {
+                skipButton.SetActive(false); 
+            }
 
         }
     }
@@ -632,6 +654,45 @@ public class TalkManager : MonoBehaviour
             }
         }
     }
+    public void hoverInPrevButton()
+    {
+        ToolBarManager.Instance.setToolBar(18);
+        prevButtonOutline.SetActive(true);
+    }
+    public void hoverOutPrevButton()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        prevButtonOutline.SetActive(false);
+    }
+    public void hoverInSkipButton()
+    {
+        ToolBarManager.Instance.setToolBar(19);
+        skipButtonOutline.SetActive(true);
+    }
+    public void hoverOutSkipButton()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        skipButtonOutline.SetActive(false);
+    }
+    public void hoverInFontSize()
+    {
+        ToolBarManager.Instance.setToolBar(20);
+        fontSizeButtonOutline.SetActive(true);
+    }
+    public void hoverOutFontSize()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        fontSizeButtonOutline.SetActive(false);
+    }
+    public void clickFontSize(bool addChk)
+    {
+        if(addChk) jsonDataManager.Instance.addFontSize();
+        int result = jsonDataManager.Instance.getFontSize();
+
+        fontSizeButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/talkFontSizeButton_" + result.ToString());
+
+        characterTalk.GetComponent<TextMeshProUGUI>().fontSize = result * 5 + 25;
+    }
     public void printTalk(int a)
     {
         if (talkList[a].eventType == 3){
@@ -648,8 +709,9 @@ public class TalkManager : MonoBehaviour
             preSound = talkList[a].BackSnd; // 노래 변경
             if (talkList[a].BackSnd >= 0) SoundManager_Main.Instance.playSound(talkList[a].BackSnd); //노래 틀어야 하는 경우 틀기.
         } // 확인
-    
-        
+
+
+        curTalkIdx.GetComponent<TextMeshProUGUI>().text = (curIdx - curTalkStartVal + 1).ToString() +" / "+curTalkLastVal.ToString();
 
         if (talkList[a].eventType == 1) FadeUIScript.fadeIn();
         if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);

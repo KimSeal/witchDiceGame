@@ -3573,7 +3573,15 @@ public class BattleManager : MonoBehaviour
 
             resultObj[i, 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[resultItem[i].getType()] + "ItemSprite/spr_item_" + typeArr[resultItem[i].getType()] + "_" + resultItem[i].getItemName());
             resultObj[i, 2].GetComponent<TextMeshPro>().text = resultItem[i].getItemName();
-            resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[resultItem[i].getType()]) + " -</size>" + "\n\n" + resultItem[i].getContent();
+            if (typeArr2[resultItem[i].getType()] < 3){
+                resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[0]) + " -</size>" + "\n\n" + resultItem[i].getContent();
+            }
+            else if (typeArr2[resultItem[i].getType()] == 3){
+                resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[3]) + " -</size>" + "\n\n" + resultItem[i].getContent();
+            }
+            else{
+                resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[resultItem[i].getType()]) + " -</size>" + "\n\n" + resultItem[i].getContent();
+            }
         }
     }
     public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1f); }

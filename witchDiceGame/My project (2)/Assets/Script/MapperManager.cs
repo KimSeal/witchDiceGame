@@ -70,9 +70,12 @@ public class MapperManager : MonoBehaviour
     [SerializeField] public TextMeshPro stagePercentText;
     [SerializeField] public TextMeshPro noWatchText;
 
+    [SerializeField] public GameObject mouseArrow;
+
     // Start is called before the first frame update
     void Start()
     {
+        mouseArrow.GetComponent<Animator>().Play("0_1");
         initMapper();
         slideBarEntity.SetActive(false);
 
@@ -289,6 +292,7 @@ public class MapperManager : MonoBehaviour
                     watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
                 }
                 TalkManager.Instance.setDescSelectText(curDiceEvent);
+                ToolBarManager.Instance.toolBarOnOff(0);
                 //TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
             }
             else
@@ -306,6 +310,7 @@ public class MapperManager : MonoBehaviour
                         //watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                     }
                 }
+                ToolBarManager.Instance.setToolBar(15);
                 TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(inputNum - 1));
                 //TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());//선택지 텍스트 변경    
             }
@@ -374,6 +379,7 @@ public class MapperManager : MonoBehaviour
 
             TalkManager.Instance.setDescClickLock(true);
             watchNumObjectEntity.SetActive(true);
+            mouseArrow.GetComponent<Animator>().Play("0_1");
             for (int i = 0; i < 6; i++)
             {
                 watchNumObject[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);

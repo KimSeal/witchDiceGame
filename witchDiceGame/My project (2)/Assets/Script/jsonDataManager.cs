@@ -400,10 +400,21 @@ public class jsonDataManager : MonoBehaviour
     public int getFoodStreetStat(int idx) { return playerPlayData.getFoodStreetStat(idx); }
     public void setFoodStreetStat(int idx, int val) { playerPlayData.setFoodStreetStat(idx, val); SavePlayerDataToJson(); }
 
+    public int getFontSize()
+    {
+        return playerPlayData.getFontSize();
+    }
+    public void addFontSize()
+    {
+        this.playerPlayData.setFontSize();
+        SavePlayerDataToJson();
+    }
+
     public class PlayerPlayData
     {
         public int language;
         public int screenSize = 1;
+        public int fontSize = 2;
         public float backgroundVolume = 1.0f;
         public float SFXVolume = 1.0f;
         public int[] curWitchPower = new int[2];
@@ -435,6 +446,16 @@ public class jsonDataManager : MonoBehaviour
 
         public bool foodStreetMeet = false;
         public int[] foodStreetStat = new int[4]; //음식 거리에서 분배된 스탯값.
+        public int setFontSize()
+        {
+            this.fontSize += 1;
+            if (fontSize >= 5) fontSize = 0;
+            return fontSize;
+        }
+        public int getFontSize()
+        {
+            return fontSize;
+        }
         public int getFoodStreetStat(int idx)
         {
             return foodStreetStat[idx];
@@ -523,6 +544,8 @@ public class jsonDataManager : MonoBehaviour
             characterSelect[0] = 0; characterSelect[1] = 0;
             foodStreetMeet = false;
             for (int i=0;i<foodStreetStat.Length;i++) foodStreetStat[i] = 0;
+
+            fontSize = 2;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -572,6 +595,7 @@ public class jsonDataManager : MonoBehaviour
             characterSelect[1] = playerPlayerData.characterSelect[1];
             foodStreetMeet = playerPlayerData.foodStreetMeet;
             for (int i = 0; i < foodStreetStat.Length; i++) foodStreetStat[i] = playerPlayerData.foodStreetStat[i];
+            fontSize = playerPlayerData.fontSize;
         }
         public bool getFirstGetCharacterPart()
         {
