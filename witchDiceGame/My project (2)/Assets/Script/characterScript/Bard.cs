@@ -663,14 +663,15 @@ public class Pimpi : Character
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
             int itemNum = itemManager.Instance.getItemNum(0) + 
-                itemManager.Instance.getItemNum(1) +
-                itemManager.Instance.getItemNum(2) +
+                //itemManager.Instance.getItemNum(1) +
+                //itemManager.Instance.getItemNum(2) +
                 itemManager.Instance.getItemNum(3);
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0],itemNum + this.getPhyAtk(), 0));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], itemManager.Instance.getItemNum(sendSkillPacket.curChanceNum) + this.getPhyAtk(), 0));
+            if(sendSkillPacket.curChanceNum == 0) packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], itemManager.Instance.getItemNum(0) + this.getPhyAtk(), 0));
+            if (sendSkillPacket.curChanceNum == 1) packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], itemManager.Instance.getItemNum(3) + this.getPhyAtk(), 0));
         }
         return packets;
     }

@@ -184,6 +184,7 @@ public abstract class Character
         this.destiny = new Destiny(character.getDestiny());
         this.dice = new Dice(character.getDiceTrue());
         this.character_battle = new Character_battle();
+        if (destiny.getDestinyIdx() > 10001) this.character_battle.setArmor(character.character_battle.getArmor());
         this.reviveUnit = character.reviveUnit;
         this.shadow = character.shadow;
         this.money = character.getMoney();

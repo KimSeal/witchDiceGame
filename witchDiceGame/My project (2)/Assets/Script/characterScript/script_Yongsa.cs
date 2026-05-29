@@ -33,7 +33,6 @@ public class Yongsa : Character
         {
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
-
                 /*
                 for (int i = 0; i < 4; i++)
                 {

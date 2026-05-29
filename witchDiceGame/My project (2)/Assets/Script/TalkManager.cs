@@ -237,6 +237,8 @@ public class TalkManager : MonoBehaviour
     }
     public void clickDescBox()
     {
+        if (!talkingChk && !descChk) return;
+
         if (!descClickLock)
         {
             if (MapperLock != 0)
@@ -438,7 +440,6 @@ public class TalkManager : MonoBehaviour
         for (int i = 0; i < lightingArr.Length; i++) { lightingArr[i] = 0; preLightingArr[i] = 0; characterMoveVal[i] = 0.0f; }
 
         for (int i = 0; i < 4; i++) {
-            Debug.Log("material make");
             material[i] = characterImage[i].GetComponent<Image>().material; 
         }
 
@@ -450,8 +451,17 @@ public class TalkManager : MonoBehaviour
         }
 
         bool jumpFlag = false;
-        // Update is called once per frame
-        void FixedUpdate()
+
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            clickDescBox();
+        }
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
         {
 
             talkClickButton.GetComponent<Image>().sprite = talkClickButtonOriginal.GetComponent<SpriteRenderer>().sprite;

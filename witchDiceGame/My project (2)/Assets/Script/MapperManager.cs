@@ -403,7 +403,8 @@ public class MapperManager : MonoBehaviour
         if (selectDepth != 1) return;
 
         TalkManager.Instance.setMapperLock(2);
-        
+        hoverDice(0);
+
         selectDepth = 2;
         adventureBackground.GetComponent<hoverRotate>().shakeStart(10.0f);
 

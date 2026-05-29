@@ -270,7 +270,9 @@ public class CharacterManager : MonoBehaviour
             switch (characterIdx)
             {
                 case 0:
-                    character = new Yongsa(0, destinyList[characterIdx]); break;
+                    character = new Yongsa(0, destinyList[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 1); break;
+
                 case 1:
                     character = new LemGol(0, destinyList[characterIdx]); break;
                 case 2:
@@ -363,10 +365,12 @@ public class CharacterManager : MonoBehaviour
                 case 22:
                     character = new EagleWizard(0, destinyList_monster[characterIdx]); break;
                 case 23:
-                    character = new WoodDummy(0, destinyList_monster[characterIdx]); 
+                    character = new WoodDummy(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 1);
                     character.changeDiceNum(2,4); break;
                 case 24:
-                    character = new IronDummy(0, destinyList_monster[characterIdx]); 
+                    character = new IronDummy(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 1);
                     character.changeDiceNum(2, 4);
                     character.changeDiceNum(3, 5);
                     character.changeDiceNum(4, 5); break;
@@ -377,7 +381,8 @@ public class CharacterManager : MonoBehaviour
                     character.changeDiceNum(2, 4);
                     character.changeDiceNum(3, 5);break;
                 case 26:
-                    character = new BigHammer(0, destinyList_monster[characterIdx]); 
+                    character = new BigHammer(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 1);
                     character.changeDiceNum(0, 3);
                     character.changeDiceNum(1, 4);
                     character.changeDiceNum(2, 5);
@@ -400,19 +405,22 @@ public class CharacterManager : MonoBehaviour
                     character.changeDiceNum(2, 2);
                     character.changeDiceNum(3, 2); break;
                 case 30:
-                    character = new GrandKnight(0, destinyList_monster[characterIdx]); 
+                    character = new GrandKnight(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 2);
                     character.changeDiceNum(1, 1);
                     character.changeDiceNum(2, 1);
                     character.changeDiceNum(3, 6);
                     character.changeDiceNum(4, 6); break;
                 case 31:
                     character = new NoHead(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 2);
                     character.changeDiceNum(1, 1);
                     character.changeDiceNum(2, 2);
                     character.changeDiceNum(3, 5);
                     character.changeDiceNum(4, 6); break;
                 case 32:
-                    character = new Bard(0, destinyList_monster[characterIdx]); 
+                    character = new Bard(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 3);
                     character.changeDiceNum(1, 1);
                     character.changeDiceNum(2, 1);
                     character.changeDiceNum(3, 1);

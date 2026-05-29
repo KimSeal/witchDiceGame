@@ -2175,6 +2175,7 @@ public class AdventureManager : MonoBehaviour
         //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때
         if (eventEndClick && resultItemArr[idx, 0] != -99999 && resultItemArr[idx, 1] != -99999)
         {
+            ToolBarManager.Instance.toolBarOnOff(0);
             if (resultItemArr[idx, 0] == 4) //캐릭터 습득일 경우
             {
                 int emptyPlaceExist = -1;
@@ -2448,7 +2449,6 @@ public class AdventureManager : MonoBehaviour
                 }
                 else CharacterManager.Instance.throwDice(i);
                 int temp = Random.Range(0, 4) * 90;
-                Debug.Log("roll!!!");
                 Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp)); //사용된 아이템에 대해 effect
                 //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
                 diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
