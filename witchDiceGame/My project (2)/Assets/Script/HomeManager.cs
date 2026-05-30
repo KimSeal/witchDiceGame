@@ -199,18 +199,17 @@ public class HomeManager : MonoBehaviour
 
     IEnumerator jewelTalk(int chapterNum, int detailIdx)
     {
-        Debug.Log("Item is true 0 ");
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
 
         TalkManager.Instance.startTalk(chapterTalkBefore[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-        Debug.Log("Item is true 1 ");
+
         TalkManager.Instance.startTalk(chapterTalk[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-        Debug.Log("Item is true 2 ");
+
         TalkManager.Instance.startTalk(chapterTalkAfter[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-        Debug.Log("Item is true 3 ");
+
         if (detailIdx == 2) {
             if (chapterClear[chapterNum] != 0) {
                 TalkManager.Instance.startTalk(chapterClear[chapterNum]);
@@ -247,8 +246,6 @@ public class HomeManager : MonoBehaviour
         if (num >= 0 && num < 3) {
             int chapterNum = curChapterIdx;
             int detailIdx = num % 3;
-            Debug.Log("jewel test");
-            Debug.Log(jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx));
             if (chapterNum == 3 && detailIdx == 1 && jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 0)
             {
                 StartCoroutine(jewelTalk(52));

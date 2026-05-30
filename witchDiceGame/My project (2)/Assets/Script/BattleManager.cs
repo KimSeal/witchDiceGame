@@ -217,7 +217,6 @@ public class BattleManager : MonoBehaviour
     }
     public void updateEquipUI(int characterIdx, int itemIdx)
     {
-        if (getCharacter(characterIdx) != null) Debug.Log(getCharacter(characterIdx).getItem(itemIdx).getIdx());
         if (characterIdx < 4)
         {
             if (getCharacter(characterIdx) != null && getCharacter(characterIdx).getCurState() == 0 &&
@@ -1831,8 +1830,6 @@ public class BattleManager : MonoBehaviour
 
             upDownManager.Instance.updateBigDiceSkill();
 
-            Debug.Log("wowowo");
-            Debug.Log(curClickSkill);
             //skill use able update
             if (curClickSkill != -1) {
                 int characterIdxTemp = curClickSkill / 10;
@@ -2928,8 +2925,6 @@ public class BattleManager : MonoBehaviour
 
     private void activeEquipBeforeSkillUse(int skillUseCharacter, List<TakeSkillPacket> takeSkillPackets, int[] useDiceArr) //패시브 등 조건에 따른 추가 효과 세팅
     {
-        Debug.Log("enemy equip test");
-        Debug.Log(skillUseCharacter);
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
         {
@@ -3217,7 +3212,6 @@ public class BattleManager : MonoBehaviour
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
                             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
-                            Debug.Log("target Idx : " + tempTargetIdx.ToString());
                             if (tempTargetIdx < 4) //아군 대상으로 스킬이 들어온 경우
                             {
                                 if (myCharacter[tempTargetIdx] != null && myCharacter[tempTargetIdx].getCurState() == 0) //대상 존재시 damage text 출력

@@ -299,8 +299,6 @@ public class upDownManager : MonoBehaviour
     {
         if (AdventureManager.Instance.getAdventureStartChk())
         {
-            Debug.Log("text Exit");
-            Debug.Log(AdventureManager.Instance.getAdventureStartChk());
             AdventureManager.Instance.clickGiveUpButton();
         }
         else if(TownManager.Instance.getTownActive())
@@ -839,6 +837,7 @@ public class upDownManager : MonoBehaviour
 
         if (optionOnOff[3]) { //title SelectUI
             underTitleEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+            //hoverOutUnderTitleButton();
             return;
         }
         if (optionOnOff[2]) { //characterSelect UI

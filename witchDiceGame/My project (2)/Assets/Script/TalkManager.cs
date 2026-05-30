@@ -654,11 +654,9 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
-            Debug.Log("cur idx : " + curIdx.ToString());
             SoundManager_Sfx.Instance.playSound(0);
             if (talkList[curIdx].talkIdx == talkList[curIdx - 1].talkIdx)
             {
-                Debug.Log("case 2");
                 curIdx--;
                 printTalk(curIdx);
             }
@@ -851,6 +849,7 @@ public class TalkManager : MonoBehaviour
                 }
                 FadeUIScript.fadeIn();
             }
+            ToolBarManager.Instance.toolBarOnOff(0);
         }
     }
     public bool getTalkChk()
