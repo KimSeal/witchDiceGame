@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class AdventureReadyManager : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class AdventureReadyManager : MonoBehaviour
     public Sprite[] towerSprite = new Sprite[2];
     private int[] spark = new int[2];
     private float[] sparkVal = new float [2];
+
+    [SerializeField]
+    public GameObject warningObj;
+    public TextMeshPro warningText;
     private void Awake()
     {
 
@@ -112,7 +117,78 @@ public class AdventureReadyManager : MonoBehaviour
             }
         }
     }
-    
+
+    public bool warningClickAble(int opt)
+    {
+        if (opt == 0) {
+            if(jsonDataManager.Instance.getChapterRead(0,2) == 2 && 
+                jsonDataManager.Instance.getCharacterSelect(0) == 0) return true;
+        }
+        if(opt == 1)
+        {
+            if (jsonDataManager.Instance.getChapterRead(1, 2) != 2) return false; // town 미개방시 return false 
+            int curChapter = 1;
+            for (int i=0;i<6;i++)
+            {
+                if (jsonDataManager.Instance.getChapterRead(i, 2) == 2) curChapter += 1; //현재 챕터 확인
+            }
+            if (jsonDataManager.Instance.getFoodStreetStat(0) +
+                jsonDataManager.Instance.getFoodStreetStat(1) +
+                jsonDataManager.Instance.getFoodStreetStat(2) +
+                jsonDataManager.Instance.getFoodStreetStat(3) < curChapter) return true; // 현재 챕터만큼 마을 스탯을 다 안썼다면
+        }
+        return false;
+    }
+    public void hoverInWarning(int opt)
+    {
+        warningObj.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+    }
+    public void hoverOutWarning()
+    {
+        
+        warningObj.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+        
+    }
+    public void clickWarning()
+    {
+        int curOpt = -1;
+        for (int i=0;i<warningTextArr.Length;i++)
+        {
+            if (warningClickAble(i))
+            {
+                curOpt = i;
+                break;
+            }
+        }
+
+        if (curOpt == 0){
+            upDownManager.Instance.clickUnderTownButton(2);
+        }
+        else if (curOpt == 1) {
+            upDownManager.Instance.clickUnderTownButton(4);
+        }
+    }
+    public int[] warningTextArr = { 176,177,0};
+    public void updateWarningImage()
+    {
+        int warningExist = -1;
+        for(int i = 0; i < warningTextArr.Length; i++)
+        {
+            if (warningClickAble(i)){
+                warningExist = i;
+                break;
+            }
+        }
+        if (warningExist >= 0)
+        {
+            warningObj.GetComponent<Animator>().Play("Warning");
+            warningText.text = TalkManager.Instance.getDesc(warningTextArr[warningExist]);
+        }
+        else {
+            warningObj.GetComponent<Animator>().Play("Empty");
+            warningText.text = "";
+        }
+    }
     public void hoverInTower()
     {
         enterButton.GetComponent<SpriteRenderer>().sprite = towerSprite[1];
@@ -146,6 +222,10 @@ public class AdventureReadyManager : MonoBehaviour
         }
         else newMark.GetComponent<Animator>().Play("Empty");
 
+        hoverOutWarning();
+        warningTextArr[0] = 176;
+        warningTextArr[1] = 177;
+        updateWarningImage();
         
         CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
         CharacterManager.Instance.setFoodStreetInfo();
@@ -180,6 +260,7 @@ public class AdventureReadyManager : MonoBehaviour
         CameraManager.Instance.updateInitPosition(new Vector3(-1000f, -500f, CameraManager.Instance.cameraPointZ()));
     }
     public void exitAdventureReady() {
+        hoverOutWarning();
         SoundManager_Sfx.Instance.stopSound(17);
         spark[0] = -1;
         spark[1] = -1;

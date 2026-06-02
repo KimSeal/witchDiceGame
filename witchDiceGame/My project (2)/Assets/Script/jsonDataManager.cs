@@ -134,7 +134,6 @@ public class jsonDataManager : MonoBehaviour
     public void addMoney(int addMoney) {
 
         playerPlayData.addMoney(addMoney);
-        Debug.Log("buy third power! extra money :" + getMoney().ToString());
         SavePlayerDataToJson();
     }
     public void setMoney(int money) { 

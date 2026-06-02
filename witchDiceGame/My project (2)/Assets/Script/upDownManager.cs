@@ -1159,6 +1159,7 @@ public class upDownManager : MonoBehaviour
             }
             return;
         }
+        if (BattleManager.Instance.curPhase == 4 && input != -1) { return; }
         for (int i = 0; i < 4; i++)
         {
             Character tempCharacter = getCharacter(i);
@@ -1860,8 +1861,9 @@ public class upDownManager : MonoBehaviour
         if(option == 1) // delete Bar
         {
             upperHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-            upperHoverBarTitle.text = "Delete Box";
-            upperHoverBarDesc.text = TalkManager.Instance.getDesc(8);//"아이템을 선택 후 이곳을 클릭하면\n아이템을 버릴 수 있습니다.";
+            //upperHoverBarTitle.text = "Delete Box";
+            upperHoverBarTitle.text = "";
+            upperHoverBarDesc.text = "<size=10>Delete Box</size>\n"+ TalkManager.Instance.getDesc(8);//"아이템을 선택 후 이곳을 클릭하면\n아이템을 버릴 수 있습니다.";
         }
         else if (item == null)
         {
@@ -1874,8 +1876,9 @@ public class upDownManager : MonoBehaviour
             //Item hoverItem = ItemArr[curSelectItemType, idx];
             //descObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board_" + hoverItem.getRare() + "_90");
             upperHoverBar[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/" + typeArr[item.getType()] + "ItemSprite/spr_item_" + typeArr[item.getType()] + "_" + item.getItemName());
-            upperHoverBarTitle.text = item.getItemName();
-            upperHoverBarDesc.text = item.getContent();
+            //upperHoverBarTitle.text = item.getItemName();
+            upperHoverBarTitle.text = "";
+            upperHoverBarDesc.text = "<size=10>" + item.getItemName() + "</size>\n" + item.getContent();
         }
     }
     public void updateBigDiceSkill()

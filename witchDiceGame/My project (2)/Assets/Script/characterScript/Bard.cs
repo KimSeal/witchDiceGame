@@ -26,7 +26,7 @@ public class WoodDummy : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 1, 0, 6));
+            //packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 1, 0, 6));
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * this.getPhyAtk() + this.getPhyAtk(), 0)); 
         }
         else if (sendSkillPacket.useSkillIdx == 1)
@@ -60,7 +60,7 @@ public class IronDummy : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx+4, 1, 0, 6));
+            //packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx+4, 1, 0, 6));
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * this.getPhyAtk() + this.getPhyAtk(), 0));
         }
         else if (sendSkillPacket.useSkillIdx == 1)
@@ -496,7 +496,7 @@ public class Enzi : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 6));
+            //packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 6));
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getArmor() * this.getPhyAtk() + this.getPhyAtk(), 0));
         }
         else if (sendSkillPacket.useSkillIdx == 1)

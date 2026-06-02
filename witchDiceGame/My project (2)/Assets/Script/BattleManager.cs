@@ -132,6 +132,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] public GameObject[] resultItemTypeObj = new GameObject[3];
     [SerializeField] private GameObject[] resultObjInit = new GameObject[12]; //obj_resultUI _board, _itemLogo, _itemName, _itemDesc + (number)
     private GameObject[,] resultObj = new GameObject[3, 4];
+    public GameObject rerollButton;
     private Item[] resultItem = new Item[3];
     private int[] resultPower = new int[3];
     private int[] resultPowerNameArr = { 143,145,147,149,151};
@@ -261,25 +262,29 @@ public class BattleManager : MonoBehaviour
     }
     public void clickItemNotGetActive()
     {
-        Debug.Log("click this");
         itemNotGetText.text = TalkManager.Instance.getDesc(138);
         itemNotGetEntity.SetActive(true);
     }
     public void hoverInCharacter(int idx)
     {
-        if (curPhase == 5)
+        if (curPhase == 4 || curPhase == 5)
         {
             return;
         }
         if (idx < 4 && myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
         {
             ToolBarManager.Instance.setToolBar(myCharacter[idx]);
+
+            //myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+
             myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
         }
         else if (idx >= 4 && idx<8 && enemyCharacter[idx - 4] != null && enemyCharacter[idx-4].getCurState() == 0)
         {
             
             ToolBarManager.Instance.setToolBar(enemyCharacter[idx-4]);
+            //enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+
             enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
         }
     }
@@ -947,10 +952,9 @@ public class BattleManager : MonoBehaviour
         upDownManager.Instance.setItemTypeButtonLock(false);
         startBattlePhase();
         itemManager.Instance.enterBattlePhase();
-       
+        initTransBySkillUser();
 
         do {
-            
             infoBtn.GetComponent<BoxCollider2D>().enabled = true;
             yield return new WaitUntil(() => phaseMoveChk(1));
             StartCoroutine(diceThrowPhase());
@@ -1212,6 +1216,8 @@ public class BattleManager : MonoBehaviour
         {
             myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
             enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+            enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
         }
         
 
@@ -1553,6 +1559,8 @@ public class BattleManager : MonoBehaviour
         {
             myDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             enemyDiceUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
         }
         backGroundObj[3].GetComponent<Animator>().Play("ChangePowerToBattle");
         backGroundObj[4].GetComponent<Animator>().Play("ChangePowerToBattle");
@@ -1950,7 +1958,6 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 4 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            
             upDownManager.Instance.clickItemTypeButton(3);
             upDownManager.Instance.setItemTypeButtonLock(true);
             witchHatButton.SetActive(false);
@@ -2024,9 +2031,9 @@ public class BattleManager : MonoBehaviour
                 }
             }
             yield return new WaitForSeconds(0.3f);
-           
 
-             curPhase = 5;
+            upDownManager.Instance.clickCharacterButton(-1);
+            curPhase = 5;
         }
     }
 
@@ -2088,16 +2095,87 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
+    
     public void hoverInTarget(int idx)
     {
-        battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+        
+        for (int i=0;i<4;i++){
+            if (battleTargetUI[i].activeSelf)
+            {
+                if (i != idx)
+                {
+                    if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
+                    {
+                        myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                    }
+                    else
+                    {
+                        myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                    }
+                    battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 1.0f);
+                }
+                else
+                {
+                    myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                    battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.3f);
+                }
+            }
+            if (battleTargetUI[i + 4].activeSelf)
+            {
+                if (i + 4 != idx)
+                {
+                    if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0)
+                    {
+                        enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                    }
+                    else
+                    {
+                        enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                    }
+                    battleTargetUI[i + 4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 1.0f);
+                }
+                else
+                {
+                    enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                    battleTargetUI[i + 4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.3f);
+                }
+            }
+        }
         drawDiceSkillForTarget(0);
     }
     public void hoverOutTarget(int idx)
     {
-        battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        
+        for (int i = 0; i < 4; i++)
+        {
+            if (battleTargetUI[i].activeSelf)
+            {
+                myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            }
+            if (battleTargetUI[i + 4].activeSelf)
+            {
+                enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+                battleTargetUI[i+4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            }
+        }
+        setTransBySkillUser(curSkillMyUseCharacter);
         drawDiceSkillForTarget(1);
     }
+    public void targetOn(int idx)
+    {
+        battleTargetUI[idx].SetActive(true);
+        battleTargetUI[idx].GetComponent<Animator>().Play("Create");
+        battleTargetUI[idx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        characterClickAble[idx] = true;
+
+    }
+    public void targetOff(int idx)
+    {
+        battleTargetUI[idx].SetActive(false);
+        characterClickAble[idx] = false;
+    }
+
     private IEnumerator clickEnemy_Coroutine(int clickEnemyNum, int clickAbleTeam) //clickAbleTeam은 0 : 아군 대상 / 1: 적군대상 / 2 : 전체 대상을 의미한다.
     { //캐릭터 클릭을 위한 코루틴(입력된 갯수만큼 반복될 예정)
         characterTargetIdx = 0;   //character인덱스 초기화
@@ -2114,11 +2192,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
                     {
-                        battleTargetUI[i].SetActive(true);
-                        //shakeObject(battleTargetUI[i]);
-                        battleTargetUI[i].GetComponent<Animator>().Play("Create");
-                        battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-                        characterClickAble[i] = true;
+                        targetOn(i);
                     }
                 }
             }
@@ -2128,14 +2202,8 @@ public class BattleManager : MonoBehaviour
                 {
                     if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() == 0)
                     {
-                        //if (enemyCharacter[i-4] != null && enemyCharacter[i-4].getCurState() != 2) {
-                        battleTargetUI[i].SetActive(true);
-                        //shakeObject(battleTargetUI[i]);
-                        battleTargetUI[i].GetComponent<Animator>().Play("Create");
-                        battleTargetUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
-                        characterClickAble[i] = true;
+                        targetOn(i);
                     }
-                        //}  
                 }
             }
 
@@ -2148,8 +2216,7 @@ public class BattleManager : MonoBehaviour
             //클릭하지 못하게 바꾸기
             for (int i = 0; i < 8; i++)
             {
-                battleTargetUI[i].SetActive(false);
-                characterClickAble[i] = false;
+                targetOff(i);
             }
         }
 
@@ -2163,8 +2230,7 @@ public class BattleManager : MonoBehaviour
         if (curPhase == 5 && characterTargetIdx != -999 && characterClickAble[characterIdxInput] && !KillAnimationManager.Instance.getKillAnimationPlay())
         {
             clickCharacter[this.characterTargetIdx] = characterIdxInput; //누른 캐릭터 저장
-            battleTargetUI[characterIdxInput].SetActive(false); //해당 target ui 배활성화
-            characterClickAble[characterIdxInput] = false;  //누를수 없게 변경
+            targetOff(characterIdxInput);
         }
     }
     //적군의 clickArray를 자동으로 만들어준다. (아직 테스트 안해봄)
@@ -3081,9 +3147,50 @@ public class BattleManager : MonoBehaviour
         updateEnemyDiceUI();
     }
 
+    private Coroutine passiveBeforeCo;
+
+    public void initTransBySkillUser()
+    {
+        for (int i=0;i<4;i++)
+        {
+            myCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 4 - i;
+            enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 1 + i;
+
+            myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+    }
+
+    public void setTransBySkillUser(int skillUseCharacterIdx)
+    {
+        if (skillUseCharacterIdx < 4)
+        {
+            for (int i = 0; i < 4; i++){
+                myCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 4 - i;
+                if(myCharacter[i] != null && myCharacter[i].getCurState() == 0) myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                else myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            }
+            myCharacterObjUI[skillUseCharacterIdx].GetComponent<SpriteRenderer>().sortingOrder = 5;
+            myCharacterObjUI[skillUseCharacterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+        else if(skillUseCharacterIdx >= 4)
+        {
+            Debug.Log(skillUseCharacterIdx);
+            for (int i = 0; i < 4; i++)
+            {
+                enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 1 + i;
+                if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0) enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
+                else enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+            }
+            enemyCharacterObjUI[skillUseCharacterIdx - 4].GetComponent<SpriteRenderer>().sortingOrder = 5;
+            enemyCharacterObjUI[skillUseCharacterIdx - 4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
+        }
+    }
+
+    private int curSkillMyTarget = 0;
+    private int curSkillMyUseCharacter = 0;
     private IEnumerator battlePhase()
     {
-        
         clickDice_battlePhase = -999;
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
         if (curPhase == 5)
@@ -3147,8 +3254,9 @@ public class BattleManager : MonoBehaviour
                     // 활성화 보여주고, 클릭 전 패시브 대상으로 하며
 
 
-                    StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
-                    yield return new WaitUntil(() => !passiveItemChk);
+                    passiveBeforeCo = StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
+                    //타겟팅 임시 테스트
+                    //yield return new WaitUntil(() => !passiveItemChk);
 
 
                     if (AdventureManager.Instance.getTutorial() == 9)
@@ -3164,17 +3272,20 @@ public class BattleManager : MonoBehaviour
                     chainChk = false;
 
                     int targetChance = curSkill.getTargetChance();
+                    curSkillMyTarget = curSkill.getTargetChance();
+                    curSkillMyUseCharacter = skillUseCharacter;
                     if (targetChance < 0) targetChance = myCharacter[skillUseCharacter].getTargetChance(skillUseIdx);
 
                     for (int i = 0; i < targetChance; i++) { // 해당 스킬이 공격하는 숫자
 
-                        
-                        takeSkillPacketArr.Clear(); // 그저 데미지 Text를 보여주기 위한 부분 
-                        takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-                        takeSkillPacketLastFix(skillUseCharacter, takeSkillPacketArr);
-                        activeEquipBeforeSkillUse(skillUseCharacter, takeSkillPacketArr, usedDiceArr); //스킬 사용시 타입에 해당하는 장비 시전.
-                        StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false));
-                        
+                        if (i != 0)
+                        {
+                            takeSkillPacketArr.Clear(); // 그저 데미지 Text를 보여주기 위한 부분 
+                            takeSkillPacketArr = myCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                            takeSkillPacketLastFix(skillUseCharacter, takeSkillPacketArr);
+                            activeEquipBeforeSkillUse(skillUseCharacter, takeSkillPacketArr, usedDiceArr); //스킬 사용시 타입에 해당하는 장비 시전.
+                            StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, false));
+                        }
                         boomChk = false;
                         characterTargetIdx = 0;
                         for (int heightIdx = 0; heightIdx < textHeight.Length; heightIdx++) textHeight[heightIdx] = 0;
@@ -3185,8 +3296,10 @@ public class BattleManager : MonoBehaviour
                         }
                         else
                         {
+                            setTransBySkillUser(skillUseCharacter);
                             StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
                             yield return new WaitUntil(() => (characterTargetIdx == curSkill.getTargetNum())); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                            if(passiveBeforeCo != null) StopCoroutine(passiveBeforeCo);
                         }
                         TalkManager.Instance.resetTutorialArrow();
                         characterTargetIdx = -999;
@@ -3243,6 +3356,7 @@ public class BattleManager : MonoBehaviour
                         battleHitAnimEndChk = true;
                         StartCoroutine(battleHitAnim(lastAtk, lastDead));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
+                        initTransBySkillUser();
 
                         if (chainChk)
                         {
@@ -3312,6 +3426,7 @@ public class BattleManager : MonoBehaviour
                     int skillUseCharacter = nextSkill / 10;
                     int skillUseIdx = nextSkill % 10;
                     Skill curSkill = enemyCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
+                    setTransBySkillUser(skillUseCharacter + 4);
 
                     skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                     yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
@@ -3388,7 +3503,7 @@ public class BattleManager : MonoBehaviour
                         battleHitAnimEndChk = true;
                         StartCoroutine(battleHitAnim(-1, -1));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
-
+                        initTransBySkillUser();
 
                         if (chainChk)
                         {
@@ -3409,6 +3524,7 @@ public class BattleManager : MonoBehaviour
                             yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
                         }
                         initTextHeight();
+                        
                     }
                     //diceArrowAnimationControl(nextDice + 4, false);
                     for (int i = 0; i < 4; i++)
@@ -3541,11 +3657,11 @@ public class BattleManager : MonoBehaviour
         if (idx == 4) return itemManager.Instance.getItemMaxNum().ToString() + ")";
         return "0)";
     }
-    private void printRandomResult(int i, bool pointOn)
+    private void printRandomResult(int i, bool pointOn, int effOpt)
     {
         resultEff[i].transform.position = new Vector3(100f * i - 100f, 0f, 0f);
         resultItemTypeObj[i].transform.position = new Vector3(100f * i - 100, 300f, 0f);
-        resultEff[i].GetComponent<Animator>().Play("Eff");
+        resultEff[i].GetComponent<Animator>().Play("Eff" + effOpt.ToString()) ;
         if (bossResult == 1)
         {
             for (int j = 0; j < 3; j++)
@@ -3592,6 +3708,8 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator endPhase()
     {
+        initTransBySkillUser();
+
         for (int i=0;i<4;i++)
         {
             myDiceTake[i] = -999;
@@ -3684,6 +3802,8 @@ public class BattleManager : MonoBehaviour
                 
                 if (AdventureManager.Instance.getTutorial() != 10)
                 {
+                    rerollCount = 1;
+                    hoverOutReroll();
                     itemManager.Instance.endOfBattlePhase();
                     TalkManager.Instance.setDescClickLock(true);
                     TalkManager.Instance.setDescIdx(92);
@@ -3696,12 +3816,12 @@ public class BattleManager : MonoBehaviour
                     resultObj_all.transform.position = new Vector3(0f, 0f, resultObj_all.transform.position.z);
                     resultObj_all.GetComponent<Animator>().Play("Change");
                     yield return new WaitUntil(() => !resultItemPopChk); // 튀어오른 아이템이 0에 도달시
-                    for (int i = 0; i < 3; i++) printRandomResult(i, false); //eff 시작
+                    for (int i = 0; i < 3; i++) printRandomResult(i, false, 0); //eff 시작
 
                     yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
                     resultItemPopChk_2 = false;
                     for (int i = 0; i < 3; i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
-
+                    rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
                     if (AdventureManager.Instance.getTutorial() == 17)
                     {
                         //TalkManager.Instance.startTalk(48);
@@ -3738,7 +3858,8 @@ public class BattleManager : MonoBehaviour
                     resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 300f,0f);
                     resultEff[i].transform.position = new Vector3(100f * i - 100f, 300f, 0f);//eff 삭제
                 }
-                    CharacterManager.Instance.character_reset();
+                rerollButton.transform.position = new Vector3(0f, 300f, 0f); 
+                CharacterManager.Instance.character_reset();
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
                 {
                     if (myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0)
@@ -3790,6 +3911,37 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
     }
 
+    public void hoverInReroll()
+    {
+        rerollButton.GetComponent<SpriteRenderer>().sprite = 
+            Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_rerollBtn");
+        ToolBarManager.Instance.setToolBar(21);
+    }
+    public void hoverOutReroll()
+    {
+        rerollButton.GetComponent<SpriteRenderer>().sprite =
+            Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_rerollBtn_0");
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void clickReroll()
+    {
+        if (AdventureManager.Instance.getAdventureGold() >= getRerollNeedGold())
+        {
+            
+            makeRandomResult();
+            AdventureManager.Instance.addMoney(0, -1 * getRerollNeedGold());
+            rerollCount += 1;
+            for (int i = 0; i < 3; i++) printRandomResult(i, false, 1); //eff 시작
+            ToolBarManager.Instance.setToolBar(21);
+        }
+        else
+        {
+            fullUI.showFull(20);
+        }
+    }
+    public int rerollNeedGold = 20;
+    public int rerollCount = 1;
+    public int getRerollNeedGold() { return rerollNeedGold * rerollCount; }
     public void click_bosang(int i) //보상 획득
     {
         if (i == -1)
@@ -3892,6 +4044,8 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
+        rerollNeedGold = 20;
+        rerollCount = 1;
         clickItemNotGetNoButton();
         resultItemPopChk = false;
         resultItemTemp = 0;
@@ -4421,7 +4575,7 @@ public class BattleManager : MonoBehaviour
         {
             Material material = battleTargetUI[i].GetComponent<SpriteRenderer>().material;
             material.SetFloat("_Transparency", 0.0f);
-            battleTargetUI[i].SetActive(false);
+            targetOff(i);
         }
 
         //animator 적용

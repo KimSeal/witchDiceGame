@@ -196,14 +196,14 @@ public class ToolBarManager : MonoBehaviour
     //공격력, 마법감응력, 스피드, 방어도, HP, 최대 HP
     //전투, 보물, 불운, 행운, 랜덤, 상점, 보스, ???, 미확인 이벤트, 우연, 성장,
     //(11, 12, 13)
-    //아카이브수직이동, 아카이브수직이동, 아카이브종료, 지도화살표, 모험선택지, 가방버튼, 전투시작버튼, 대화 이전버튼, 대화 스킵버튼, 대화 폰트변경버튼
+    //아카이브수직이동, 아카이브수직이동, 아카이브종료, 지도화살표, 모험선택지, 가방버튼, 전투시작버튼, 대화 이전버튼, 대화 스킵버튼, 대화 폰트변경버튼, 전투 보상 리롤 버튼
     private int[] toolBarStatTitleIdx = { 72, 73, 74, 83, 85, 124, 155 };
     private int[] toolBarStatContentIdx = { 75, 76, 77, 84, 86, 125, 154 };
 
     private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121,
-                                     156,156,159, 161,163,165,167, 170,172,174 };
+                                     156,156,159, 161,163,165,167, 170,172,174, 178 };
     private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122,
-                                     157,158,160, 162,164,166,168, 171,173,175};
+                                     157,158,160, 162,164,166,168, 171,173,175, 179};
 
     private int[] toolBarItemTypeTitleIdx = { 78,79,80,81};
     private int[] toolBarItemTypeContentIdx = { 134,135,136, 137};
@@ -236,6 +236,7 @@ public class ToolBarManager : MonoBehaviour
         toolBarImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton");
         toolBarTitle.text = TalkManager.Instance.getDesc(toolBarTitleIdx[idx]);
         toolBarDesc.text = TalkManager.Instance.getDesc(toolBarContentIdx[idx]);
+        if (idx == 21) toolBarDesc.text += ("\n( $" + BattleManager.Instance.getRerollNeedGold().ToString() + ")");
     }
     public void setToolBarStat(int idx)
     {

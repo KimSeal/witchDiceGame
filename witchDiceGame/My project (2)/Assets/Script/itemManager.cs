@@ -1098,7 +1098,7 @@ public class itemManager : MonoBehaviour
 
         
         //test Sample
-        /*
+        
         
          ItemExistArr[1, 3] = true;
         ItemArr[1, 3] = new Item(itemList[1][18]);
@@ -1151,7 +1151,7 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 2] = new Item(itemList[2][1]);
         ItemArr[0, 3] = new Item(itemList[2][1]);
         ItemArr[0, 4] = new Item(itemList[2][1]);
-        */
+        
         updateInventory();
     }
 
