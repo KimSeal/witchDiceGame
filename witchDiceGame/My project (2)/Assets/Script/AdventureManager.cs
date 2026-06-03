@@ -815,6 +815,7 @@ public class AdventureManager : MonoBehaviour
         
         resetDice();
         //지금은 시작 버튼 누르면 바로 시작
+        
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
             //StartCoroutine(phase_Manage_Coroutine(3));
@@ -825,6 +826,7 @@ public class AdventureManager : MonoBehaviour
         {
             StartCoroutine(phase_Manage_Coroutine(2));
         }
+        
     }
 
     public void clearBalpan()// 발판 이벤트 끝나고 발판 화면 치우기

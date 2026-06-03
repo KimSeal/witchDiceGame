@@ -9,6 +9,7 @@ public class Destiny
     public int phyAtk, magAtk, phyDef, magDef, speed, maxHp, maxMp, shadow, money;
     //int[] needDiceArr = new int[10];
 
+    public int[] skillMotion = new int[2];
     public Skill[] skillArr = new Skill[10];
     private int[] skillIdx = new int[10];
     //1-6 일반 값. 7 홀수 8 짝수 9 아무 값이나
@@ -33,6 +34,10 @@ public class Destiny
             skillArr[i] = new Skill(destiny.getSkill(i));
             skillIdx[i] = destiny.getSkillIdx(i);
         }
+        for (int i=0;i<skillMotion.Length;i++)
+        {
+            skillMotion[i] = destiny.skillMotion[i];
+        }
         this.money = destiny.money;
     }
 
@@ -56,8 +61,14 @@ public class Destiny
             this.skillArr[i] = new Skill(skillSet[i]);
             this.skillIdx[i] = this.skillArr[i].getSkillIdx();
         }
+        skillMotion[0] = destinyReader.skillMotion0;
+        skillMotion[1] = destinyReader.skillMotion1;
         this.money = destinyReader.money;
         //diceToArr();
+    }
+    public int getSkillMotion(int idx)
+    {
+        return this.skillMotion[idx];
     }
     public int getMoney() {
         return this.money;

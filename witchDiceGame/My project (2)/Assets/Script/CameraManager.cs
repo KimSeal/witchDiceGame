@@ -38,7 +38,12 @@ public class CameraManager : MonoBehaviour
     GameObject[] characterPart = new GameObject[4];
     TextMeshPro money;
     TextMeshPro partGet;
-
+    [SerializeField]
+    public float xInput;
+    public float yInput;
+    public float speedInput;
+    public float zoomValInput;
+    public float zoomSpeedInput;
     
 
     // Start is called before the first frame update
@@ -54,6 +59,17 @@ public class CameraManager : MonoBehaviour
     public int pixelWidth = 384;  // 낮은 해상도 너비
     public int pixelHeight = 216;  // 낮은 해상도 높이
 
+    //camera move make
+    public float moveVal = 0;
+    public float moveSpeed = 0;
+    public Vector3 startPoint = new Vector3(0f,0f,0f);
+    public Vector3 endPoint = new Vector3(0f, 0f, 0f);
+    public float zoomVal = 0f;
+    public float zoomEndPoint = 0f;
+    public float zoomSpeed = 0f;
+    public float startZoomVal;
+    public float endZoomVal;
+
     void Start()
     {
         Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
@@ -67,6 +83,13 @@ public class CameraManager : MonoBehaviour
         }
         money = GameObject.Find("obj_ui_lose_money").GetComponent<TextMeshPro>();
         partGet = GameObject.Find("obj_ui_lose_characterPart").GetComponent<TextMeshPro>();
+
+        moveVal = 0;
+        moveSpeed = 0;
+        startPoint = new Vector3(0f, 0f, 0f);
+        endPoint = new Vector3(0f, 0f, 0f);
+
+        startZoomVal = 108;
     }
 
     int tempSize;
@@ -137,15 +160,41 @@ public class CameraManager : MonoBehaviour
                 transform.position = initialPosition;
             }
         }
-       
 
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            initialPosition = new Vector3(xInput, yInput, this.transform.position.z);
+        }
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            moveStart(new Vector3(xInput, yInput, this.transform.position.z), speedInput);
+        }
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            startZoom(zoomValInput, zoomSpeedInput);
+        }
     }
     void FixedUpdate()
     {
-        
+
     }
     private void LateUpdate()
     {
+        if (zoomVal > 0.0f)
+        {
+            zoomVal -= zoomSpeed * Time.deltaTime;
+            if (zoomVal <= 0.0f) {
+                zoomSpeed = 0.0f;
+                zoomVal = 0.0f;
+            }
+            this.GetComponent<Camera>().orthographicSize = startZoomVal * (zoomVal) * (zoomVal) + (endZoomVal * (1 - (zoomVal) * (zoomVal)));
+        }
+        if (moveVal > 0.0f)
+        {
+            moveVal -= moveSpeed * Time.deltaTime;
+            if (moveVal <= 0.0f){ stopMove(); }
+            else initialPosition = Vector3.Lerp(endPoint, startPoint, (moveVal) * (moveVal));
+        }
         if (dirShakeSize > 0)
         {
             this.transform.position = initialPosition + new Vector3(dirShakeSize * Mathf.Sin(dirShakeVal) * Mathf.Cos(dirShake), dirShakeSize * Mathf.Sin(dirShakeVal) * Mathf.Sin(dirShake), 0f);
@@ -160,6 +209,33 @@ public class CameraManager : MonoBehaviour
     public float dirShake = 0; //실제 방향
     public float dirShakeVal = 0; //흔들릴때 시간 축이 될 변수
     public float subShakeVal = 0.02f;
+
+    public void startZoom(float endZoomTemp, float zoomSpeedTemp)
+    {
+        startZoomVal = this.GetComponent<Camera>().orthographicSize;
+        endZoomVal = endZoomTemp;
+        zoomVal = 1.0f;
+        zoomSpeed = zoomSpeedTemp;
+    }
+    public void stopZoom()
+    {
+        zoomSpeed = 0;
+        zoomVal = 0;
+        this.GetComponent<Camera>().orthographicSize = startZoomVal * (1 - (zoomVal) * (zoomVal)) + (endZoomVal * (zoomVal) * (zoomVal));
+    }
+    public void stopMove()
+    {
+        moveSpeed = 0.0f;
+        moveVal = 0.0f;
+        initialPosition = Vector3.Lerp(endPoint, startPoint, (moveVal)* (moveVal));
+    }
+    public void moveStart(Vector3 endPointTemp, float moveSpeedTemp)
+    {
+        startPoint = initialPosition;
+        endPoint = endPointTemp;
+        moveVal = 1.0f;
+        moveSpeed = moveSpeedTemp;
+    }
 
     public void attackShakeStart(float power)
     {
@@ -192,6 +268,8 @@ public class CameraManager : MonoBehaviour
     }
     public void updateInitPosition(Vector3 vec )
     {
+        stopMove();
+
         initialPosition = vec;
         ShakeTime = 0.0f;
         FadeUIScript.fadeIn();

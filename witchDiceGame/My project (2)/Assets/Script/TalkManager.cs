@@ -699,7 +699,7 @@ public class TalkManager : MonoBehaviour
 
         fontSizeButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/talkFontSizeButton_" + result.ToString());
 
-        characterTalk.GetComponent<TextMeshProUGUI>().fontSize = result * 5 + 25;
+        characterTalk.GetComponent<TextMeshProUGUI>().fontSize = result * 5 + 35;
     }
     public void printTalk(int a)
     {

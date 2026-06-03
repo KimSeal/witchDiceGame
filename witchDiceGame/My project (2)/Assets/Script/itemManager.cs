@@ -1099,7 +1099,7 @@ public class itemManager : MonoBehaviour
         
         //test Sample
         
-        
+        /*
          ItemExistArr[1, 3] = true;
         ItemArr[1, 3] = new Item(itemList[1][18]);
           
@@ -1151,7 +1151,7 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 2] = new Item(itemList[2][1]);
         ItemArr[0, 3] = new Item(itemList[2][1]);
         ItemArr[0, 4] = new Item(itemList[2][1]);
-        
+        */
         updateInventory();
     }
 
@@ -1177,8 +1177,6 @@ public class itemManager : MonoBehaviour
     }
     public int activeEquipItem(int[] heightArr, int timing, int useCharacterIdx, int itemNum, TakeSkillPacket takeSkillPacket)
     {
-        Debug.Log("equip test");
-
         int returnValue = 0;
         Character useCharacter = BattleManager.Instance.getCharacter(useCharacterIdx);
         if (useCharacter == null || useCharacter.getCurState() != 0) return 0;

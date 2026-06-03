@@ -364,7 +364,6 @@ public class CharacterManager : MonoBehaviour
                     character = new EagleWizard(0, destinyList_monster[characterIdx]); break;
                 case 23:
                     character = new WoodDummy(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 1);
                     character.changeDiceNum(2,4); break;
                 case 24:
                     character = new IronDummy(0, destinyList_monster[characterIdx]);

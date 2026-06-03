@@ -448,11 +448,14 @@ public class jsonDataManager : MonoBehaviour
         public int setFontSize()
         {
             this.fontSize += 1;
-            if (fontSize >= 5) fontSize = 0;
+            if (fontSize < 0) fontSize = 0;
+            if (fontSize >= 3) fontSize = 0;
             return fontSize;
         }
         public int getFontSize()
         {
+            if (fontSize < 0) fontSize = 0;
+            if (fontSize >= 3) fontSize = 0;
             return fontSize;
         }
         public int getFoodStreetStat(int idx)

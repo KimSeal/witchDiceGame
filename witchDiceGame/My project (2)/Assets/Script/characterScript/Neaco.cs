@@ -181,14 +181,15 @@ public class Peck : Character
     public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
-        if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
+        if (sendSkillPacket.useSkillIdx == 0) // 스피드 만큼 데미지
+        {
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 5, 0, 4));
+        }
+        if (sendSkillPacket.useSkillIdx == 1) //용사 기본 스킬
         {
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getMagAtk() + this.getPhyAtk(), sendSkillPacket.diceNum[0]));
         }
-        if (sendSkillPacket.useSkillIdx == 1) // 스피드 만큼 데미지
-        {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0, 4));
-        }
+        
         return packets;
     }
 }

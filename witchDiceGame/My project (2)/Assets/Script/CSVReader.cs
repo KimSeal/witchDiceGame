@@ -59,6 +59,10 @@ public class DestinyReader
     public int maxHp;
     public int maxMp;
     public int shadow;
+
+    public int skillMotion0;
+    public int skillMotion1;
+
     public int skill0;
     public int skill1;
     public int skill2;

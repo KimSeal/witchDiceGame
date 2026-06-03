@@ -519,6 +519,11 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
+        Debug.Log("beatris");
+        for (int i=0;i<8;i++)
+        {
+            Debug.Log(enemySkillDiceNum[i]);
+        }
     }
 
     //현재 주사위 값들을 기반으로 스킬을 할당한다.
@@ -955,6 +960,7 @@ public class BattleManager : MonoBehaviour
         initTransBySkillUser();
 
         do {
+            InitSetOfEnemySkill();
             infoBtn.GetComponent<BoxCollider2D>().enabled = true;
             yield return new WaitUntil(() => phaseMoveChk(1));
             StartCoroutine(diceThrowPhase());
@@ -2625,11 +2631,11 @@ public class BattleManager : MonoBehaviour
 
             for (int i = 0; i < moneyTemp; i++)
             {
-                GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position + new Vector3(0f,30f,0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(2);
             }
 
-            GameObject temp2 = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+            GameObject temp2 = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position + new Vector3(0f, 30f, 0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
             temp2.GetComponent<coinMove>().changeDest(3);
             /*
             
@@ -2882,9 +2888,6 @@ public class BattleManager : MonoBehaviour
         if (val == 0) return false;
         else
         {
-            Debug.Log("target Test");
-            Debug.Log(myTeam);
-            Debug.Log(idx);
             if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }    //damage
             if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; } //heal
             if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, val, height); return true; } //atk
@@ -3029,16 +3032,61 @@ public class BattleManager : MonoBehaviour
     {
         for (int i = 0; i < 8; i++) textHeight[i] = 0;
     }
-    private IEnumerator battleHitAnim(int lastAttack, int lastDead)
+
+    [SerializeField]
+    public GameObject attackCharacterObj;
+    private IEnumerator battleHitAnim(int lastAttack, int lastDead, int motionOpt)
     {
         int skillResult = 0;
         int tempTargetIdx = 0;
         bool boomChk = false;
+        int specialHitVal = 0; // 카메라 움직임이 추가되는 스킬 모션. 음수면 하지 않는다.
+
+        int hitTest = -1; // 공격하게 되는 적 idx
+
+        
 
         if (lastAttack >= 0 && lastDead >= 0) { //kill Animation
+            specialHitVal = -1;
             KillAnimationManager.Instance.startAnimation(0, getCharacter(lastAttack), getCharacter(lastDead));
             yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
         }
+
+        if (motionOpt > 0 && specialHitVal >= 0)
+        {
+            attackCharacterObj.GetComponent<Animator>().runtimeAnimatorController =
+                         myCharacterObjUIAnim[lastAttack].runtimeAnimatorController;
+            myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = false;
+        }
+
+        if (specialHitVal == 0 && lastAttack < 4 )
+        {
+            int[] tempQueueCopy = skillResultQueueForAnim.ToArray();
+            for (int idx = 0; idx < tempQueueCopy.Length; idx++)
+            {
+                //적을 공격하면서 동시에 적이 타겟인 경우
+                if((tempQueueCopy[idx] == 0 || tempQueueCopy[idx] == 1) && takeSkillPacketArr[idx].getTargetIdx() > 3) { 
+                    hitTest = takeSkillPacketArr[idx].getTargetIdx(); 
+                    break; 
+                }
+
+            }
+            if (hitTest >= 4)
+            {
+                specialHitVal = 1;
+                if (motionOpt == 2) {  //공격전 모션 필요 시,
+                    CameraManager.Instance.startZoom(80, 1);
+                    CameraManager.Instance.moveStart(new Vector3(8f * (hitTest - 4), -20f, CameraManager.Instance.cameraPointZ()), 3);
+                    attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(1,
+                        new Vector3(enemyCharacterObjUI[hitTest - 4].transform.position.x - 40f,
+                      enemyCharacterObjUI[hitTest - 4].transform.position.y, attackCharacterObj.transform.position.z));
+                    attackCharacterObj.GetComponent<Animator>().Play("Attack_1_0");
+                    yield return new WaitForSeconds(0.35f);
+                }
+            }
+        }
+        
+
 
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++) {
 
@@ -3047,9 +3095,11 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
             //state 변화만 있는 경우 예외처리.
-            
 
             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
+
+            //hit anim
+            
 
             if (skillResult == -2)
             {
@@ -3078,6 +3128,7 @@ public class BattleManager : MonoBehaviour
                 }
 
                 if (skillResult == 1) {
+
                     characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
                     backGroundObj[4].GetComponent<Animator>().Play("BattleFaint");
                     battleAnimationControl(tempTargetIdx, 2);
@@ -3133,8 +3184,41 @@ public class BattleManager : MonoBehaviour
                 }
 
             }
+
             
-            
+        }
+
+        if (specialHitVal == 1)
+        {
+            specialHitVal = 2;
+            if (motionOpt == 2)
+            {
+                CameraManager.Instance.startZoom(60f, 3f);
+                CameraManager.Instance.moveStart(new Vector3(15f + 15f * (hitTest - 4), -30f, CameraManager.Instance.cameraPointZ()), 8f);
+                attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(2, new Vector3(enemyCharacterObjUI[hitTest - 4].transform.position.x - 30f,
+                       enemyCharacterObjUI[hitTest - 4].transform.position.y, attackCharacterObj.transform.position.z));
+                attackCharacterObj.GetComponent<Animator>().Play("Attack_1_1");
+                updateHp();
+                yield return new WaitForSeconds(0.3f);
+            }
+            else if(motionOpt == 1)
+            {
+                CameraManager.Instance.startZoom(60f, 3f);
+                CameraManager.Instance.moveStart(new Vector3(15f + 15f * (hitTest - 4), -30f, CameraManager.Instance.cameraPointZ()), 8f);
+                attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(1, new Vector3(enemyCharacterObjUI[hitTest - 4].transform.position.x - 30f,
+                       enemyCharacterObjUI[hitTest - 4].transform.position.y, attackCharacterObj.transform.position.z));
+                attackCharacterObj.GetComponent<Animator>().Play("Attack_0_0");
+                updateHp();
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+        if (specialHitVal == 2)
+        {
+            attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(0,new Vector3(0f,0f,0f));
+            specialHitVal = 3;
+            CameraManager.Instance.startZoom(108f, 1f);
+            CameraManager.Instance.moveStart(new Vector3(0f, 0f, CameraManager.Instance.cameraPointZ()), 1f);
+            myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = true;
         }
 
 
@@ -3319,7 +3403,7 @@ public class BattleManager : MonoBehaviour
 
 
                         int tempTargetIdx;
-                        int lastAtk = -1;
+                        int lastAtk = skillUseCharacter;
                         int lastDead = -1;
                         //만들어진 상호작용 Queue를 기반으로 전투 진행
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
@@ -3331,7 +3415,7 @@ public class BattleManager : MonoBehaviour
                                 {
                                     int skillResult = myCharacter[tempTargetIdx].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
                                     skillResultQueueForAnim.Enqueue(skillResult);
-                                    if (skillResult == 1 && winningCheck() > 0) { lastAtk = skillUseCharacter; lastDead = tempTargetIdx; }
+                                    if (skillResult == 1 && winningCheck() > 0) {  lastDead = tempTargetIdx; }
                                 }
                                 else
                                 {
@@ -3344,7 +3428,7 @@ public class BattleManager : MonoBehaviour
                                 {
                                     int skillResult = enemyCharacter[tempTargetIdx - 4].TakeSkillPacket(takeSkillPacketArr[takeSkillArrIdx]);
                                     skillResultQueueForAnim.Enqueue(skillResult);
-                                    if (skillResult == 1 && winningCheck() > 0) { lastAtk = skillUseCharacter; lastDead = tempTargetIdx; }
+                                    if (skillResult == 1 && winningCheck() > 0) { lastDead = tempTargetIdx; }
                                 }
                                 else
                                 {
@@ -3354,7 +3438,7 @@ public class BattleManager : MonoBehaviour
                         }
                         
                         battleHitAnimEndChk = true;
-                        StartCoroutine(battleHitAnim(lastAtk, lastDead));
+                        StartCoroutine(battleHitAnim(lastAtk, lastDead, myCharacter[skillUseCharacter].getDestiny().getSkillMotion(skillUseIdx)));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
                         initTransBySkillUser();
 
@@ -3501,7 +3585,7 @@ public class BattleManager : MonoBehaviour
                         }
 
                         battleHitAnimEndChk = true;
-                        StartCoroutine(battleHitAnim(-1, -1));
+                        StartCoroutine(battleHitAnim(-1, -1, 0));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
                         initTransBySkillUser();
 
