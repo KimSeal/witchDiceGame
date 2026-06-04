@@ -253,23 +253,21 @@ public class Betaca : Character
 
         if (sendSkillPacket.useSkillIdx == 0) //고블린의 첫번째 스킬이 호출된 경우
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(0, 0) + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
-            if (sendSkillPacket.targetIdx[0] != -999 && BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]) <= 3)
+            if (sendSkillPacket.targetIdx[0] >= 0 && sendSkillPacket.targetIdx[0] < 4)
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getSkillVal(0, 1), 0, 2)); //자신에게 공격력 추가
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(0, 0), 0, 2)); //아군 대상에게 공격력 1 추가
+            }
+            else
+            {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
             }
         }
         else if (sendSkillPacket.useSkillIdx == 1) //고블린의 두번째 스킬이 호출된 경우
         {
-            if (sendSkillPacket.targetIdx[0] >= 0 && sendSkillPacket.targetIdx[0] < 4)
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0) + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
+            if (sendSkillPacket.targetIdx[0] != -999 && BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]) <= 3)
             {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getSkillVal(1, 0), 0, 2)); //아군 대상에게 공격력 1 추가
-            }
-            else
-            {
-
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
-
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, this.getSkillVal(1, 1), 0, 2)); //자신에게 공격력 추가
             }
         }
 
