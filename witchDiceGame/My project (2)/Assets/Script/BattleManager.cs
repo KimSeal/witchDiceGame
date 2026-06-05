@@ -3052,14 +3052,9 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
         }
 
-        if (motionOpt > 0 && specialHitVal >= 0)
-        {
-            attackCharacterObj.GetComponent<Animator>().runtimeAnimatorController =
-                         myCharacterObjUIAnim[lastAttack].runtimeAnimatorController;
-            myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = false;
-        }
+        
 
-        if (specialHitVal == 0 && lastAttack < 4 )
+        if (specialHitVal == 0 && lastAttack < 4 && motionOpt > 0)
         {
             int[] tempQueueCopy = skillResultQueueForAnim.ToArray();
             for (int idx = 0; idx < tempQueueCopy.Length; idx++)
@@ -3074,6 +3069,9 @@ public class BattleManager : MonoBehaviour
             if (hitTest >= 4)
             {
                 specialHitVal = 1;
+                attackCharacterObj.GetComponent<Animator>().runtimeAnimatorController =
+                         myCharacterObjUIAnim[lastAttack].runtimeAnimatorController;
+                myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = false;
                 if (motionOpt == 2) {  //공격전 모션 필요 시,
                     CameraManager.Instance.startZoom(80, 1);
                     CameraManager.Instance.moveStart(new Vector3(8f * (hitTest - 4), -20f, CameraManager.Instance.cameraPointZ()), 3);
@@ -3085,8 +3083,6 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
-        
-
 
         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++) {
 
@@ -3218,9 +3214,9 @@ public class BattleManager : MonoBehaviour
             specialHitVal = 3;
             CameraManager.Instance.startZoom(108f, 1f);
             CameraManager.Instance.moveStart(new Vector3(0f, 0f, CameraManager.Instance.cameraPointZ()), 1f);
-            myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = true;
+            
         }
-
+        if(lastAttack>=0 && lastAttack<4) myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = true;
 
         if (boomChk) SoundManager_Sfx.Instance.playSound(75);
 
@@ -3440,6 +3436,7 @@ public class BattleManager : MonoBehaviour
                         battleHitAnimEndChk = true;
                         StartCoroutine(battleHitAnim(lastAtk, lastDead, myCharacter[skillUseCharacter].getDestiny().getSkillMotion(skillUseIdx)));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
+                        for(int animInitIdx =0;animInitIdx<4;animInitIdx++) myCharacterObjUI[animInitIdx].GetComponent<SpriteRenderer>().enabled = true;
                         initTransBySkillUser();
 
                         if (chainChk)

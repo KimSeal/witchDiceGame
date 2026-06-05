@@ -441,7 +441,6 @@ public class CharacterManager : MonoBehaviour
                 case 35:
                     character = new DeadGuy(0, destinyList_monster[characterIdx]); break;
             }
-            
         }
     }
 
