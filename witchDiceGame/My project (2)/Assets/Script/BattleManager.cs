@@ -3883,7 +3883,7 @@ public class BattleManager : MonoBehaviour
                 
                 if (AdventureManager.Instance.getTutorial() != 10)
                 {
-                    rerollCount = 1;
+                    rerollCount = 0;
                     hoverOutReroll();
                     itemManager.Instance.endOfBattlePhase();
                     TalkManager.Instance.setDescClickLock(true);
@@ -3902,7 +3902,7 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
                     resultItemPopChk_2 = false;
                     for (int i = 0; i < 3; i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
-                    rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
+                    if(bossResult == 0) rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
                     if (AdventureManager.Instance.getTutorial() == 17)
                     {
                         //TalkManager.Instance.startTalk(48);
@@ -4020,9 +4020,9 @@ public class BattleManager : MonoBehaviour
             fullUI.showFull(20);
         }
     }
-    public int rerollNeedGold = 20;
-    public int rerollCount = 1;
-    public int getRerollNeedGold() { return rerollNeedGold * rerollCount; }
+    public int rerollNeedGold = 10;
+    public int rerollCount = 0;
+    public int getRerollNeedGold() { return  rerollNeedGold * (int)Mathf.Pow(2,rerollCount); }
     public void click_bosang(int i) //보상 획득
     {
         if (i == -1)
@@ -4125,8 +4125,8 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        rerollNeedGold = 20;
-        rerollCount = 1;
+        rerollNeedGold = 10;
+        rerollCount = 0;
         clickItemNotGetNoButton();
         resultItemPopChk = false;
         resultItemTemp = 0;
