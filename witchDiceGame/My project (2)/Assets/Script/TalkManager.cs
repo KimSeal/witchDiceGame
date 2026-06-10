@@ -778,7 +778,11 @@ public class TalkManager : MonoBehaviour
         //캐릭터 스프라이트 업데이트
         for (int i = 0; i < lightingArr.Length; i++)
         {
-            if (nameArr[i] == "Village" || nameArr[i] == "Bard" || nameArr[i] == "Tom" || nameArr[i] == "Bob") characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(204f, 216f);
+            if (nameArr[i] == "Village" || nameArr[i] == "Bard" || nameArr[i] == "Tom" || nameArr[i] == "Bob" || 
+                nameArr[i] == "ailBig0" || nameArr[i] == "Kaebi" || nameArr[i] == "grinYoung0")
+            {
+                characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(204f, 216f);
+            }
             else characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(102f, 216f);
 
             if (nameArr[i] == ".") characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/empty/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
