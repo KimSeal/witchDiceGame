@@ -778,16 +778,19 @@ public class itemManager : MonoBehaviour
             if (itemIdx == 1)
             { //랜덤한 숫자로 변경 
                 changeDice(characterIdx, idx, Random.Range(1, 7));
+                upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                 upDownManager.Instance.makeItemCharacterDiceEff(idx);
             }
             else if (itemIdx >= 2 && itemIdx <= 7) //해당 숫자로 변경
             {
                 changeDice(characterIdx, idx, ItemArr[curSelectItemType, itemBagIdx].getVal(0));
+                upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                 upDownManager.Instance.makeItemCharacterDiceEff(idx);
             }
             else if (itemIdx == 8)
             { //현재 선택한 캐릭터에 대해 보통 주사위로 변경
                 AdventureManager.Instance.setUseFairDice(true);
+                upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                 for (int i = 0; i < 6; i++)
                 {
                     upDownManager.Instance.makeItemCharacterDiceEff(i);
@@ -798,6 +801,7 @@ public class itemManager : MonoBehaviour
             {//4명의 아군들에 대해 살아있으면 보통 주사위로 변경
                 for (int chIdx = 0; chIdx < 4; chIdx++)
                 {
+                    upDownManager.Instance.makeDiceItemCharacterEff(chIdx);
                     for (int i = 0; i < 6; i++)
                     {
                         changeDice(chIdx, i, i + 1);
@@ -807,6 +811,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx == 10)
             {
+                upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                 for (int i = 0; i < 6; i++)
                 {
                     changeDice(characterIdx, i, Random.Range(1, 7));
@@ -817,6 +822,7 @@ public class itemManager : MonoBehaviour
             { //4명의 아군들에 대해 살아있으면 다 랜덤한 주사위 값으로 변경
                 for (int chIdx = 0; chIdx < 4; chIdx++)
                 {
+                    upDownManager.Instance.makeDiceItemCharacterEff(chIdx);
                     for (int i = 0; i < 6; i++)
                     {
                         changeDice(chIdx, i, Random.Range(1, 7));
@@ -826,6 +832,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx == 12)
             {
+                upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                 int tempRandom = Random.Range(1, 7);
                 for (int i = 0; i < 6; i++)
                 {
@@ -835,6 +842,7 @@ public class itemManager : MonoBehaviour
             }
             else if (itemIdx >= 13 && itemIdx <= 18)
             {
+                upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                 for (int i = 0; i < 6; i++)
                 {
                     changeDice(characterIdx, i, itemIdx - 12);
@@ -847,6 +855,7 @@ public class itemManager : MonoBehaviour
                 {
                     if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
+                        upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                         changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) + 1);
                         upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
@@ -855,6 +864,7 @@ public class itemManager : MonoBehaviour
                 {
                     if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
+                        upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                         changeDice(characterIdx, idx, BattleManager.Instance.getCharacter(characterIdx).getDice(idx) + 1);
                         upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
@@ -866,6 +876,7 @@ public class itemManager : MonoBehaviour
                 {
                     if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
+                        upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                         changeDice(characterIdx, idx, CharacterManager.Instance.getDiceNum(characterIdx, idx) - 1);
                         upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
@@ -874,6 +885,7 @@ public class itemManager : MonoBehaviour
                 {
                     if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                     {
+                        upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                         changeDice(characterIdx, idx, BattleManager.Instance.getCharacter(characterIdx).getDice(idx) - 1);
                         upDownManager.Instance.makeItemCharacterDiceEff(idx);
                     }
@@ -887,6 +899,7 @@ public class itemManager : MonoBehaviour
                     {
                         if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
+                            upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                             changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) + 1);
                             upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
@@ -895,6 +908,7 @@ public class itemManager : MonoBehaviour
                     {
                         if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
+                            upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                             changeDice(characterIdx, i, BattleManager.Instance.getCharacter(characterIdx).getDice(i) + 1);
                             upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
@@ -909,6 +923,7 @@ public class itemManager : MonoBehaviour
                     {
                         if (CharacterManager.Instance.getCharacter(characterIdx) != null && CharacterManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
+                            upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                             changeDice(characterIdx, i, CharacterManager.Instance.getDiceNum(characterIdx, i) - 1);
                             upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }
@@ -917,6 +932,7 @@ public class itemManager : MonoBehaviour
                     {
                         if (BattleManager.Instance.getCharacter(characterIdx) != null && BattleManager.Instance.getCharacter(characterIdx).getCurState() == 0)
                         {
+                            upDownManager.Instance.makeDiceItemCharacterEff(characterIdx);
                             changeDice(characterIdx, i, BattleManager.Instance.getCharacter(characterIdx).getDice(i) - 1);
                             upDownManager.Instance.makeItemCharacterDiceEff(i);
                         }

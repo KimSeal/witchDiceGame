@@ -283,6 +283,16 @@ public class upDownManager : MonoBehaviour
             exampleTextManager.GetComponent<ExampleTextManager>().printConSumeItemUpgrade(characterIdx, opt, val, height);
         }
     }
+    public void makeDiceItemCharacterEff(int characterIdx)
+    {
+        if (CharacterManager.Instance.getChracterChkCur(characterIdx) != null &&
+            CharacterManager.Instance.getChracterChkCur(characterIdx).getCurState() == 0)
+        {
+            bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("1");//("Active");
+            bigDiceItemCharacterEff[characterIdx].GetComponent<Image>().sprite =
+                  bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<SpriteRenderer>().sprite;
+        }
+    }
     public void makeItemCharacterDiceEff(int diceIdx)
     {
         bigDiceItemCharacterDiceEffOrigin[diceIdx].GetComponent<Animator>().Play("Active");
@@ -401,6 +411,10 @@ public class upDownManager : MonoBehaviour
            Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change"));
         ToolBarManager.Instance.setToolBarJewelImage(2);
     }
+    public void clickWitchPowerButton(int idx)
+    {
+        BattleManager.Instance.hoverInWitchPowerNum(idx);
+    }
     public void hoverOutAdventureWitchPowerButton()
     {
         ToolBarManager.Instance.toolBarOnOff(0);
@@ -408,8 +422,15 @@ public class upDownManager : MonoBehaviour
     public void hoverInWitchPowerButton()
     {
         int powerIdx = BattleManager.Instance.getCurWitchPower();
-        ToolBarManager.Instance.setToolBar(powerName[powerIdx], TalkManager.Instance.getDesc(41 + powerIdx), Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerSmall/spr_witchPowerSmall_" + powerName[powerIdx]));
-        ToolBarManager.Instance.setToolBarJewelImage(BattleManager.Instance.getCurWitchPowerNeedJewel());
+        hoverInWitchPowerButton(powerIdx);
+    }
+    public void hoverInWitchPowerButton(int powerIdx)
+    {
+        if (BattleManager.Instance.witchPowerAble(powerIdx))
+        {
+            ToolBarManager.Instance.setToolBar(powerName[powerIdx], TalkManager.Instance.getDesc(41 + powerIdx), Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerSmall/spr_witchPowerSmall_" + powerName[powerIdx]));
+            ToolBarManager.Instance.setToolBarJewelImage(BattleManager.Instance.getCurWitchPowerNeedJewel());
+        }
     }
     public void hoverOutWitchPowerButton()
     {
@@ -911,12 +932,18 @@ public class upDownManager : MonoBehaviour
         {
             bigDiceSkillOutline[idx].GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+
+            if (BattleManager.Instance.getDiceTake(idx) != -999)
+            {
+                ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
+            }
         }
     }
     public void hoverOutBigDiceSkill(int idx)
     {
         bigDiceSkillOutline[idx].GetComponent<Image>().sprite
              = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" }; //item type string 
@@ -1269,6 +1296,10 @@ public class upDownManager : MonoBehaviour
         BattleManager.Instance.moveToBattlePhase();
     }
 
+    public void activeBattleStart(bool onOff)
+    {
+        underBattleButton.SetActive(onOff);
+    }
     public void hoverInUnderBarBattle()
     {
         underBattleButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_battleButton_3840_on");
@@ -1309,7 +1340,6 @@ public class upDownManager : MonoBehaviour
         if (BattleManager.Instance.getDiceTake(idx) != -999)
         {
             ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
-
         }
     }
     public void hoverOutDiceSkill()
@@ -1335,9 +1365,33 @@ public class upDownManager : MonoBehaviour
     }
     public void underSkillClickAble(int idx, int opt)
     {
+        Debug.Log("???!");
         if(opt == 1) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on");
         else if(opt == 0)underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off");
+        else if (opt == 2) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_warning");
         else underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+    }
+    public void hoverInSkillClickAble(int idx)
+    {
+        if (underSkillAble[idx].GetComponent<Image>().sprite == Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on")) {
+            ToolBarManager.Instance.setToolBar(22);
+        }
+        else if (underSkillAble[idx].GetComponent<Image>().sprite == Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_warning"))
+        {
+            ToolBarManager.Instance.setToolBar(23);
+        }
+        else if(underSkillAble[idx].GetComponent<Image>().sprite == Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off"))
+        {
+            ToolBarManager.Instance.setToolBar(24);
+        }
+        else
+        {
+            ToolBarManager.Instance.toolBarOnOff(0);
+        }
+    }
+    public void hoverOutSkillClickAble()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
     public void clickSkill(int input)
     {
@@ -1902,8 +1956,11 @@ public class upDownManager : MonoBehaviour
         if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
         {
             BattleManager.Instance.witchPowerLookUpdate(i);
-            hoverInWitchPowerButton();
-            
+            //hoverInWitchPowerButton();
+            if (BattleManager.Instance.getDiceTake(i) != -999)
+            {
+                ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(i));
+            }
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         }
     }
@@ -1911,7 +1968,8 @@ public class upDownManager : MonoBehaviour
     {
         for (int i = 0; i < 8; i++)
         {
-            hoverOutWitchPowerButton();
+            //hoverOutWitchPowerButton();
+            ToolBarManager.Instance.toolBarOnOff(0);
             bigDicePowerOutline[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
     }

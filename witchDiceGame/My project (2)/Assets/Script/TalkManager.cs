@@ -45,8 +45,8 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public GameObject wishlistButton;
     [SerializeField] public Sprite[] wishlistSprite = new Sprite[2];
 
-    [SerializeField] public GameObject[] tutorialArrow = new GameObject[5];
-    [SerializeField] public GameObject[] tutorialArrowOrigin = new GameObject[5];
+    [SerializeField] public GameObject[] tutorialArrow = new GameObject[8];
+    [SerializeField] public GameObject[] tutorialArrowOrigin = new GameObject[8];
     private List<TalkReader> talkList = new List<TalkReader>();
     private List<DescReader> descList = new List<DescReader>();
     private Material[] material = new Material[4];
@@ -369,6 +369,7 @@ public class TalkManager : MonoBehaviour
                     tempIdx += 2;
                 }
             }
+            
         }
         if(opt == 10) 
         {
@@ -390,14 +391,15 @@ public class TalkManager : MonoBehaviour
             {
                 if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
                 {
-                    makeTutorialArrow(tempIdx, new Vector3(-125 + (i * 30), 0, 0), 0, 2);
+                    makeTutorialArrow(tempIdx, new Vector3(-125 + (i * 30), -15, 0), 0, 2);
                     tempIdx += 1;
                 }
             }
             for (int i=0;i<3;i++)
             {
-                makeTutorialArrow(i+2, new Vector3(35 + (i * 30), 0, 0), 0, 2);
+                makeTutorialArrow(i+2, new Vector3(35 + (i * 30), -15, 0), 0, 2);
             }
+            makeTutorialArrow(7, new Vector3(-80, 70, 0), 1, 2);
         }
         if(opt == 16) makeTutorialArrow(0, new Vector3(-60, 50, 0), 0, 3);
     }

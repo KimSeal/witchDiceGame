@@ -548,4 +548,16 @@ public class CharacterManager : MonoBehaviour
             else BattleManager.Instance.getCharacter(idx).downGrade(type, val);
         }
     }
+    public Character getChracterChkCur(int idx)
+    {
+        if (!AdventureManager.Instance.getBattleEventChk())
+        {
+            return myCharacter[idx];
+        }
+        else
+        {
+            return BattleManager.Instance.getCharacter(idx); 
+        }
+        return null;
+    }
 }

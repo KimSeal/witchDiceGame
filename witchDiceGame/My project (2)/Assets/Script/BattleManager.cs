@@ -527,7 +527,7 @@ public class BattleManager : MonoBehaviour
     }
 
     //현재 주사위 값들을 기반으로 스킬을 할당한다.
-    private void MakeEnemyAttackSet() //주사위 건너뛰고 발동하는 에러가 있다. 수정 필요
+    private void MakeEnemyAttackSet() 
     {
         List<int> liveCharacterList = new List<int>();
         List<int> liveSkillList = new List<int>();
@@ -627,9 +627,9 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-    private bool MakeMyAttackSet(bool onlyChk, int characterIdx, int skillSelIdx, int selDiceIdx)
+    private int MakeMyAttackSet(bool onlyChk, int characterIdx, int skillSelIdx, int selDiceIdx)//0 : 불가능 1 : 가능 2 : 가능하지만, 이미 다른 스킬이 배치되어있음.
     {
-        if (myCharacter[characterIdx] == null || myDice[selDiceIdx] == null) return false;
+        if (myCharacter[characterIdx] == null || myDice[selDiceIdx] == null) return 0;
 
         Skill skill = myCharacter[characterIdx].skillUse(skillSelIdx);
         List<int> liveCharacterList = new List<int>();
@@ -642,67 +642,95 @@ public class BattleManager : MonoBehaviour
         }
         if (skill.getNeedDiceNum() > liveCharacterList.Count)
         {
-            return false;
+            return 0;
         }
 
         //필요 주사위가 1칸인 경우
         if (skill.getNeedDiceNum() == 1)
         {
-            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]))
+            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]))
             { // 첫번쨰주사위가 겹치는 경우
-                if (!onlyChk) myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
-                return true;
+                if (myDiceTake[liveCharacterList[0]] == -999 )
+                {
+                    if (!onlyChk) myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                    return 1;
+                }
+                else
+                {
+                    return 2;
+                }
+                
             }
         }
         //필요 주사위가 2칸인 경우
         else if (skill.getNeedDiceNum() == 2)
         {
-            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
-                myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]))
+            if ( condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) 
+                && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]))
             { // 첫번쨰주사위가 겹치는 경우
-                if (!onlyChk)
+                if (myDiceTake[liveCharacterList[0]] == -999 && myDiceTake[liveCharacterList[1]] == -999)
                 {
-                    myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
-                    myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
+                    if (!onlyChk)
+                    {
+                        myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                        myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
+                    }
+                    return 1;
                 }
-                return true;
+                else { return 2; }
             }
 
         }
         else if (skill.getNeedDiceNum() == 3)
         {
-            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
-                myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
-                myDiceTake[liveCharacterList[2]] == -999 && condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]))
+            if ( condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                 condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]))
             { // 첫번쨰주사위가 겹치는 경우
-                if (!onlyChk)
+                if (myDiceTake[liveCharacterList[0]] == -999 &&
+                    myDiceTake[liveCharacterList[1]] == -999 &&
+                    myDiceTake[liveCharacterList[2]] == -999)
                 {
-                    myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
-                    myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
-                    myDiceChange(liveCharacterList[2], characterIdx, skillSelIdx);
+                    if (!onlyChk)
+                    {
+                        myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                        myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
+                        myDiceChange(liveCharacterList[2], characterIdx, skillSelIdx);
+                    }
+                    return 1;
                 }
-                return true;
+                else { return 2; }
             }
         }
         else if (skill.getNeedDiceNum() == 4)
         {
-            if (myDiceTake[liveCharacterList[0]] == -999 && condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
-                myDiceTake[liveCharacterList[1]] == -999 && condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
-                myDiceTake[liveCharacterList[2]] == -999 && condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]) &&
-                myDiceTake[liveCharacterList[3]] == -999 && condition_diceSkillCheck(skill.getNeedDice(3), myDiceNum[liveCharacterList[3]]))
+            if (condition_diceSkillCheck(skill.getNeedDice(0), myDiceNum[liveCharacterList[0]]) &&
+                condition_diceSkillCheck(skill.getNeedDice(1), myDiceNum[liveCharacterList[1]]) &&
+                 condition_diceSkillCheck(skill.getNeedDice(2), myDiceNum[liveCharacterList[2]]) &&
+                 condition_diceSkillCheck(skill.getNeedDice(3), myDiceNum[liveCharacterList[3]]))
             { // 첫번쨰주사위가 겹치는 경우
-                if (!onlyChk)
+                if (myDiceTake[liveCharacterList[0]] == -999 &&
+                    myDiceTake[liveCharacterList[1]] == -999 &&
+                    myDiceTake[liveCharacterList[2]] == -999 &&
+                    myDiceTake[liveCharacterList[3]] == -999)
                 {
-                    myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
-                    myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
-                    myDiceChange(liveCharacterList[2], characterIdx, skillSelIdx);
-                    myDiceChange(liveCharacterList[3], characterIdx, skillSelIdx);
+                    if (!onlyChk)
+                    {
+                        myDiceChange(liveCharacterList[0], characterIdx, skillSelIdx);
+                        myDiceChange(liveCharacterList[1], characterIdx, skillSelIdx);
+                        myDiceChange(liveCharacterList[2], characterIdx, skillSelIdx);
+                        myDiceChange(liveCharacterList[3], characterIdx, skillSelIdx);
+                    }
+                    return 1;
                 }
-                return true;
+                else
+                {
+                    return 2;
+                }
             }
         }
 
-        return false;
+        return 0;
     }
 
     private bool readyBattleChk = false;
@@ -958,6 +986,7 @@ public class BattleManager : MonoBehaviour
         startBattlePhase();
         itemManager.Instance.enterBattlePhase();
         initTransBySkillUser();
+        upDownManager.Instance.activeBattleStart(false);
 
         do {
             InitSetOfEnemySkill();
@@ -974,6 +1003,7 @@ public class BattleManager : MonoBehaviour
             StartCoroutine(skillSelectPhase());
             yield return new WaitUntil(() => phaseMoveChk(4) || giveUpChk);
             TalkManager.Instance.resetTutorialArrow();
+            upDownManager.Instance.activeBattleStart(false);
             AdventureManager.Instance.giveUpBtnAble(false);
             if (!giveUpChk)
             {
@@ -1003,6 +1033,7 @@ public class BattleManager : MonoBehaviour
     //DiceThrow Phase  Start (phase 1- dice throw start)//
     private IEnumerator diceThrowPhase()
     {
+        upDownManager.Instance.activeBattleStart(false);
         for (int i = 0; i < 16; i++){
             updateEquipUI(i / 2, i % 2);
         }
@@ -1070,11 +1101,13 @@ public class BattleManager : MonoBehaviour
                 TalkManager.Instance.startTalk(5);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.setTutorialArrow(9);
+                upDownManager.Instance.activeBattleStart(false);
             }
             else if (AdventureManager.Instance.getTutorial() == 11) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
             {
                 TalkManager.Instance.startTalk(7);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                upDownManager.Instance.activeBattleStart(false);
             }
             //아군 모든 주사위 던지기
             for (int i = 0; i < 4; i++)
@@ -1288,7 +1321,7 @@ public class BattleManager : MonoBehaviour
     }
     public void hoverOutWitchPowerNum()
     {
-        
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     public void witchPowerLookUpdate(int idx)
@@ -1589,6 +1622,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase()
     {
+        upDownManager.Instance.activeBattleStart(true);
         readyBattleChk = true;
         setCurClickSkill(-1);
         deleteSkillCommand();
@@ -1628,12 +1662,13 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.startTalk(40);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             TalkManager.Instance.setTutorialArrow(10);
-
+            
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 9);
             TalkManager.Instance.resetTutorialArrow();
             TalkManager.Instance.startTalk(41);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             TalkManager.Instance.setTutorialArrow(11);
+            upDownManager.Instance.activeBattleStart(true);
         }
         if (AdventureManager.Instance.getTutorial() == 11)
         {//주사위 변경, 운명 마법 사용 관련
@@ -1677,6 +1712,7 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.setDescIdx(64);
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 17);
+            upDownManager.Instance.activeBattleStart(true);
             TalkManager.Instance.setDescClickLock(false);
             TalkManager.Instance.setDescIdx(-1);
         }
@@ -1712,12 +1748,17 @@ public class BattleManager : MonoBehaviour
                 }
                 for (int diceIdx = 0; diceIdx < 4; diceIdx++)
                 {
-                    if (MakeMyAttackSet(true, input / 10, input % 10, diceIdx))
+                    int tempAttackMakeResult = MakeMyAttackSet(true, input / 10, input % 10, diceIdx);
+                    if (tempAttackMakeResult == 1)
                     {
                         //스킬 배치 가능한 곳이 흔들림.
                         hoverRotateAble(myDiceUI[diceIdx], 1, true);
                         shakeObject(myDiceUI[diceIdx]);
                         upDownManager.Instance.underSkillClickAble(diceIdx, 1);
+                    }
+                    else if (tempAttackMakeResult == 2)
+                    {
+                        upDownManager.Instance.underSkillClickAble(diceIdx, 2);
                     }
                     else if(myCharacter[diceIdx] != null && myCharacter[diceIdx].getCurState() == 0)
                     {
@@ -1784,7 +1825,7 @@ public class BattleManager : MonoBehaviour
                     {
                         myDiceChange(i, 0, -999);
                         //현재 클릭한 스킬이 있고 ,만약 삭제했음에도 현재 스킬을 받아드릴수 있는 경우. 얘도 마우스 겹쳤을때 확대 가능하도록
-                        if (curClickSkill != -1 && MakeMyAttackSet(true, curClickSkill / 10, curClickSkill % 10, i))
+                        if (curClickSkill != -1 && MakeMyAttackSet(true, curClickSkill / 10, curClickSkill % 10, i) == 1)
                         {
                             hoverRotateAble(myDiceUI[diceIdx], 1, true);
                         }
@@ -1810,7 +1851,7 @@ public class BattleManager : MonoBehaviour
                 Skill useSkill = myCharacter[characterIdx].skillUse(skillIdx);
                 int needDiceNum = useSkill.getNeedDiceNum();
                 //가능한지 확인
-                if (MakeMyAttackSet(true, characterIdx, skillIdx, diceIdx))
+                if (MakeMyAttackSet(true, characterIdx, skillIdx, diceIdx) == 1)
                 {   //가능한 경우 중복 스킬 제거, 배치, 주사위의 ui 업데이트
 
                     for (int i = 0; i < 4; i++)
@@ -1852,14 +1893,8 @@ public class BattleManager : MonoBehaviour
                 {
                     if (myCharacter[idx] != null && myCharacter[idx].getCurState() == 0)
                     {
-                        if (MakeMyAttackSet(true, characterIdxTemp, skillIdxTemp, idx))
-                        {
-                            upDownManager.Instance.underSkillClickAble(idx, 1);
-                        }
-                        else
-                        {
-                            upDownManager.Instance.underSkillClickAble(idx, 0);
-                        }
+                        int tempAttackMakeResult = MakeMyAttackSet(true, characterIdxTemp, skillIdxTemp, idx);
+                        upDownManager.Instance.underSkillClickAble(idx, tempAttackMakeResult);
                     }
                     else
                     {
@@ -1867,6 +1902,8 @@ public class BattleManager : MonoBehaviour
                     }
                 }
             }
+            upDownManager.Instance.hoverOutBigDiceSkill(diceIdx);
+            upDownManager.Instance.hoverInBigDiceSkill(diceIdx);
         }
     }
 

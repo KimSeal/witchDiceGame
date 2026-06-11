@@ -24,18 +24,18 @@ public class fullUI : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (canvasGroup.alpha > 0.0f)
         {
-            alphaVal -= 0.01f;
+            alphaVal -= 1.0f * Time.deltaTime;
             canvasGroup.alpha = alphaVal;
         }
     }
     
     static public void showFull(int strIdx)
     {
-        alphaVal = 1.2f;
+        alphaVal = 2.5f;
         canvasGroup.alpha = 1.00f;
         textTemp.text = TalkManager.Instance.getDesc(strIdx);//UIstringKR[strIdx];
     }
