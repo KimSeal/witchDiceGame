@@ -1364,12 +1364,6 @@ public class AdventureManager : MonoBehaviour
             
 
             diceBtnFire.Play();
-            if (tutorialVal == 1) {
-                
-                TalkManager.Instance.startTalk(4); //4
-                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-            } //튜토리얼에서 주사위 굴리기를 알려주기 위한 대화
-
             if (tutorialVal != 0 && tutorialVal < 17) { witchHatButton.SetActive(false); }
             else witchHatButton.SetActive(true);
 
@@ -1691,7 +1685,17 @@ public class AdventureManager : MonoBehaviour
                         }
                         battleSoundTemp = 26;
                     }
-                    
+                    /*
+                    else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 103)
+                    { // Grace
+                        if (jsonDataManager.Instance.setChapterDid(2, 4))
+                        {
+                            TalkManager.Instance.startTalk(73);
+                            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        }
+                        battleSoundTemp = 26;
+                    }
+                    */
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101) {

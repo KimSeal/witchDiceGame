@@ -1299,6 +1299,7 @@ public class upDownManager : MonoBehaviour
     public void activeBattleStart(bool onOff)
     {
         underBattleButton.SetActive(onOff);
+        if (onOff) hoverOutUnderBarBattle();
     }
     public void hoverInUnderBarBattle()
     {
