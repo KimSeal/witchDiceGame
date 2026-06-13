@@ -161,6 +161,7 @@ public class CameraManager : MonoBehaviour
             }
         }
 
+        /*
         if (Input.GetKeyUp(KeyCode.Space))
         {
             initialPosition = new Vector3(xInput, yInput, this.transform.position.z);
@@ -173,6 +174,7 @@ public class CameraManager : MonoBehaviour
         {
             startZoom(zoomValInput, zoomSpeedInput);
         }
+        */
     }
     void FixedUpdate()
     {

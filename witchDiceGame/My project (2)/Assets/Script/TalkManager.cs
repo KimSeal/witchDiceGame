@@ -49,6 +49,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public GameObject[] tutorialArrowOrigin = new GameObject[8];
     private List<TalkReader> talkList = new List<TalkReader>();
     private List<DescReader> descList = new List<DescReader>();
+    private List<SumReader> sumList = new List<SumReader>();
     private Material[] material = new Material[4];
     private int curIdx = 0;
     private int initIdx = -1;
@@ -98,6 +99,7 @@ public class TalkManager : MonoBehaviour
         if (talkingChk)
         {
             characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
+            skipSumText.text = sumText[jsonDataManager.Instance.getLanguage()];
         }
         else if (descChk)
         {
@@ -403,10 +405,55 @@ public class TalkManager : MonoBehaviour
         }
         if(opt == 16) makeTutorialArrow(0, new Vector3(-60, 50, 0), 0, 3);
     }
+    [SerializeField]
+    public GameObject skipBoard;
+    public GameObject skipYesButton;
+    public GameObject skipNoButton;
+    public TextMeshProUGUI skipSumText;
+    public GameObject skipEntity;
+    public Sprite[] skipButtonSprite = new Sprite[4];
+    public string [] sumText = new string[3];
+    public void hoverInSkipYesButton()
+    {
+        ToolBarManager.Instance.setToolBar(19);
+        skipYesButton.GetComponent<Image>().sprite = skipButtonSprite[0];
+    }
+    public void hoverOutSkipYesButton()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        skipYesButton.GetComponent<Image>().sprite = skipButtonSprite[1];
+    }
+    public void hoverInSkipNoButton()
+    {
+        skipNoButton.GetComponent<Image>().sprite = skipButtonSprite[2];
+    }
+    public void hoverOutSkipNoButton()
+    {
+        skipNoButton.GetComponent<Image>().sprite = skipButtonSprite[3];
+    }
+    
+    public void clickSkipYesButton()
+    {
+        clickSkipNoButton();
+        stopTalk();
+
+    }
+    public void clickSkipNoButton()
+    {
+        skipEntity.GetComponent<RectTransform>().position = new Vector3(0f,3000f,0f);
+        hoverOutSkipNoButton();
+        hoverOutSkipYesButton();
+    }
+
+    public void clickSkipButton()
+    {
+        skipEntity.GetComponent<RectTransform>().position = new Vector3(960f, 540f, 0f);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        clickSkipNoButton();
         wishlistButton.SetActive(false);
         resetTutorialArrow();
 
@@ -414,6 +461,13 @@ public class TalkManager : MonoBehaviour
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
         talkList = CSVReader.Read<TalkReader>("Talk_2");
+        sumList = CSVReader.Read<SumReader>("TextSum");
+        for (int i=0;i<sumList.Count;i++)
+        {
+            sumList[i].SumKR = SpecialTextChange(sumList[i].SumKR);
+            sumList[i].SumJP = SpecialTextChange(sumList[i].SumJP);
+            sumList[i].SumEN = SpecialTextChange(sumList[i].SumEN);
+        }
         for (int i = 0; i < talkList.Count; i++)
         {
             talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
@@ -427,6 +481,7 @@ public class TalkManager : MonoBehaviour
             descList[i].EN = SpecialTextChange(descList[i].EN);
             descList[i].JP = SpecialTextChange(descList[i].JP);
         }
+        
 
         initIdx = -1;
 
@@ -456,10 +511,15 @@ public class TalkManager : MonoBehaviour
 
     private void Update()
     {
+        
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            clickDescBox();
+            if (chapterStartManager.Instance.getChapterStartEnd())
+            {
+                clickDescBox();
+            }
         }
+        
     }
 
     // Update is called once per frame
@@ -591,8 +651,6 @@ public class TalkManager : MonoBehaviour
         if (a < 0) return;
         if (!talkingChk)
         {
-            
-
             curTalkLastVal = listIdx[a + 1] - listIdx[a];
             curTalkStartVal = listIdx[a];
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
@@ -629,6 +687,10 @@ public class TalkManager : MonoBehaviour
             if (talkList[curIdx].skipAble == 1)
             {
                 skipButton.SetActive(true);
+                sumText[0] = sumList[a].SumKR;
+                sumText[1] = sumList[a].SumEN;
+                sumText[2] = sumList[a].SumJP;
+                skipSumText.text = sumText[jsonDataManager.Instance.getLanguage()];
             }
             else {
                 skipButton.SetActive(false); 

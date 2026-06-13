@@ -371,13 +371,15 @@ public class AdventureManager : MonoBehaviour
         else
         {
             TownManager.Instance.backToTownUI();
-            if (jsonDataManager.Instance.setChapterDid(0, 1))
+            if (jsonDataManager.Instance.setChapterDid(0, 1))   //다시 들어간 경우, 업데이트 반영
             {
                 jsonDataManager.Instance.tutorialDid();
+                chapterStartManager.Instance.startChater(0);
                 TalkManager.Instance.startTalk(16);
             }
             if (jsonDataManager.Instance.getChapterRead(0,2) ==2 && jsonDataManager.Instance.setChapterDid(1, 1)) //업데이트 시 반영되도록
             {
+                chapterStartManager.Instance.startChater(1);
                 SoundManager_Main.Instance.stopSound(7);
                 TalkManager.Instance.startTalk(54);
             }
@@ -2061,6 +2063,8 @@ public class AdventureManager : MonoBehaviour
                         SoundManager_Main.Instance.stopSound(3); //기본 브금 제거
                         TalkManager.Instance.startTalk(13);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        chapterStartManager.Instance.startChater(0);
+                        yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
                         TalkManager.Instance.startTalk(16);
                     }
                     tutorialVal = 0;

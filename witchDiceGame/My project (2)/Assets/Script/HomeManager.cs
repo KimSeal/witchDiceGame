@@ -191,6 +191,7 @@ public class HomeManager : MonoBehaviour
     IEnumerator jewelTalk(int talkIdx)
     {
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
+
         TalkManager.Instance.startTalk(talkIdx);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         FadeUIScript.fadeIn();
@@ -221,6 +222,11 @@ public class HomeManager : MonoBehaviour
             }
             if (chapterStartIdx[chapterNum] != 0)
             {
+                if(chapterNum == 0)
+                {
+                    chapterStartManager.Instance.startChater(0);
+                    yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
+                }
                 TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 

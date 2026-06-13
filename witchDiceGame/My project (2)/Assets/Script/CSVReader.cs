@@ -122,6 +122,13 @@ public class DescReader
     public string JP;
 }
 
+public class SumReader
+{
+    public int talkIdx;
+    public string SumKR;
+    public string SumJP;
+    public string SumEN;
+}
 public class TalkReader{
     public int talkIdx;
     public int Idx;
