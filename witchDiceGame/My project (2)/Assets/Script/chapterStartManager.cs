@@ -64,7 +64,7 @@ public class chapterStartManager : MonoBehaviour
         
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            startChater(0);
+            startChater(1);
         }
     }
     public void setAnim(int objIdx, string animName, Vector3 vectorTemp)
@@ -109,7 +109,17 @@ public class chapterStartManager : MonoBehaviour
             changeAnim(1, "Idle");
             changeAnim(2, "Idle");
             changeAnim(3, "Idle");
-
+        }
+        if (opt == 1)
+        {
+            setAnim(0, "sitDoll", new Vector3(-1, -56, 0));
+            setAnim(1, "witch1", new Vector3(-55, -41, 0));
+            setAnim(2, "flutter0", new Vector3(53, -54, 0));
+            setAnim(3, "boom0", new Vector3(-3, -52, 0));
+            changeAnim(0, "Idle");
+            changeAnim(1, "Idle");
+            changeAnim(2, "Idle");
+            changeAnim(3, "Idle");
         }
         blackCover.GetComponent<Image>().color = new Color(blackCover.GetComponent<Image>().color.r,
                blackCover.GetComponent<Image>().color.g,
@@ -138,6 +148,21 @@ public class chapterStartManager : MonoBehaviour
             changeAnim(3, "Smile");
             yield return new WaitForSeconds(1f);
             changeAnim(0, "WatchLeft");
+            yield return new WaitForSeconds(1f);
+        }
+        if (opt == 1)
+        {
+            yield return new WaitForSeconds(2f);
+            changeAnim(1, "Spell");
+            yield return new WaitForSeconds(0.5f);
+            changeAnim(0, "Spell");
+            yield return new WaitForSeconds(1.5f);
+            changeAnim(1, "SpellFail");
+            changeAnim(0, "Burn");
+            changeAnim(2, "Surprise");
+            changeAnim(3, "Boom");
+            yield return new WaitForSeconds(1f);
+            changeAnim(2, "Idle2");
             yield return new WaitForSeconds(1f);
         }
 

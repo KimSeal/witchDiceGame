@@ -222,9 +222,13 @@ public class HomeManager : MonoBehaviour
             }
             if (chapterStartIdx[chapterNum] != 0)
             {
-                if(chapterNum == 0)
-                {
+                if(chapterNum == 0){
                     chapterStartManager.Instance.startChater(0);
+                    yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
+                }
+                if (chapterNum == 1)
+                {
+                    chapterStartManager.Instance.startChater(1);
                     yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
                 }
                 TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
