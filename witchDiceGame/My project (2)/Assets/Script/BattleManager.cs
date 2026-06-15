@@ -3438,6 +3438,7 @@ public class BattleManager : MonoBehaviour
                         int tempTargetIdx;
                         int lastAtk = skillUseCharacter;
                         int lastDead = -1;
+
                         //만들어진 상호작용 Queue를 기반으로 전투 진행
                         for (int takeSkillArrIdx = 0; takeSkillArrIdx < takeSkillPacketArr.Count; takeSkillArrIdx++)
                         {
