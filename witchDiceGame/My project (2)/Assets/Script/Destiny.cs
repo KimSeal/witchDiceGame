@@ -6,7 +6,8 @@ public class Destiny
 { 
     public int DestinyIdx;
     public string Enemy, Name, Sex;
-    public int phyAtk, magAtk, phyDef, magDef, speed, maxHp, maxMp, shadow, money;
+    public int phyAtk, magAtk, speed, maxHp, shadow, money, armor;
+    public int[] baseDiceNum = new int[6];
     //int[] needDiceArr = new int[10];
 
     public int[] skillMotion = new int[2];
@@ -17,18 +18,16 @@ public class Destiny
 
     public Destiny(Destiny destiny)
     {
-        this.maxMp = destiny.maxMp;
         this.DestinyIdx = destiny.DestinyIdx;
         this.Enemy = destiny.Enemy; 
         this.Name = destiny.Name;
         this.Sex = destiny.Sex;
         this.phyAtk = destiny.phyAtk;
         this.magAtk = destiny.magAtk;
-        this.phyDef = destiny.phyDef;
-        this.magDef = destiny.magDef;
         this.speed = destiny.speed;
         this.maxHp = destiny.maxHp;
         this.shadow = destiny.shadow;
+        this.armor = destiny.armor;
         for (int i=0;i<10;i++)
         {
             skillArr[i] = new Skill(destiny.getSkill(i));
@@ -39,6 +38,10 @@ public class Destiny
             skillMotion[i] = destiny.skillMotion[i];
         }
         this.money = destiny.money;
+        for (int i=0;i<baseDiceNum.Length;i++)
+        {
+            baseDiceNum[i] = destiny.baseDiceNum[i];
+        }
     }
 
     public Destiny(DestinyReader destinyReader,  Skill[] skillSet)
@@ -49,11 +52,9 @@ public class Destiny
         this.Sex = destinyReader.Sex;
         this.phyAtk = destinyReader.phyAtk;
         this.magAtk = destinyReader.magAtk;
-        this.phyDef = destinyReader.phyDef;
-        this.magDef = destinyReader.magDef;
         this.speed = destinyReader.Speed;
         this.maxHp = destinyReader.maxHp;
-        this.maxMp = destinyReader.maxMp;
+        this.armor = destinyReader.Armor;
         
         this.shadow = destinyReader.shadow;
         for (int i=0;i<10;i++)
@@ -61,10 +62,26 @@ public class Destiny
             this.skillArr[i] = new Skill(skillSet[i]);
             this.skillIdx[i] = this.skillArr[i].getSkillIdx();
         }
+
+        baseDiceNum[0] = destinyReader.BaseDiceNum0;
+        baseDiceNum[1] = destinyReader.BaseDiceNum1;
+        baseDiceNum[2] = destinyReader.BaseDiceNum2;
+        baseDiceNum[3] = destinyReader.BaseDiceNum3;
+        baseDiceNum[4] = destinyReader.BaseDiceNum4;
+        baseDiceNum[5] = destinyReader.BaseDiceNum5;
+
         skillMotion[0] = destinyReader.skillMotion0;
         skillMotion[1] = destinyReader.skillMotion1;
         this.money = destinyReader.money;
         //diceToArr();
+    }
+    public int getArmor()
+    {
+        return this.armor;
+    }
+    public int getBaseDiceNum(int diceIdx)
+    {
+        return baseDiceNum[diceIdx];
     }
     public int getSkillMotion(int idx)
     {

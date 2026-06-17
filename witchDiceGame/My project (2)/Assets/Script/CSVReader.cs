@@ -53,12 +53,12 @@ public class DestinyReader
     public string Sex;
     public int phyAtk;
     public int magAtk;
-    public int phyDef;
-    public int magDef;
+    public int Armor;
     public int Speed;
     public int maxHp;
-    public int maxMp;
     public int shadow;
+    public int BaseDiceNum0, BaseDiceNum1, BaseDiceNum2, BaseDiceNum3, BaseDiceNum4, BaseDiceNum5;
+
 
     public int skillMotion0;
     public int skillMotion1;

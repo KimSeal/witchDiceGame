@@ -11,6 +11,8 @@ public class Character_battle{
     private int diceState;
     private int characterState;
     private int specialVal = 0;
+    private int skillUseCount0 = 0;
+    private int skillUseCount1 = 0;
     public Character_battle()
     {
         originIdx = -999;
@@ -20,8 +22,22 @@ public class Character_battle{
         armor = 0;
         diceState = 0;
         specialVal = 0;
+
+        skillUseCount0 = 0;
+        skillUseCount1 = 0;
     }
 
+    public int getSkillUseCount(int opt)
+    {
+        if (opt == 0) return skillUseCount0;
+        else if(opt == 1)return skillUseCount1;
+        return 0;
+    }
+    public void setSkillUseCount(int opt, int val)
+    {
+        if (opt == 0) skillUseCount0 = val;
+        else if (opt == 1) skillUseCount1 = val;
+    }
     public int getDiceState()
     {
         return diceState;
@@ -95,8 +111,8 @@ public abstract class Character
 {
     // 0 : 활성화 1: 미배정 2: 비활성화 3 : 사용불가
     protected int curState = 3;
-    protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, phyDef = 0, magDef = 0, speed = 0,
-        hp = 0, maxHp = 0, mp = 0, maxMp = 0;
+    protected int level = 0, exp = 0, phyAtk = 0, magAtk = 0, speed = 0,
+        hp = 0, maxHp = 0;
 
     protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
@@ -116,12 +132,8 @@ public abstract class Character
         {
             this.level = 1;
             this.exp = 0;
-            this.maxMp = destiny.maxMp;
-            this.mp = maxMp;
             this.phyAtk = destiny.phyAtk;
             this.magAtk = destiny.magAtk;
-            this.phyDef = destiny.phyDef;
-            this.magDef = destiny.magDef;
             this.speed = destiny.speed;
             this.maxHp = destiny.maxHp;
             this.hp = maxHp;
@@ -143,11 +155,7 @@ public abstract class Character
         this.level = character.level;
         this.exp = character.exp;
         this.phyAtk = character.phyAtk;
-        this.maxMp = character.maxMp;
-        this.mp = character.mp;
         this.magAtk = character.magAtk;
-        this.phyDef = character.phyDef;
-        this.magDef = character.magDef;
         this.speed = character.speed;
         this.hp = character.hp;
         this.maxHp = character.maxHp;
@@ -169,11 +177,7 @@ public abstract class Character
         this.level = character.level;
         this.exp = character.exp;
         this.phyAtk = character.phyAtk;
-        this.maxMp = character.maxMp;
-        this.mp = character.mp;
         this.magAtk = character.magAtk;
-        this.phyDef = character.phyDef;
-        this.magDef = character.magDef;
         this.speed = character.speed;
         this.hp = character.hp;
         this.maxHp = character.maxHp;
@@ -317,8 +321,6 @@ public abstract class Character
         return this.character_battle.getArmor();
     }
     public int getMaxHp() { return maxHp; }
-    public int getMp() { return mp; }
-    public int getMaxMp() { return maxMp; }
     public Skill skillUse(int selNum)
     {
         return destiny.findSkill(skillIdx[selNum]);
@@ -409,6 +411,32 @@ public abstract class Character
             BattleManager.Instance.updateHpCover(takeSkillPacket.getTargetIdx(), 0);
             return 3;
         }
+        else if (takeSkillPacket.getSkillType() == 10)// HP 영구 제거
+        {
+            if (this.getSpeed() >= Random.Range(1, 101)) { return 2; }
+            this.downGrade(1, takeSkillPacket.getVal());
+            return 3;
+        }
+        else if (takeSkillPacket.getSkillType() == 11) //최대체력 업그레이드
+        {
+            this.upGrade(1, takeSkillPacket.getVal());
+            return 3;
+        }
+        else if (takeSkillPacket.getSkillType() == 12) //공격력 업인 경우
+        {
+            this.downGrade(5, takeSkillPacket.getVal());
+            return 3;
+        }
+        else if (takeSkillPacket.getSkillType() == 14) //마법감응력 업인 경우
+        {
+            this.downGrade(6, takeSkillPacket.getVal());
+            return 3;
+        }
+        else if (takeSkillPacket.getSkillType() == 15) //스피드 업인 경우
+        {
+            this.downGrade(7, takeSkillPacket.getVal());
+            return 3;
+        }
 
         if (takeSkillPacket.getStateChange() >= 1 && takeSkillPacket.getStateChange() <= 6)
         {
@@ -484,7 +512,7 @@ public abstract class Character
         
     }
     public int upGrade(int idx, int val)
-    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:마법 감응력 / 7.스피드 
+    {  //0 : 체력 / 1: 최대체력  / 4:방어도 / 5:공격력 / 6:마법 감응력 / 7.스피드 
         if (idx == 0){
             this.hp += val;
             if (hp > maxHp) hp = maxHp;
@@ -493,16 +521,6 @@ public abstract class Character
             int tempMaxHp = maxHp;
             maxHp += val;
             this.hp += maxHp - tempMaxHp; 
-        }
-        if (idx == 2){
-            this.mp += val;
-            if (this.mp > maxMp) this.mp = maxMp;
-        }
-        if (idx == 3)
-        {
-            int tempMaxMp = maxHp;
-            maxMp += val;
-            this.mp += maxMp - tempMaxMp;
         }
         if (idx == 4)
         {
@@ -542,7 +560,7 @@ public abstract class Character
     }
 
     public int downGrade(int idx, int val)
-    {  //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:마법 감응력/ 7 : 스피드
+    {  //0 : 체력 / 1: 최대체력  / 4:방어도 / 5:공격력 / 6:마법 감응력/ 7 : 스피드
         if (idx == 0) //체력이 줄었고 
         {
             if (downGradeDamage(val) == 1) return 1;
@@ -556,21 +574,6 @@ public abstract class Character
                 //this.curState = 2;
                 maxHp = 1;
                 hp = 1; //return 1;
-            }
-        }
-        if (idx == 2)
-        {
-            this.mp -= val;
-            if(this.mp < 0 ) this.mp = 0;
-        }
-        if(idx == 3)
-        {
-            this.maxMp -= val;
-            if (maxMp < mp) mp = maxMp;
-            if (maxMp <= 0)
-            {
-                maxMp = 0;
-                mp = 0;
             }
         }
         if (idx == 4) {

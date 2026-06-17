@@ -734,7 +734,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 0; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -821,8 +821,8 @@ public class AdventureManager : MonoBehaviour
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
             //StartCoroutine(phase_Manage_Coroutine(3));
-
-            StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
+            StartCoroutine(phase_Manage_Coroutine(1));
+            //StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
         else
         {

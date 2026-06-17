@@ -328,9 +328,13 @@ public class BattleManager : MonoBehaviour
         shakeObject(bagShake);
     }
     public Character getCharacter(int a) {
-        if (a < 4) return myCharacter[a];
-        a -= 4;
-        return enemyCharacter[a];
+        if (a >= 0 && a < 4) return myCharacter[a];
+        else if (a >= 4 && a < 8)
+        {
+            a -= 4;
+            return enemyCharacter[a];
+        }
+        return null;
     }
     public int getDiceNum(int a)
     {

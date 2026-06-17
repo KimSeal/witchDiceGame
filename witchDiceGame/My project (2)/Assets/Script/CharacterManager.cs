@@ -422,8 +422,6 @@ public class CharacterManager : MonoBehaviour
                     character.changeDiceNum(3, 1);
                     character.changeDiceNum(4, 1); 
                     character.changeDiceNum(5, 5);break;
-                //character.changeEquip(0, 1);
-                //character.changeEquip(1, 3);
                 case 33:
                     character = new SoulShield(0, destinyList_monster[characterIdx]);
                     character.changeDiceNum(1, 1);
@@ -440,7 +438,37 @@ public class CharacterManager : MonoBehaviour
                     character.changeDiceNum(5, 2); break;
                 case 35:
                     character = new DeadGuy(0, destinyList_monster[characterIdx]); break;
+                case 36:
+                    character = new BlackEyedRabbit(0, destinyList_monster[characterIdx]); break;
+                case 37:
+                    character = new Vamdeer(0, destinyList_monster[characterIdx]); break;
+                case 38:
+                    character = new Holemole(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 1); break;
+                case 39:
+                    character = new Dionaea(0, destinyList_monster[characterIdx]); break;
+                case 40:
+                    character = new Drosera(0, destinyList_monster[characterIdx]); break;
+                case 41:
+                    character = new Nepenthes(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 2); break;
+                case 42:
+                    character = new Rafflesia(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 2); break;
+                case 43:
+                    character = new Assassin(0, destinyList_monster[characterIdx]);
+                    character.getCharacter_battle().upgrade(6, 3); break;
+                case 44:
+                    character = new Grace(0, destinyList_monster[characterIdx]); break;
+                case 45:
+                    character = new BlueSoulRapier(0, destinyList_monster[characterIdx]); break;
+                case 46:
+                    character = new PurpleSoulRapier(0, destinyList_monster[characterIdx]); break;
+                case 47:
+                    character = new RedSoulRapier(0, destinyList_monster[characterIdx]); break;
             }
+            character.getCharacter_battle().upgrade(6, destinyList_monster[characterIdx].getArmor());
+            for(int i=0;i<6;i++) character.changeDiceNum(i, destinyList_monster[characterIdx].getBaseDiceNum(i));
         }
     }
 
