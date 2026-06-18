@@ -48,7 +48,6 @@ public class chapterStartManager : MonoBehaviour
     {
         if (getChapterStartEnd())
         {
-            Debug.Log("helo");
             for (int i = 0; i < objectArr.Length; i++)
             {
                 objectArr[i].GetComponent<Image>().sprite = objectOriginArr[i].GetComponent<SpriteRenderer>().sprite;
@@ -64,7 +63,7 @@ public class chapterStartManager : MonoBehaviour
         
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            startChater(1);
+            startChater(2);
         }
     }
     public void setAnim(int objIdx, string animName, Vector3 vectorTemp)
@@ -121,6 +120,19 @@ public class chapterStartManager : MonoBehaviour
             changeAnim(2, "Idle");
             changeAnim(3, "Idle");
         }
+        if (opt == 2)
+        {
+            setAnim(0, "witch1", new Vector3(80, -41, 0));
+            setAnim(1, "standAil", new Vector3(55, -55, 0));
+            setAnim(2, "flutter0", new Vector3(-96, -53, 0));
+            setAnim(3, "Odi", new Vector3(-4, -41, 0));
+            setAnim(4, "UnstablePortal", new Vector3(-48, -45, 0));
+            changeAnim(0, "LeftWatchIdle");
+            changeAnim(1, "Idle");
+            changeAnim(2, "TimeStop");
+            changeAnim(3, "Idle");
+            changeAnim(4, "Idle");
+        }
         blackCover.GetComponent<Image>().color = new Color(blackCover.GetComponent<Image>().color.r,
                blackCover.GetComponent<Image>().color.g,
                blackCover.GetComponent<Image>().color.b,
@@ -164,6 +176,19 @@ public class chapterStartManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             changeAnim(2, "Idle2");
             yield return new WaitForSeconds(1f);
+        }
+        if (opt == 2)
+        {
+            yield return new WaitForSeconds(2f);
+            changeAnim(0, "LeftWatchSurprise");
+            changeAnim(3, "FocusAngry");
+            changeAnim(4, "Make");
+            yield return new WaitForSeconds(1.5f);
+            changeAnim(0, "LeftWatchNoise");
+            changeAnim(1, "Surprise");
+            changeAnim(3, "FocusSpin");
+            changeAnim(4, "Boom");
+            yield return new WaitForSeconds(3f);
         }
 
         while (blackCover.GetComponent<Image>().color.a < 1)
