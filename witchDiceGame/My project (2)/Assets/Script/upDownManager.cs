@@ -1366,7 +1366,6 @@ public class upDownManager : MonoBehaviour
     }
     public void underSkillClickAble(int idx, int opt)
     {
-        Debug.Log("???!");
         if(opt == 1) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on");
         else if(opt == 0)underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off");
         else if (opt == 2) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_warning");

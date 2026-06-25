@@ -383,6 +383,12 @@ public class AdventureManager : MonoBehaviour
                 SoundManager_Main.Instance.stopSound(7);
                 TalkManager.Instance.startTalk(54);
             }
+            if (jsonDataManager.Instance.getChapterRead(1, 2) == 2 && jsonDataManager.Instance.setChapterDid(2, 1)) //업데이트 시 반영되도록
+            {
+                chapterStartManager.Instance.startChater(2);
+                SoundManager_Main.Instance.stopSound(7);
+                TalkManager.Instance.startTalk(72);
+            }
             //CameraManager.Instance.updateInitPosition(new Vector3(-500f, -500f, mainCamera.transform.position.z));
             //SoundManager_Main.Instance.playSound(7);
         }
@@ -734,7 +740,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 0; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -807,6 +813,10 @@ public class AdventureManager : MonoBehaviour
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2) {
             stageDepthMax = 2;
         }
+        if (jsonDataManager.Instance.getChapterRead(1, 2) == 2)
+        {
+            stageDepthMax = 3;
+        }
 
         curCanvasIsAdventure = true;
         battleEventTrigger = false;
@@ -821,8 +831,8 @@ public class AdventureManager : MonoBehaviour
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
             //StartCoroutine(phase_Manage_Coroutine(3));
-            StartCoroutine(phase_Manage_Coroutine(1));
-            //StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
+            //StartCoroutine(phase_Manage_Coroutine(1));
+            StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
         else
         {
@@ -1687,7 +1697,6 @@ public class AdventureManager : MonoBehaviour
                         }
                         battleSoundTemp = 26;
                     }
-                    /*
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 103)
                     { // Grace
                         if (jsonDataManager.Instance.setChapterDid(2, 4))
@@ -1697,7 +1706,6 @@ public class AdventureManager : MonoBehaviour
                         }
                         battleSoundTemp = 26;
                     }
-                    */
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101) {
@@ -1949,8 +1957,10 @@ public class AdventureManager : MonoBehaviour
                 { // 1스테이지 최종 보스 클리어
                     if (jsonDataManager.Instance.getChapterRead(stageDepth, 1) == 0) jsonDataManager.Instance.setChapterRead(stageDepth, 1);
                     giveUpBtnAble(false);
+
                     TalkManager.Instance.startTalk(32);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    
                     giveUpBtnAble(true);
                 }
                 //데모 보스 클리어 확인
@@ -1965,6 +1975,13 @@ public class AdventureManager : MonoBehaviour
                     if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) jsonDataManager.Instance.setChapterRead(1, 2);
                     giveUpBtnAble(false);
                     demoEndChk = 3;
+                    gameOverChk = true;
+                }
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 103 && !gameOverChk)
+                { // 그레이스 클리어
+                    if (jsonDataManager.Instance.getChapterRead(2, 2) == 0) jsonDataManager.Instance.setChapterRead(2, 2);
+                    giveUpBtnAble(false);
+                    demoEndChk = 4;
                     gameOverChk = true;
                 }
                 //튜토리얼 보스 클리어 확인
@@ -2028,12 +2045,19 @@ public class AdventureManager : MonoBehaviour
                     stageDepth = 1;
                     //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
-                if(demoEndChk == 2) { stageDepth = 1; stageDepthMax = 1; }
-                if(demoEndChk == 3)
-                {
-                    stageDepth = 2;
-                }
-
+                if(demoEndChk == 2) { stageDepth = 1; stageDepthMax = 1; } //튜토리얼
+                if(demoEndChk == 3) { stageDepth = 2; } //bard
+                if (demoEndChk == 4) {
+                    if (!jsonDataManager.Instance.getGraceBattleWin())
+                    {
+                        SoundManager_Main.Instance.stopSound(3); //기본 브금 제거
+                        jsonDataManager.Instance.graceBattleWin();
+                        TalkManager.Instance.startTalk(75);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        SoundManager_Main.Instance.playSound(3); //기본 브금 제거
+                    }
+                    stageDepth = 3; 
+                } //grace
 
                 if (giveUpChk && !battleEventTrigger)
                 { //항복한 경우
@@ -2132,6 +2156,17 @@ public class AdventureManager : MonoBehaviour
                 else
                 {// 2챕터 클리어후 depth 1
                     StartCoroutine(phase_Manage_Coroutine(3));
+                }
+            }
+            if (stageDepth == 2)
+            {
+                if (jsonDataManager.Instance.getChapterRead(2, 2) != 2)
+                {// 2챕터 클리어전 depth 1
+                    StartCoroutine(phase_Manage_Coroutine(4));
+                }
+                else
+                {// 2챕터 클리어후 depth 1
+                    StartCoroutine(phase_Manage_Coroutine(4));
                 }
             }
 

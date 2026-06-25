@@ -194,6 +194,9 @@ public abstract class Character
         this.money = character.getMoney();
     }
 
+
+    
+
     public RuntimeAnimatorController getAnimator(bool deadOk)
     {
         string temp = this.getDestiny().getName();
@@ -203,12 +206,17 @@ public abstract class Character
             return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
         }
 
+        
         if (
-            (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10012 || this.getDestiny().getDestinyIdx() == 10003 || this.getDestiny().getDestinyIdx() == 10004))
-        )
+            (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10012 || this.getDestiny().getDestinyIdx() == 10003 || this.getDestiny().getDestinyIdx() == 10004)) ||
+            (jsonDataManager.Instance.getChapterRead(2, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10044 || this.getDestiny().getDestinyIdx() == 10045 || this.getDestiny().getDestinyIdx() == 10046 || 
+            this.getDestiny().getDestinyIdx() == 10047 || this.getDestiny().getDestinyIdx() == 10048))
+            )
         {
-            return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp + "_2");
+            //return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp + "_2");
+            return CharacterManager.Instance.getOriginAnimator(this.getDestiny().getDestinyIdx());
         }
+        
         return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
     }
 

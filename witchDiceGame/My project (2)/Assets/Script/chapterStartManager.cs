@@ -42,6 +42,7 @@ public class chapterStartManager : MonoBehaviour
         entity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -3000f, 0);
         chapterTitle[0] = "Lost People";
         chapterTitle[1] = "Expedient";
+        chapterTitle[2] = "Liar";
     }
 
     private void FixedUpdate()
@@ -63,7 +64,7 @@ public class chapterStartManager : MonoBehaviour
         
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            startChater(2);
+            //startChater(2);
         }
     }
     public void setAnim(int objIdx, string animName, Vector3 vectorTemp)

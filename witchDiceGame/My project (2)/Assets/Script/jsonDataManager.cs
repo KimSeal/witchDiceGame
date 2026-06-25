@@ -314,6 +314,20 @@ public class jsonDataManager : MonoBehaviour
             SavePlayerDataToJson();
         }
     }
+
+    public bool getGraceBattleWin()
+    {
+        return playerPlayData.graceBattleWin;
+    }
+    public void graceBattleWin()
+    {
+        if (!playerPlayData.graceBattleWin)
+        {
+            playerPlayData.graceBattleWin = true;
+            SavePlayerDataToJson();
+        }
+    }
+
     public bool getFirstGetCharacterPart()
     {
         return playerPlayData.firstGetCharacterPart;
@@ -430,6 +444,7 @@ public class jsonDataManager : MonoBehaviour
         public bool towerEntry = false;
         public bool libraryMeet = false;
         public bool owlBattleWin = false;
+        public bool graceBattleWin = false;
         public bool firstGetCharacterPart = false;
         public int[] chapterDid = new int[6];
         public int[] chapter1Read = new int[3]; // 1챕터 각 스토리 대응. int값이 0이면 미해금. 1이면 스토리 막 개방 2면 스토리 종료
@@ -532,6 +547,7 @@ public class jsonDataManager : MonoBehaviour
             towerEntry = false;
             libraryMeet = false;
             owlBattleWin = false;
+            graceBattleWin = false;
             firstGetCharacterPart = false;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = 0;
             for (int i = 0; i < 3; i++)
@@ -581,6 +597,7 @@ public class jsonDataManager : MonoBehaviour
             towerEntry = playerPlayerData.towerEntry;
             libraryMeet = playerPlayerData.libraryMeet;
             owlBattleWin = playerPlayerData.owlBattleWin;
+            graceBattleWin = playerPlayerData.graceBattleWin;
             firstGetCharacterPart = playerPlayerData.firstGetCharacterPart;
             this.language = playerPlayerData.language;
             for (int i = 0; i < chapterDid.Length; i++) chapterDid[i] = playerPlayerData.chapterDid[i];

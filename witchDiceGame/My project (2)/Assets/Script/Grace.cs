@@ -100,16 +100,6 @@ public class Holemole : Character
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
 
         if (sendSkillPacket.useSkillIdx == 0)
-        { //고블린의 첫번째 스킬이 호출된 경우
-            if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
-                BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
-            {
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0],
-                    BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 2 + this.getPhyAtk(), 0));
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1,0, 6));
-            }
-        }
-        else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
             if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
                 BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
@@ -121,6 +111,17 @@ public class Holemole : Character
                 } 
             }
         }
+        else if (sendSkillPacket.useSkillIdx == 1)
+        { //고블린의 첫번째 스킬이 호출된 경우
+            if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
+                BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
+            {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0],
+                    BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 2 + this.getPhyAtk(), 0));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 1, 0, 6));
+            }
+        }
+        
         return packets;
     }
 }
@@ -194,9 +195,14 @@ public class Drosera : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0));
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk(),0, 15));
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, sendSkillPacket.diceNum[0] + this.getPhyAtk(), 0, 5));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + this.getPhyAtk(),0, 15));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + this.getPhyAtk(), 0, 5));
+            if(this.getSpeed() >= 15) {
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + this.getPhyAtk(), 0));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + this.getPhyAtk(), 0, 15));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, sendSkillPacket.diceNum[0] + sendSkillPacket.diceNum[1] + this.getPhyAtk(), 0, 5));
+            }
         }
         return packets;
     }
@@ -226,31 +232,32 @@ public class Nepenthes : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
-                BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
+            for (int i = 0; i < 4; i++)
             {
-                int tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 2;
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0,0));
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0,1));
-                if (this.getPossible(20))
+                if (BattleManager.Instance.getCharacter(i + 4) != null &&
+                BattleManager.Instance.getCharacter(i + 4).getCurState() == 0)
                 {
-                    tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 2;
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0,0));
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0,1));
+                    Character tempCharacter = BattleManager.Instance.getCharacter(i + 4);
+                    packets.Add(new TakeSkillPacket(i+4, tempCharacter.getPhyAtk(), 0, 2));
+                    packets.Add(new TakeSkillPacket(i + 4, tempCharacter.getMagAtk(), 0, 4));
+                    packets.Add(new TakeSkillPacket(i + 4, tempCharacter.getSpeed(), 0, 5));
                 }
             }
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-            for (int i=0;i<4;i++)
+           
+            if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
+                BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
             {
-                if (BattleManager.Instance.getCharacter(i+4) != null &&
-                BattleManager.Instance.getCharacter(i+4).getCurState() == 0)
+                int tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 5;
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0, 0));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx+4, tempVal + this.getPhyAtk(), 0, 1));
+                if (this.getPossible(20))
                 {
-                    Character tempCharacter = BattleManager.Instance.getCharacter(i + 4);
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempCharacter.getPhyAtk(), 0,2));
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempCharacter.getMagAtk(), 0,4));
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempCharacter.getSpeed(), 0,5));
+                    tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 5;
+                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0, 0));
+                    packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx+4, tempVal + this.getPhyAtk(), 0, 1));
                 }
             }
         }
@@ -282,17 +289,33 @@ public class Rafflesia : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
-                BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
+            bool emptyChk = false;
+            for (int i = 4; i < 8; i++)
             {
-                int tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 2;
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(),0, 0));
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(),0, 1));
-                if (this.getPossible(20))
+                if (BattleManager.Instance.getCharacter(i) == null ||
+                    BattleManager.Instance.getCharacter(i).getCurState() != 0)
                 {
-                    tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 2;
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0,0));
-                    packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(),0, 1));
+                    if (sendSkillPacket.targetIdx[0] >= 0 && sendSkillPacket.targetIdx[0] < 4)
+                    {
+                        BattleManager.Instance.setEnemyCharacter(i-4, Random.Range(10040, 10042));
+                        emptyChk = true;
+                        break;
+                    }
+                }
+            }
+            if (!emptyChk) {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (i != sendSkillPacket.useCharacterIdx + 4)
+                    {
+                        if (BattleManager.Instance.getCharacter(i) != null &&
+                        BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                        {
+                            packets.Add(new TakeSkillPacket(i, 10, 0, 10)); //최대체력 제거
+                            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 10, 0, 11)); //최대체력 증가
+                        }
+
+                    }
                 }
             }
         }
@@ -301,9 +324,9 @@ public class Rafflesia : Character
             if (BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]) != null &&
                 BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getCurState() == 0)
             {
-                int tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getMaxHp() / 5;
-                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal + this.getPhyAtk(), 0,10)); //최대체력 제거
-                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, tempVal + this.getPhyAtk(), 0, 11)); //최대체력 증가
+                int tempVal = BattleManager.Instance.getCharacter(sendSkillPacket.targetIdx[0]).getHp() / 5;
+                packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], tempVal, 0, 10));
+                packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, tempVal, 0, 11));
             }
         }
         return packets;
@@ -384,18 +407,18 @@ public class Grace : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.getPhyAtk() + this.getMagAtk() + this.getSpeed()) / 3 + this.getPhyAtk(), 0)); //최대체력 제거
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.getPhyAtk() + this.getMagAtk() + this.getSpeed()) + this.getPhyAtk(), 0)); //최대체력 제거
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.getPhyAtk() + this.getMagAtk() + this.getSpeed()) + this.getPhyAtk(), 0)); //최대체력 제거
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], (this.getPhyAtk() + this.getMagAtk() + this.getSpeed()) / 3 + this.getPhyAtk(), 0)); //최대체력 제거
         }
         return packets;
     }
 
     public override int getTargetChance(int idx)
     {
-        if (idx == 0)
+        if (idx == 1)
         {
             int swordNum = 0;
             for (int i=4;i<8;i++)

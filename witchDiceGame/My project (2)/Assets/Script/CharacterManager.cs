@@ -39,6 +39,19 @@ public class CharacterManager : MonoBehaviour
     public List<SkillReader> skillReaderList = new List<SkillReader>();
 
     // Start is called before the first frame update
+    [SerializeField]
+    public RuntimeAnimatorController[] flutterOriginAnimator = new RuntimeAnimatorController[5];
+    public RuntimeAnimatorController[] graceOriginAnimator = new RuntimeAnimatorController[5];
+
+    public RuntimeAnimatorController getOriginAnimator(int destinyIdx)
+    {
+ 
+        if (destinyIdx >= 10044 && destinyIdx <= 10048) return graceOriginAnimator[destinyIdx - 10044];
+        if (destinyIdx == 10012) return flutterOriginAnimator[0];
+        if (destinyIdx == 10003 || destinyIdx == 10004) return flutterOriginAnimator[destinyIdx - 10002];
+        return null;
+    }
+
     void Start()
     {
         destinyReaderList = CSVReader.Read<DestinyReader>("Destiny");
@@ -363,79 +376,29 @@ public class CharacterManager : MonoBehaviour
                 case 22:
                     character = new EagleWizard(0, destinyList_monster[characterIdx]); break;
                 case 23:
-                    character = new WoodDummy(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(2,4); break;
+                    character = new WoodDummy(0, destinyList_monster[characterIdx]); break;
                 case 24:
-                    character = new IronDummy(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 1);
-                    character.changeDiceNum(2, 4);
-                    character.changeDiceNum(3, 5);
-                    character.changeDiceNum(4, 5); break;
+                    character = new IronDummy(0, destinyList_monster[characterIdx]); break;
                 case 25:
-                    character = new FastFoot(0, destinyList_monster[characterIdx]); 
-                    character.changeDiceNum(0, 3);
-                    character.changeDiceNum(1, 4);
-                    character.changeDiceNum(2, 4);
-                    character.changeDiceNum(3, 5);break;
+                    character = new FastFoot(0, destinyList_monster[characterIdx]); break;
                 case 26:
-                    character = new BigHammer(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(0, 3);
-                    character.changeDiceNum(1, 4);
-                    character.changeDiceNum(2, 5);
-                    character.changeDiceNum(3, 5);
-                    character.changeDiceNum(4, 6); break;
+                    character = new BigHammer(0, destinyList_monster[characterIdx]); break;
                 case 27:
-                    character = new Undead(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(0, 2);
-                    character.changeDiceNum(2, 2);
-                    character.changeDiceNum(3, 5); break;
+                    character = new Undead(0, destinyList_monster[characterIdx]);; break;
                 case 28:
-                    character = new DeadChunk(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(0, 2);
-                    character.changeDiceNum(2, 5);
-                    character.changeDiceNum(3, 5);
-                    character.changeDiceNum(4, 6); break;
+                    character = new DeadChunk(0, destinyList_monster[characterIdx]); break;
                 case 29:
-                    character = new BombHead(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(0, 2);
-                    character.changeDiceNum(2, 2);
-                    character.changeDiceNum(3, 2); break;
+                    character = new BombHead(0, destinyList_monster[characterIdx]); break;
                 case 30:
-                    character = new GrandKnight(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 2);
-                    character.changeDiceNum(1, 1);
-                    character.changeDiceNum(2, 1);
-                    character.changeDiceNum(3, 6);
-                    character.changeDiceNum(4, 6); break;
+                    character = new GrandKnight(0, destinyList_monster[characterIdx]); break;
                 case 31:
-                    character = new NoHead(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 2);
-                    character.changeDiceNum(1, 1);
-                    character.changeDiceNum(2, 2);
-                    character.changeDiceNum(3, 5);
-                    character.changeDiceNum(4, 6); break;
+                    character = new NoHead(0, destinyList_monster[characterIdx]);break;
                 case 32:
-                    character = new Bard(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 3);
-                    character.changeDiceNum(1, 1);
-                    character.changeDiceNum(2, 1);
-                    character.changeDiceNum(3, 1);
-                    character.changeDiceNum(4, 1); 
-                    character.changeDiceNum(5, 5);break;
+                    character = new Bard(0, destinyList_monster[characterIdx]);break;
                 case 33:
-                    character = new SoulShield(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(1, 1);
-                    character.changeDiceNum(2, 1);
-                    character.changeDiceNum(3, 1);
-                    character.changeDiceNum(4, 5);
-                    character.changeDiceNum(5, 5); break;
+                    character = new SoulShield(0, destinyList_monster[characterIdx]); break;
                 case 34:
-                    character = new SoulFlag(0, destinyList_monster[characterIdx]);
-                    character.changeDiceNum(1, 1);
-                    character.changeDiceNum(2, 1);
-                    character.changeDiceNum(3, 1);
-                    character.changeDiceNum(4, 2);
-                    character.changeDiceNum(5, 2); break;
+                    character = new SoulFlag(0, destinyList_monster[characterIdx]);break;
                 case 35:
                     character = new DeadGuy(0, destinyList_monster[characterIdx]); break;
                 case 36:
@@ -443,21 +406,17 @@ public class CharacterManager : MonoBehaviour
                 case 37:
                     character = new Vamdeer(0, destinyList_monster[characterIdx]); break;
                 case 38:
-                    character = new Holemole(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 1); break;
+                    character = new Holemole(0, destinyList_monster[characterIdx]); break;
                 case 39:
                     character = new Dionaea(0, destinyList_monster[characterIdx]); break;
                 case 40:
                     character = new Drosera(0, destinyList_monster[characterIdx]); break;
                 case 41:
-                    character = new Nepenthes(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 2); break;
+                    character = new Nepenthes(0, destinyList_monster[characterIdx]);break;
                 case 42:
-                    character = new Rafflesia(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 2); break;
+                    character = new Rafflesia(0, destinyList_monster[characterIdx]);break;
                 case 43:
-                    character = new Assassin(0, destinyList_monster[characterIdx]);
-                    character.getCharacter_battle().upgrade(6, 3); break;
+                    character = new Assassin(0, destinyList_monster[characterIdx]);break;
                 case 44:
                     character = new Grace(0, destinyList_monster[characterIdx]); break;
                 case 45:

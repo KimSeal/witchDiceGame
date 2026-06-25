@@ -240,7 +240,7 @@ public class MapperManager : MonoBehaviour
 
     public void clickStageNumButton(int idx)
     {
-        if (idx > 3) return;
+        if (idx > 4) return;
         
         stageNum = idx;
         stageIdx = 0;

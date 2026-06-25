@@ -523,11 +523,6 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("beatris");
-        for (int i=0;i<8;i++)
-        {
-            Debug.Log(enemySkillDiceNum[i]);
-        }
     }
 
     //현재 주사위 값들을 기반으로 스킬을 할당한다.
@@ -2935,6 +2930,12 @@ public class BattleManager : MonoBehaviour
             if (skillType == 4) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(6, myTeam, idx, val, height); return true; } //mag
             if (skillType == 5) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(7, myTeam, idx, val, height); return true; } //speed
             if (skillType == 6) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(4, myTeam, idx, val, height); return true; } //armor
+
+            if (skillType == 10) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, -1 * val, height); return true; }    //damage
+            if (skillType == 11) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(0, myTeam, idx, val, height); return true; } //max hp
+            if (skillType == 12) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, -1 * val, height); return true; } //atk
+            if (skillType == 14) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(6, myTeam, idx, -1* val, height); return true; } //mag
+            if (skillType == 15) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(7, myTeam, idx, -1* val, height); return true; } //speed
             /*
             if (myTeam) //아군 대상일 경우
             {
@@ -4013,6 +4014,7 @@ public class BattleManager : MonoBehaviour
             }
             else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
             {
+                hoverOutCharacter(4);
                 if (jsonDataManager.Instance.getChapterRead(0, 2) == 0)
                 {
                     TalkManager.Instance.startTalk(22);
@@ -4021,9 +4023,27 @@ public class BattleManager : MonoBehaviour
                 bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
                 setEnemyCharacter(0, 10013);
-                hoverOutCharacter(4);
+                
             }
+            else if (bossPhase == 103) //안경 선배가 보스고 1페이즈 인경우
+            {
+                hoverOutCharacter(4);
+                if (jsonDataManager.Instance.getChapterRead(2, 2) == 0)
+                {
+                    TalkManager.Instance.startTalk(74);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
+                bossPhase = 0; //보스 페이즈를 0으로 변경
+                curPhase = 1;
+                setGraceEnemyCharacter();
 
+                //setEnemyCharacter(0, 10046);
+                //setEnemyCharacter(1, 10045);
+                //setEnemyCharacter(2, 10047);
+                //setEnemyCharacter(3, 10048);
+
+
+            }
 
         }
         //전투 지속 필요
@@ -4758,10 +4778,52 @@ public class BattleManager : MonoBehaviour
 
         //캐릭터 세팅을 반영
         string temp = enemyCharacter[placeIdx].getDestiny().getName();
-        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = enemyCharacter[placeIdx].getAnimator(false);
         enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[placeIdx].getShadow().ToString());
 
         enemyCharacterObjUIAnim[placeIdx].Play("Create");
+
+        updateHp();
+        InitSetOfEnemySkill();
+    }
+
+    
+    [SerializeField]
+    private RuntimeAnimatorController[] graceAnimatorPixel = new RuntimeAnimatorController[5];
+    [SerializeField]
+    private RuntimeAnimatorController[] graceAnimator = new RuntimeAnimatorController[5];
+    public void setGraceEnemyCharacter()
+    {
+        for (int i=0;i<4;i++)
+        {
+            CharacterManager.Instance.emptyEnemyCharacter(i);
+        }
+
+        CharacterManager.Instance.setCharacter(0, 10046); //캐릭터 세팅
+        CharacterManager.Instance.setCharacter(1, 10045); //캐릭터 세팅
+        CharacterManager.Instance.setCharacter(2,10047); //캐릭터 세팅
+        CharacterManager.Instance.setCharacter(3, 10048); //캐릭터 세팅
+        for(int placeIdx = 0; placeIdx < 4; placeIdx++)
+        {
+            CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
+            enemyDice[placeIdx] = new Dice();
+            enemyDiceUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+
+            string temp = enemyCharacter[placeIdx].getDestiny().getName();
+            if (jsonDataManager.Instance.getChapterRead(2, 2) == 0) {
+                enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimator[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+            }
+            else
+            {
+                enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+            }
+            enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[placeIdx].getShadow().ToString());
+
+            //enemyCharacterObjUIAnim[placeIdx].Play("Create");
+        }
+       
+        //캐릭터 세팅을 반영
+        
 
         updateHp();
         InitSetOfEnemySkill();

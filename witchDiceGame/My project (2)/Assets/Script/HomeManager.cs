@@ -42,11 +42,11 @@ public class HomeManager : MonoBehaviour
     private List<DescReader> homeNPCText = new List<DescReader>();
 
     private int[] chapterIdx = { 6, 1, 2 };
-    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 }, { 0,0,0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    private int[,] chapterTalk = { { 24, 27, 30 }, { 56, 59, 62 },  { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63}, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 }, { 76,79,82 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    private int[,] chapterTalk = { { 24, 27, 30 }, { 56, 59, 62 },  { 77, 80, 83 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63}, { 78, 81, 84 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
     private int[] chapterClear = { 19, 70, 0, 0, 0, 0};
-    private int[] chapterStartIdx = { 54, 0, 0, 0, 0, 0 };
+    private int[] chapterStartIdx = { 54, 72, 0, 0, 0, 0 };
     private int homeSoundIdx = 19;
     private float textBoxTimer = 0f;
 
@@ -92,6 +92,13 @@ public class HomeManager : MonoBehaviour
             homeNPCText[i].EN = TalkManager.Instance.SpecialTextChange(homeNPCText[i].EN);
         }
         curChapterIdx = 0;
+
+        diceIdxToChapter[0] = 0;
+        diceIdxToChapter[1] = 1;
+        diceIdxToChapter[2] = 5;
+        diceIdxToChapter[3] = 3;
+        diceIdxToChapter[4] = 2;
+        diceIdxToChapter[5] = 4;
     }
 
     // Update is called once per frame
@@ -198,8 +205,9 @@ public class HomeManager : MonoBehaviour
         SoundManager_Main.Instance.playSound(homeSoundIdx);
     }
 
-    IEnumerator jewelTalk(int chapterNum, int detailIdx)
+    IEnumerator jewelTalk(int jewelBigNum, int detailIdx)
     {
+        int chapterNum = diceIdxToChapter[jewelBigNum];
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
 
         TalkManager.Instance.startTalk(chapterTalkBefore[chapterNum, detailIdx]);
@@ -211,30 +219,42 @@ public class HomeManager : MonoBehaviour
         TalkManager.Instance.startTalk(chapterTalkAfter[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
+
         if (detailIdx == 2) {
             if (chapterClear[chapterNum] != 0) {
                 TalkManager.Instance.startTalk(chapterClear[chapterNum]);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                if (chapterNum == 1) {// 데모 종료 임시
-                    TalkManager.Instance.startTalk(68);
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                }
+            }
+            else //데모 임시
+            {
+                
+                TalkManager.Instance.startTalk(85);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             }
             if (chapterStartIdx[chapterNum] != 0)
             {
-                if(chapterNum == 0){
-                    chapterStartManager.Instance.startChater(0);
-                    yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
-                }
-                if (chapterNum == 1)
+                if (chapterNum == 0)
                 {
                     chapterStartManager.Instance.startChater(1);
                     yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
                 }
-                TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
-                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
-                jsonDataManager.Instance.setChapterDid(diceIdxToChapter[chapterNum] + 1, 1);
+                if (chapterNum == 1)
+                {
+                    chapterStartManager.Instance.startChater(2);
+                    yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
+                }
+                if(chapterNum == 2)
+                {
+                    TalkManager.Instance.startTalk(86); //베는 모션
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
+                
+                if (chapterNum < 2) //for demo에서는 chapter3 까지만!
+                {
+                    TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    jsonDataManager.Instance.setChapterDid(diceIdxToChapter[chapterNum] + 1, 1);
+                }
             }
         }
 
@@ -261,7 +281,7 @@ public class HomeManager : MonoBehaviour
                 StartCoroutine(jewelTalk(52));
             }
             else if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
-                StartCoroutine(jewelTalk(chapterTalk[chapterNum,detailIdx]));
+                StartCoroutine(jewelTalk(chapterTalk[diceIdxToChapter[chapterNum],detailIdx]));
             }
             else if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 1)
             {//스토리 진행된 부분이라면 틀어주기.
@@ -272,7 +292,7 @@ public class HomeManager : MonoBehaviour
                 else
                 {
                     StartCoroutine(jewelTalk(chapterNum, detailIdx));
-                    jsonDataManager.Instance.setChapterRead(chapterNum, detailIdx);
+                    jsonDataManager.Instance.setChapterRead(diceIdxToChapter[chapterNum], detailIdx);
                 }
             }
             else

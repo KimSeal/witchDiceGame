@@ -447,7 +447,7 @@ public class TalkManager : MonoBehaviour
 
     public void clickSkipButton()
     {
-        skipEntity.GetComponent<RectTransform>().position = new Vector3(960f, 540f, 0f);
+        skipEntity.GetComponent<RectTransform>().position = new Vector3(Screen.width/2, Screen.height/2, 0f);
     }
 
     // Start is called before the first frame update
@@ -512,7 +512,7 @@ public class TalkManager : MonoBehaviour
     private void Update()
     {
         
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space) && !chapterStartManager.Instance.getChapterStartEnd())
         {
             if (chapterStartManager.Instance.getChapterStartEnd())
             {
@@ -651,6 +651,8 @@ public class TalkManager : MonoBehaviour
         if (a < 0) return;
         if (!talkingChk)
         {
+            
+
             curTalkLastVal = listIdx[a + 1] - listIdx[a];
             curTalkStartVal = listIdx[a];
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
@@ -785,8 +787,8 @@ public class TalkManager : MonoBehaviour
 
         curTalkIdx.GetComponent<TextMeshProUGUI>().text = (curIdx - curTalkStartVal + 1).ToString() +" / "+curTalkLastVal.ToString();
 
-        if (talkList[a].eventType == 1) FadeUIScript.fadeIn();
-        if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);
+        if (talkList[a].eventType == 1) FadeUIScript2.fadeIn();
+       // if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);
 
         /*
         if (a == listIdx[2] + 36)

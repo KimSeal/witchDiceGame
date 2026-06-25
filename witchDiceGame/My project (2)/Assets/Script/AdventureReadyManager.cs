@@ -120,11 +120,19 @@ public class AdventureReadyManager : MonoBehaviour
 
     public bool warningClickAble(int opt)
     {
-        if (opt == 0) {
+        if (opt == 0)
+        {
+            for (int i=0;i<6;i++)
+            {
+                if (jsonDataManager.Instance.getChapterRead(i, 2) == 1) return true;
+            }
+            return false;
+        }
+        if (opt == 1) {
             if(jsonDataManager.Instance.getChapterRead(0,2) == 2 && 
                 jsonDataManager.Instance.getCharacterSelect(0) == 0) return true;
         }
-        if(opt == 1)
+        if(opt == 2)
         {
             if (jsonDataManager.Instance.getChapterRead(1, 2) != 2) return false; // town 미개방시 return false 
             int curChapter = 1;
@@ -161,10 +169,14 @@ public class AdventureReadyManager : MonoBehaviour
             }
         }
 
-        if (curOpt == 0){
+        if(curOpt == 0)
+        {
+            upDownManager.Instance.clickUnderTownButton(1);
+        }
+        else if (curOpt == 1){
             upDownManager.Instance.clickUnderTownButton(2);
         }
-        else if (curOpt == 1) {
+        else if (curOpt == 2) {
             upDownManager.Instance.clickUnderTownButton(4);
         }
     }
@@ -223,8 +235,9 @@ public class AdventureReadyManager : MonoBehaviour
         else newMark.GetComponent<Animator>().Play("Empty");
 
         hoverOutWarning();
-        warningTextArr[0] = 176;
-        warningTextArr[1] = 177;
+        warningTextArr[0] = 184;
+        warningTextArr[1] = 176;
+        warningTextArr[2] = 177;
         updateWarningImage();
         
         CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));

@@ -66,6 +66,7 @@ public class KillAnimationManager : MonoBehaviour
         background.GetComponent<Animator>().Play("0");
         attackCharacterBackObj.GetComponent<SpriteRenderer>().sprite = attackCharacter.getBackSprite();
         deadCharacterObj.GetComponent<Animator>().runtimeAnimatorController = deadCharacter.getAnimator(true);
+        deadCharacterObj.GetComponent<Animator>().Play("Idle");
             //Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + deadCharacter.getName() + "/animator_" + deadCharacter.getName());
         Vector3 attackInitPoint = new Vector3(-75f, -30f, 0f);
         Vector3 attackEndPoint = new Vector3(100f, 15f, 0f);
