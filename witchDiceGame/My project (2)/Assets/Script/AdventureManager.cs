@@ -161,10 +161,10 @@ public class AdventureManager : MonoBehaviour
     public int getArmorMaxVal() { return armorMaxVal; }
     public void initMaxVal()
     {
-        atkMaxVal = 30;
-        magMaxVal = 30;
-        spdMaxVal = 30;
-        armorMaxVal = 3;
+        atkMaxVal = 99;
+        magMaxVal = 99;
+        spdMaxVal = 99;
+        armorMaxVal = 9;
         deadEnemyCount = 0;
         itemManager.Instance.setItemMaxNum(6);
     }
@@ -2147,6 +2147,10 @@ public class AdventureManager : MonoBehaviour
         giveUpBtnAble(true);
         if (nextStageGo)
         {
+            if (itemManager.Instance.getItemMaxNum() + 1 <= 11) //스테이지 클리어시 아이템 하나 열어주기
+            {
+                itemManager.Instance.setItemMaxNum(itemManager.Instance.getItemMaxNum() + 1);
+            }
             if (stageDepth == 1)
             {
                 if (jsonDataManager.Instance.getChapterRead(1, 2) != 2)

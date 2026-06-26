@@ -3791,6 +3791,7 @@ public class BattleManager : MonoBehaviour
         resultEff[i].transform.position = new Vector3(100f * i - 100f, 0f, 0f);
         resultItemTypeObj[i].transform.position = new Vector3(100f * i - 100, 300f, 0f);
         resultEff[i].GetComponent<Animator>().Play("Eff" + effOpt.ToString()) ;
+        /*
         if (bossResult == 1)
         {
             for (int j = 0; j < 3; j++)
@@ -3803,7 +3804,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
         else
-        {
+        {*/
             //if (pointOn) resultObj[i, 0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/battleResultUI/spr_selectUI_board");
             //else
             {
@@ -3821,7 +3822,7 @@ public class BattleManager : MonoBehaviour
             else{
                 resultObj[i, 3].GetComponent<TextMeshPro>().text = "<size=80>- " + TalkManager.Instance.getDesc(typeArr2[resultItem[i].getType()]) + " -</size>" + "\n\n" + resultItem[i].getContent();
             }
-        }
+        //}
     }
     public void pointEnterRandomResult(int i) { resultObj[i, 0].GetComponent<SpriteRenderer>().material.SetFloat("_Radius", 1f); }
     // printRandomResult(i, true);}
@@ -3893,6 +3894,7 @@ public class BattleManager : MonoBehaviour
         //적군 전멸
         else if (result == 1)
         {
+
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
 
             if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
@@ -3928,7 +3930,7 @@ public class BattleManager : MonoBehaviour
 
                 characterInfoOpenAble = false;
                 bosang_click = true;
-                
+
                 if (AdventureManager.Instance.getTutorial() != 10)
                 {
                     rerollCount = 0;
@@ -3950,7 +3952,11 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
                     resultItemPopChk_2 = false;
                     for (int i = 0; i < 3; i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
-                    if(bossResult == 0) rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
+                    if (bossResult == 0)
+                    {
+                        rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
+                    }
+
                     if (AdventureManager.Instance.getTutorial() == 17)
                     {
                         //TalkManager.Instance.startTalk(48);
@@ -4127,7 +4133,7 @@ public class BattleManager : MonoBehaviour
             }
             return;
         }
-
+        /* 
         if (bossResult == 1)//boss 보상일 경우
         {
             if (resultPower[i] ==0) {
@@ -4170,7 +4176,7 @@ public class BattleManager : MonoBehaviour
             if(bosang_click == false) resultObj_all.transform.position = new Vector3(0f, 300f, resultObj_all.transform.position.z);
             return;
         }
-
+        */
         int result = itemManager.Instance.getItemResult(resultItem[i].getType(), resultItem[i].getIdx());
         if (result == 0)
         {
