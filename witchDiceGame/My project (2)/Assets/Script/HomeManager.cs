@@ -227,7 +227,8 @@ public class HomeManager : MonoBehaviour
             }
             else //데모 임시
             {
-                
+                TalkManager.Instance.startTalk(86); //베는 모션
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 TalkManager.Instance.startTalk(85);
                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             }
@@ -242,11 +243,6 @@ public class HomeManager : MonoBehaviour
                 {
                     chapterStartManager.Instance.startChater(2);
                     yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
-                }
-                if(chapterNum == 2)
-                {
-                    TalkManager.Instance.startTalk(86); //베는 모션
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
                 
                 if (chapterNum < 2) //for demo에서는 chapter3 까지만!

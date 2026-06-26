@@ -514,10 +514,7 @@ public class TalkManager : MonoBehaviour
         
         if (Input.GetKeyUp(KeyCode.Space) && !chapterStartManager.Instance.getChapterStartEnd())
         {
-            if (chapterStartManager.Instance.getChapterStartEnd())
-            {
                 clickDescBox();
-            }
         }
         
     }

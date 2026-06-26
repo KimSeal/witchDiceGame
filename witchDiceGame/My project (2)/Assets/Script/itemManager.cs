@@ -73,6 +73,7 @@ public class itemManager : MonoBehaviour
     public List<Item>[] itemList = new List<Item>[5];
     public List<Item>[,] itemListChapter = new List<Item>[5, 10];
     public List<ItemReader> itemReaderList = new List<ItemReader>();
+    public List<Item>[] specialItemList = new List<Item>[10];
 
     private Item[,] ItemArr = new Item[5,11];
     private bool[,] ItemExistArr = new bool[5, 11];
@@ -303,6 +304,30 @@ public class itemManager : MonoBehaviour
         resultArr[0] = getRandomItemByChapter(-1, -1);
         resultArr[1] = getRandomItemByChapter(resultArr[0].getIdx(), -1);
         resultArr[2] = getRandomItemByChapter(resultArr[0].getIdx(), resultArr[1].getIdx());
+        return resultArr;
+    }
+
+    public Item getRandomSpecialItemByChapter(int exceptItem0, int exceptItem1)
+    {
+        int curChapter = jsonDataManager.Instance.getCurChapter();
+
+        int randomItemIdx = Random.Range(0, specialItemList[curChapter].Count); //현재 챕터에서 얻을 수 있는, 해당 종류의 모든 아이템 수 
+        //escape same item idx
+        if (specialItemList[curChapter][randomItemIdx].getIdx() == exceptItem0 ||
+            specialItemList[curChapter][randomItemIdx].getIdx() == exceptItem1) randomItemIdx = (randomItemIdx + 1) % specialItemList[curChapter].Count;
+
+        if (specialItemList[curChapter][randomItemIdx].getIdx() == exceptItem0 ||
+            specialItemList[curChapter][randomItemIdx].getIdx() == exceptItem1) randomItemIdx = (randomItemIdx + 1) % specialItemList[curChapter].Count;
+
+        return specialItemList[curChapter][randomItemIdx];
+    }
+
+    public Item[] get3RandomSpecialItemByChapter()
+    {
+        Item[] resultArr = new Item[3];
+        resultArr[0] = getRandomSpecialItemByChapter(-1, -1);
+        resultArr[1] = getRandomSpecialItemByChapter(resultArr[0].getIdx(), -1);
+        resultArr[2] = getRandomSpecialItemByChapter(resultArr[0].getIdx(), resultArr[1].getIdx());
         return resultArr;
     }
 
@@ -1087,14 +1112,29 @@ public class itemManager : MonoBehaviour
                 itemListChapter[i, j] = new List<Item>();
             }
         }
+        for (int i=0;i<specialItemList.Length;i++)
+        {
+            specialItemList[i] = new List<Item>();
+        }
 
         itemReaderList = CSVReader.Read<ItemReader>("Item");    //csv 읽고 해당 Item을 타입에 맞춰 넣는 모습
         for (int i = 0; i < itemReaderList.Count; i++)
         {
             itemList[itemReaderList[i].type].Add(new Item(itemReaderList[i]));
-            for (int j= itemReaderList[i].chapterClear; j < 10; j++) {
-                itemListChapter[itemReaderList[i].type, j].Add(new Item(itemReaderList[i]));
-            } 
+            if (itemReaderList[i].chapterClear < 0)
+            {
+                for (int j = (itemReaderList[i].chapterClear * -1) - 1; j < 10; j++)
+                {
+                    specialItemList[j].Add(new Item(itemReaderList[i]));
+                }
+            }
+            else
+            {
+                for (int j = itemReaderList[i].chapterClear; j < 10; j++)
+                {
+                    itemListChapter[itemReaderList[i].type, j].Add(new Item(itemReaderList[i]));
+                }
+            }
         }
 
         for (int i = 0; i < 11; i++)

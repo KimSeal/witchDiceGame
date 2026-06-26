@@ -365,7 +365,7 @@ public class BattleManager : MonoBehaviour
     public void changeBossPhase(int a)
     {
         bossResult = 0;
-        if(a >= 98){bossResult = 1;}
+        if(a >= 100){bossResult = 1;}
         if (a >= 100) bossPhase = a;
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
@@ -3745,7 +3745,12 @@ public class BattleManager : MonoBehaviour
     {
         if (bossResult == 1)
         {
-            
+            Item[] itemArrTemp = itemManager.Instance.get3RandomSpecialItemByChapter();//itemManager.Instance.get3RandomItemByChapter();
+            resultItem[0] = itemArrTemp[0]; resultItem[1] = itemArrTemp[1]; resultItem[2] = itemArrTemp[2];
+            resultItemTypeObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[0].getType()]);
+            resultItemTypeObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[1].getType()]);
+            resultItemTypeObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_itemType_" + typeArr[resultItem[2].getType()]);
+            /*
             for (int i = 0; i < 3; i++) {
                 resultPower[i] = 9999;
                 resultItemTypeObj[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change");
@@ -3760,7 +3765,7 @@ public class BattleManager : MonoBehaviour
             else if (resultPower[2] >= resultPower[0] && resultPower[2]  >= resultPower[1]) resultPower[2] += 2;
             else if (resultPower[2] >= resultPower[0] && resultPower[2] + 1 < resultPower[1]) resultPower[2] += 1;
             else if (resultPower[2] >= resultPower[1] && resultPower[2] + 1 < resultPower[0]) resultPower[2] += 1;
-
+            */
             return;
         }
         Item[] itemArr = itemManager.Instance.get3RandomItemByChapter();
@@ -4035,14 +4040,38 @@ public class BattleManager : MonoBehaviour
                 }
                 bossPhase = 0; //보스 페이즈를 0으로 변경
                 curPhase = 1;
-                setGraceEnemyCharacter();
 
-                //setEnemyCharacter(0, 10046);
-                //setEnemyCharacter(1, 10045);
-                //setEnemyCharacter(2, 10047);
-                //setEnemyCharacter(3, 10048);
+                for (int i = 0; i < 4; i++)
+                {
+                    CharacterManager.Instance.emptyEnemyCharacter(i);
+                }
 
+                CharacterManager.Instance.setCharacter(0, 10046); //캐릭터 세팅
+                CharacterManager.Instance.setCharacter(1, 10045); //캐릭터 세팅
+                CharacterManager.Instance.setCharacter(2, 10047); //캐릭터 세팅
+                CharacterManager.Instance.setCharacter(3, 10048); //캐릭터 세팅
 
+                for (int placeIdx = 0; placeIdx < 4; placeIdx++)
+                {
+                    CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
+                    enemyDice[placeIdx] = new Dice();
+                    enemyDiceUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+
+                    if (jsonDataManager.Instance.getChapterRead(2, 2) == 0)
+                    {
+                        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimator[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+                    }
+                    else
+                    {
+                        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+                    }
+                }
+
+                //캐릭터 세팅을 반영
+
+                yield return new WaitForSeconds(0.2f);
+                updateHp();
+                InitSetOfEnemySkill();
             }
 
         }
@@ -4794,39 +4823,7 @@ public class BattleManager : MonoBehaviour
     private RuntimeAnimatorController[] graceAnimator = new RuntimeAnimatorController[5];
     public void setGraceEnemyCharacter()
     {
-        for (int i=0;i<4;i++)
-        {
-            CharacterManager.Instance.emptyEnemyCharacter(i);
-        }
-
-        CharacterManager.Instance.setCharacter(0, 10046); //캐릭터 세팅
-        CharacterManager.Instance.setCharacter(1, 10045); //캐릭터 세팅
-        CharacterManager.Instance.setCharacter(2,10047); //캐릭터 세팅
-        CharacterManager.Instance.setCharacter(3, 10048); //캐릭터 세팅
-        for(int placeIdx = 0; placeIdx < 4; placeIdx++)
-        {
-            CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
-            enemyDice[placeIdx] = new Dice();
-            enemyDiceUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-
-            string temp = enemyCharacter[placeIdx].getDestiny().getName();
-            if (jsonDataManager.Instance.getChapterRead(2, 2) == 0) {
-                enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimator[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
-            }
-            else
-            {
-                enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
-            }
-            enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_" + enemyCharacter[placeIdx].getShadow().ToString());
-
-            //enemyCharacterObjUIAnim[placeIdx].Play("Create");
-        }
-       
-        //캐릭터 세팅을 반영
         
-
-        updateHp();
-        InitSetOfEnemySkill();
     }
    
 }
