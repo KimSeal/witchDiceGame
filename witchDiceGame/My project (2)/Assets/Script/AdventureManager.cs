@@ -140,6 +140,15 @@ public class AdventureManager : MonoBehaviour
     public TextMeshPro itemRemainText;
 
 
+    [SerializeField]
+    public GameObject adventureChangeToolbar;
+    public GameObject adventurePowerChangeToolbarEntity;
+    public GameObject[] adventurePowerChangeToolbarCollider = new GameObject[5];
+    public TextMeshPro[] adventurePowerChangeToolbarText = new TextMeshPro[5];
+    public GameObject adventureDiceChangeToolbarEntity;
+    public GameObject[] adventureDiceChangeToolbarRoll = new GameObject[6];
+    public GameObject[] adventureDiceChangeToolbarRollOutline = new GameObject[6];
+
     public int atkMaxVal = 30;
     public int magMaxVal = 30;
     public int spdMaxVal = 30;
@@ -154,6 +163,101 @@ public class AdventureManager : MonoBehaviour
     {
         return deadEnemyCount;
     }
+
+    //이벤트 조우로 인한, 능력치나 주사위 변화에 따른 결과창 관련 함수들
+    public void activeAdventurePowerChangeToolbar(int characterIdx) // power 변경시 해당
+    {
+        adventureChangeToolbar.transform.position = new Vector3(-637f + 30 * characterIdx, 30f, 0f);
+        adventurePowerChangeToolbarEntity.SetActive(true);
+        adventureDiceChangeToolbarEntity.SetActive(false);
+
+        Character characterTemp = CharacterManager.Instance.getCharacter(characterIdx);
+        adventurePowerChangeToolbarText[0].text = characterTemp.getHp().ToString();
+        adventurePowerChangeToolbarText[1].text = characterTemp.getMaxHp().ToString();
+        adventurePowerChangeToolbarText[2].text = characterTemp.getPhyAtk().ToString();
+        adventurePowerChangeToolbarText[3].text = characterTemp.getMagAtk().ToString();
+        adventurePowerChangeToolbarText[4].text = characterTemp.getSpeed().ToString();
+    }
+    public void activeAdventureDiceChangeToolbar(int characterIdx)
+    {
+        adventureChangeToolbar.transform.position = new Vector3(-637f + 30 * characterIdx, 30f, 0f);
+        
+        adventurePowerChangeToolbarEntity.SetActive(false);
+        adventureDiceChangeToolbarEntity.SetActive(true);
+    }
+    public void updateAdventurePowerChangeToolbar(int characterIdx, int optInput, int val)
+    {
+        int opt = -1;
+        Character characterTemp = CharacterManager.Instance.getCharacter(characterIdx);
+        if (optInput == 0) { 
+            opt = 0;
+            adventurePowerChangeToolbarText[opt].text = characterTemp.getHp().ToString();
+        }
+        if (optInput == 1)
+        {
+            opt = 1;
+            adventurePowerChangeToolbarText[opt].text = characterTemp.getMaxHp().ToString();
+        }
+        if (optInput == 5)
+        {
+            opt = 2;
+            adventurePowerChangeToolbarText[opt].text = characterTemp.getPhyAtk().ToString();
+        }
+        if (optInput == 6)
+        {
+            opt = 3;
+            adventurePowerChangeToolbarText[opt].text = characterTemp.getMagAtk().ToString();
+        }
+        if (optInput == 7)
+        {
+            opt = 4;
+            adventurePowerChangeToolbarText[opt].text = characterTemp.getSpeed().ToString();
+        }
+        if (opt < 0) return;
+        if (val < 0) {
+            adventurePowerChangeToolbarText[opt].text =
+                "<color=#FF6464><size=60px>" + adventurePowerChangeToolbarText[opt].text + "(" + val.ToString() + ")</size></color>";
+        }
+        if (val > 0)
+        {
+            adventurePowerChangeToolbarText[opt].text =
+                "<color=#8CFF64><size=60px>" + adventurePowerChangeToolbarText[opt].text + "(+" + val.ToString() + ")</size></color>";
+        }
+    }
+    
+    public void clickAdventureChangeToolbar()
+    {
+        adventureChangeToolbar.transform.position = new Vector3(-637f, 230f, 0f);
+    }
+    public void hoverInAdventureChangeToolbar()
+    {
+
+    }
+    public void hoverOutAdventureChangeToolbar()
+    {
+
+    }
+    public void hoverInAdventurePowerChangeToolbar(int opt)
+    {
+        if(opt == 0) { ToolBarManager.Instance.setToolBarStat(4); }
+        if (opt == 1) { ToolBarManager.Instance.setToolBarStat(5); }
+        if (opt == 2) { ToolBarManager.Instance.setToolBarStat(0); }
+        if (opt == 3) { ToolBarManager.Instance.setToolBarStat(1); }
+        if (opt == 4) { ToolBarManager.Instance.setToolBarStat(2); }
+    }
+    public void hoverOutAdventurePowerChangeToolbar()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void hoverInAdventureDiceChangeToolbar(int opt)
+    {
+
+    }
+    public void hoverOutAdventureDiceChangeToolbar()
+    {
+        //ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
 
     public int getAtkMaxVal() { return atkMaxVal; }
     public int getMagMaxVal() { return magMaxVal; }
@@ -965,13 +1069,13 @@ public class AdventureManager : MonoBehaviour
         }
         if (!onOff) giveUpBoard.SetActive(false);
     }
-    private void meetDiceEvent(bool onOff)
+    private void meetDiceEvent(bool onOff, bool diceNumNeed)
     {
         
         eventWatchTrigger = onOff;
         changeSelectNum(0);
         TalkManager.Instance.setDescClickLock(onOff);
-        if (onOff) {
+        if (diceNumNeed) {
             watchNumObjectEntity.transform.position = new Vector3(9f - 500f, -43f, 0f);
         }
         else
@@ -1238,7 +1342,7 @@ public class AdventureManager : MonoBehaviour
 
         upDownManager.Instance.setInit(adventureGold, adventureJewel);
 
-        meetDiceEvent(false);
+        meetDiceEvent(false, false);
         diceEntity.SetActive(false);
         rerollBtn.SetActive(false);
         gameOverAtBattle = false;
@@ -1301,6 +1405,7 @@ public class AdventureManager : MonoBehaviour
         while (//stageIdx < 20 &&
                !gameOverChk)
         {
+            clickAdventureChangeToolbar();
             giveUpBtnAble(false);
             closeTryBuyItem(true);
             eventWatchNum = -1;
@@ -1376,10 +1481,10 @@ public class AdventureManager : MonoBehaviour
             
 
             diceBtnFire.Play();
-            if (tutorialVal != 0 && tutorialVal < 17) { witchHatButton.SetActive(false); }
-            else witchHatButton.SetActive(true);
+            if (tutorialVal != 0 && tutorialVal < 17) { makeAdventureDice(-1); }
+            else { makeAdventureDice(0); }
 
-            makeAdventureDice(0);
+
 
             if (tutorialVal == 1)
             {
@@ -1404,6 +1509,7 @@ public class AdventureManager : MonoBehaviour
 
             giveUpBtnAble(true);
             yield return new WaitUntil(() => selectDiceNum > 0 || gameOverChk);
+            
             TalkManager.Instance.resetTutorialArrow();
 
             if (gameOverChk) { continue; }
@@ -1522,11 +1628,15 @@ public class AdventureManager : MonoBehaviour
 
                 if (curDiceEvent.getEventType() == 6) { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
 
-                    meetDiceEvent(true);
+                    meetDiceEvent(true, true);
+                }
+                else if (curDiceEvent.getEventType() == 3  || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5)// 능력치 대상 선택
+                {
+                    meetDiceEvent(true, false);
                 }
                 else
                 {
-                    meetDiceEvent(false);
+                    meetDiceEvent(false, false);
                 }
 
 
@@ -1553,18 +1663,13 @@ public class AdventureManager : MonoBehaviour
 
                 //selectImage.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + (eventWatchNum + 1).ToString());
 
-                if (curDiceEvent.getEventType() != 6)//(curDiceEvent.getDiceUse() == 0)//주사위 사용이 필요가 없다면, 맨 첫번째 결과가 나오게 하여 그냥 넘길수 있게 한다.
+                
+                if (curDiceEvent.getEventType() == 6)//고를 수 있는 상태로 변경
                 {
-                    selectDiceNum = -1;
-                }
-                else if (curDiceEvent.getEventType() == 6)//고를 수 있는 상태로 변경
-                {
-                    
                     diceBtnFire.Play();
                     diceSelectInit();
                     makeAdventureDice(0);
                     selectDiceNum = -1;
-
                     if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
                     {
 
@@ -1573,10 +1678,22 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setTutorialArrow(2);
                         setTutorialVal4ErrorChk(false);
                     }
-
+                }
+                else if (curDiceEvent.getEventType() == 3 || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5)
+                {
+                    diceBtnFire.Play();
+                    diceSelectInit();
+                    makeAdventureDice(-1);
+                    selectDiceNum = -1;
+                }
+                else //(curDiceEvent.getDiceUse() == 0)//주사위 사용이 필요가 없다면, 맨 첫번째 결과가 나오게 하여 그냥 넘길수 있게 한다.
+                {
+                    selectDiceNum = -1;
+                    Debug.Log("selectDiceNum1 : " + selectDiceNum.ToString());
                 }
                 giveUpBtnAble(true);
                 yield return new WaitUntil(() => selectDiceNum > 0 || gameOverChk); // 주사위 쓸 영웅 선택 대기
+                Debug.Log("selectDiceNum2 : " + selectDiceNum.ToString());
                 TalkManager.Instance.resetTutorialArrow();
                 if (gameOverChk) continue;
                 giveUpBtnAble(false);
@@ -1593,18 +1710,13 @@ public class AdventureManager : MonoBehaviour
                 }
 
                 adventureBackground.GetComponent<hoverRotate>().shakeStart(10.0f);
-                meetDiceEvent(false);
+                meetDiceEvent(false, false);
                 for (int i = 0; i < 6; i++)
                 {
                     watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                 }
 
                 eventWatchNum = selectDiceNum - 1;
-
-                //selectInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getChooseText();//선택지 텍스트 변경
-                //eventInfo.GetComponent<TextMeshPro>().text = curDiceEventPacket.getResultText();
-
-
 
                 if (curDiceEvent.getEventType() == 6) //주사위를 굴리는 이벤트일 경우, 주사위 결과 반영해 NPC 스프라이트 변경
                 {
@@ -1628,10 +1740,17 @@ public class AdventureManager : MonoBehaviour
                 if (curDiceEventPacket.getSelectType() == 3 || curDiceEventPacket.getSelectType() == 4 || curDiceEventPacket.getSelectType() == 5) { //능력치 변화
                     tagInit();
                     int tagIdxTemp = 0;
+
+                    if (selectDiceCharacterIdx>=0 && selectDiceCharacterIdx < 4 
+                        && CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) != null && CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() == 0) {
+                        activeAdventurePowerChangeToolbar(selectDiceCharacterIdx);
+                    }
+                    
                     for (int i = 0; i < 8; i++)
                     {
                         if (CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) == null || CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() != 0)
                         {
+                            clickAdventureChangeToolbar();
                             break;
                         }
 
@@ -1652,7 +1771,7 @@ public class AdventureManager : MonoBehaviour
                             setTag(tagIdxTemp++, i, curDiceEventPacket.getVal(i));
                             CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).upGrade(i, curDiceEventPacket.getVal(i));
                         }
-                        
+                        updateAdventurePowerChangeToolbar(selectDiceCharacterIdx, i, curDiceEventPacket.getVal(i));
                     }
                 }
 
@@ -1668,14 +1787,7 @@ public class AdventureManager : MonoBehaviour
                     }
                     updateStore();
                 }
-                if (curDiceEventPacket.getSelectType() == 4)
-                { //능력치 증가
-                    for (int i = 0; i < 8; i++)
-                    {
-                        CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).upGrade(i, curDiceEventPacket.getVal(i));
-                    }
 
-                }
                 if (curDiceEventPacket.getSelectType() == 6) //전투를 진행하는 경우
                 {
                     SoundManager_Main.Instance.stopSound(2);
@@ -2005,6 +2117,7 @@ public class AdventureManager : MonoBehaviour
                 }
                 storeEntityObj.SetActive(false);
                 resultObj.SetActive(false);
+                clickAdventureChangeToolbar();
 
             }
         }
@@ -2468,39 +2581,55 @@ public class AdventureManager : MonoBehaviour
     }
 
     public GameObject diceEntity;
-    public void makeAdventureDice(int cost)
+    public void makeAdventureDice(int cost) //use cost to roll dice. if cost<0, this time cant use reroll dice
     {
-        if (adventureJewel < cost) {
-            fullUI.showFull(70);
-            return;
-        }
-        else
+        bool witchHatButtonActive = true;
+        if (cost < 0) witchHatButtonActive = false;
+
+        if (cost >= 0)
         {
-            addMoney(1, -1 * cost);
+            if (adventureJewel < cost)
+            {
+                fullUI.showFull(70);
+                return;
+            }
+            else
+            {
+                addMoney(1, -1 * cost);
+            }
         }
-        if (cost != 0) {
+        if (cost > 0) { //tutorial click Check
             if (getTutorial() == 19)
             {
                 setTutorial(20);
             }
         }
+
         diceEntity.SetActive(true);
+        if (witchHatButtonActive){ //witch hat active
+            witchHatButton.SetActive(witchHatButtonActive);
+        }
+
         SoundManager_Sfx.Instance.playSound(2);
         for (int i = 0; i < 4; i++)
         {
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0)
             {
-                //if (cost == 0) CharacterManager.Instance.throwDice(i);
-                //else 
-                if (cost != 0)
-                {
-                    CharacterManager.Instance.throwDiceExcept(i);
-                }
-                else CharacterManager.Instance.throwDice(i);
                 int temp = Random.Range(0, 4) * 90;
-                Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp)); //사용된 아이템에 대해 effect
-                //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
-                diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
+                Instantiate(diceRollEff, diceObject[i].transform.position, Quaternion.Euler(0, 0, temp));
+                if (witchHatButtonActive)
+                {
+                    if (cost != 0)
+                    {
+                        CharacterManager.Instance.throwDiceExcept(i);
+                    }
+                    else CharacterManager.Instance.throwDice(i);                                                                                        //Instantiate(diceRollEff, nextBtnObj.transform.position, Quaternion.Euler(0, 0, Random.Range(0, 4) * -90));
+                    diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
+                }
+                else
+                {
+                    diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead 1");
+                }
             }
             else
             {
