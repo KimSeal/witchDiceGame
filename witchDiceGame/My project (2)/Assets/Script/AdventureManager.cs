@@ -167,6 +167,7 @@ public class AdventureManager : MonoBehaviour
     //이벤트 조우로 인한, 능력치나 주사위 변화에 따른 결과창 관련 함수들
     public void activeAdventurePowerChangeToolbar(int characterIdx) // power 변경시 해당
     {
+        upDownManager.Instance.goldJewelActive(false);
         adventureChangeToolbar.transform.position = new Vector3(-637f + 30 * characterIdx, 30f, 0f);
         adventurePowerChangeToolbarEntity.SetActive(true);
         adventureDiceChangeToolbarEntity.SetActive(false);
@@ -178,12 +179,25 @@ public class AdventureManager : MonoBehaviour
         adventurePowerChangeToolbarText[3].text = characterTemp.getMagAtk().ToString();
         adventurePowerChangeToolbarText[4].text = characterTemp.getSpeed().ToString();
     }
-    public void activeAdventureDiceChangeToolbar(int characterIdx)
+    public void activeAdventureDiceChangeToolbar(int characterIdx, int[] outlineArr )
     {
+        upDownManager.Instance.goldJewelActive(false);
         adventureChangeToolbar.transform.position = new Vector3(-637f + 30 * characterIdx, 30f, 0f);
         
         adventurePowerChangeToolbarEntity.SetActive(false);
         adventureDiceChangeToolbarEntity.SetActive(true);
+        Character characterTemp = CharacterManager.Instance.getCharacter(characterIdx);
+        for (int i = 0; i < 6; i++)
+        {
+            adventureDiceChangeToolbarRoll[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + characterTemp.getDice(i));
+            if (outlineArr[i] == 0){
+                adventureDiceChangeToolbarRollOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            }
+            else
+            {
+                adventureDiceChangeToolbarRollOutline[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline");
+            }
+        }
     }
     public void updateAdventurePowerChangeToolbar(int characterIdx, int optInput, int val)
     {
@@ -227,6 +241,7 @@ public class AdventureManager : MonoBehaviour
     
     public void clickAdventureChangeToolbar()
     {
+        upDownManager.Instance.goldJewelActive(true);
         adventureChangeToolbar.transform.position = new Vector3(-637f, 230f, 0f);
     }
     public void hoverInAdventureChangeToolbar()
@@ -395,7 +410,7 @@ public class AdventureManager : MonoBehaviour
     public IEnumerator tutorial_Coroutine()
     {
         giveUpBtnAble(false);
-        tagInit();
+        tagInit(0);
         resetDice();
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -844,7 +859,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 12; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -906,7 +921,7 @@ public class AdventureManager : MonoBehaviour
         stageDepth = 0;
         adventureStart = true;
         giveUpBtnAble(false);
-        tagInit();
+        tagInit(0);
         adventureGold = jsonDataManager.Instance.getMoney();
         addMoney(0,0);
         adventureJewelMax = 9999;
@@ -1193,8 +1208,27 @@ public class AdventureManager : MonoBehaviour
     private float[] upgradeTagAmount = new float[4];
     private int[] upgradeTagTypeVal = new int[4];
 
-    public void tagInit()
+    [SerializeField]
+    public GameObject upgradeDiceTagEntity;
+    public GameObject[] upgradeDiceTagDice = new GameObject[6];
+    public int[] upgradeDiceTagInfo = new int[6];
+
+    public void tagInit(int opt)
     {
+        if (opt == 0) {
+            for(int i=0;i<6;i++) upgradeDiceTagDice[i].GetComponent<BoxCollider2D>().enabled = false;
+            for (int i = 0; i < 4; i++) upgradeTagType[i].GetComponent<BoxCollider2D>().enabled = false;
+        }
+        if (opt == 1)
+        {
+            for (int i = 0; i < 6; i++) upgradeDiceTagDice[i].GetComponent<BoxCollider2D>().enabled = false;
+            for (int i = 0; i < 4; i++) upgradeTagType[i].GetComponent<BoxCollider2D>().enabled = true;
+        }
+        if (opt == 2)
+        {
+            for (int i = 0; i < 6; i++) upgradeDiceTagDice[i].GetComponent<BoxCollider2D>().enabled = true;
+            for (int i = 0; i < 4; i++) upgradeTagType[i].GetComponent<BoxCollider2D>().enabled = false;
+        }
         for (int i=0;i<4;i++)
         {
             upgradeTagEntity[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -1203,6 +1237,25 @@ public class AdventureManager : MonoBehaviour
             upgradeTagTypeVal[i] = -1;
             upgradeTagText[i].GetComponent<TextMeshPro>().text = "";
         }
+        upgradeDiceTagEntity.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        for(int i = 0; i < 6; i++)
+        {
+            upgradeDiceTagDice[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            upgradeDiceTagInfo[i] = 0;
+        }
+    }
+    public void hoverInTagDice(int idx)
+    {
+        ToolBarManager.Instance.setToolBarDiceChange(upgradeDiceTagInfo[idx]);
+    }
+    public void hoverOutTagDice() {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void setTagDice(int opt, int val)
+    {
+        upgradeDiceTagEntity.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/spr_diceStatePost");
+        upgradeDiceTagInfo[opt] = val;
+        upgradeDiceTagDice[opt].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + val.ToString());
     }
     public void hoverInTagType(int idx)
     {
@@ -1425,7 +1478,7 @@ public class AdventureManager : MonoBehaviour
 
             yield return new WaitUntil(() => loadEnd);
             resetItemResult();
-            tagInit();
+            tagInit(0);
             adventureBalpanPointTemp = 0;
             //발판 이벤트를 위한 이펙트
             //setBalpan(stageIdx);
@@ -1481,8 +1534,8 @@ public class AdventureManager : MonoBehaviour
             
 
             diceBtnFire.Play();
-            if (tutorialVal != 0 && tutorialVal < 17) { makeAdventureDice(-1); }
-            else { makeAdventureDice(0); }
+            makeAdventureDice(0);
+            if (tutorialVal != 0 && tutorialVal < 17) { witchHatButton.SetActive(false); }
 
 
 
@@ -1602,7 +1655,7 @@ public class AdventureManager : MonoBehaviour
             resetItemResult();          //이전 결과물로 나온 아이템들을 얻지 못하게 초기화.
             resultObj.SetActive(false);
             storeEntityObj.SetActive(false);
-            tagInit();
+            tagInit(0);
 
             if (true)//adventureEventArr[stageIdx] == 1)
             { //주사위 이벤트 일경우 해당 이벤트 진행. 
@@ -1630,7 +1683,7 @@ public class AdventureManager : MonoBehaviour
 
                     meetDiceEvent(true, true);
                 }
-                else if (curDiceEvent.getEventType() == 3  || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5)// 능력치 대상 선택
+                else if (curDiceEvent.getEventType() == 3  || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5 || curDiceEvent.getEventType() == 9)// 능력치 대상 선택
                 {
                     meetDiceEvent(true, false);
                 }
@@ -1675,15 +1728,17 @@ public class AdventureManager : MonoBehaviour
 
                         //TalkManager.Instance.startTalk(49);
                         //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        witchHatButton.SetActive(false);
                         TalkManager.Instance.setTutorialArrow(2);
                         setTutorialVal4ErrorChk(false);
                     }
                 }
-                else if (curDiceEvent.getEventType() == 3 || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5)
+                else if (curDiceEvent.getEventType() == 3 || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5 || curDiceEvent.getEventType() == 9)
                 {
                     diceBtnFire.Play();
                     diceSelectInit();
                     makeAdventureDice(-1);
+                    witchHatButton.SetActive(false);
                     selectDiceNum = -1;
                 }
                 else //(curDiceEvent.getDiceUse() == 0)//주사위 사용이 필요가 없다면, 맨 첫번째 결과가 나오게 하여 그냥 넘길수 있게 한다.
@@ -1738,7 +1793,7 @@ public class AdventureManager : MonoBehaviour
                 }
 
                 if (curDiceEventPacket.getSelectType() == 3 || curDiceEventPacket.getSelectType() == 4 || curDiceEventPacket.getSelectType() == 5) { //능력치 변화
-                    tagInit();
+                    tagInit(1);
                     int tagIdxTemp = 0;
 
                     if (selectDiceCharacterIdx>=0 && selectDiceCharacterIdx < 4 
@@ -1774,7 +1829,27 @@ public class AdventureManager : MonoBehaviour
                         updateAdventurePowerChangeToolbar(selectDiceCharacterIdx, i, curDiceEventPacket.getVal(i));
                     }
                 }
+                if (curDiceEventPacket.getSelectType() == 9) { // 주사위 시스템
+                    tagInit(2);
+                    if (selectDiceCharacterIdx >= 0 && selectDiceCharacterIdx < 4
+                        && CharacterManager.Instance.getCharacter(selectDiceCharacterIdx) != null && CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).getCurState() == 0)
+                    {
+                        int[] tempOutlineArr = { 1,1, 1, 1, 1, 1 };
+                        for (int i=0;i<6;i++)
+                        {
+                            setTagDice(i, curDiceEventPacket.getVal(i));
+                            if (curDiceEventPacket.getVal(i) == 0) tempOutlineArr[i] = 0;
+                            if(curDiceEventPacket.getVal(i) >=1 && curDiceEventPacket.getVal(i)<=6) CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).changeDiceNum(i, curDiceEventPacket.getVal(i));
+                            if (curDiceEventPacket.getVal(i) == 7) CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).changeDiceNum(i, Random.Range(0,3) * 2 + 1);
+                            if (curDiceEventPacket.getVal(i) == 8) CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).changeDiceNum(i, Random.Range(1, 4) * 2 );
+                            if (curDiceEventPacket.getVal(i) == 9) CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).changeDiceNum(i, Random.Range(1, 7));
+                            if (curDiceEventPacket.getVal(i) >=11 && curDiceEventPacket.getVal(i) <= 16) CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).changeDiceNum(i, Random.Range(1, (curDiceEventPacket.getVal(i)%10)+1));
+                            if (curDiceEventPacket.getVal(i) >= 21 && curDiceEventPacket.getVal(i) <= 26) CharacterManager.Instance.getCharacter(selectDiceCharacterIdx).changeDiceNum(i, Random.Range((curDiceEventPacket.getVal(i) % 10) + 1, 7));
+                        }
+                        activeAdventureDiceChangeToolbar(selectDiceCharacterIdx, tempOutlineArr);
+                    }
 
+                }
                 if (curDiceEventPacket.getSelectType() == 8) { //상점 시스템
                     
                     storeEntityObj.SetActive(true);
@@ -2471,9 +2546,17 @@ public class AdventureManager : MonoBehaviour
                         //watchNumObject[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
                     }
                 }
-                ToolBarManager.Instance.setToolBar(15);
-                eventWatchNum = inputNum - 1;
-                TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(eventWatchNum));
+
+                if (curDiceEvent.getEventType() == 6)
+                {
+                    ToolBarManager.Instance.setToolBar(15);
+                    eventWatchNum = inputNum - 1;
+                    TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(eventWatchNum));
+                }
+                else if(curDiceEvent.getEventType() >= 3 && curDiceEvent.getEventType() <= 5)
+                {
+                    ToolBarManager.Instance.setToolBar(25);
+                }
                 //TalkManager.Instance.setDescString(curDiceEvent.getPacket(eventWatchNum).getChooseText());//선택지 텍스트 변경    
             }
         }
@@ -2581,13 +2664,19 @@ public class AdventureManager : MonoBehaviour
     }
 
     public GameObject diceEntity;
+
+    private int witchHatClickNum = 0;
+    public int getWitchHatClickNum() { return witchHatClickNum; }
     public void makeAdventureDice(int cost) //use cost to roll dice. if cost<0, this time cant use reroll dice
     {
         bool witchHatButtonActive = true;
         if (cost < 0) witchHatButtonActive = false;
 
+        if (cost == 0) witchHatClickNum = 0;
+        
         if (cost >= 0)
         {
+            upDownManager.Instance.hoverOutAdventureWitchPowerButton();
             if (adventureJewel < cost)
             {
                 fullUI.showFull(70);
@@ -2595,7 +2684,8 @@ public class AdventureManager : MonoBehaviour
             }
             else
             {
-                addMoney(1, -1 * cost);
+                addMoney(1, -1 * cost * witchHatClickNum);
+                witchHatClickNum += 1;
             }
         }
         if (cost > 0) { //tutorial click Check
@@ -2606,9 +2696,7 @@ public class AdventureManager : MonoBehaviour
         }
 
         diceEntity.SetActive(true);
-        if (witchHatButtonActive){ //witch hat active
-            witchHatButton.SetActive(witchHatButtonActive);
-        }
+
 
         SoundManager_Sfx.Instance.playSound(2);
         for (int i = 0; i < 4; i++)
@@ -2764,6 +2852,9 @@ public class AdventureManager : MonoBehaviour
                 break;
             case 8:
                 ToolBarManager.Instance.setToolBar(5);
+                break;
+            case 9:
+                ToolBarManager.Instance.setToolBar(26);
                 break;
             case 98:
                 ToolBarManager.Instance.setToolBar(6);

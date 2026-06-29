@@ -273,6 +273,20 @@ public class upDownManager : MonoBehaviour
             
     }
 
+    public void goldJewelActive(bool onOff)
+    {
+        if (onOff)
+        {
+            goldEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 433f, 0);
+            jewelEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 419f, 0);
+        }
+        else
+        {
+            goldEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-1500f, 433f, 0);
+            jewelEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-1500f, 419f, 0);
+        }
+    }
+
     public void makeItemCharacterEff(int characterIdx, int opt, int val, int height)
     {
         if (opt > 0)
@@ -407,9 +421,10 @@ public class upDownManager : MonoBehaviour
 
     public void hoverInAdventureWitchPowerButton()
     {
-        ToolBarManager.Instance.setToolBar(TalkManager.Instance.getDesc(91), TalkManager.Instance.getDesc(48),
+        ToolBarManager.Instance.setToolBar(TalkManager.Instance.getDesc(91), TalkManager.Instance.getDesc(48) + AdventureManager.Instance.getWitchHatClickNum() + ")",
            Resources.Load<Sprite>("sprite/townImage/spr_Destiny Change"));
-        ToolBarManager.Instance.setToolBarJewelImage(2);
+        if(AdventureManager.Instance.getWitchHatClickNum() > 6) ToolBarManager.Instance.setToolBarJewelImage(6);
+        else ToolBarManager.Instance.setToolBarJewelImage(AdventureManager.Instance.getWitchHatClickNum());
     }
     public void clickWitchPowerButton(int idx)
     {
@@ -662,6 +677,7 @@ public class upDownManager : MonoBehaviour
             return;
         }
         itemTypeOnOff = onOff;
+        AdventureManager.Instance.clickAdventureChangeToolbar();
         if (!onOff)
         {
             upperItemTypeEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-150f, 2700f, 0f);
@@ -1483,6 +1499,7 @@ public class upDownManager : MonoBehaviour
                 fullUI.showFull(69);
                 return;
             }
+            AdventureManager.Instance.clickAdventureChangeToolbar();
         }
         if (input != -1 && lockState == 3) return;
         if (AdventureManager.Instance.getTutorial() != 0 && (AdventureManager.Instance.getTutorial() != 4 && AdventureManager.Instance.getTutorial() != 5 && AdventureManager.Instance.getTutorial() != 6 &&  AdventureManager.Instance.getTutorial() <= 9))

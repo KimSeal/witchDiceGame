@@ -60,6 +60,11 @@ public class MapperManager : MonoBehaviour
     private float[] upgradeTagAmount = new float[4];
     private int[] upgradeTagTypeVal = new int[4];
 
+    [SerializeField]
+    public GameObject upgradeDiceTagEntity;
+    public GameObject[] upgradeDiceTagDice = new GameObject[6];
+    public int[] upgradeDiceTagInfo = new int[6];
+
     private adventureEvent curDiceEvent;
     private adventureEvent_Packet curDiceEventPacket;
 
@@ -146,8 +151,23 @@ public class MapperManager : MonoBehaviour
         }
         return 2; //다른 경우에는 결말이 심플.
     }
-    public void tagInit()
+    public void tagInit(int opt)
     {
+        if (opt == 0)
+        {
+            for (int i = 0; i < 6; i++) upgradeDiceTagDice[i].GetComponent<BoxCollider2D>().enabled = false;
+            for (int i = 0; i < 4; i++) upgradeTagType[i].GetComponent<BoxCollider2D>().enabled = false;
+        }
+        if (opt == 1)
+        {
+            for (int i = 0; i < 6; i++) upgradeDiceTagDice[i].GetComponent<BoxCollider2D>().enabled = false;
+            for (int i = 0; i < 4; i++) upgradeTagType[i].GetComponent<BoxCollider2D>().enabled = true;
+        }
+        if (opt == 2)
+        {
+            for (int i = 0; i < 6; i++) upgradeDiceTagDice[i].GetComponent<BoxCollider2D>().enabled = true;
+            for (int i = 0; i < 4; i++) upgradeTagType[i].GetComponent<BoxCollider2D>().enabled = false;
+        }
         for (int i = 0; i < 4; i++)
         {
             upgradeTagEntity[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -156,7 +176,29 @@ public class MapperManager : MonoBehaviour
             upgradeTagTypeVal[i] = -1;
             upgradeTagText[i].GetComponent<TextMeshPro>().text = "";
         }
+        upgradeDiceTagEntity.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        for (int i = 0; i < 6; i++)
+        {
+            upgradeDiceTagDice[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            upgradeDiceTagInfo[i] = 0;
+        }
     }
+    public void hoverInTagDice(int idx)
+    {
+        ToolBarManager.Instance.setToolBarDiceChange(upgradeDiceTagInfo[idx]);
+    }
+    public void hoverOutTagDice()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void setTagDice(int opt, int val)
+    {
+        upgradeDiceTagEntity.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/loading/spr_diceStatePost");
+        upgradeDiceTagInfo[opt] = val;
+        upgradeDiceTagDice[opt].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + val.ToString());
+
+    }
+
     public void setTag(int idx, int opt, int val)
     {
         //0 : 체력 / 1: 최대체력 / 2:마나 / 3:최대 마나 / 4:방어도 / 5:공격력 / 6:마법 감응력/ 7 : 스피드 -> 캐릭터 전투 기준
@@ -320,6 +362,7 @@ public class MapperManager : MonoBehaviour
 
     public void initMapper()
     {
+        tagInit(0);
         storeEntityObj.SetActive(false);
         resultObj.SetActive(false);
         watchNumObjectEntity.SetActive(false);
@@ -434,7 +477,8 @@ public class MapperManager : MonoBehaviour
 
         if (curDiceEventPacket.getSelectType() == 3 || curDiceEventPacket.getSelectType() == 4 || curDiceEventPacket.getSelectType() == 5)
         { //능력치 변화
-            tagInit();
+            tagInit(1);
+
             int tagIdxTemp = 0;
             for (int i = 0; i < 8; i++)
             {
@@ -448,6 +492,15 @@ public class MapperManager : MonoBehaviour
                 }
 
             }
+        }
+        if (curDiceEventPacket.getSelectType() == 9) {
+            tagInit(2);
+
+            int[] tempOutlineArr = { 1, 1, 1, 1, 1, 1 };
+            for (int i = 0; i < 6; i++)
+            {
+                setTagDice(i, curDiceEventPacket.getVal(i));
+            }                    
         }
 
         if (curDiceEventPacket.getSelectType() == 8)
