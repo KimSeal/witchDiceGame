@@ -56,6 +56,7 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
         this.val = val;
         this.stateChange = stateChange;
         this.skillType = 0;
+        this.critical = false;
     }
 
     public TakeSkillPacket(int targetIdx, int val, int stateChange, int skillType)
@@ -64,6 +65,7 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
         this.val = val;
         this.stateChange = stateChange;
         this.skillType =skillType;
+        this.critical = false;
     }
 
 
@@ -73,6 +75,7 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     private int diceChange;
 
     private int skillType;
+    private bool critical = false;
     // 0 : 데미지. 1: 회복, 2: 단순 상태 변경
 
     public int getTargetIdx()
@@ -88,7 +91,8 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     public void addVal(int val) { this.val += val; }
     public void mulVal(int val) { this.val *= val; Debug.Log(this.val); }
     public void setStateChange(int val) { this.stateChange = val; }
-
+    public bool getCritical() { return critical; }
+    public void setCritical() { this.critical = true; }
 }
 
 

@@ -626,7 +626,7 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-    private int MakeMyAttackSet(bool onlyChk, int characterIdx, int skillSelIdx, int selDiceIdx)//0 : 불가능 1 : 가능 2 : 가능하지만, 이미 다른 스킬이 배치되어있음.
+    public int MakeMyAttackSet(bool onlyChk, int characterIdx, int skillSelIdx, int selDiceIdx)//0 : 불가능 1 : 가능 2 : 가능하지만, 이미 다른 스킬이 배치되어있음.
     {
         if (myCharacter[characterIdx] == null || myDice[selDiceIdx] == null) return 0;
 
@@ -1803,7 +1803,10 @@ public class BattleManager : MonoBehaviour
         }
         return false;
     }
-
+    public int getCurClickSkill()
+    {
+        return curClickSkill;
+    }
     //스킬 선택 중 주사위 클릭에 대한 코드
     private void click_characterSkill_Dice(int diceIdx)
     {
@@ -2183,6 +2186,20 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
+
+        int usedDiceIdx = -1;
+        for (int i = 0; i < 4; i++)
+        {
+            if (myDiceTake[i] == battlePhaseCurSkill)
+            {
+                usedDiceIdx = i;
+                break;
+            }
+        }
+
+        int[] tempArr = itemManager.Instance.passiveItemActiveByHover(battlePhaseCurSkill / 10, battlePhaseCurSkill % 10, usedDiceIdx, 1, idx);
+        upDownManager.Instance.printHoverPassive(tempArr, 1);
+
         drawDiceSkillForTarget(0);
     }
     public void hoverOutTarget(int idx)
@@ -2201,6 +2218,7 @@ public class BattleManager : MonoBehaviour
                 battleTargetUI[i+4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             }
         }
+        upDownManager.Instance.hoverOutTarget();
         setTransBySkillUser(curSkillMyUseCharacter);
         drawDiceSkillForTarget(1);
     }
@@ -2449,7 +2467,11 @@ public class BattleManager : MonoBehaviour
             }
 
         }
-
+    }
+    public int[] getMakeDiceArrToMakePacket(int startIdx, int needDiceNum)
+    {
+        makeMyDice_BattlePhase (startIdx, needDiceNum);
+        return makeDiceArrToMakePacket;
     }
     private void makeEnemyDice_BattlePhase(int startIdx, int needDiceNum)
     {
@@ -2808,7 +2830,7 @@ public class BattleManager : MonoBehaviour
                     effectChk[passiveItemIdx] = true;
                     if (tempPassiveReturn.cal != "none") specialTextManager.GetComponent<ExampleTextManager>().ShowPassiveText(passiveItemIdx, tempPassiveReturn.cal + tempPassiveReturn.val.ToString());
                     //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
-                    upDownManager.Instance.activePassiveItem(passiveItemIdx);
+                    upDownManager.Instance.activePassiveItem(passiveItemIdx, 0);
                     //GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                     
                     SoundManager_Sfx.Instance.playSound(55 + conditionNum);
@@ -2882,7 +2904,7 @@ public class BattleManager : MonoBehaviour
                             }
                         }
                         //SoundManager_doremi.Instance.playDoremi(itemUseIdx++);
-                        upDownManager.Instance.activePassiveItem(passiveItemIdx);
+                        upDownManager.Instance.activePassiveItem(passiveItemIdx, 1);
                         
                         //GameObject temp = Instantiate(passiveEffObj, itemManager.Instance.getItemInventoryPosition(passiveItemIdx), new Quaternion(0, 0, 0, 0)); //사용된 아이템에 대해 effect
                         effectChk[passiveItemIdx] = true;
@@ -2936,22 +2958,20 @@ public class BattleManager : MonoBehaviour
             if (skillType == 12) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(5, myTeam, idx, -1 * val, height); return true; } //atk
             if (skillType == 14) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(6, myTeam, idx, -1* val, height); return true; } //mag
             if (skillType == 15) { specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(7, myTeam, idx, -1* val, height); return true; } //speed
-            /*
-            if (myTeam) //아군 대상일 경우
-            {
-                
-            }
-            else // 적군 대상일 경우
-            {
-                if (skillType == 0) { specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamDamage(idx, val, height); return true; }
-                if (skillType == 1) { specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamHeal(idx, val, height); return true; }
-                if (skillType == 2) { specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamAtkUp(idx, val, height); return true; }
-            }
-            */
         }
-
         return false;
-        //if (takeSkillPacketArr[takeSkillArrIdx].getSkillType() == 0) specialTextManager.GetComponent<ExampleTextManager>().ShowMyTeamDamage(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+    }
+    public bool makeCalculateText_critical(bool myTeam, int skillType, int idx, int val, int height)
+    {
+        if (val == 0) return false;
+        else
+        {
+            if (skillType == 0) {
+                Debug.Log("criticalChk");
+                specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(10, myTeam, idx, -1 * val, height); return true; 
+            }    //damage
+        }
+        return false;
     }
 
 
@@ -3016,7 +3036,7 @@ public class BattleManager : MonoBehaviour
     {
         return sendSkillPacketTemp;
     }
-    private void takeSkillPacketLastFix(int skillUseCharacter, List<TakeSkillPacket> takeSkillPackets) //패시브 등 조건에 따른 추가 효과 세팅
+    public void takeSkillPacketLastFix(int skillUseCharacter, List<TakeSkillPacket> takeSkillPackets) //패시브 등 조건에 따른 추가 효과 세팅
     {
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
@@ -3061,7 +3081,9 @@ public class BattleManager : MonoBehaviour
                 int randomValTemp = Random.Range(0,100);
                 if (randomValTemp < character.getSpeed())
                 {
-                    takeSkillPackets.Add(new TakeSkillPacket(takeSkillPackets[i].getTargetIdx(), 1 + character.getPhyAtk(), 0));
+                    takeSkillPackets[i].mulVal(2);
+                    takeSkillPackets[i].setCritical();
+                    //takeSkillPackets.Add(new TakeSkillPacket(takeSkillPackets[i].getTargetIdx(), 1 + character.getPhyAtk(), 0));
                 }
             }
         }
@@ -3086,7 +3108,7 @@ public class BattleManager : MonoBehaviour
 
         int hitTest = -1; // 공격하게 되는 적 idx
 
-        
+        int zoomVal = jsonDataManager.Instance.getBattleShakeOpt();
 
         if (lastAttack >= 0 && lastDead >= 0) { //kill Animation
             specialHitVal = -1;
@@ -3115,8 +3137,11 @@ public class BattleManager : MonoBehaviour
                          myCharacterObjUIAnim[lastAttack].runtimeAnimatorController;
                 myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = false;
                 if (motionOpt == 2) {  //공격전 모션 필요 시,
-                    CameraManager.Instance.startZoom(80, 1);
-                    CameraManager.Instance.moveStart(new Vector3(8f * (hitTest - 4), -20f, CameraManager.Instance.cameraPointZ()), 3);
+                    if (zoomVal != 0)
+                    {
+                        CameraManager.Instance.startZoom(108 - (zoomVal * 7), 1);
+                        CameraManager.Instance.moveStart(new Vector3((3*zoomVal) * (hitTest - 4), -7 * zoomVal, CameraManager.Instance.cameraPointZ()), zoomVal);
+                    }
                     attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(1,
                         new Vector3(enemyCharacterObjUI[hitTest - 4].transform.position.x - 40f,
                       enemyCharacterObjUI[hitTest - 4].transform.position.y, attackCharacterObj.transform.position.z));
@@ -3159,9 +3184,19 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {  //회피가 아닌경우
-                    if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx]))
+                    if (takeSkillPacketArr[takeSkillArrIdx].getCritical())
                     {
-                        textHeight[tempTargetIdx]++;
+                        if (makeCalculateText_critical(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx]))
+                        {
+                            textHeight[tempTargetIdx]++;
+                        }
+                    }
+                    else
+                    {
+                        if (makeCalculateText(true, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx]))
+                        {
+                            textHeight[tempTargetIdx]++;
+                        }
                     }
                 }
 
@@ -3191,15 +3226,31 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                if (skillResult == 2) { //회피
+                if (skillResult == 2)
+                { //회피
                     specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamMiss(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
                 }
-                else if(skillResult == 4) { //가드
+                else if (skillResult == 4)
+                { //가드
                     specialTextManager.GetComponent<ExampleTextManager>().ShowEnemyTeamGuard(tempTargetIdx - 4, textHeight[tempTargetIdx]++);
                     makeGuardEffect(tempTargetIdx);
                 }
-                else {
-                    if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx])) textHeight[tempTargetIdx]++;
+                else
+                {
+                    if (takeSkillPacketArr[takeSkillArrIdx].getCritical())
+                    {
+                        if (makeCalculateText_critical(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx]))
+                        {
+                            textHeight[tempTargetIdx]++;
+                        }
+                    }
+                    else
+                    {
+                        if (makeCalculateText(false, takeSkillPacketArr[takeSkillArrIdx].getSkillType(), tempTargetIdx - 4, takeSkillPacketArr[takeSkillArrIdx].getVal(), textHeight[tempTargetIdx]))
+                        {
+                            textHeight[tempTargetIdx]++;
+                        }
+                    }
                 }
                 if (skillResult == 1) //사망한 경우
                 {
@@ -3231,18 +3282,23 @@ public class BattleManager : MonoBehaviour
             specialHitVal = 2;
             if (motionOpt == 2)
             {
-                CameraManager.Instance.startZoom(60f, 3f);
-                CameraManager.Instance.moveStart(new Vector3(15f + 15f * (hitTest - 4), -30f, CameraManager.Instance.cameraPointZ()), 8f);
+                if (zoomVal != 0)
+                {
+                    CameraManager.Instance.startZoom(108 - (zoomVal * 14f), zoomVal);
+                    CameraManager.Instance.moveStart(new Vector3((5f * zoomVal) * (hitTest - 3), -30f, CameraManager.Instance.cameraPointZ()), (3 * zoomVal));
+                }
                 attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(2, new Vector3(enemyCharacterObjUI[hitTest - 4].transform.position.x - 30f,
                        enemyCharacterObjUI[hitTest - 4].transform.position.y, attackCharacterObj.transform.position.z));
                 attackCharacterObj.GetComponent<Animator>().Play("Attack_1_1");
                 updateHp();
                 yield return new WaitForSeconds(0.3f);
             }
-            else if(motionOpt == 1)
+            else if (motionOpt == 1)
             {
-                CameraManager.Instance.startZoom(60f, 3f);
-                CameraManager.Instance.moveStart(new Vector3(15f + 15f * (hitTest - 4), -30f, CameraManager.Instance.cameraPointZ()), 8f);
+                if (zoomVal != 0) {
+                    CameraManager.Instance.startZoom(108 - (zoomVal * 14f), zoomVal);
+                    CameraManager.Instance.moveStart(new Vector3((5f * zoomVal) * (hitTest - 3), -30f, CameraManager.Instance.cameraPointZ()), (3 * zoomVal));
+                }
                 attackCharacterObj.GetComponent<AttackCharacterMove>().setAnim(1, new Vector3(enemyCharacterObjUI[hitTest - 4].transform.position.x - 30f,
                        enemyCharacterObjUI[hitTest - 4].transform.position.y, attackCharacterObj.transform.position.z));
                 attackCharacterObj.GetComponent<Animator>().Play("Attack_0_0");
@@ -3308,7 +3364,7 @@ public class BattleManager : MonoBehaviour
             enemyCharacterObjUI[skillUseCharacterIdx - 4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
         }
     }
-
+    private int battlePhaseCurSkill = -999;
     private int curSkillMyTarget = 0;
     private int curSkillMyUseCharacter = 0;
     private IEnumerator battlePhase()
@@ -3327,6 +3383,7 @@ public class BattleManager : MonoBehaviour
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
 
                     nextSkill = myDiceTake[nextDice];
+                    battlePhaseCurSkill = myDiceTake[nextDice];
                     battleAlphaControl_My(nextSkill);
                     //clickDice_battlePhase = -998;
 
@@ -3421,7 +3478,12 @@ public class BattleManager : MonoBehaviour
                             setTransBySkillUser(skillUseCharacter);
                             StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
                             yield return new WaitUntil(() => (characterTargetIdx == curSkill.getTargetNum())); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
-                            if(passiveBeforeCo != null) StopCoroutine(passiveBeforeCo);
+                            if (passiveBeforeCo != null)
+                            {
+                                StopCoroutine(passiveBeforeCo);
+                                int[] tempArr = itemManager.Instance.passiveItemActiveByHover(skillUseCharacter, skillUseIdx, nextDice, 0, -999);
+                                upDownManager.Instance.printHoverPassive(tempArr, 0);
+                            }
                         }
                         TalkManager.Instance.resetTutorialArrow();
                         characterTargetIdx = -999;
@@ -3522,7 +3584,7 @@ public class BattleManager : MonoBehaviour
                     }
                     drawDiceSkillForTarget(1);
                     updateMyDiceUI();
-                    
+                    upDownManager.Instance.resetPassiveItemEff();
                     //
                     nextSkill = 0;
 

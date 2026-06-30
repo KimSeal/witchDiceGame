@@ -24,21 +24,30 @@ public class optionManager : MonoBehaviour
     [SerializeField]
     public GameObject optionBoard;
     [SerializeField]
-    public GameObject[] optionBtn = new GameObject[3];
+    public GameObject[] optionBtn = new GameObject[4];
     [SerializeField]
+    public TextMeshProUGUI[] languageBigText = new TextMeshProUGUI[2];
     public GameObject[] languageBtn = new GameObject[3];
+    public GameObject[] underTextSizeButton = new GameObject[3];
+    public TextMeshProUGUI[] underTextSizeButtonText = new TextMeshProUGUI[3];
+
     [SerializeField]
     public GameObject[] screenSizeBtn = new GameObject[5];
     [SerializeField]
     public GameObject[] soundBtn = new GameObject[2];
 
     [SerializeField]
+    public GameObject[] battleZoomOptButton = new GameObject[4];
+    public TextMeshProUGUI[] battleZoomOptButtonText = new TextMeshProUGUI[4];
+    public TextMeshProUGUI battleZoomOptText;
+
+    [SerializeField]
     public GameObject optionBackBoard;
     [SerializeField]
-    public GameObject[] optionBoards = new GameObject[3];
+    public GameObject[] optionBoards = new GameObject[4];
    
     [SerializeField]
-    public TextMeshProUGUI[] optionBtnText = new TextMeshProUGUI[3];
+    public TextMeshProUGUI[] optionBtnText = new TextMeshProUGUI[4];
     public TextMeshProUGUI[] soundText = new TextMeshProUGUI[2];
     public TextMeshProUGUI fullScreenText;
 
@@ -128,24 +137,81 @@ public class optionManager : MonoBehaviour
                 optionBoards[i].SetActive(false);
             }
         }
-        if (idx == 0) { changeLanguage(jsonDataManager.Instance.getLanguage()); }
+        if (idx == 0) { changeLanguage(jsonDataManager.Instance.getLanguage()); changeTextSize(jsonDataManager.Instance.getFontSize()); }
         else if (idx == 1) changeScreenSize(jsonDataManager.Instance.getScreenSize());
         else if (idx == 2) changeSound();
+        else if (idx == 3) changePlay();
+    }
+    public void changePlay()
+    {
+        if (optionIdx == 3)
+        {
+            battleZoomOptText.text = TalkManager.Instance.getDesc(197);
+            for (int i = 0; i < 4; i++)
+            {
+                battleZoomOptButtonText[i].text = "- "+ TalkManager.Instance.getDesc(201 - i);
+            }
+
+            changeBattleZoom(jsonDataManager.Instance.getBattleShakeOpt());
+            updateOptionButtonText();
+        }
+    }
+    public void changeBattleZoom(int val)
+    {
+        jsonDataManager.Instance.setBattleShakeOpt(val);
+        for (int i = 0; i < battleZoomOptButton.Length; i++)
+        {
+            if (val == i)
+            {
+                battleZoomOptButton[i].GetComponent<hoverRotateUI>().setLanguageActive(true);
+            }
+            else
+            {
+                battleZoomOptButton[i].GetComponent<hoverRotateUI>().setLanguageActive(false);
+            }
+        }
     }
 
     public void updateOptionButtonText()
     {
-        optionBtnText[0].text = TalkManager.Instance.getDesc(93);
+        optionBtnText[0].text = TalkManager.Instance.getDesc(192);
         optionBtnText[1].text = TalkManager.Instance.getDesc(94);
         optionBtnText[2].text = TalkManager.Instance.getDesc(95);
+        optionBtnText[3].text = TalkManager.Instance.getDesc(202);
     }
 
+    public void changeTextSize(int val)
+    {
+        if(optionIdx == 0)
+        {
+            TalkManager.Instance.clickFontSize(val);
+            for (int i = 0; i < underTextSizeButton.Length; i++)
+            {
+                if (val == i)
+                {
+                    underTextSizeButton[i].GetComponent<hoverRotateUI>().setLanguageActive(true);
+                }
+                else
+                {
+                    underTextSizeButton[i].GetComponent<hoverRotateUI>().setLanguageActive(false);
+                }
+            }
+        }
+    }
     public void changeLanguage(int idx)
     {
         if (optionIdx == 0)
         {
             AdventureManager.Instance.changeLanguage();
             jsonDataManager.Instance.setLanguage(idx);
+
+            languageBigText[0].text = TalkManager.Instance.getDesc(93);
+            languageBigText[1].text = TalkManager.Instance.getDesc(193);
+
+            underTextSizeButtonText[0].text = "- "+TalkManager.Instance.getDesc(194);
+            underTextSizeButtonText[1].text = "- " + TalkManager.Instance.getDesc(195);
+            underTextSizeButtonText[2].text = "- " + TalkManager.Instance.getDesc(196);
+
             for (int i = 0; i < languageBtn.Length; i++)
             {
                 if (idx == i)
@@ -158,6 +224,7 @@ public class optionManager : MonoBehaviour
                 }
             }
             TalkManager.Instance.changeLan();
+            changeTextSize(jsonDataManager.Instance.getFontSize());
             updateOptionButtonText();
         }
     }

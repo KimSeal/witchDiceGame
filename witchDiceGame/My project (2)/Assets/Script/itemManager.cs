@@ -157,12 +157,12 @@ public class itemManager : MonoBehaviour
     {
         if (itemMaxNum > number) {
             for (int i = itemMaxNum - 1; i >= number; i--) {
-                upDownManager.Instance.activePassiveItem(i);
+                upDownManager.Instance.activePassiveItem(i, -1);
             }
         }
         if (itemMaxNum < number) {
             for (int i=itemMaxNum; i<number; i++) {
-                upDownManager.Instance.activePassiveItem(i);
+                upDownManager.Instance.activePassiveItem(i, -1);
             } 
         }
         itemMaxNum = number;
@@ -263,7 +263,7 @@ public class itemManager : MonoBehaviour
 
         
         setItem(type, emptyIdx, originType, idx); //공간이 존재하면 가장 왼쪽에 아이템을 배치한다.
-        upDownManager.Instance.activePassiveItem(emptyIdx);
+        upDownManager.Instance.activePassiveItem(emptyIdx, -1);
         upDownManager.Instance.clickItemTypeButton(type);
         updateInventory();
         
@@ -1152,9 +1152,19 @@ public class itemManager : MonoBehaviour
             }
         }
 
-       
+        for (int i = 0; i < 6; i++)
+        {
+            ItemExistArr[3, i] = true;
+            ItemArr[3, i] = new Item(itemList[3][i + 1]);
+        }
+        ItemArr[3, 0] = new Item(itemList[3][21]);
+        ItemArr[3, 1] = new Item(itemList[3][8]);
+        ItemArr[3, 2] = new Item(itemList[3][7]);
+        ItemArr[3, 3] = new Item(itemList[3][10]);
+        ItemArr[3, 4] = new Item(itemList[3][11]);
+        ItemArr[3, 5] = new Item(itemList[3][12]);
         //test Sample
-        
+
         /*
          ItemExistArr[1, 3] = true;
         ItemArr[1, 3] = new Item(itemList[1][18]);
@@ -1270,6 +1280,47 @@ public class itemManager : MonoBehaviour
         return returnValue;
     }
     //passive Item use function start
+    public int[] passiveItemActiveByHover(int characterIdx, int skillIdx, int diceStartIdx, int activeTime, int targetCharacter)
+    {
+        int[] resultArr = { 0,0,0,0,0,0,
+                            0,0,0,0,0};
+        if(activeTime == 0 && 1 != BattleManager.Instance.MakeMyAttackSet(true, characterIdx, skillIdx, diceStartIdx)){
+            return resultArr;
+        }
+
+        int[] clickCharacter = { -999, -999, -999, -999 };
+        if (targetCharacter >= 0) clickCharacter[0] = targetCharacter;
+
+        Character characterTemp = CharacterManager.Instance.getCharacter(characterIdx);
+        int[] diceArr = BattleManager.Instance.getMakeDiceArrToMakePacket(diceStartIdx, characterTemp.skillUse(skillIdx).getNeedDiceNum());
+        SendSkillPacket sendSkillPacketTemp = new SendSkillPacket(characterIdx, characterTemp.getSkillIdx(skillIdx), clickCharacter , diceArr);
+        List<TakeSkillPacket> takeSkillPacketList = characterTemp.doSkill(sendSkillPacketTemp);
+        BattleManager.Instance.takeSkillPacketLastFix(characterIdx, takeSkillPacketList);
+
+        for (int idx = 0; idx < 11; idx++)
+        {
+            if (!ItemExistArr[3, idx]) { continue; } // 아이템이 없으면 그냥 스킵
+            Item item = ItemArr[3, idx];
+            int activeTiming = item.getActiveTiming();
+            if (activeTiming != activeTime) { continue; } //원하는 타이밍이 아니면 생략
+
+            for (int i=0;i<takeSkillPacketList.Count;i++) {
+                if (item.getVal(0) == takeSkillPacketList[i].getSkillType()) {  //스킬이 아이템 타입하고 안맞으면 종료 
+                                                                         //클릭 이전 타이밍 이면서 주사위 조건이 안맞으면 return
+                    if (activeTiming == 0 && conditionCheck_dice(diceArr, item.getVal(1), item.getVal(2), item.getVal(3), item.getVal(4), item.getVal(5))) {
+                        resultArr[idx] = 1;
+                        break;
+                    }
+                    //클릭 이후 대상. 이건 몬스터 정보 같은거도 받아야해서 조건 추가될 예정
+                    if (activeTiming == 1 && conditionCheck_target(takeSkillPacketList[i], item)) {
+                        resultArr[idx] = 1;
+                        break;
+                    }
+                }
+            }
+        }
+        return resultArr;
+    }
     public passiveReturn usePassiveItem(List<TakeSkillPacket> takeSkillPacketList, TakeSkillPacket takeSkillPacket, int idx, int[] diceArr, int activeTime)
     {
         if (!ItemExistArr[3, idx]) {return new passiveReturn(false, "", 0);} // 아이템이 없으면 그냥 스킵
@@ -1399,8 +1450,6 @@ public class itemManager : MonoBehaviour
             bool chkTrue = false;
             for (int i = 0; i < 8; i++){
                 int characterIdx = BattleManager.Instance.getCurSkillInfo().getClickCharacter(i);
-                Debug.Log("targeting Character! : ");
-                Debug.Log(characterIdx);
                 if (characterIdx == -999) continue;
                 if (conditionCheck_target_detail(takeSkillPacket, item, characterIdx)) {chkTrue = true; break; }
             }
@@ -1419,7 +1468,6 @@ public class itemManager : MonoBehaviour
             Debug.Log(diceNum);
             if (item.getVal(2) == 0)
             { //어떤 주사위든 상관없이
-                Debug.Log("it is work!");
                 return true;
             }
             if (item.getVal(2) >= 1 && item.getVal(2) <= 6 && diceNum == item.getVal(2))

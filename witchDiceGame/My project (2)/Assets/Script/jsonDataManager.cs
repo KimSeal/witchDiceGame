@@ -417,17 +417,23 @@ public class jsonDataManager : MonoBehaviour
     {
         return playerPlayData.getFontSize();
     }
-    public void addFontSize()
+    public void setFontSize(int val)
     {
-        this.playerPlayData.setFontSize();
+        this.playerPlayData.setFontSize(val);
         SavePlayerDataToJson();
     }
+    public int getBattleShakeOpt()
+    {
+        return playerPlayData.getBattleShakeOpt();
+    }
+    public void setBattleShakeOpt(int val) { playerPlayData.setBattleShakeOpt(val); SavePlayerDataToJson(); }
 
     public class PlayerPlayData
     {
         public int language;
         public int screenSize = 1;
         public int fontSize = 2;
+        public int battleShakeOpt = 1;
         public float backgroundVolume = 1.0f;
         public float SFXVolume = 1.0f;
         public int[] curWitchPower = new int[2];
@@ -460,11 +466,9 @@ public class jsonDataManager : MonoBehaviour
 
         public bool foodStreetMeet = false;
         public int[] foodStreetStat = new int[4]; //음식 거리에서 분배된 스탯값.
-        public int setFontSize()
+        public int setFontSize(int val)
         {
-            this.fontSize += 1;
-            if (fontSize < 0) fontSize = 0;
-            if (fontSize >= 3) fontSize = 0;
+            this.fontSize = val;
             return fontSize;
         }
         public int getFontSize()
@@ -564,6 +568,7 @@ public class jsonDataManager : MonoBehaviour
             for (int i=0;i<foodStreetStat.Length;i++) foodStreetStat[i] = 0;
 
             fontSize = 2;
+            battleShakeOpt = 1;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -615,6 +620,15 @@ public class jsonDataManager : MonoBehaviour
             foodStreetMeet = playerPlayerData.foodStreetMeet;
             for (int i = 0; i < foodStreetStat.Length; i++) foodStreetStat[i] = playerPlayerData.foodStreetStat[i];
             fontSize = playerPlayerData.fontSize;
+            battleShakeOpt = playerPlayerData.battleShakeOpt;
+        }
+        public int getBattleShakeOpt()
+        {
+            return battleShakeOpt;
+        }
+        public void setBattleShakeOpt(int opt)
+        {
+            battleShakeOpt = opt;
         }
         public bool getFirstGetCharacterPart()
         {

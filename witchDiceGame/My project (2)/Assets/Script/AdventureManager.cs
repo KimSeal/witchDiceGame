@@ -859,7 +859,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = 12; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -1536,6 +1536,7 @@ public class AdventureManager : MonoBehaviour
             diceBtnFire.Play();
             makeAdventureDice(0);
             if (tutorialVal != 0 && tutorialVal < 17) { witchHatButton.SetActive(false); }
+            else { witchHatButton.SetActive(true); }
 
 
 
@@ -1732,6 +1733,10 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setTutorialArrow(2);
                         setTutorialVal4ErrorChk(false);
                     }
+                    else
+                    {
+                        witchHatButton.SetActive(true); 
+                    }
                 }
                 else if (curDiceEvent.getEventType() == 3 || curDiceEvent.getEventType() == 4 || curDiceEvent.getEventType() == 5 || curDiceEvent.getEventType() == 9)
                 {
@@ -1744,11 +1749,9 @@ public class AdventureManager : MonoBehaviour
                 else //(curDiceEvent.getDiceUse() == 0)//주사위 사용이 필요가 없다면, 맨 첫번째 결과가 나오게 하여 그냥 넘길수 있게 한다.
                 {
                     selectDiceNum = -1;
-                    Debug.Log("selectDiceNum1 : " + selectDiceNum.ToString());
                 }
                 giveUpBtnAble(true);
                 yield return new WaitUntil(() => selectDiceNum > 0 || gameOverChk); // 주사위 쓸 영웅 선택 대기
-                Debug.Log("selectDiceNum2 : " + selectDiceNum.ToString());
                 TalkManager.Instance.resetTutorialArrow();
                 if (gameOverChk) continue;
                 giveUpBtnAble(false);
@@ -1927,6 +1930,7 @@ public class AdventureManager : MonoBehaviour
                     SoundManager_Main.Instance.stopSound(battleSoundTemp);
                     SoundManager_Main.Instance.playSound(2);
                     updateCharacterFace();
+                    resetDice();
                     if (gameOverChk) { break; }
                     giveUpBtnAble(false);
 
@@ -2672,19 +2676,19 @@ public class AdventureManager : MonoBehaviour
         bool witchHatButtonActive = true;
         if (cost < 0) witchHatButtonActive = false;
 
-        if (cost == 0) witchHatClickNum = 0;
+        if (cost == 0) witchHatClickNum = 1;
         
-        if (cost >= 0)
+        if (cost > 0)
         {
             upDownManager.Instance.hoverOutAdventureWitchPowerButton();
-            if (adventureJewel < cost)
+            if (adventureJewel < getWitchHatClickNum())
             {
                 fullUI.showFull(70);
                 return;
             }
             else
             {
-                addMoney(1, -1 * cost * witchHatClickNum);
+                addMoney(1, -1 * getWitchHatClickNum());
                 witchHatClickNum += 1;
             }
         }
@@ -2733,7 +2737,14 @@ public class AdventureManager : MonoBehaviour
         {
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0)
             {
-                diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
+                if (witchHatButton.activeSelf)
+                {
+                    diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
+                }
+                else
+                {
+                    diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead 1");
+                }
             }
             else
             {

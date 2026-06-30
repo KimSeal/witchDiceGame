@@ -374,9 +374,15 @@ public class upDownManager : MonoBehaviour
         bigDicePowerButtonEff[diceIdx].GetComponent<Image>().sprite =
                bigDicePowerButtonEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
     }
-    public void activePassiveItem(int itemIdx)
+    public void activePassiveItem(int itemIdx, int opt)//opt 0 : before 1 : after 2 : just boom
     {
-        upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active");
+        if(opt == 0) upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active_passive");
+        else if (opt == 1) upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active_passive_2");
+        else upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active");
+    }
+    public void resetPassiveItemEff()
+    {
+        for(int i=0;i<upperItemEffOrigin.Length;i++) upperItemEffOrigin[i].GetComponent<Animator>().Play("none");
     }
     public void resetUI()
     {
@@ -953,13 +959,47 @@ public class upDownManager : MonoBehaviour
             {
                 ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
             }
+            int[] tempArr = itemManager.Instance.passiveItemActiveByHover(BattleManager.Instance.getCurClickSkill() / 10, BattleManager.Instance.getCurClickSkill() % 10, idx, 0, -999);
+            printHoverPassive(tempArr, 0);
         }
+    }
+    public void printHoverPassive(int[] tempArr, int opt)
+    {
+        bool passiveExist = false;
+        for (int i = 0; i < upperItemEffOrigin.Length - 1; i++)
+        {
+            if (tempArr[i] == 1)
+            {
+                passiveExist = true;
+                if(opt == 0) upperItemEffOrigin[i].GetComponent<Animator>().Play("Active_passive");
+                else if(opt == 1) upperItemEffOrigin[i].GetComponent<Animator>().Play("Active_passive_2");
+                upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
+            }
+        }
+        if (passiveExist) clickItemTypeButton(3);
     }
     public void hoverOutBigDiceSkill(int idx)
     {
         bigDiceSkillOutline[idx].GetComponent<Image>().sprite
              = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         ToolBarManager.Instance.toolBarOnOff(0);
+        for (int i = 0; i < upperItemEffOrigin.Length-1; i++)
+        {
+            if (itemManager.Instance.getItemFromBag(3, i) != null && itemManager.Instance.getItemFromBag(3, i).getActiveTiming() == 0)
+            {
+                upperItemEffOrigin[i].GetComponent<Animator>().Play("none");
+            }
+        }
+    }
+
+    public void hoverOutTarget()
+    {
+        for (int i = 0; i < upperItemEffOrigin.Length - 1; i++)
+        {
+            if (itemManager.Instance.getItemFromBag(3, i) != null && itemManager.Instance.getItemFromBag(3, i).getActiveTiming() == 1) {
+                upperItemEffOrigin[i].GetComponent<Animator>().Play("none");
+            } 
+        }
     }
 
     string[] typeArr = { "consume", "dice", "equip", "passive", "destiny" }; //item type string 

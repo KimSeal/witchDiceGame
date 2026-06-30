@@ -88,8 +88,6 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public GameObject skipButtonOutline;
     [SerializeField] public GameObject prevButtonOutline;
 
-    [SerializeField] public GameObject fontSizeButton;
-    [SerializeField] public GameObject fontSizeButtonOutline;
     public void setMapperLock(int opt)
     {
         MapperLock = opt;
@@ -120,7 +118,7 @@ public class TalkManager : MonoBehaviour
         }
         else
         {
-            clickFontSize(false);
+            clickFontSize(-1);
             curTalkIdx.GetComponent<TextMeshProUGUI>().text = "";
             if (descClickLock)
             {
@@ -656,11 +654,10 @@ public class TalkManager : MonoBehaviour
             characterTalk.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
 
             entity.SetActive(true);
-            clickFontSize(false);
+            clickFontSize(-1);
 
             hoverOutSkipButton();
             hoverOutPrevButton();
-            hoverOutFontSize();
 
             curIdx = listIdx[a];
             setCharacterName(talkList[a]);
@@ -745,22 +742,11 @@ public class TalkManager : MonoBehaviour
         ToolBarManager.Instance.toolBarOnOff(0);
         skipButtonOutline.SetActive(false);
     }
-    public void hoverInFontSize()
-    {
-        ToolBarManager.Instance.setToolBar(20);
-        fontSizeButtonOutline.SetActive(true);
-    }
-    public void hoverOutFontSize()
-    {
-        ToolBarManager.Instance.toolBarOnOff(0);
-        fontSizeButtonOutline.SetActive(false);
-    }
-    public void clickFontSize(bool addChk)
-    {
-        if(addChk) jsonDataManager.Instance.addFontSize();
-        int result = jsonDataManager.Instance.getFontSize();
 
-        fontSizeButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/talkFontSizeButton_" + result.ToString());
+    public void clickFontSize(int newFontSize)
+    {
+        if(newFontSize >= 0) jsonDataManager.Instance.setFontSize(newFontSize);
+        int result = jsonDataManager.Instance.getFontSize();
 
         characterTalk.GetComponent<TextMeshProUGUI>().fontSize = result * 5 + 35;
     }
