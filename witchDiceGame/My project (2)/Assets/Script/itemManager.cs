@@ -1152,17 +1152,6 @@ public class itemManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < 6; i++)
-        {
-            ItemExistArr[3, i] = true;
-            ItemArr[3, i] = new Item(itemList[3][i + 1]);
-        }
-        ItemArr[3, 0] = new Item(itemList[3][21]);
-        ItemArr[3, 1] = new Item(itemList[3][8]);
-        ItemArr[3, 2] = new Item(itemList[3][7]);
-        ItemArr[3, 3] = new Item(itemList[3][10]);
-        ItemArr[3, 4] = new Item(itemList[3][11]);
-        ItemArr[3, 5] = new Item(itemList[3][12]);
         //test Sample
 
         /*

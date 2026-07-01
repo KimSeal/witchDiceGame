@@ -568,7 +568,7 @@ public class BattleManager : MonoBehaviour
                 {
                     if (enemyDiceTake[liveCharacterList[diceIdx]] == -999 && condition_diceSkillCheck(enemySkillDiceVal[skillIdx, 0], enemyDiceNum[liveCharacterList[diceIdx]])) { // 첫번쨰주사위가 겹치는 경우
                         enemyDiceChange(liveCharacterList[diceIdx], skillIdx);
-                        liveCharacterList.RemoveAt(diceIdx);
+                        //liveCharacterList.RemoveAt(diceIdx);
                         break;
                     }
 

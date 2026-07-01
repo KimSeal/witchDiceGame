@@ -320,16 +320,17 @@ public class NoHead : Character
 
         if (sendSkillPacket.useSkillIdx == 0)
         { //고블린의 첫번째 스킬이 호출된 경우
-            for (int i = 0; i < 4; i++)
-            {
-                packets.Add(new TakeSkillPacket(i, this.getPhyAtk() + this.getPhyAtk(), 0));
-            }
-        }
-        else if (sendSkillPacket.useSkillIdx == 1)
-        {//고블린의 두번째 스킬이 호출된 경우
             for (int i = 4; i < 8; i++)
             {
                 packets.Add(new TakeSkillPacket(i, 1, 0, 6));
+            }
+            
+        }
+        else if (sendSkillPacket.useSkillIdx == 1)
+        {//고블린의 두번째 스킬이 호출된 경우
+            for (int i = 0; i < 4; i++)
+            {
+                packets.Add(new TakeSkillPacket(i, this.getPhyAtk() + this.getPhyAtk(), 0));
             }
         }
         return packets;

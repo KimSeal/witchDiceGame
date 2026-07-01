@@ -1894,7 +1894,7 @@ public class AdventureManager : MonoBehaviour
                             TalkManager.Instance.startTalk(73);
                             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         }
-                        battleSoundTemp = 26;
+                        battleSoundTemp = 30;
                     }
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
@@ -2242,6 +2242,7 @@ public class AdventureManager : MonoBehaviour
                 if (demoEndChk == 4) {
                     if (!jsonDataManager.Instance.getGraceBattleWin())
                     {
+                        SoundManager_Main.Instance.stopSound(30);
                         SoundManager_Main.Instance.stopSound(3); //기본 브금 제거
                         jsonDataManager.Instance.graceBattleWin();
                         TalkManager.Instance.startTalk(75);
