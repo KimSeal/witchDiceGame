@@ -3480,9 +3480,9 @@ public class BattleManager : MonoBehaviour
                             yield return new WaitUntil(() => (characterTargetIdx == curSkill.getTargetNum())); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
                             if (passiveBeforeCo != null)
                             {
-                                StopCoroutine(passiveBeforeCo);
                                 int[] tempArr = itemManager.Instance.passiveItemActiveByHover(skillUseCharacter, skillUseIdx, nextDice, 0, -999);
                                 upDownManager.Instance.printHoverPassive(tempArr, 0);
+                                StopCoroutine(passiveBeforeCo);
                             }
                         }
                         TalkManager.Instance.resetTutorialArrow();

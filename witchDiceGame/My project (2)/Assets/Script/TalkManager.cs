@@ -920,6 +920,7 @@ public class TalkManager : MonoBehaviour
     }
     public void clickWishlist()
     {
+        //fullUI.showFull(203);
         Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
     }
 }
