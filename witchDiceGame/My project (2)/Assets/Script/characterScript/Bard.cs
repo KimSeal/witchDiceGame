@@ -31,7 +31,7 @@ public class WoodDummy : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-         packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 2, 0, 6));
+         packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 1, 0, 6));
         }
         return packets;
     }
@@ -65,7 +65,7 @@ public class IronDummy : Character
         }
         else if (sendSkillPacket.useSkillIdx == 1)
         {//고블린의 두번째 스킬이 호출된 경우
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx+4, 3, 0, 6));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx+4, 2, 0, 6));
         }
         return packets;
     }
