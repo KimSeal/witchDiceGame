@@ -840,9 +840,12 @@ public class TalkManager : MonoBehaviour
                 if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_stand_" + nameArr[i] + "_" + faceArr[i]) != null) {
                     characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
                 }
+                else if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]) != null) {
+                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
+                }
                 else
                 {
-                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
+                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
                 }
             }
         }
