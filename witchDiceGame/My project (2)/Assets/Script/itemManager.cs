@@ -485,7 +485,7 @@ public class itemManager : MonoBehaviour
             curSelectItemType = idx; //타입 변경   
             updateInventory();
         }
-        else { SoundManager_Sfx.Instance.playSound(7); }
+        //else { SoundManager_Sfx.Instance.playSound(7); }
     }
     
     public int click_Character(int idx)
@@ -1206,6 +1206,12 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 2] = new Item(itemList[2][1]);
         ItemArr[0, 3] = new Item(itemList[2][1]);
         ItemArr[0, 4] = new Item(itemList[2][1]);
+        
+        for (int i = 0; i < 10; i++)
+        {
+            ItemExistArr[3, i] = true;
+            ItemArr[3, i] = new Item(itemList[3][3]);
+        }
         */
         updateInventory();
     }
@@ -1273,7 +1279,7 @@ public class itemManager : MonoBehaviour
     {
         int[] resultArr = { 0,0,0,0,0,0,
                             0,0,0,0,0};
-        if(activeTime == 0 && 1 != BattleManager.Instance.MakeMyAttackSet(true, characterIdx, skillIdx, diceStartIdx)){
+        if(activeTime == 0 && 0 == BattleManager.Instance.MakeMyAttackSet(true, characterIdx, skillIdx, diceStartIdx)){
             return resultArr;
         }
 
@@ -1453,8 +1459,6 @@ public class itemManager : MonoBehaviour
         if (item.getVal(1) == 1)
         {//단순 주사위 확인
             int diceNum = BattleManager.Instance.getDiceNum(characterIdx);
-            Debug.Log("targeting Character's dice ! : ");
-            Debug.Log(diceNum);
             if (item.getVal(2) == 0)
             { //어떤 주사위든 상관없이
                 return true;

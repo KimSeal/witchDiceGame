@@ -448,6 +448,7 @@ public abstract class Character
 
         if (takeSkillPacket.getStateChange() >= 1 && takeSkillPacket.getStateChange() <= 6)
         {
+            
             return -2;
         }
         return -1;

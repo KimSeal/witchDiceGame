@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using AnimatedBattleText.Examples;
+using System.Linq;
 public class BattleManager : MonoBehaviour
 {
 
@@ -2199,7 +2200,7 @@ public class BattleManager : MonoBehaviour
 
         int[] tempArr = itemManager.Instance.passiveItemActiveByHover(battlePhaseCurSkill / 10, battlePhaseCurSkill % 10, usedDiceIdx, 1, idx);
         upDownManager.Instance.printHoverPassive(tempArr, 1);
-
+        if (curSkill != null) ToolBarManager.Instance.setToolBar(curSkill);
         drawDiceSkillForTarget(0);
     }
     public void hoverOutTarget(int idx)
@@ -2219,6 +2220,7 @@ public class BattleManager : MonoBehaviour
             }
         }
         upDownManager.Instance.hoverOutTarget();
+        ToolBarManager.Instance.toolBarOnOff(0);
         setTransBySkillUser(curSkillMyUseCharacter);
         drawDiceSkillForTarget(1);
     }
@@ -2291,6 +2293,7 @@ public class BattleManager : MonoBehaviour
         {
             clickCharacter[this.characterTargetIdx] = characterIdxInput; //누른 캐릭터 저장
             targetOff(characterIdxInput);
+            ToolBarManager.Instance.toolBarOnOff(0);
         }
     }
     //적군의 clickArray를 자동으로 만들어준다. (아직 테스트 안해봄)
@@ -2746,7 +2749,6 @@ public class BattleManager : MonoBehaviour
         {
             stateChange = 0;
         }
-
         if (characterIdx < 4)
         {
             myDiceState[characterIdx] = stateChange;
@@ -2802,8 +2804,9 @@ public class BattleManager : MonoBehaviour
            this.battleTextObjBack[0].transform.position.z);
 
     }
-    private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArr, int[] usedDiceArr, bool updateLook)
+    private IEnumerator passiveUpdateBeforClick(List<TakeSkillPacket> takeSkillPacketArrInput, int[] usedDiceArr, bool updateLook)
     {
+        List<TakeSkillPacket> takeSkillPacketArr = takeSkillPacketArrInput.ToList();
         float activeTime = 0.1f;
         passiveItemChk = true;
         bool[] effectChk = { false, false, false, false, false, false, false, false, false, false, false, false };
@@ -2824,7 +2827,7 @@ public class BattleManager : MonoBehaviour
             for (int passiveItemIdx = 0; passiveItemIdx < 11; passiveItemIdx++)
             { //모든 passive 아이템을 확인해서 takeSkillPacket 수정
 
-                passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArr, takeSkillPacketArr[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 0);
+                passiveReturn tempPassiveReturn = itemManager.Instance.usePassiveItem(takeSkillPacketArrInput, takeSkillPacketArrInput[takeSkillArrIdx], passiveItemIdx, usedDiceArr, 0);
                 if (!effectChk[passiveItemIdx] && tempPassiveReturn.used && updateLook) //만약 적용이 되엇으며 그 결과를 보여줄 경우
                 {
                     effectChk[passiveItemIdx] = true;
@@ -3162,15 +3165,14 @@ public class BattleManager : MonoBehaviour
             tempTargetIdx = takeSkillPacketArr[takeSkillArrIdx].getTargetIdx();
 
             //hit anim
-            
 
+            
             if (skillResult == -2)
             {
                 changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                 continue;
             }
 
-            Debug.Log(tempTargetIdx);
             if (tempTargetIdx < 4) //아군이 타겟일 경우
             {
                 if (skillResult == 2) //회피
@@ -3353,7 +3355,6 @@ public class BattleManager : MonoBehaviour
         }
         else if(skillUseCharacterIdx >= 4)
         {
-            Debug.Log(skillUseCharacterIdx);
             for (int i = 0; i < 4; i++)
             {
                 enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 1 + i;
@@ -3367,6 +3368,7 @@ public class BattleManager : MonoBehaviour
     private int battlePhaseCurSkill = -999;
     private int curSkillMyTarget = 0;
     private int curSkillMyUseCharacter = 0;
+    private Skill curSkill;
     private IEnumerator battlePhase()
     {
         clickDice_battlePhase = -999;
@@ -3378,6 +3380,7 @@ public class BattleManager : MonoBehaviour
             //아군 스킬 클릭 
             while (nextDice < 4)
             {
+                curSkill = null;
                 if (winningCheck() != 0) break;
                 if (myDiceTake[nextDice] != -999)
                 {   //주사위 가장 앞에 있는 주사위 클릭을 위해 받아오고 click 기다리기
@@ -3411,7 +3414,7 @@ public class BattleManager : MonoBehaviour
                     //스킬이 사용 코드 적히는 부분
                     int skillUseCharacter = nextSkill / 10;
                     int skillUseIdx = nextSkill % 10;
-                    Skill curSkill = myCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
+                    curSkill = myCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
 
                     characterTargetIdx = 0;
 
@@ -3432,7 +3435,7 @@ public class BattleManager : MonoBehaviour
                     //skill기반의 takeSkillPacket의 값 얻고 이벤트 보여주기
                     // 활성화 보여주고, 클릭 전 패시브 대상으로 하며
 
-
+                    int[] tempArr = itemManager.Instance.passiveItemActiveByHover(skillUseCharacter, skillUseIdx, nextDice, 0, -999);
                     passiveBeforeCo = StartCoroutine(passiveUpdateBeforClick(takeSkillPacketArr, usedDiceArr, true));
                     //타겟팅 임시 테스트
                     //yield return new WaitUntil(() => !passiveItemChk);
@@ -3478,12 +3481,14 @@ public class BattleManager : MonoBehaviour
                             setTransBySkillUser(skillUseCharacter);
                             StartCoroutine(clickEnemy_Coroutine(curSkill.getTargetNum(), curSkill.getTargetTeam())); // 클릭 이벤트 시작
                             yield return new WaitUntil(() => (characterTargetIdx == curSkill.getTargetNum())); //필요한 캐릭터만큼 클릭된 경우 click 이벤트 종료!
+                            
                             if (passiveBeforeCo != null)
                             {
-                                int[] tempArr = itemManager.Instance.passiveItemActiveByHover(skillUseCharacter, skillUseIdx, nextDice, 0, -999);
-                                upDownManager.Instance.printHoverPassive(tempArr, 0);
                                 StopCoroutine(passiveBeforeCo);
                             }
+
+                            //int[] tempArr = itemManager.Instance.passiveItemActiveByHover(skillUseCharacter, skillUseIdx, nextDice, 0, -999);
+                            upDownManager.Instance.printHoverPassive(tempArr, 0);
                         }
                         TalkManager.Instance.resetTutorialArrow();
                         characterTargetIdx = -999;
@@ -3551,7 +3556,8 @@ public class BattleManager : MonoBehaviour
                         }
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
-
+                        upDownManager.Instance.hoverOutTarget();
+                        
                         if (winningCheck() != 0) //게임이 승리하여 공격할 적이 더이상 없는 경우
                         {
                             setBattleFontSize(0, 0);
@@ -3589,6 +3595,7 @@ public class BattleManager : MonoBehaviour
                     nextSkill = 0;
 
                 }
+                curSkill = null;
                 nextDice++;
             }
             yield return new WaitForSeconds(1.0f);
@@ -4118,7 +4125,7 @@ public class BattleManager : MonoBehaviour
                 CharacterManager.Instance.setCharacter(1, 10045); //캐릭터 세팅
                 CharacterManager.Instance.setCharacter(2, 10047); //캐릭터 세팅
                 CharacterManager.Instance.setCharacter(3, 10048); //캐릭터 세팅
-
+                yield return new WaitForSeconds(0.2f);
                 for (int placeIdx = 0; placeIdx < 4; placeIdx++)
                 {
                     CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
@@ -4133,6 +4140,7 @@ public class BattleManager : MonoBehaviour
                     {
                         enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
                     }
+                    yield return new WaitForSeconds(0.2f);
                 }
 
                 //캐릭터 세팅을 반영

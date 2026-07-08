@@ -286,6 +286,9 @@ public class TalkManager : MonoBehaviour
         }
         else
         {
+            upDownManager.Instance.clickCharacterButton(-1);
+            upDownManager.Instance.clickItem(-1);
+            upDownManager.Instance.clickItem(-1);
             if (AdventureManager.Instance.remainItemChk()  && AdventureManager.Instance.getTutorial() == 0 ) //튜토리얼이 아니고, 남은 게 있을 경우
             {
                 AdventureManager.Instance.remainItemOnOff(true);
@@ -843,9 +846,13 @@ public class TalkManager : MonoBehaviour
                 else if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]) != null) {
                     characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
                 }
-                else
+                else if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]) != null) 
                 {
                     characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
+                }
+                else
+                {
+                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
                 }
             }
         }
@@ -923,7 +930,7 @@ public class TalkManager : MonoBehaviour
     }
     public void clickWishlist()
     {
-        //fullUI.showFull(203);
-        Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
+        fullUI.showFull(203);
+        //Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
     }
 }

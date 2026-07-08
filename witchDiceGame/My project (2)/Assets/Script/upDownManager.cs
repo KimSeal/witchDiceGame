@@ -291,7 +291,7 @@ public class upDownManager : MonoBehaviour
     {
         if (opt > 0)
         {
-            bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("2");//("Active");
+            bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("2", -1, 0f);//("Active");
             bigDiceItemCharacterEff[characterIdx].GetComponent<Image>().sprite =
                   bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<SpriteRenderer>().sprite;
             exampleTextManager.GetComponent<ExampleTextManager>().printConSumeItemUpgrade(characterIdx, opt, val, height);
@@ -302,7 +302,7 @@ public class upDownManager : MonoBehaviour
         if (CharacterManager.Instance.getChracterChkCur(characterIdx) != null &&
             CharacterManager.Instance.getChracterChkCur(characterIdx).getCurState() == 0)
         {
-            bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("1");//("Active");
+            bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("1", -1, 0f);//("Active");
             bigDiceItemCharacterEff[characterIdx].GetComponent<Image>().sprite =
                   bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<SpriteRenderer>().sprite;
         }

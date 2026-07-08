@@ -2738,7 +2738,7 @@ public class AdventureManager : MonoBehaviour
         {
             if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacterState(i) == 0)
             {
-                if (witchHatButton.activeSelf)
+                if (witchHatButton.activeSelf || (tutorialVal != 0))
                 {
                     diceObject[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + CharacterManager.Instance.getDiceNum(i).ToString());
                 }
@@ -2816,6 +2816,7 @@ public class AdventureManager : MonoBehaviour
             {
                 SoundManager_Sfx.Instance.playSound(0);
                 selectDiceCharacterIdx = characterIdx;
+                ToolBarManager.Instance.toolBarOnOff(0);
                 hoverOutCharacterDice(selectDiceCharacterIdx);
                 //balpanArrow.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));
                 standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/backImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_back");
