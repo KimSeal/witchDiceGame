@@ -804,13 +804,25 @@ public class TalkManager : MonoBehaviour
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
-        else if (talkList[a].imagePlace == 1) {
-            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
-            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-        }
-        else if (talkList[a].imagePlace == 2) {
-            talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-            talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
+        else {
+            Sprite temp = null;
+            if (Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString()) != null)
+            {
+                temp = Resources.Load<Sprite>("sprite/talkImage/spr_talkImage_" + talkList[a].imageIdx.ToString());
+            }
+            else
+            {
+                temp = Resources.Load<Sprite>("sprite/talkImage/originVersion/spr_talkImage_" + talkList[a].imageIdx.ToString());
+            }
+            
+            if (talkList[a].imagePlace == 1) {
+                talkImage[0].GetComponent<Image>().sprite = temp;
+                talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            }
+            else if (talkList[a].imagePlace == 2) {
+                talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                talkImage[1].GetComponent<Image>().sprite = temp;
+            }
         }
 
         //캐릭터 밝기 조정
