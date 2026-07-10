@@ -461,7 +461,7 @@ public class TalkManager : MonoBehaviour
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
-        talkList = CSVReader.Read<TalkReader>("Talk_2");
+        talkList = CSVReader.Read<TalkReader>("Talk_2 1");
         sumList = CSVReader.Read<SumReader>("TextSum");
         for (int i=0;i<sumList.Count;i++)
         {
@@ -812,7 +812,7 @@ public class TalkManager : MonoBehaviour
             }
             else
             {
-                temp = Resources.Load<Sprite>("sprite/talkImage/originVersion/spr_talkImage_" + talkList[a].imageIdx.ToString());
+                temp = Resources.Load<Sprite>("sprite/talkImage/originalVersion/spr_talkImage_" + talkList[a].imageIdx.ToString());
             }
             
             if (talkList[a].imagePlace == 1) {
@@ -843,7 +843,9 @@ public class TalkManager : MonoBehaviour
         for (int i = 0; i < lightingArr.Length; i++)
         {
             if (nameArr[i] == "Village" || nameArr[i] == "Bard" || nameArr[i] == "Tom" || nameArr[i] == "Bob" || 
-                nameArr[i] == "ailBig0" || nameArr[i] == "Kaebi" || nameArr[i] == "grinYoung0")
+                nameArr[i] == "ailBig0" || nameArr[i] == "Kaebi" || nameArr[i] == "grinYoung0" ||
+                nameArr[i] == "ailAdult" || nameArr[i] == "ailDark" || nameArr[i] == "graceWoman" 
+                || nameArr[i] == "killer" || nameArr[i] == "king")
             {
                 characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(204f, 216f);
             }
@@ -858,19 +860,25 @@ public class TalkManager : MonoBehaviour
                 else if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]) != null) {
                     characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
                 }
-                else if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]) != null) 
+                else if (Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/originalVersion/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]) != null) 
                 {
-                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
+                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/originalVersion/" + nameArr[i] + "/spr_" + nameArr[i] + "_" + faceArr[i]);
                 }
                 else
                 {
-                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/NotDemo/" + nameArr[i] + "/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
+                    characterImage[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterTalkStand/originalVersion/" + nameArr[i] + "/spr_stand_" + nameArr[i] + "_" + faceArr[i]);
                 }
             }
         }
 
         //배경 이미지 업데이트
-        background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + talkList[a].backGround);
+        if (Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + talkList[a].backGround) != null) {
+            background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/spr_background_" + talkList[a].backGround);
+        }
+        else
+        {
+            background.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/backgroundImage/originalVersion/spr_background_" + talkList[a].backGround);
+        }
 
         //언어따라 다른 text
         characterName.GetComponent<TextMeshProUGUI>().text = SpecialTextChange(talkList[a].Name);
