@@ -446,6 +446,11 @@ public abstract class Character
             return 3;
         }
 
+        else if (takeSkillPacket.getSkillType() >= 10000) //적 대상 소환
+        {
+            BattleManager.Instance.setEnemyCharacter(takeSkillPacket.getVal(), takeSkillPacket.getSkillType());
+        }
+
         if (takeSkillPacket.getStateChange() >= 1 && takeSkillPacket.getStateChange() <= 6)
         {
             
