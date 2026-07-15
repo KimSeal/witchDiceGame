@@ -515,7 +515,6 @@ public class itemManager : MonoBehaviour
         }
         else if (BattleManager.Instance.getCharacter(idx) != null && BattleManager.Instance.getCharacter(idx).getCurState() == 0) //캐릭터 전환이 되는 경우(생존해 있는 캐릭터!)
         {
-            Debug.Log("???");
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 89f, 0f);
             characterBoard_update();
         }

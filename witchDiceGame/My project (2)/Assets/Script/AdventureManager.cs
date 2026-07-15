@@ -1466,13 +1466,14 @@ public class AdventureManager : MonoBehaviour
 
             for (int i = 0; i < balpanObj.Length; i++) { setBalpan(i, -1); }
             diceSelectInit();
-            
+
+            loadEnd = false;
             balpanScreen.GetComponent<Animator>().Play("Open");
             hoverOutBalpanUpDownButton();
             balpanUpDownButton[0].SetActive(false);
             balpanUpDownButton[1].SetActive(false);
             balpanScreen.transform.position = new Vector3(balpanScreen.transform.position.x, 0, balpanScreen.transform.position.z);
-            loadEnd = false;
+            
             clickAble = false; // 주사위 클릭 못하게
             clickAbleObjSet(nextBtnObj, false, 1);
 

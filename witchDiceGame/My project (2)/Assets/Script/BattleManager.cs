@@ -4064,11 +4064,14 @@ public class BattleManager : MonoBehaviour
                 }
                 rerollButton.transform.position = new Vector3(0f, 300f, 0f); 
                 CharacterManager.Instance.character_reset();
+                bool reviveChk = false;
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
                 {
-                    if (myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0)
+                    if (!reviveChk && myCharacter[i] != null && myCharacter[i].getReviveUnit() && myCharacter[i].getCurState() != 0)
                     { //만약 부활캐릭터이면서 해당 캐릭터가 죽은 경우
                         myCharacter[i].setHp(1);
+                        myCharacter[i].setCurState(0);
+                        reviveChk = true; //부활 캐릭터는 1명만
                     }
 
                     if (myCharacter[i] == null || myCharacter[i].getCurState() != 0) continue;
@@ -4105,7 +4108,7 @@ public class BattleManager : MonoBehaviour
                 setEnemyCharacter(0, 10013);
                 
             }
-            else if (bossPhase == 103) //안경 선배가 보스고 1페이즈 인경우
+            else if (bossPhase == 103) //그레이스가 보스고 1페이즈 인경우
             {
                 hoverOutCharacter(4);
                 if (jsonDataManager.Instance.getChapterRead(2, 2) == 0)
@@ -4145,7 +4148,7 @@ public class BattleManager : MonoBehaviour
 
                 //캐릭터 세팅을 반영
 
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.8f);
                 updateHp();
                 InitSetOfEnemySkill();
             }

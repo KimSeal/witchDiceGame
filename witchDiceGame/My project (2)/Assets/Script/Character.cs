@@ -323,6 +323,7 @@ public abstract class Character
     {
         return destiny;
     }
+    public void setCurState(int input) { curState = input; }
     public int getCurState(){ return curState; }
     public int getHp() {return hp; }
     public int getArmor() {
