@@ -88,8 +88,11 @@ public class HomeManager : MonoBehaviour
         for (int i=0;i<homeNPCText.Count;i++)
         {
             homeNPCText[i].KR = TalkManager.Instance.SpecialTextChange(homeNPCText[i].KR);
+
             homeNPCText[i].JP = TalkManager.Instance.SpecialTextChange(homeNPCText[i].JP);
             homeNPCText[i].EN = TalkManager.Instance.SpecialTextChange(homeNPCText[i].EN);
+
+            
         }
         curChapterIdx = 0;
 
@@ -155,9 +158,21 @@ public class HomeManager : MonoBehaviour
 
     public string getDesc(int idx)
     {
-        if (jsonDataManager.Instance.getLanguage() == 0) return homeNPCText[idx].KR;
-        if (jsonDataManager.Instance.getLanguage() == 0) return homeNPCText[idx].EN;
-        if (jsonDataManager.Instance.getLanguage() == 0) return homeNPCText[idx].JP;
+        
+        
+       
+        if (jsonDataManager.Instance.getLanguage() == 0)
+        {
+            return homeNPCText[idx].KR;
+        }
+        else if (jsonDataManager.Instance.getLanguage() == 1)
+        {
+            return homeNPCText[idx].EN;
+        }
+        else if (jsonDataManager.Instance.getLanguage() == 2)
+        {
+            return homeNPCText[idx].JP;
+        }
         return homeNPCText[idx].EN;
     }
 

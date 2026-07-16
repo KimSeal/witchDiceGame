@@ -461,7 +461,7 @@ public class TalkManager : MonoBehaviour
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
-        talkList = CSVReader.Read<TalkReader>("Talk_2 1");
+        talkList = CSVReader.Read<TalkReader>("Talk_2");
         sumList = CSVReader.Read<SumReader>("TextSum");
         for (int i=0;i<sumList.Count;i++)
         {
