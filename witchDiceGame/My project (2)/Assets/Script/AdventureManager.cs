@@ -949,7 +949,7 @@ public class AdventureManager : MonoBehaviour
         
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
-            //StartCoroutine(phase_Manage_Coroutine(3));
+            //StartCoroutine(phase_Manage_Coroutine(4));
             //StartCoroutine(phase_Manage_Coroutine(1));
             StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
@@ -1477,7 +1477,10 @@ public class AdventureManager : MonoBehaviour
             clickAble = false; // 주사위 클릭 못하게
             clickAbleObjSet(nextBtnObj, false, 1);
 
-            yield return new WaitUntil(() => loadEnd);
+            //yield return new WaitUntil(() => loadEnd);
+            yield return new WaitForSeconds(0.3f);
+            loadEnd = true;
+
             resetItemResult();
             tagInit(0);
             adventureBalpanPointTemp = 0;
@@ -1647,7 +1650,9 @@ public class AdventureManager : MonoBehaviour
             for (int i = 0; i < balpanObj.Length; i++) { setBalpan(i, -1); }
             balpanScreen.GetComponent<Animator>().Play("Close");
             loadEnd = false;
-            yield return new WaitUntil(() => loadEnd);
+            yield return new WaitForSeconds(0.3f);
+            loadEnd = true;
+
             clearBalpan();
 
             //발판 이벤트 종료 

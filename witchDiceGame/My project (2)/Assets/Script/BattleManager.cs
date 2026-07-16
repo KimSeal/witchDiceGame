@@ -4117,7 +4117,7 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
                 bossPhase = 0; //보스 페이즈를 0으로 변경
-                curPhase = 1;
+                
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -4147,8 +4147,7 @@ public class BattleManager : MonoBehaviour
                 }
 
                 //캐릭터 세팅을 반영
-
-                yield return new WaitForSeconds(0.8f);
+                curPhase = 1;
                 updateHp();
                 InitSetOfEnemySkill();
             }
