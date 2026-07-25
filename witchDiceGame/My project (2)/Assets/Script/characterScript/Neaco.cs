@@ -25,7 +25,7 @@ public class Neaco : Character
         if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
         {
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 3 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
-            packets.Add(new TakeSkillPacket(BattleManager.Instance.getCurSkillInfo().useCharacterIdx, 3, 0, 1));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 3, 0, 1));
         }
         if (sendSkillPacket.useSkillIdx == 1) //용사 기본 스킬
         {

@@ -427,7 +427,8 @@ public class jsonDataManager : MonoBehaviour
         return playerPlayData.getBattleShakeOpt();
     }
     public void setBattleShakeOpt(int val) { playerPlayData.setBattleShakeOpt(val); SavePlayerDataToJson(); }
-
+    public bool getTalkAuto() { return playerPlayData.getTalkAuto(); }
+    public void setTalkAuto(bool input) { playerPlayData.setTalkAuto(input);SavePlayerDataToJson(); }
     public class PlayerPlayData
     {
         public int language;
@@ -466,6 +467,8 @@ public class jsonDataManager : MonoBehaviour
 
         public bool foodStreetMeet = false;
         public int[] foodStreetStat = new int[4]; //음식 거리에서 분배된 스탯값.
+
+        public bool talkAuto = false;
         public int setFontSize(int val)
         {
             this.fontSize = val;
@@ -569,6 +572,8 @@ public class jsonDataManager : MonoBehaviour
 
             fontSize = 2;
             battleShakeOpt = 1;
+
+            talkAuto = false;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -621,7 +626,11 @@ public class jsonDataManager : MonoBehaviour
             for (int i = 0; i < foodStreetStat.Length; i++) foodStreetStat[i] = playerPlayerData.foodStreetStat[i];
             fontSize = playerPlayerData.fontSize;
             battleShakeOpt = playerPlayerData.battleShakeOpt;
+
+            talkAuto = playerPlayerData.talkAuto;
         }
+        public bool getTalkAuto() { return talkAuto; }
+        public void setTalkAuto(bool input) { talkAuto = input; }
         public int getBattleShakeOpt()
         {
             return battleShakeOpt;

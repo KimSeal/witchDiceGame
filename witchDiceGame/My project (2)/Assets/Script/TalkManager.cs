@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using TMPro;
 public class TalkManager : MonoBehaviour
 {
@@ -88,6 +90,10 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public GameObject skipButtonOutline;
     [SerializeField] public GameObject prevButtonOutline;
 
+    [SerializeField] public GameObject autoButton;
+    [SerializeField] public GameObject autoButtonOutline;
+
+    public float autoRemainTime = 0f;
     public void setMapperLock(int opt)
     {
         MapperLock = opt;
@@ -293,6 +299,10 @@ public class TalkManager : MonoBehaviour
             {
                 AdventureManager.Instance.remainItemOnOff(true);
             }
+            else if (AdventureManager.Instance.remainStoreChk())
+            {
+                AdventureManager.Instance.remainStoreOnOff(true);
+            }
             else
             {
                 if (!descClickLock)
@@ -365,9 +375,9 @@ public class TalkManager : MonoBehaviour
             int tempIdx = 0;
             for (int i=0;i<4;i++)
             {
-                if(BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                if(BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0 && BattleManager.Instance.getCharacter(i).getDestiny().getDestinyIdx() == 0)
                 {
-                    makeTutorialArrow(tempIdx, new Vector3(-112 + (i * 64), -55, 0), 0, 2);
+                    //makeTutorialArrow(tempIdx, new Vector3(-112 + (i * 64), -55, 0), 0, 2);
                     makeTutorialArrow(tempIdx + 1, new Vector3(-112 + (64 * i) + 32, -55, 0), 0, 2);
                     tempIdx += 2;
                 }
@@ -377,7 +387,15 @@ public class TalkManager : MonoBehaviour
         if(opt == 10) 
         {
             makeTutorialArrow(1, new Vector3(110, -10, 0), 1, 2);
-            
+            for (int i = 0; i < 4; i++)
+            {
+                if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                {
+                    makeTutorialArrow(2, new Vector3(-90 + (60 * i) , 60, 0), 0, 2);
+                    break;
+                }
+            }
+
         }
         if(opt == 11)
         {
@@ -461,7 +479,7 @@ public class TalkManager : MonoBehaviour
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
-        talkList = CSVReader.Read<TalkReader>("Talk_2 1");
+        talkList = CSVReader.Read<TalkReader>("Talk_2");
         sumList = CSVReader.Read<SumReader>("TextSum");
         for (int i=0;i<sumList.Count;i++)
         {
@@ -506,20 +524,90 @@ public class TalkManager : MonoBehaviour
             entity.SetActive(false);
 
             
-        }
-
-        bool jumpFlag = false;
-
-    private void Update()
-    {
-        
-        if (Input.GetKeyUp(KeyCode.Space) && !chapterStartManager.Instance.getChapterStartEnd())
-        {
-                clickDescBox();
-        }
-        
     }
 
+    [SerializeField]
+    public GameObject remainTimeUI;
+
+    private bool autoActive = false;
+    private float maxAutoTime = 0f;
+    bool jumpFlag = false;
+    private KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, 
+        KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0, KeyCode.Minus, KeyCode.Equals};
+    private KeyCode[] underKeys = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, 
+        KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O };
+   
+    
+    private void Update()
+    {
+        if (!talkingChk)
+        {
+            remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f, 7f);
+        }
+        else if (
+            autoActive && 
+            !optionManager.Instance.getOptionOn() && autoRemainTime > 0.0f)
+        {
+            autoRemainTime -= Time.deltaTime;
+            remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f - (370f * autoRemainTime / maxAutoTime), 7f);
+            if (autoRemainTime < 0) { clickDescBox(); }
+        }
+
+
+        if (!optionManager.Instance.getOptionOn()) {
+            if (Input.GetKeyUp(KeyCode.Space) && !chapterStartManager.Instance.getChapterStartEnd())
+            {
+                clickDescBox();
+            }
+            for (int i = 0; i < itemKeys.Length; i++)
+            {
+                if (i == 0 && Input.GetKeyDown(itemKeys[i]))
+                {
+                    SimulateClickAtPosition(new Vector2((315f * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
+
+                }
+                else if (i > 0 && Input.GetKeyDown(itemKeys[i]))
+                {
+                    SimulateClickAtPosition(new Vector2(((460f + (102.5f * i)) * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
+                }
+            }
+            for (int i = 0; i < underKeys.Length; i++)
+            {
+                if (Input.GetKeyDown(underKeys[i])) {
+                    if (i == 8) //battleStart Button
+                    {
+                        SimulateClickAtPosition(new Vector2((1707f * Screen.width / 1920f), (68f * Screen.height / 1080f)));
+                    }
+                    else
+                    {
+                        SimulateClickAtPosition(new Vector2(((400f + (160f * i)) * Screen.width / 1920f), (68f * Screen.height / 1080f)));
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    void SimulateClickAtPosition(Vector2 screenPosition)
+    {
+        /*
+        Debug.Log(screenPosition.x);
+        Debug.Log(screenPosition.y);
+        */
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPosition;
+        // 해당 좌표에 있는 UI 요소 검색
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        if (results.Count > 0)
+        {
+            // 가장 앞에 있는 UI 요소에 클릭 이벤트 전달
+            GameObject targetObject = results[0].gameObject;
+            ExecuteEvents.Execute(targetObject, eventData, ExecuteEvents.pointerClickHandler);
+        }
+    }
     // Update is called once per frame
     void FixedUpdate()
         {
@@ -649,8 +737,6 @@ public class TalkManager : MonoBehaviour
         if (a < 0) return;
         if (!talkingChk)
         {
-            
-
             curTalkLastVal = listIdx[a + 1] - listIdx[a];
             curTalkStartVal = listIdx[a];
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
@@ -661,6 +747,9 @@ public class TalkManager : MonoBehaviour
 
             hoverOutSkipButton();
             hoverOutPrevButton();
+            hoverOutAutoButton();
+            changeAutoButtonSprite();
+            autoActive = jsonDataManager.Instance.getTalkAuto();
 
             curIdx = listIdx[a];
             setCharacterName(talkList[a]);
@@ -722,9 +811,43 @@ public class TalkManager : MonoBehaviour
             {
                 curIdx--;
                 printTalk(curIdx);
+                if (!autoActive)
+                {
+                    remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f, 7f);
+                }
             }
         }
     }
+
+    public void clickAutoButton()
+    {
+        jsonDataManager.Instance.setTalkAuto(!jsonDataManager.Instance.getTalkAuto());
+        autoActive = jsonDataManager.Instance.getTalkAuto();
+        
+        changeAutoButtonSprite();
+    }
+    public void changeAutoButtonSprite()
+    {
+        if (!jsonDataManager.Instance.getTalkAuto())
+        {
+            autoButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower_button_auto_0");
+        }
+        else
+        {
+            autoButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/witchPower_button_auto_1");
+        }
+    }
+    public void hoverInAutoButton()
+    {
+        ToolBarManager.Instance.setToolBar(27);
+        autoButtonOutline.SetActive(true);
+    }
+    public void hoverOutAutoButton()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+        autoButtonOutline.SetActive(false);
+    }
+
     public void hoverInPrevButton()
     {
         ToolBarManager.Instance.setToolBar(18);
@@ -755,6 +878,7 @@ public class TalkManager : MonoBehaviour
     }
     public void printTalk(int a)
     {
+        
         if (talkList[a].eventType == 3){
             wishlistButton.SetActive(true);
         }
@@ -894,6 +1018,8 @@ public class TalkManager : MonoBehaviour
         talkLanArr[1] = talkList[a].TextEN;
         talkLanArr[2] = talkList[a].TextJP;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
+        maxAutoTime = 1.0f + (talkLanArr[jsonDataManager.Instance.getLanguage()].Length) * 0.2f;
+        autoRemainTime = maxAutoTime;
         /*
         if (jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
         else if (jsonDataManager.Instance.getLanguage() == 2) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextJP;
@@ -907,6 +1033,7 @@ public class TalkManager : MonoBehaviour
     {
         if (talkingChk)
         {
+            autoRemainTime = -1.0f;
             wishlistButton.SetActive(false);
 
             changeTalkState(0, true);

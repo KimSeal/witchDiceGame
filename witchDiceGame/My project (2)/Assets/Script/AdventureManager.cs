@@ -319,10 +319,22 @@ public class AdventureManager : MonoBehaviour
 
     public void remainItemOnOff(bool onOff)
     {
-
         if (onOff)
         {
             itemRemainText.text = TalkManager.Instance.getDesc(67);
+            itemRemainChk.transform.position = new Vector3(-500f, 0f, 0f);
+            itemRemainChk.GetComponent<hoverRotate>().shakeStart();
+        }
+        else
+        {
+            itemRemainChk.transform.position = new Vector3(-500f, 300f, 0f);
+        }
+    }
+    public void remainStoreOnOff(bool onOff)
+    {
+        if (onOff)
+        {
+            itemRemainText.text = TalkManager.Instance.getDesc(208);
             itemRemainChk.transform.position = new Vector3(-500f, 0f, 0f);
             itemRemainChk.GetComponent<hoverRotate>().shakeStart();
         }
@@ -345,6 +357,15 @@ public class AdventureManager : MonoBehaviour
             resultItemArr[1, 0] == -99999 && resultItemArr[1, 1] == -99999 &&
             resultItemArr[2, 0] == -99999 && resultItemArr[2, 1] == -99999 &&
             resultItemArr[3, 0] == -99999 && resultItemArr[3, 1] == -99999);
+    }
+    public bool remainStoreChk()
+    {
+        return
+            storeEntityObj.activeSelf &&
+            !((storeItemArr[0, 0] == -99999 && storeItemArr[0, 1] == -99999 && storeItemArr[0, 2] == -99999) ||
+            (storeItemArr[1, 0] == -99999 && storeItemArr[1, 1] == -99999 && storeItemArr[1, 2] == -99999) ||
+            (storeItemArr[2, 0] == -99999 && storeItemArr[2, 1] == -99999 && storeItemArr[2, 2] == -99999) ||
+            (storeItemArr[3, 0] == -99999 && storeItemArr[3, 1] == -99999 && storeItemArr[3, 2] == -99999));
     }
 
     public void hoverInCharacter(int idx)
@@ -666,6 +687,7 @@ public class AdventureManager : MonoBehaviour
             if (resultItemArr[idx, 0] == 4)
             {
                 ToolBarManager.Instance.setToolBar(resultCharacter[idx]);
+                hoverInResultCharacter(idx);
             }
             else
             {
@@ -1959,6 +1981,7 @@ public class AdventureManager : MonoBehaviour
 
                 if (curDiceEventPacket.getItemExist() == 1) { //이벤트 결과로 정해진 아이템을 준다.
                     resultObj.SetActive(true);
+                    resultCharacterSkillUIEntity.SetActive(false);
                     for (int i = 0; i < 4; i++)   //각 칸에 대한 처리
                     {
                         resultItemArr[i, 0] = curDiceEventPacket.getItemType(i);
@@ -1977,6 +2000,8 @@ public class AdventureManager : MonoBehaviour
                             clickAbleObjSet(resultObjArr[i], true, 1);
                             clickAbleObjSet(resultObjArr[i], true, 2);
                             if (resultItemArr[i, 0] == 4) {
+                                resultCharacterSkillUIEntity.SetActive(true);
+                                
                                 CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]); //getCharacter(resultItemArr[i, 1]);
                                 for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
                                 
@@ -1988,6 +2013,7 @@ public class AdventureManager : MonoBehaviour
                                     resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark"); 
                                 }
                                 resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
+                                characterSkillUpdate(0);
                             }
                             else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
                         }
@@ -2068,6 +2094,7 @@ public class AdventureManager : MonoBehaviour
                 if (curDiceEventPacket.getItemExist() >= 11 && curDiceEventPacket.getItemExist() <= 14 ) // 랜덤한 아이템을 준다.
                 {
                     resultObj.SetActive(true);
+                    resultCharacterSkillUIEntity.SetActive(false);
                     for (int i = 0; i < 4; i++)   // 보상 수만큼 해주기
                     {
                         resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -2101,6 +2128,7 @@ public class AdventureManager : MonoBehaviour
                 if (curDiceEventPacket.getItemExist() >= 21 && curDiceEventPacket.getItemExist() <= 24) // 랜덤한 캐릭터를 준다.
                 {
                     resultObj.SetActive(true);
+                    resultCharacterSkillUIEntity.SetActive(true);
                     for (int i = 0; i < 4; i++)   
                     {
                         resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -2139,6 +2167,7 @@ public class AdventureManager : MonoBehaviour
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
                         }
                     }
+                    characterSkillUpdate(0);
                 }
                 if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 && !gameOverChk && jsonDataManager.Instance.setChapterDid(stageDepth, 2)){ // 1스테이지 중간 보스 클리어
                     if(jsonDataManager.Instance.getChapterRead(stageDepth,0) == 0) jsonDataManager.Instance.setChapterRead(stageDepth,0);
@@ -2418,6 +2447,44 @@ public class AdventureManager : MonoBehaviour
     }
 
     private int demoEndChk = 0;
+
+    [SerializeField]
+    public GameObject resultCharacterSkillUIEntity;
+    public GameObject[] resultCharacterSkillUI = new GameObject[2];
+    public Sprite[] resultCharacterSkillUIBackground = new Sprite[2];
+    public Skill[] resultCharacterSkill = new Skill[2];
+
+    public void hoverInResultCharacter(int idx)
+    {
+        characterSkillUpdate(idx);
+    }
+    public void hoverInResultCharacterSkill(int idx)
+    {
+        if (resultCharacterSkill[idx] != null)
+        {
+            ToolBarManager.Instance.setToolBar(resultCharacterSkill[idx]);
+            
+        }
+    }
+    public void hoverOutResultCharacterSkill() { ToolBarManager.Instance.toolBarOnOff(0); }
+    public void characterSkillUpdate(int idx)
+    {
+        if(idx < 0 || resultCharacter[idx] == null)
+        {
+            resultCharacterSkill[0] = null;
+            resultCharacterSkill[1] = null;
+            resultCharacterSkillUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
+            resultCharacterSkillUI[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none"); //정상종료
+        }
+        else
+        {
+            resultCharacterSkillUIEntity.GetComponent<SpriteRenderer>().sprite = resultCharacterSkillUIBackground[idx];
+            resultCharacterSkill[0] = resultCharacter[idx].skillUse(0);
+            resultCharacterSkill[1] = resultCharacter[idx].skillUse(1);
+            resultCharacterSkillUI[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + resultCharacterSkill[0].getSkillName());
+            resultCharacterSkillUI[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + resultCharacterSkill[1].getSkillName());
+        }
+    }
     public void clickResultItem(int idx)
     {
         //이벤트가 종료된 상태이고, 해당 아이템들이 유효할때
@@ -2464,6 +2531,7 @@ public class AdventureManager : MonoBehaviour
                     resultItemArr[idx, 1] = -99999;
                     clickAbleObjSet(resultObjArr[idx], false, 1);
                     clickAbleObjSet(resultObjArr[idx], false, 2);
+                    characterSkillUpdate(-1);
                     updateCharacterFace();
                 }
             }

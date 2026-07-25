@@ -159,6 +159,87 @@ public class upDownManager : MonoBehaviour
     [SerializeField]
     public GameObject exampleTextManager;
 
+    [SerializeField]
+    public GameObject[] wasteItemBtn = new GameObject[2];
+    public GameObject wasteItemBoard;
+    public GameObject wasteItemText;
+
+    [SerializeField]
+    public GameObject[] noSkillBtn = new GameObject[2];
+    public GameObject noSkillBoard;
+    public GameObject noSkillText;
+
+    public void activeNoSkillBoard()
+    {
+        noSkillBoard.SetActive(true);
+        noSkillText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(207);
+        hoverOutNoSkillNoButton();
+        hoverOutNoSkillYesButton();
+    }
+    public void clickNoSkillYesButton()
+    {
+        battleStartTrue();
+        clickNoSkillNoButton();
+    }
+    public void hoverInNoSkillYesButton()
+    {
+        noSkillBtn[0].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_yesBtn");
+    }
+    public void hoverOutNoSkillYesButton()
+    {
+        noSkillBtn[0].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_yesBtn_base");
+    }
+
+    public void clickNoSkillNoButton()
+    {
+        noSkillBoard.SetActive(false);
+    }
+    public void hoverInNoSkillNoButton()
+    {
+        noSkillBtn[1].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_noBtn");
+    }
+    public void hoverOutNoSkillNoButton()
+    {
+        noSkillBtn[1].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_noBtn_base");
+    }
+
+    public void tryWasteItem()
+    {
+        wasteItemBoard.SetActive(true);
+        wasteItemText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(206);
+        hoverOutWastItemNoButton();
+        hoverInWastItemYesButton();
+    }
+    public void clickWasteItemNoButton()
+    {
+        wasteItemBoard.SetActive(false);
+    }
+    public void hoverInWastItemYesButton()
+    {
+        wasteItemBtn[0].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_yesBtn");
+    }
+    public void hoverOutWastItemYesButton()
+    {
+        wasteItemBtn[0].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_yesBtn_base");
+    }
+
+    public void hoverInWastItemNoButton()
+    {
+        wasteItemBtn[1].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_noBtn");
+    }
+    public void hoverOutWastItemNoButton()
+    {
+        wasteItemBtn[1].GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_noBtn_base");
+    }
+
     private void Awake()
     {
         if (null == instance)
@@ -210,6 +291,9 @@ public class upDownManager : MonoBehaviour
         townName[6] = "???";
         townName[7] = "Hill";
         initSet = false;
+
+        clickWasteItemNoButton();
+        clickNoSkillNoButton();
     }
 
     private bool initSet = false;
@@ -359,13 +443,29 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverInOptionButton()
     {
-        optionButton.GetComponent<Image>().sprite
+        if (!optionManager.Instance.getOptionOn())
+        {
+            optionButton.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionButton_on");
+        }
+        else
+        {
+            optionButton.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionExitButton_on");
+        }
     }
     public void hoverOutOptionButton()
     {
-        optionButton.GetComponent<Image>().sprite
-           = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionButton_off");
+        if (!optionManager.Instance.getOptionOn())
+        {
+            optionButton.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionButton_off");
+        }
+        else
+        {
+            optionButton.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionExitButton_off");
+        }
     }
     
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
@@ -853,6 +953,11 @@ public class upDownManager : MonoBehaviour
 
     public void clickDeleteInitBtn()
     {
+        if (AdventureManager.Instance.getTutorial() > 0)
+        {
+            fullUI.showFull(65);
+            return;
+        }
         if (AdventureManager.Instance.getBattleEventChk())
         {
             clickCharacterButton(-1);
@@ -952,13 +1057,29 @@ public class upDownManager : MonoBehaviour
         if (getCharacterExist(idx))
         //if (BattleManager.Instance.getCharacter(idx) != null && BattleManager.Instance.getCharacter(idx).getCurState() == 0)
         {
-            bigDiceSkillOutline[idx].GetComponent<Image>().sprite
-            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
-
             if (BattleManager.Instance.getDiceTake(idx) != -999)
             {
                 ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
             }
+
+            if (underSkillAble[idx].GetComponent<Image>().sprite != Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on"))
+            {
+                return;
+            }
+
+            int needDiceNum = BattleManager.Instance.getCurClickNeedDiceNum();
+            int tempIdx = idx;
+            while (needDiceNum > 0 && tempIdx < 4) {
+                if (BattleManager.Instance.getCharacter(tempIdx) != null && BattleManager.Instance.getCharacter(tempIdx).getCurState() == 0) {
+                    if (BattleManager.Instance.getDiceTake(tempIdx) < 0) {
+                        bigDiceSkillOutline[tempIdx].GetComponent<Image>().sprite
+                        = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+                    }
+                    needDiceNum--;
+                }
+                tempIdx++;
+            }
+            
             int[] tempArr = itemManager.Instance.passiveItemActiveByHover(BattleManager.Instance.getCurClickSkill() / 10, BattleManager.Instance.getCurClickSkill() % 10, idx, 0, -999);
             printHoverPassive(tempArr, 0);
         }
@@ -980,8 +1101,11 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutBigDiceSkill(int idx)
     {
-        bigDiceSkillOutline[idx].GetComponent<Image>().sprite
-             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        for (int i = 0; i < 4; i++)
+        {
+            bigDiceSkillOutline[i].GetComponent<Image>().sprite
+                 = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
         ToolBarManager.Instance.toolBarOnOff(0);
         for (int i = 0; i < upperItemEffOrigin.Length-1; i++)
         {
@@ -1333,23 +1457,30 @@ public class upDownManager : MonoBehaviour
 
     public void battleStart()
     {
-        if (BattleManager.Instance.skillEmptyChk()) {
-            fullUI.showFull(68);
-            BattleManager.Instance.skillEmptyChkEnd();
-            return;
-        }
+        
         if (AdventureManager.Instance.getTutorial() == 7 || AdventureManager.Instance.getTutorial() == 8 ||
             AdventureManager.Instance.getTutorial() == 11 || AdventureManager.Instance.getTutorial() == 12 ||
                 AdventureManager.Instance.getTutorial() == 13 || AdventureManager.Instance.getTutorial() == 14 ||
                 AdventureManager.Instance.getTutorial() == 15 || AdventureManager.Instance.getTutorial() == 16) {
             return;
         }
+        if (BattleManager.Instance.skillEmptyChk())
+        {
+            activeNoSkillBoard();
+            return;
+        }
+        battleStartTrue();
+    
+    }
+    public void battleStartTrue()
+    {
         clickItem(-1);
         clickItem(-1);
         BattleManager.Instance.setCurClickSkill(-1);
         lockState = 3;
         BattleManager.Instance.updateMoveUI(3);
         BattleManager.Instance.moveToBattlePhase();
+        ToolBarManager.Instance.toolBarOnOff(0);
     }
 
     public void activeBattleStart(bool onOff)
@@ -1454,7 +1585,14 @@ public class upDownManager : MonoBehaviour
         //전투 중에는 추가 잠금 불가능하게
         if (input != -1 && lockState == 3) return;
 
-        
+        if (input == -1 && AdventureManager.Instance.getTutorial() == 8)
+        {
+            if (BattleManager.Instance.getDiceTake(0) == -999 && BattleManager.Instance.getDiceTake(1) == -999 && BattleManager.Instance.getDiceTake(2) == -999 && BattleManager.Instance.getDiceTake(3) == -999)
+            {
+                fullUI.showFull(205);
+                return;
+            }
+        }
 
         deleteOtherLock(1);
         for (int idx = 0; idx < 8; idx++) {
@@ -1472,7 +1610,11 @@ public class upDownManager : MonoBehaviour
             updateBigDiceSkill();
         }
         else {
-            if (AdventureManager.Instance.getTutorial() == 8) AdventureManager.Instance.setTutorial(9);
+            if (AdventureManager.Instance.getTutorial() == 8)
+            {
+                AdventureManager.Instance.setTutorial(9);
+                upDownManager.Instance.activeBattleStart(true);
+            }
             backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);
             bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 327f, 0f);
             updateBigDiceSkill();
@@ -1509,10 +1651,16 @@ public class upDownManager : MonoBehaviour
             fullUI.showFull(65);
             return;
         }
-        if (curItemIdx >= 0) {
-            if (AdventureManager.Instance.getTutorial() == 5 && curItemType == 0 && curItemIdx == 0) AdventureManager.Instance.setTutorial(6);
-            itemManager.Instance.useItem(curItemType, curItemIdx);
+        if (curItemIdx >= 0 && itemManager.Instance.getItemExistArr(curItemIdx)) {
+            tryWasteItem();
         }
+    }
+
+    public void clickTrashButtonTrue()
+    {
+        if (AdventureManager.Instance.getTutorial() == 5 && curItemType == 0 && curItemIdx == 0) AdventureManager.Instance.setTutorial(6);
+        itemManager.Instance.useItem(curItemType, curItemIdx);
+        clickWasteItemNoButton();
     }
 
     public void clickItem(int input)
@@ -1842,8 +1990,12 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-           
-            if (AdventureManager.Instance.getTutorial() == 16) AdventureManager.Instance.setTutorial(17);
+
+            if (AdventureManager.Instance.getTutorial() == 16)
+            {
+                activeBattleStart(true);
+                AdventureManager.Instance.setTutorial(17);
+            }
             bigDicePowerCancleObj.SetActive(false);
             BattleManager.Instance.deleteWitchPowerUI();
             //backBlack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 360f, 0f);

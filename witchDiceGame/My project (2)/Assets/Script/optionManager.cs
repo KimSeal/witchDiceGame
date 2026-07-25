@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 public class optionManager : MonoBehaviour
 {
@@ -51,7 +53,15 @@ public class optionManager : MonoBehaviour
     public TextMeshProUGUI[] soundText = new TextMeshProUGUI[2];
     public TextMeshProUGUI fullScreenText;
 
+    [SerializeField]
+    public GameObject[] optionImage = new GameObject[4];
+    public Sprite[] optionLogo = new Sprite[5];
+
     private bool optionOn = false;
+    public bool getOptionOn()
+    {
+        return optionOn;
+    }
     public static optionManager Instance
     {
         get
@@ -72,12 +82,15 @@ public class optionManager : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape)) {
             clickOptionButton();
+           
         }
     }
 
     public void clickOptionButton()
     {
         AdventureManager.Instance.activeGiveUpBoard(false);
+        upDownManager.Instance.clickWasteItemNoButton();
+        upDownManager.Instance.clickNoSkillNoButton();
         if (optionOn)
         {
             unactiveOptionBoard();
@@ -86,6 +99,7 @@ public class optionManager : MonoBehaviour
         {
             activeOptionBoard();
         }
+        upDownManager.Instance.hoverOutOptionButton();
     }
     public void clickBlack()
     {
@@ -97,10 +111,13 @@ public class optionManager : MonoBehaviour
         optionBoard.SetActive(true);
         optionBackBoard.SetActive(true);
         optionBackBoard.transform.position = new Vector3(CameraManager.Instance.cameraPointX(), CameraManager.Instance.cameraPointY(), 0);
-        
+
         for (int i = 0; i < optionBoards.Length; i++)
         {
-            if (i == optionIdx) optionBoards[i].SetActive(true);
+            if (i == optionIdx)
+            {
+                optionBoards[i].SetActive(true);
+            }
             else optionBoards[i].SetActive(false);
         }
         changeOption(optionIdx);
@@ -124,11 +141,18 @@ public class optionManager : MonoBehaviour
     public void changeOption(int idx)
     {
         optionIdx = idx;
+
+        for (int i = 0; i < optionImage.Length; i++)
+        {
+            if(i == idx) optionImage[i].GetComponent<Image>().sprite = optionLogo[0];
+            else optionImage[i].GetComponent<Image>().sprite = optionLogo[i + 1];
+        }
+
         for (int i = 0; i < optionBoards.Length; i++)
         {
             if (idx == i)
             {
-                optionBtn[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 125);
+                optionBtn[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(134, 229, 127, 255);
                 optionBoards[i].SetActive(true);
             }
             else

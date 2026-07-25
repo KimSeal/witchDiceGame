@@ -168,6 +168,10 @@ public class itemManager : MonoBehaviour
         itemMaxNum = number;
         updateInventory();
     }
+    public bool getItemExistArr(int idx)
+    {
+        return ItemExistArr[curSelectItemType, idx];
+    }
 
     public int getItemNum(int itemType)
     {

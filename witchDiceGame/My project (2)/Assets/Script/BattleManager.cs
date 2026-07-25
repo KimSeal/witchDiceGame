@@ -268,7 +268,7 @@ public class BattleManager : MonoBehaviour
     }
     public void hoverInCharacter(int idx)
     {
-        if (curPhase == 4 || curPhase == 5)
+        if (curPhase != 3 )
         {
             return;
         }
@@ -365,6 +365,7 @@ public class BattleManager : MonoBehaviour
     int bossPhase = 0;
     public void changeBossPhase(int a)
     {
+        bossPhase = 0;
         bossResult = 0;
         if(a >= 100){bossResult = 1;}
         if (a >= 100) bossPhase = a;
@@ -733,19 +734,16 @@ public class BattleManager : MonoBehaviour
         return 0;
     }
 
-    private bool readyBattleChk = false;
+
     public bool skillEmptyChk()
     {
-        return readyBattleChk && 
+        return 
             myDiceTake[0] == -999 &&
             myDiceTake[1] == -999 &&
             myDiceTake[2] == -999 &&
             myDiceTake[3] == -999 ;
     }
-    public void skillEmptyChkEnd()
-    {
-        readyBattleChk = false;
-    }
+
     public void click_dice(int diceIdx)
     {
         
@@ -976,7 +974,7 @@ public class BattleManager : MonoBehaviour
     }
 
 
-
+    private bool tutorialBattleStartButtonCheck = false;
     private IEnumerator startPhaseManage()
     {
 
@@ -987,6 +985,8 @@ public class BattleManager : MonoBehaviour
         itemManager.Instance.enterBattlePhase();
         initTransBySkillUser();
         upDownManager.Instance.activeBattleStart(false);
+        if (AdventureManager.Instance.getTutorial() > 0 && AdventureManager.Instance.getTutorial() < 16) tutorialBattleStartButtonCheck = true;
+        else tutorialBattleStartButtonCheck = false;
 
         do {
             InitSetOfEnemySkill();
@@ -998,10 +998,14 @@ public class BattleManager : MonoBehaviour
             AdventureManager.Instance.giveUpBtnAble(true);
             //StartCoroutine(witchPowerPhase());
             yield return new WaitUntil(() => phaseMoveChk(3));
-           
 
+            if (AdventureManager.Instance.getTutorial() > 0 && AdventureManager.Instance.getTutorial() <16)
+            {
+                upDownManager.Instance.activeBattleStart(false);
+            }
             StartCoroutine(skillSelectPhase());
             yield return new WaitUntil(() => phaseMoveChk(4) || giveUpChk);
+            tutorialBattleStartButtonCheck = false;
             TalkManager.Instance.resetTutorialArrow();
             upDownManager.Instance.activeBattleStart(false);
             AdventureManager.Instance.giveUpBtnAble(false);
@@ -1499,6 +1503,14 @@ public class BattleManager : MonoBehaviour
 
     }
     public void setCurClickSkill(int input) {
+        if (input == -1 && AdventureManager.Instance.getTutorial() == 8)
+        {
+            if (BattleManager.Instance.getDiceTake(0) == -999 && BattleManager.Instance.getDiceTake(1) == -999 && BattleManager.Instance.getDiceTake(2) == -999 && BattleManager.Instance.getDiceTake(3) == -999)
+            {
+                fullUI.showFull(205);
+                return;
+            }
+        }
         curClickSkill = input;
         upDownManager.Instance.clickSkill(curClickSkill);
     }
@@ -1622,8 +1634,14 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator skillSelectPhase()
     {
-        upDownManager.Instance.activeBattleStart(true);
-        readyBattleChk = true;
+        if (!tutorialBattleStartButtonCheck)
+        {
+            upDownManager.Instance.activeBattleStart(true);
+        }
+        else
+        {
+            upDownManager.Instance.activeBattleStart(false);
+        }
         setCurClickSkill(-1);
         deleteSkillCommand();
 
@@ -1662,8 +1680,19 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.startTalk(40);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
             TalkManager.Instance.setTutorialArrow(10);
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescIdx(204);
             
+            yield return new WaitUntil(() => myDiceTake[0] >= 0 || myDiceTake[1] >= 0 || myDiceTake[2] >= 0 || myDiceTake[3] >= 0);
+            TalkManager.Instance.resetTutorialArrow();
+            TalkManager.Instance.setDescClickLock(true);
+            TalkManager.Instance.setDescIdx(64);
+            
+
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 9);
+            TalkManager.Instance.setDescClickLock(false);
+            TalkManager.Instance.setDescIdx(-1);
+            
             TalkManager.Instance.resetTutorialArrow();
             TalkManager.Instance.startTalk(41);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1732,6 +1761,14 @@ public class BattleManager : MonoBehaviour
     //스킬 선택 중 버튼 클릭에 대한 코드
     public void click_characterSkill_Button(int input)
     {
+        if (AdventureManager.Instance.getTutorial() == 7 && 
+            ( (input % 2 == 0) ||
+            BattleManager.Instance.getCharacter(input / 10) == null || BattleManager.Instance.getCharacter(input/10).getCurState() != 0 || BattleManager.Instance.getCharacter(input/10).getDestiny().getDestinyIdx() != 0)
+            )
+        {
+            fullUI.showFull(65);
+            return;
+        }
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
             upDownManager.Instance.clickUpperItemTypeInit(false);
@@ -1807,6 +1844,15 @@ public class BattleManager : MonoBehaviour
     public int getCurClickSkill()
     {
         return curClickSkill;
+    }
+    public int getCurClickNeedDiceNum()
+    {
+        if (curClickSkill < 0) return 1;
+        else
+        {
+            return getCharacter(curClickSkill / 10).skillUse(curClickSkill % 10).getNeedDiceNum();
+        }
+        return 1;
     }
     //스킬 선택 중 주사위 클릭에 대한 코드
     private void click_characterSkill_Dice(int diceIdx)
@@ -1995,8 +2041,9 @@ public class BattleManager : MonoBehaviour
         }
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
-            readyBattleChk = false;
             curPhase = 4;
+            Debug.Log("curPhase : ");
+            Debug.Log(curPhase);
         }
     }
 
@@ -4731,7 +4778,6 @@ public class BattleManager : MonoBehaviour
  
     public void startBattlePhase()
     {
-        readyBattleChk = false;
         if (AdventureManager.Instance.getTutorial() == 1 || AdventureManager.Instance.getTutorial() == 2)
         {
             backGroundObj[3].GetComponent<Animator>().Play("Empty");

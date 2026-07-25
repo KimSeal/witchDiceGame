@@ -210,6 +210,9 @@ public class Skill
     }
     public string getCommand()
     {
+        if(getSkillIdx() == 79) return this.Command[jsonDataManager.Instance.getLanguage()] + (" ( " + (itemManager.Instance.getItemNum(0) + itemManager.Instance.getItemNum(3)).ToString() + " )"); 
+        if (getSkillIdx() == 80) return this.Command[jsonDataManager.Instance.getLanguage()] + (" ( " + itemManager.Instance.getItemNum(0).ToString() + " / " + itemManager.Instance.getItemNum(3).ToString() + " )");
+        if (getSkillIdx() == 81) return this.Command[jsonDataManager.Instance.getLanguage()] + (" ( " + AdventureManager.Instance.getDeadEnemyCount().ToString() + " )");
         return this.Command[jsonDataManager.Instance.getLanguage()];
     }
     public int getVal(int idx)

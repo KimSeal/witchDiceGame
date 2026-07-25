@@ -154,6 +154,7 @@ public class ToolBarManager : MonoBehaviour
         toolBarDice[4].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         toolBarDice[5].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         toolBarDesc.text = skill.getCommand();
+        
     }
     public void setToolBar(Item item) {
         toolBarOnOff(1);
@@ -197,18 +198,18 @@ public class ToolBarManager : MonoBehaviour
     //전투, 보물, 불운, 행운, 랜덤, 상점, 보스, ???, 미확인 이벤트, 우연, 성장,
     //(11, 12, 13 - 21)
     //아카이브수직이동, 아카이브수직이동, 아카이브종료, 지도화살표, 모험선택지, 가방버튼, 전투시작버튼, 대화 이전버튼, 대화 스킵버튼, 대화 폰트변경버튼, 전투 보상 리롤 버튼
-    //(22, 23, 24), 25, 26
-    //주사위 배치 가능여부 설명(배치가능, 사용중, 불가능), 모험중 캐릭터 선택, 주사위 변경 이벤트
+    //(22, 23, 24), 25, 26, 27
+    //주사위 배치 가능여부 설명(배치가능, 사용중, 불가능), 모험중 캐릭터 선택, 주사위 변경 이벤트, auto 버튼 설명
     
     private int[] toolBarStatTitleIdx = { 72, 73, 74, 83, 85, 124, 155 };
     private int[] toolBarStatContentIdx = { 75, 76, 77, 84, 86, 125, 154 };
 
     private int[] toolBarTitleIdx = {   100, 102, 104, 106, 108, 110, 112, 114, 117, 119, 121,
                                      156,156,159, 161,163,165,167, 170,172,174, 178,
-                                     183, 183, 183, 185, 190};
+                                     183, 183, 183, 185, 190, 209};
     private int[] toolBarContentIdx = {101, 103, 105, 107, 109, 111, 113, 115 ,118, 120, 122,
                                      157,158,160, 162,164,166,168, 171,173,175, 179,
-                                    180,181,182, 186, 191};
+                                    180,181,182, 186, 191, 210};
 
     private int[] toolBarItemTypeTitleIdx = { 78,79,80,81};
     private int[] toolBarItemTypeContentIdx = { 134,135,136, 137};

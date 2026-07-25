@@ -101,10 +101,18 @@ public class hoverRotateUI : MonoBehaviour
     public void setLanguageActive(bool input)
     {
         lanOnOff = input;
-        if (input) transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "* "+ 
+        if (input)
+        {
+            transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(134, 229, 127, 255);
+            transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "* " +
                 transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Substring(2, transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Length - 2);
-        else transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "- " +
-                transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Substring(2, transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Length - 2);
+        }
+        else
+        {
+            transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+            transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "- " +
+               transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Substring(2, transform.GetChild(0).GetComponent<TextMeshProUGUI>().text.Length - 2);
+        }
     }
     public void OnPointerExit(PointerEventData eventData)
     {

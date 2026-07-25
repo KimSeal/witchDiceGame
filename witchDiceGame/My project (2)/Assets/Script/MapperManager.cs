@@ -141,7 +141,8 @@ public class MapperManager : MonoBehaviour
             }
         }
         if (clearStageNum == 0) stagePercentText.text = "";
-        else stagePercentText.text = ((float)clearStageNum * 100f / (float)(AdventureManager.Instance.getAdventureEventLen(stageNum)-1)).ToString() + " %";
+        else if(clearStageNum == AdventureManager.Instance.getAdventureEventLen(stageNum) - 1) stagePercentText.text = "100%!";
+        else stagePercentText.text = ((float)clearStageNum * 100f / (float)(AdventureManager.Instance.getAdventureEventLen(stageNum)-1)).ToString("F2") + " %";
     }
 
     public int getEventTalkMaxDepth()
