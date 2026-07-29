@@ -45,7 +45,17 @@ public class ToolBarManager : MonoBehaviour
     public GameObject toolBarDiceInfo;
     public TextMeshProUGUI[] toolBarDiceText = new TextMeshProUGUI[6];
 
+    [SerializeField]
+    public GameObject toolBarNeedDiceInfo;
+    public TextMeshProUGUI toolBarNeedDiceInfo_title;
+    public GameObject[] toolBarNeedDiceInfo_dice = new GameObject[4];
+    public TextMeshProUGUI[] toolBarNeedDiceInfo_text = new TextMeshProUGUI[4];
+    private Skill curSkillForToolBar2;
+    private int[] curNeedDice = new int[4];
+
+
     public int toolBarState = 0;
+    public int toolBarState_needDice = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,17 +70,83 @@ public class ToolBarManager : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if(toolBarState != 0)
+        if (toolBarState != 0)
         {
             toolBarObj.GetComponent<RectTransform>().position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+            
+        }
+
+        if(toolBarState_needDice != 0)
+        {
+            toolBarNeedDiceInfo.GetComponent<RectTransform>().position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+        }
+        else
+        {
+            toolBarNeedDiceInfo.GetComponent<RectTransform>().position = new Vector3(-30000, -30000, 0);
+        }
+    }
+    public void activeToolBarNeedDice(bool onOff)
+    {
+        if(onOff) toolBarState_needDice = 1;
+        else toolBarState_needDice = 0;
+
+    }
+    public void toolbar2Update(Skill skill)
+    {
+        toolBarNeedDiceInfo_title.text = TalkManager.Instance.getDesc(116);
+        curSkillForToolBar2 = skill;
+
+        for (int i=0;i<4;i++)
+        {
+            curNeedDice[i] = skill.getNeedDice(i);
+            toolBarNeedDiceInfo_dice[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/needDice_" + curNeedDice[i].ToString());
+            if (curNeedDice[i] <= 6 && curNeedDice[i] >= 1) toolBarNeedDiceInfo_text[i].text = curNeedDice[i].ToString() + " " + TalkManager.Instance.getDesc(99);
+            else if (curNeedDice[i] == 7) toolBarNeedDiceInfo_text[i].text = TalkManager.Instance.getDesc(27);
+            else if (curNeedDice[i] == 8) toolBarNeedDiceInfo_text[i].text = TalkManager.Instance.getDesc(28);
+            else if (curNeedDice[i] == 9) toolBarNeedDiceInfo_text[i].text = TalkManager.Instance.getDesc(29);
+            else if (curNeedDice[i] >= 11 && curNeedDice[i] <= 16) toolBarNeedDiceInfo_text[i].text = (curNeedDice[i] % 10).ToString() + " " + TalkManager.Instance.getDesc(25);
+            else if (curNeedDice[i] >= 21 && curNeedDice[i] <= 26) toolBarNeedDiceInfo_text[i].text = (curNeedDice[i] % 10).ToString() + " " + TalkManager.Instance.getDesc(26);
+            else toolBarNeedDiceInfo_text[i].text = "";
         }
     }
 
+    public void matchDiceForToolBar2(int idx)
+    {
+        toolbar2Update(curSkillForToolBar2);
+        int[] curDiceArr = { -999, -999, -999, -999 };
+        int tmpIdx = 0;
+        for (; idx<4;idx++)
+        {
+            if (BattleManager.Instance.getDiceNum(idx) > 0 && BattleManager.Instance.getDiceNum(idx) < 6)
+            {
+                curDiceArr[tmpIdx] = BattleManager.Instance.getDiceNum(idx);
+                tmpIdx++;
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if ( curDiceArr[i] != -999 &&
+                ((curNeedDice[i] <= 6 && curNeedDice[i] >= 1 && curNeedDice[i] == curDiceArr[i]) ||
+            (curNeedDice[i] == 7 && curDiceArr[i] % 2 == 1) ||
+            (curNeedDice[i] == 8 && curDiceArr[i] % 2 == 0) ||
+            (curNeedDice[i] == 9 ) ||
+            (curNeedDice[i] >= 11 && curNeedDice[i] <= 16 && (curNeedDice[i] % 10) >= curDiceArr[i] ) ||
+            (curNeedDice[i] >= 21 && curNeedDice[i] <= 26 && (curNeedDice[i] % 10) <= curDiceArr[i])))
+            {
+                toolBarNeedDiceInfo_text[i].color =  new Color32(134, 229, 127, 255);
+            }
+            else
+            {
+                toolBarNeedDiceInfo_text[i].color = new Color32(234, 132, 132, 255);
+            }
+        }
+    }
     public void toolBarOnOff(int idx)
     {
         toolBarState = idx;
         if (idx == 0){
             toolBarObj.SetActive(false);
+            ToolBarManager.Instance.activeToolBarNeedDice(false);
             return;
         }
         toolBarObj.SetActive(true);

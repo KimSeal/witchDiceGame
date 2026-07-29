@@ -3010,11 +3010,13 @@ public class AdventureManager : MonoBehaviour
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
             giveUpBtnAble(false);
-            upDownManager.Instance.changeOption(1, true);
+            Debug.Log("battle start trigger!");
+           
             gameOverChk = false;
             curCanvasIsAdventure = false;
             upDownManager.Instance.resetUI();
             BattleManager.Instance.startBattle_fromAdventure();
+            upDownManager.Instance.changeOption(1, true);
             CameraManager.Instance.updateInitPosition(new Vector3(0f, mainCamera.transform.position.y, mainCamera.transform.position.z));
             
         }

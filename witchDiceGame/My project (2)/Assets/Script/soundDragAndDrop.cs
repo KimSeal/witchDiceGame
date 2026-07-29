@@ -39,6 +39,8 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
         this.GetComponent<hoverRotateUI>().shakeStart();
         if (soundOption == 0) this.transform.position = new Vector3((SoundManager_Main.Instance.backgroundVolume * (maxVal - minVal) /2.5f) + minVal,this.transform.position.y, this.transform.position.z);
         if (soundOption == 1) this.transform.position = new Vector3((SoundManager_Sfx.Instance.SFXVolume * (maxVal - minVal) / 2.5f) + minVal, this.transform.position.y, this.transform.position.z);
+        if(soundOption == 2) this.transform.position  = new Vector3((jsonDataManager.Instance.getTalkAutoSpeed() * (maxVal - minVal) / 2.5f) + minVal, this.transform.position.y, this.transform.position.z);
+
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
@@ -54,6 +56,7 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
         
         if(soundOption == 0) SoundManager_Main.Instance.setBackgroundVolume((nextX - minVal) * 2.5f/ (maxVal - minVal));
         if (soundOption == 1) SoundManager_Sfx.Instance.setSFXVolume((nextX - minVal) * 2.5f / (maxVal - minVal));
+        if (soundOption == 2) TalkManager.Instance.setAutoSpeed((nextX - minVal) * 2.5f / (maxVal - minVal));
 
     }
 
@@ -73,6 +76,11 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
         if (soundOption == 1) {
             jsonDataManager.Instance.setSFXVol((nextX - minVal) * 2.5f / (maxVal - minVal));
             SoundManager_Sfx.Instance.playSound(1);
+        }
+        if(soundOption == 2)
+        {
+            jsonDataManager.Instance.setTalkAutoSpeed((nextX - minVal) * 2.5f / (maxVal - minVal));
+            TalkManager.Instance.setAutoSpeed((nextX - minVal) * 2.5f / (maxVal - minVal));
         }
         Debug.Log((nextX - minVal) * 2.5f / (maxVal - minVal));
 

@@ -113,6 +113,7 @@ public class TalkManager : MonoBehaviour
     public void setDescClickLock(bool hello)
     {
         descClickLock = hello;
+        upDownManager.Instance.activeSkillCoverImage(!hello);
     }
 
     public void setDescString(string str) {
@@ -531,13 +532,22 @@ public class TalkManager : MonoBehaviour
 
     private bool autoActive = false;
     private float maxAutoTime = 0f;
+    private float autoSpeed = 1f;
     bool jumpFlag = false;
     private KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, 
         KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0, KeyCode.Minus, KeyCode.Equals};
     private KeyCode[] underKeys = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, 
         KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O };
    
-    
+    public void setAutoSpeed(float input)
+    {
+        this.autoSpeed = input;
+    }
+    public void setKeyBoardBinding(int opt, int idx, KeyCode input)
+    {
+        if (opt == 0) itemKeys[idx] = input;
+        if (opt == 1) underKeys[idx] = input;
+    }
     private void Update()
     {
         if (!talkingChk)
@@ -548,7 +558,7 @@ public class TalkManager : MonoBehaviour
             autoActive && 
             !optionManager.Instance.getOptionOn() && autoRemainTime > 0.0f)
         {
-            autoRemainTime -= Time.deltaTime;
+            autoRemainTime -= Time.deltaTime * autoSpeed;
             remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f - (370f * autoRemainTime / maxAutoTime), 7f);
             if (autoRemainTime < 0) { clickDescBox(); }
         }
@@ -563,12 +573,13 @@ public class TalkManager : MonoBehaviour
             {
                 if (i == 0 && Input.GetKeyDown(itemKeys[i]))
                 {
+                    Debug.Log("click A");
                     SimulateClickAtPosition(new Vector2((315f * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
 
                 }
                 else if (i > 0 && Input.GetKeyDown(itemKeys[i]))
                 {
-                    SimulateClickAtPosition(new Vector2(((460f + (102.5f * i)) * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
+                    SimulateClickAtPosition(new Vector2(((460f + (102.5f * (i-1))) * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
                 }
             }
             for (int i = 0; i < underKeys.Length; i++)
@@ -604,7 +615,9 @@ public class TalkManager : MonoBehaviour
         if (results.Count > 0)
         {
             // 가장 앞에 있는 UI 요소에 클릭 이벤트 전달
+            
             GameObject targetObject = results[0].gameObject;
+            Debug.Log(targetObject);
             ExecuteEvents.Execute(targetObject, eventData, ExecuteEvents.pointerClickHandler);
         }
     }

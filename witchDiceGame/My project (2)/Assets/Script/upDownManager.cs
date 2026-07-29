@@ -28,6 +28,9 @@ public class upDownManager : MonoBehaviour
     public GameObject underSkillEntity;
     public GameObject[] underSkillButton = new GameObject[8];
     public GameObject[] underSkillOutline = new GameObject[8];
+    public GameObject underSkillCoverSet;
+    public GameObject[] underSkillCover = new GameObject[8];
+    public Sprite[] underSkillCoverSprite = new Sprite[8];
     public GameObject[] underSkillAble = new GameObject[4];
     public GameObject underBattleButton;
     public GameObject underBattleOutline;
@@ -169,6 +172,12 @@ public class upDownManager : MonoBehaviour
     public GameObject noSkillBoard;
     public GameObject noSkillText;
 
+    private Vector3 coverInitPoint;
+    public void activeSkillCoverImage(bool onOff)
+    {
+        if (onOff) underSkillCoverSet.SetActive(true);
+        else underSkillCoverSet.SetActive(false);
+    }
     public void activeNoSkillBoard()
     {
         noSkillBoard.SetActive(true);
@@ -500,7 +509,7 @@ public class upDownManager : MonoBehaviour
     //off, on
     private float[,] moveConstY = {
         {-2f, 225f},
-        { 55f, 168f}
+        { 58f, 168f}
     };
 
     public void rotateGold()
@@ -994,6 +1003,32 @@ public class upDownManager : MonoBehaviour
         }
         if(optionOnOff[1]){ //skillSelectUI
             underSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+            for (int idx=0;idx<4;idx++)
+            {
+                if(BattleManager.Instance.getCharacter(idx) == null 
+                    || BattleManager.Instance.getCharacter(idx).getCurState() != 0)
+                {
+                    changeUnderSkillCover(idx, false);
+                }
+                else
+                {
+                    changeUnderSkillCover(idx, true);
+                }
+            }
+        }
+    }
+
+    public void changeUnderSkillCover(int characterIdx, bool onOff)
+    {
+        if (onOff)
+        {
+            underSkillCover[characterIdx * 2].GetComponent<Image>().sprite = underSkillCoverSprite[characterIdx * 2];
+            underSkillCover[characterIdx * 2 + 1].GetComponent<Image>().sprite = underSkillCoverSprite[characterIdx * 2 + 1];
+        }
+        else
+        {
+            underSkillCover[characterIdx * 2].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+            underSkillCover[characterIdx * 2 + 1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
     }
 
@@ -1061,9 +1096,10 @@ public class upDownManager : MonoBehaviour
             {
                 ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
             }
-
-            if (underSkillAble[idx].GetComponent<Image>().sprite != Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on"))
+            else if (underSkillAble[idx].GetComponent<Image>().sprite != Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on"))
             {
+                ToolBarManager.Instance.activeToolBarNeedDice(true);
+                ToolBarManager.Instance.matchDiceForToolBar2(idx);
                 return;
             }
 
@@ -1107,6 +1143,7 @@ public class upDownManager : MonoBehaviour
                  = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
         ToolBarManager.Instance.toolBarOnOff(0);
+        
         for (int i = 0; i < upperItemEffOrigin.Length-1; i++)
         {
             if (itemManager.Instance.getItemFromBag(3, i) != null && itemManager.Instance.getItemFromBag(3, i).getActiveTiming() == 0)
@@ -1530,6 +1567,8 @@ public class upDownManager : MonoBehaviour
             ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));
         }
     }
+
+    public int getLockState() { return lockState; }
     public void hoverOutDiceSkill()
     {
         ToolBarManager.Instance.toolBarOnOff(0);
@@ -2116,6 +2155,7 @@ public class upDownManager : MonoBehaviour
     public void skillIconUpdate(int idx, string str)
     {
         underSkillButton[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + str);
+
     }
     public string[] powerName = { "Reroll Origin", "Reroll", "Add", "Sub"};
     

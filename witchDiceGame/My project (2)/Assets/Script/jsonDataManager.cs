@@ -61,6 +61,18 @@ public class jsonDataManager : MonoBehaviour
             setCharacterSelect(1,0);
         }
 
+        for (int i=0;i < playerPlayData.itemClickKey.Length;i++)
+        {
+            TalkManager.Instance.setKeyBoardBinding(0, i, getClickKey(0, i));
+        }
+        for (int i = 0; i < playerPlayData.skillClickKey.Length; i++)
+        {
+            TalkManager.Instance.setKeyBoardBinding(1, i, getClickKey(1, i));
+        }
+
+        TalkManager.Instance.setAutoSpeed(getTalkAutoSpeed());
+
+
         //TalkManager.Instance.setDescIdx(39);
 
     }
@@ -413,6 +425,33 @@ public class jsonDataManager : MonoBehaviour
     public int getFoodStreetStat(int idx) { return playerPlayData.getFoodStreetStat(idx); }
     public void setFoodStreetStat(int idx, int val) { playerPlayData.setFoodStreetStat(idx, val); SavePlayerDataToJson(); }
 
+    public KeyCode getClickKey(int opt, int idx)
+    {
+        return (KeyCode)playerPlayData.getClickKey(opt, idx);
+    }
+    public void setClickKey(int opt, int idx, KeyCode input)
+    {
+        if(!playerPlayData.setClickKey(opt, idx, (int)input))
+        {
+            //키보드 이미 사용중이라 적용 실패시
+            fullUI.showFull(236);
+        }
+        else
+        {
+            SavePlayerDataToJson();
+            TalkManager.Instance.setKeyBoardBinding(opt, idx, getClickKey(opt, idx));
+        }
+    }
+    public float getTalkAutoSpeed()
+    {
+        return playerPlayData.talkAutoSpeed;   
+    }
+    public void setTalkAutoSpeed(float input)
+    {
+        playerPlayData.talkAutoSpeed = input;
+        SavePlayerDataToJson();
+    }
+
     public int getFontSize()
     {
         return playerPlayData.getFontSize();
@@ -469,6 +508,35 @@ public class jsonDataManager : MonoBehaviour
         public int[] foodStreetStat = new int[4]; //음식 거리에서 분배된 스탯값.
 
         public bool talkAuto = false;
+
+        public int[] itemClickKey = new int[13];
+        public int[] skillClickKey = new int[9];
+
+        public float talkAutoSpeed = 1f;
+
+        public int getClickKey(int opt, int idx)
+        {
+            if (opt == 0) return itemClickKey[idx];
+            if (opt == 1) return skillClickKey[idx];
+            return 0;
+        }
+        public bool setClickKey(int opt, int idx, int newKey)
+        {
+            for (int i=0;i<itemClickKey.Length;i++)
+            {
+                if (newKey == itemClickKey[i]) return false;
+            }
+            for (int i = 0; i < skillClickKey.Length; i++)
+            {
+                if (newKey == skillClickKey[i]) return false;
+            }
+            
+            if(opt == 0) itemClickKey[idx] = newKey;
+            if (opt == 1) skillClickKey[idx] = newKey;
+
+            return true;
+        }
+
         public int setFontSize(int val)
         {
             this.fontSize = val;
@@ -574,6 +642,23 @@ public class jsonDataManager : MonoBehaviour
             battleShakeOpt = 1;
 
             talkAuto = false;
+            talkAutoSpeed = 1f;
+
+            KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
+            KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Minus, KeyCode.Equals};
+            KeyCode[] underKeys = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
+            KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O };
+
+            for (int i=0;i<itemClickKey.Length;i++)
+            {
+                itemClickKey[i] = (int)itemKeys[i];
+            }
+            for (int i = 0; i < skillClickKey.Length; i++)
+            {
+                skillClickKey[i] = (int)underKeys[i];
+            }
+
+
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -628,6 +713,16 @@ public class jsonDataManager : MonoBehaviour
             battleShakeOpt = playerPlayerData.battleShakeOpt;
 
             talkAuto = playerPlayerData.talkAuto;
+            talkAutoSpeed = playerPlayerData.talkAutoSpeed;
+
+            for (int i = 0; i < itemClickKey.Length; i++)
+            {
+                itemClickKey[i] = playerPlayerData.itemClickKey[i];
+            }
+            for (int i = 0; i < skillClickKey.Length; i++)
+            {
+                skillClickKey[i] = playerPlayerData.skillClickKey[i];
+            }
         }
         public bool getTalkAuto() { return talkAuto; }
         public void setTalkAuto(bool input) { talkAuto = input; }
