@@ -1583,6 +1583,9 @@ public class AdventureManager : MonoBehaviour
                 TalkManager.Instance.setTutorialArrow(16);
                 yield return new WaitUntil(() => tutorialVal == 20);
                 TalkManager.Instance.resetTutorialArrow();
+                TalkManager.Instance.startTalk(49);
+                yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                
                 TalkManager.Instance.setDescClickLock(true);
                 TalkManager.Instance.setDescIdx(1);
             }

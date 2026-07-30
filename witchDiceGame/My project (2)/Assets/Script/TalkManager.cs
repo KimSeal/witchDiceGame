@@ -565,21 +565,20 @@ public class TalkManager : MonoBehaviour
 
 
         if (!optionManager.Instance.getOptionOn()) {
-            if (Input.GetKeyUp(KeyCode.Space) && !chapterStartManager.Instance.getChapterStartEnd())
-            {
-                clickDescBox();
-            }
+            bool inputChk = false;
+
             for (int i = 0; i < itemKeys.Length; i++)
             {
                 if (i == 0 && Input.GetKeyDown(itemKeys[i]))
                 {
                     Debug.Log("click A");
                     SimulateClickAtPosition(new Vector2((315f * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
-
+                    inputChk = true;
                 }
                 else if (i > 0 && Input.GetKeyDown(itemKeys[i]))
                 {
                     SimulateClickAtPosition(new Vector2(((460f + (102.5f * (i-1))) * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
+                    inputChk = true;
                 }
             }
             for (int i = 0; i < underKeys.Length; i++)
@@ -588,15 +587,20 @@ public class TalkManager : MonoBehaviour
                     if (i == 8) //battleStart Button
                     {
                         SimulateClickAtPosition(new Vector2((1707f * Screen.width / 1920f), (68f * Screen.height / 1080f)));
+                        inputChk = true;
                     }
                     else
                     {
                         SimulateClickAtPosition(new Vector2(((400f + (160f * i)) * Screen.width / 1920f), (68f * Screen.height / 1080f)));
+                        inputChk = true;
                     }
                 }
 
             }
-
+            if (!inputChk && (Input.GetKeyDown(KeyCode.Space)||Input.GetKeyDown(KeyCode.KeypadEnter)) && !chapterStartManager.Instance.getChapterStartEnd())
+            {
+                clickDescBox();
+            }
         }
     }
 

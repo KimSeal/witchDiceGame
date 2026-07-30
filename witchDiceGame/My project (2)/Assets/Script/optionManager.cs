@@ -295,6 +295,7 @@ public class optionManager : MonoBehaviour
     }
     public void changeKeyBoard()
     {
+        updateKeyMappingOutline();
         itemKeyBoardDesc[0].text = TalkManager.Instance.getDesc(211);
         for (int i=1;i < itemKeyBoardDesc.Length;i++)
         {
@@ -318,51 +319,38 @@ public class optionManager : MonoBehaviour
         if (curSelectKeyBoard == idx) curSelectKeyBoard = -1;
         else curSelectKeyBoard = idx;
 
-        hoverOutKeyMapping(temp);
+        updateKeyMappingOutline();
     }
     public void hoverInKeyMapping(int idx) {
-        if (idx < 0) return;
-        if (idx < 100){
+        updateKeyMappingOutline();
+        if (idx < 100 && idx >= 0)
+        {
             itemKeyBoard[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
-        }
-        else{
-            underKeyBoard[idx - 100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
-        }
-        if (curSelectKeyBoard >= 0)
-        {
-            if (curSelectKeyBoard < 100)
-            {
-                itemKeyBoard[curSelectKeyBoard].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
-            }
-            else
-            {
-                underKeyBoard[curSelectKeyBoard - 100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
-            }
-        }
-    }
-    public void hoverOutKeyMapping(int idx) {
-        if (idx < 0) return;
-        if (idx < 100)
-        {
-            itemKeyBoard[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
         else
         {
-            underKeyBoard[idx - 100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-        }
-        if (curSelectKeyBoard >= 0)
-        {
-            if (curSelectKeyBoard < 100)
-            {
-                itemKeyBoard[curSelectKeyBoard].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
-            }
-            else
-            {
-                underKeyBoard[curSelectKeyBoard - 100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
-            }
+            underKeyBoard[idx-100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
         }
     }
+    public void hoverOutKeyMapping(int idx) {
+        updateKeyMappingOutline();
+    }
 
+    public void updateKeyMappingOutline()
+    {
+
+        for(int i=0;i<itemKeyBoard.Length;i++) itemKeyBoard[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        for (int i = 0; i < underKeyBoard.Length; i++) underKeyBoard[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        
+        if(curSelectKeyBoard < 100 && curSelectKeyBoard >= 0)
+        {
+            itemKeyBoard[curSelectKeyBoard].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
+        }
+        else
+        {
+            underKeyBoard[curSelectKeyBoard-100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
+        }
+    }
     public void changePlay()
     {
         if (optionIdx == 3)

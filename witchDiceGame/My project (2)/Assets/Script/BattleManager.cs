@@ -2763,9 +2763,10 @@ public class BattleManager : MonoBehaviour
                 GameObject temp = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position + new Vector3(0f,30f,0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
                 temp.GetComponent<coinMove>().changeDest(2);
             }
-
+            /*
             GameObject temp2 = Instantiate(coinEff, enemyCharacterObjUI[idx].transform.position + new Vector3(0f, 30f, 0f), Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
             temp2.GetComponent<coinMove>().changeDest(3);
+            */
             /*
             
             int jewelTemp = 1;
