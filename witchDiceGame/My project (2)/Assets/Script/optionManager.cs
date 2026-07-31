@@ -43,6 +43,9 @@ public class optionManager : MonoBehaviour
     public GameObject[] battleZoomOptButton = new GameObject[4];
     public TextMeshProUGUI[] battleZoomOptButtonText = new TextMeshProUGUI[4];
     public TextMeshProUGUI battleZoomOptText;
+    public GameObject[] battleOttogiButton = new GameObject[4];
+    public TextMeshProUGUI battleOttogiText;
+
 
     [SerializeField]
     public GameObject optionBackBoard;
@@ -59,6 +62,8 @@ public class optionManager : MonoBehaviour
     public Sprite[] optionLogo = new Sprite[7];
 
     [SerializeField]
+    public TextMeshProUGUI talkIdxText;
+    public GameObject talkIdxButton;
     public TextMeshProUGUI storyAutoSpeedText;
     public GameObject storyAutoSpeedButton;
 
@@ -288,14 +293,40 @@ public class optionManager : MonoBehaviour
         else if (idx == 4) changeStory();
         else if (idx == 5) changeKeyBoard();
     }
+
     public void changeStory()
     {
         storyAutoSpeedText.text = TalkManager.Instance.getDesc(235);
         storyAutoSpeedButton.GetComponent<soundDragAndDrop>().setUIButton();
+        updateTalkIdxOff();
     }
+
+    public void clickTalkIdxOnOff()
+    {
+        jsonDataManager.Instance.setTalkIdxOnOff(!jsonDataManager.Instance.getTalkIdxOnOff());
+        TalkManager.Instance.setTalkNumOnOff(jsonDataManager.Instance.getTalkIdxOnOff());
+        updateTalkIdxOff();
+    }
+    public void updateTalkIdxOff()
+    {
+        talkIdxText.text = TalkManager.Instance.getDesc(238);
+        if (jsonDataManager.Instance.getTalkIdxOnOff())
+        {
+            talkIdxButton.GetComponent<hoverRotateUI>().setLanguageActive(true);
+            talkIdxButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "* " + TalkManager.Instance.getDesc(239);
+            talkIdxButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(134, 229, 127, 255);
+        }
+        else
+        {
+            talkIdxButton.GetComponent<hoverRotateUI>().setLanguageActive(false);
+            talkIdxButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "- " + TalkManager.Instance.getDesc(240);
+            talkIdxButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+        }
+    }
+
     public void changeKeyBoard()
     {
-        updateKeyMappingOutline();
+        updateKeyMappingColor();
         itemKeyBoardDesc[0].text = TalkManager.Instance.getDesc(211);
         for (int i=1;i < itemKeyBoardDesc.Length;i++)
         {
@@ -319,10 +350,10 @@ public class optionManager : MonoBehaviour
         if (curSelectKeyBoard == idx) curSelectKeyBoard = -1;
         else curSelectKeyBoard = idx;
 
-        updateKeyMappingOutline();
+        updateKeyMappingColor();
     }
     public void hoverInKeyMapping(int idx) {
-        updateKeyMappingOutline();
+        updateKeyMappingColor();
         if (idx < 100 && idx >= 0)
         {
             itemKeyBoard[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
@@ -333,22 +364,42 @@ public class optionManager : MonoBehaviour
         }
     }
     public void hoverOutKeyMapping(int idx) {
-        updateKeyMappingOutline();
-    }
-
-    public void updateKeyMappingOutline()
-    {
-
-        for(int i=0;i<itemKeyBoard.Length;i++) itemKeyBoard[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-        for (int i = 0; i < underKeyBoard.Length; i++) underKeyBoard[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-        
-        if(curSelectKeyBoard < 100 && curSelectKeyBoard >= 0)
+        updateKeyMappingColor();
+        if (idx < 100 && idx >= 0)
         {
-            itemKeyBoard[curSelectKeyBoard].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
+            itemKeyBoard[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
         else
         {
-            underKeyBoard[curSelectKeyBoard-100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/spr_keyMappingOutline");
+            underKeyBoard[idx - 100].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+    }
+
+    public void updateKeyMappingColor()
+    {
+
+        for (int i = 0; i < itemKeyBoard.Length; i++)
+        {
+            itemKeyBoardDesc[i+1].color = new Color32(255, 255, 255, 255);
+            itemKeyBoardText[i].color = new Color32(255, 255, 255, 255);
+        }
+        for (int i = 0; i < underKeyBoard.Length; i++)
+        {
+            underKeyBoardDesc[i+1].color = new Color32(255, 255, 255, 255);
+            underKeyBoardText[i].color = new Color32(255, 255, 255, 255);
+        }
+        if (curSelectKeyBoard >= 0)
+        {
+            if (curSelectKeyBoard < 100)
+            {
+                itemKeyBoardDesc[curSelectKeyBoard + 1].color = new Color32(134, 229, 127, 255);
+                itemKeyBoardText[curSelectKeyBoard].color = new Color32(134, 229, 127, 255);
+            }
+            else
+            {
+                underKeyBoardDesc[curSelectKeyBoard - 99].color = new Color32(134, 229, 127, 255);
+                underKeyBoardText[curSelectKeyBoard - 100].color = new Color32(134, 229, 127, 255);
+            }
         }
     }
     public void changePlay()
@@ -363,8 +414,35 @@ public class optionManager : MonoBehaviour
 
             changeBattleZoom(jsonDataManager.Instance.getBattleShakeOpt());
             updateOptionButtonText();
+            updateBattleOttogiOnOff();
         }
     }
+    public void clickBattleOttogiOnOff(int opt)
+    {
+        jsonDataManager.Instance.setBattleOttogi(opt);
+        BattleManager.Instance.setBattleOttogi(opt);
+        updateBattleOttogiOnOff();
+    }
+    public void updateBattleOttogiOnOff()
+    {
+        battleOttogiText.text = TalkManager.Instance.getDesc(241);
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == jsonDataManager.Instance.getBattleOttogi())
+            {
+                battleOttogiButton[i].GetComponent<hoverRotateUI>().setLanguageActive(true);
+                battleOttogiButton[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "* " + TalkManager.Instance.getDesc(242+i);
+                battleOttogiButton[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(134, 229, 127, 255);
+            }
+            else
+            {
+                battleOttogiButton[i].GetComponent<hoverRotateUI>().setLanguageActive(false);
+                battleOttogiButton[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "- " + TalkManager.Instance.getDesc(242+i);
+                battleOttogiButton[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+            }
+        }
+    }
+
     public void changeBattleZoom(int val)
     {
         jsonDataManager.Instance.setBattleShakeOpt(val);

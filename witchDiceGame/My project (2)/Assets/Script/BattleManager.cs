@@ -204,6 +204,12 @@ public class BattleManager : MonoBehaviour
     public GameObject itemNotGetEntity;
     public TextMeshProUGUI itemNotGetText;
 
+    private int battleOttogi;
+
+    public void setBattleOttogi(int input)
+    {
+        battleOttogi = input;
+    }
     public void hoverInEquip(int input) {
         int characterIdx = input / 2;
         int itemIdx = input % 2;
@@ -2068,7 +2074,7 @@ public class BattleManager : MonoBehaviour
             }
 
 
-            curPhase = -999;
+            //curPhase = -999;
 
             //updateMoveUI(3);
 
@@ -2626,7 +2632,24 @@ public class BattleManager : MonoBehaviour
         }
         else //스킬 애니메이션이 필요 없는 경우
         {*/
-        if ((team && myCharacterAtkReady[characterIdx] == timing - 1) || (!team && enemyCharacterAtkReady[characterIdx] == timing - 1))//실행하려는 애니메이션이 현재 필요한 타이밍이 맞는지 확인
+
+        if (timing == 3)
+        {
+            if (team)
+            {
+                myCharacterAtkReady[characterIdx] = 2;
+                myCharacterPunch[characterIdx] = 0.5f; // 당기기 끝난다는 거 체크
+                myCharacterSwing[characterIdx] = 0.75f; //당기는 정도
+            }
+            else
+            {
+                enemyCharacterAtkReady[characterIdx] = 2;
+                enemyCharacterPunch[characterIdx] = 0.5f; // 당기기 끝난다는 거 체크
+                enemyCharacterSwing[characterIdx] = 0.75f; //당기는 정도
+            }
+        }
+        if ((team && myCharacterAtkReady[characterIdx] == timing - 1) 
+            || (!team && enemyCharacterAtkReady[characterIdx] == timing - 1))//실행하려는 애니메이션이 현재 필요한 타이밍이 맞는지 확인
         {
             if (timing == 1) //땡기기
             {
@@ -2637,6 +2660,7 @@ public class BattleManager : MonoBehaviour
                 setCharacterAtkReady(team, characterIdx, 3);
             }
         }
+        
         //}
     }
     private bool chainChk = false;
@@ -3501,10 +3525,11 @@ public class BattleManager : MonoBehaviour
                     curSkill = myCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
 
                     characterTargetIdx = 0;
-
-                    skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
-                    yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
-
+                    if (curSkill.getTargetTeam() == 2)
+                    {
+                        skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                        yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
+                    }
 
 
                     //타겟이 정해지지 않은 takeSkillPacket 생성.
@@ -3674,6 +3699,7 @@ public class BattleManager : MonoBehaviour
                             chainChk = false;
                             SoundManager_Sfx.Instance.playSound(74);
                         }
+                        
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
                         upDownManager.Instance.hoverOutTarget();
@@ -3684,9 +3710,13 @@ public class BattleManager : MonoBehaviour
                             break;
                         }
 
-                        if (i + 1 < targetChance) { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
-                            skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
-                            yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
+                        if (i + 1 < targetChance)
+                        { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
+                            if (curSkill.getTargetTeam() == 2)
+                            {
+                                skillAnimationControl(true, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                                yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 2);
+                            }
                         }
 
                         setBattleFontSize(0, 0);
@@ -3740,10 +3770,11 @@ public class BattleManager : MonoBehaviour
                     int skillUseIdx = nextSkill % 10;
                     Skill curSkill = enemyCharacter[skillUseCharacter].skillUse(skillUseIdx); //사용하는 스킬에 대한 정보를 받아온다.
                     setTransBySkillUser(skillUseCharacter + 4);
-
-                    skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
-                    yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
-
+                    if (curSkill.getTargetTeam() == 2)
+                    {
+                        skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                        yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
+                    }
                     //// 공격 전 장비 버프 관련
                     for (int i = 0; i < clickCharacter.Length; i++)
                     { //모든 클릭된 캐릭터 초기화
@@ -3767,7 +3798,7 @@ public class BattleManager : MonoBehaviour
                     for (int i = 0; i < targetChance; i++)
                     { // 해당 스킬이 공격하는 숫자
 
-                        
+
                         makeEnemyClick(curSkill.getTargetNum(), curSkill.getTargetTeam()); // 적군의 공격 대상 만들기
 
                         //스킬에 대한 공격용 Packet 생성
@@ -3776,7 +3807,7 @@ public class BattleManager : MonoBehaviour
 
                         takeSkillPacketArr.Clear();
                         takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
-                        
+
                         attackAddBySpeed(enemyCharacter[skillUseCharacter], takeSkillPacketArr);
 
                         int tempTargetIdx;
@@ -3833,8 +3864,10 @@ public class BattleManager : MonoBehaviour
                         if (i + 1 < targetChance)
                         { //공격 후에 공격기회가 더 남았으면 다시 뒤로 땡기기
                             yield return new WaitForSeconds(0.2f);
-                            skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
+                            if (curSkill.getTargetTeam() == 2) { 
+                                skillAnimationControl(false, 1, 0, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                             yield return new WaitUntil(() => enemyCharacterAtkReady[skillUseCharacter] == 2);
+                            }
                         }
                         initTextHeight();
                         
@@ -4582,11 +4615,21 @@ public class BattleManager : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 if (myCharacterSwing[i] < 0.0f) myCharacterSwing[i] = 0.0f;
-                myCharacterObjEntityUI[i].transform.position = new Vector3(
-                        myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
-                        myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
 
-                myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i]) * 90);
+                if (battleOttogi == 2 || battleOttogi == 3)
+                {
+                    myCharacterObjEntityUI[i].transform.position = new Vector3(
+                       myCharacterPosition[i].x , myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
+                    myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                else
+                {
+                    myCharacterObjEntityUI[i].transform.position = new Vector3(
+                            myCharacterPosition[i].x - (10 * myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i])),
+                            myCharacterObjEntityUI[i].transform.position.y, myCharacterObjEntityUI[i].transform.position.z);
+
+                    myCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, myCharacterSwing[i] * Mathf.Sin(Mathf.PI * myCharacterPunch[i]) * 90);
+                }
 
                 if (myCharacterAtkReady[i] == 0) //공격 준비 상태가 아닌경우 
                 {
@@ -4621,12 +4664,20 @@ public class BattleManager : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 if (enemyCharacterSwing[i] < 0.0f) enemyCharacterSwing[i] = 0.0f;
-                enemyCharacterObjEntityUI[i].transform.position = new Vector3(
-                        enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
-                        enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
+                if (battleOttogi == 1 || battleOttogi == 3)
+                {
+                    enemyCharacterObjEntityUI[i].transform.position = new Vector3(
+                            enemyCharacterPosition[i].x , enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
+                    enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                else
+                {
+                    enemyCharacterObjEntityUI[i].transform.position = new Vector3(
+                            enemyCharacterPosition[i].x + (10 * enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i])),
+                            enemyCharacterObjEntityUI[i].transform.position.y, enemyCharacterObjEntityUI[i].transform.position.z);
 
-                enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
-
+                    enemyCharacterObjUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyCharacterSwing[i] * Mathf.Sin(Mathf.PI * enemyCharacterPunch[i]) * -90);
+                }
                 if (enemyCharacterAtkReady[i] == 0) //공격 준비 상태가 아닌경우 
                 {
                     enemyCharacterPunch[i] += 0.05f;
@@ -4785,6 +4836,8 @@ public class BattleManager : MonoBehaviour
         updateMyDiceUI();
 
         adventureStartChk = true;
+        setBattleOttogi(jsonDataManager.Instance.getBattleOttogi());
+
         StartCoroutine(startPhaseManage());
     }
 

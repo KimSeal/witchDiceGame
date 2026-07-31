@@ -2508,7 +2508,7 @@ public class AdventureManager : MonoBehaviour
                 if (emptyPlaceExist == -1)
                 {
                     SoundManager_Sfx.Instance.playSound(7);
-                    fullUI.showFull(0);
+                    fullUI.showFull(237);
                 }
                 else
                 {

@@ -468,6 +468,26 @@ public class jsonDataManager : MonoBehaviour
     public void setBattleShakeOpt(int val) { playerPlayData.setBattleShakeOpt(val); SavePlayerDataToJson(); }
     public bool getTalkAuto() { return playerPlayData.getTalkAuto(); }
     public void setTalkAuto(bool input) { playerPlayData.setTalkAuto(input);SavePlayerDataToJson(); }
+
+    public bool getTalkIdxOnOff()
+    {
+        return playerPlayData.getTalkIdxOnOff();
+    }
+    public int getBattleOttogi()
+    {
+        return playerPlayData.getBattleOttogi();
+    }
+    public void setTalkIdxOnOff(bool input)
+    {
+        playerPlayData.setTalkIdxOnOff(input);
+        SavePlayerDataToJson();
+    }
+    public void setBattleOttogi(int input)
+    {
+        BattleManager.Instance.setBattleOttogi(input);
+        playerPlayData.setBattleOttogi(input);
+        SavePlayerDataToJson();
+    }
     public class PlayerPlayData
     {
         public int language;
@@ -513,6 +533,9 @@ public class jsonDataManager : MonoBehaviour
         public int[] skillClickKey = new int[9];
 
         public float talkAutoSpeed = 1f;
+
+        public bool talkIdxOnOff = false;
+        public int battleOttogi = 0;
 
         public int getClickKey(int opt, int idx)
         {
@@ -634,7 +657,7 @@ public class jsonDataManager : MonoBehaviour
                 chapter5Read[i] = 0;
                 chapter6Read[i] = 0;
             }
-            characterSelect[0] = 0; characterSelect[1] = 0;
+            characterSelect[0] = 1; characterSelect[1] = 0;
             foodStreetMeet = false;
             for (int i=0;i<foodStreetStat.Length;i++) foodStreetStat[i] = 0;
 
@@ -658,7 +681,8 @@ public class jsonDataManager : MonoBehaviour
                 skillClickKey[i] = (int)underKeys[i];
             }
 
-
+            talkIdxOnOff = false;
+            battleOttogi = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -723,6 +747,23 @@ public class jsonDataManager : MonoBehaviour
             {
                 skillClickKey[i] = playerPlayerData.skillClickKey[i];
             }
+
+            talkIdxOnOff = playerPlayerData.talkIdxOnOff;
+            battleOttogi = playerPlayerData.battleOttogi;
+        }
+        public bool getTalkIdxOnOff()
+        {
+            return talkIdxOnOff;
+        }
+        public void setTalkIdxOnOff(bool input) {
+            talkIdxOnOff =input;
+        }
+        public int getBattleOttogi()
+        {
+            return battleOttogi;
+        }
+        public void setBattleOttogi(int input) { 
+            battleOttogi=input;
         }
         public bool getTalkAuto() { return talkAuto; }
         public void setTalkAuto(bool input) { talkAuto = input; }

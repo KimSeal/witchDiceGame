@@ -12,6 +12,7 @@ public class LibraryManager : MonoBehaviour
     public GameObject[] characterSelectOutline = new GameObject[9];
     public GameObject[] characterSelectNextButton = new GameObject[2];
     public GameObject[] characterSelectSmoke = new GameObject[2];
+    public GameObject[] libraryArrow = new GameObject[2];
 
     [SerializeField]
     public GameObject[] characterSkillButton = new GameObject[2];
@@ -378,6 +379,15 @@ public class LibraryManager : MonoBehaviour
         smokeSound = true;
         curCharacterIdx = 0;
         hoverOutCurCharacter();
+
+        if (jsonDataManager.Instance.getChapterRead(1, 2) == 2)
+        {
+            libraryArrow[1].SetActive(true);
+        }
+        else
+        {
+            libraryArrow[1].SetActive(false);
+        }
     }
     public void exitLibrary() {
         //둘다 선택이 되었을 경우에만 나갈 수 있도록

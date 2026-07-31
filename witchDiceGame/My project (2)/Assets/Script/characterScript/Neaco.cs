@@ -116,7 +116,7 @@ public class LemGol : Character
         }
         if (sendSkillPacket.useSkillIdx == 1) //
         {
-            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() * 5 + this.getPhyAtk(), 0));
+            packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], this.getPhyAtk() * 3 + this.getPhyAtk(), 0));
         }
         //}
         return packets;

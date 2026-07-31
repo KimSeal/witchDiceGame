@@ -111,7 +111,13 @@ public class CharacterManager : MonoBehaviour
         emptyMyCharacter(1);
         emptyMyCharacter(2);
         emptyMyCharacter(3);
+        /*
         if (jsonDataManager.Instance.getChapterRead(0,2) == 2 && jsonDataManager.Instance.getCharacterSelect(0) != 0)
+        {
+            setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
+        }
+        */
+        if (jsonDataManager.Instance.getCharacterSelect(0) != 0) //1Ã©ÅÍ¿¡¼­µµ µ¿·á´Â °ñ·½ ÁÖ±â
         {
             setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
         }

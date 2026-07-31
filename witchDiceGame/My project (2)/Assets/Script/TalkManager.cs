@@ -433,6 +433,8 @@ public class TalkManager : MonoBehaviour
     public GameObject skipEntity;
     public Sprite[] skipButtonSprite = new Sprite[4];
     public string [] sumText = new string[3];
+
+    private bool skipOnOff = false;
     public void hoverInSkipYesButton()
     {
         ToolBarManager.Instance.setToolBar(19);
@@ -463,20 +465,23 @@ public class TalkManager : MonoBehaviour
         skipEntity.GetComponent<RectTransform>().position = new Vector3(0f,3000f,0f);
         hoverOutSkipNoButton();
         hoverOutSkipYesButton();
+        skipOnOff = false;
     }
 
     public void clickSkipButton()
     {
+        skipOnOff = true;
         skipEntity.GetComponent<RectTransform>().position = new Vector3(Screen.width/2, Screen.height/2, 0f);
     }
 
     // Start is called before the first frame update
     void Start()
     {
+
         clickSkipNoButton();
         wishlistButton.SetActive(false);
         resetTutorialArrow();
-
+        talkNumOnOffPoint = curTalkIdx.GetComponent<RectTransform>().anchoredPosition;
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
@@ -534,11 +539,28 @@ public class TalkManager : MonoBehaviour
     private float maxAutoTime = 0f;
     private float autoSpeed = 1f;
     bool jumpFlag = false;
+
+    private bool talkNumOnOff = false;
+    private Vector3 talkNumOnOffPoint;
+
     private KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, 
         KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0, KeyCode.Minus, KeyCode.Equals};
     private KeyCode[] underKeys = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, 
         KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O };
    
+    public void setTalkNumOnOff(bool onOff)
+    {
+        talkNumOnOff = onOff;
+        if(onOff)
+        {
+            curTalkIdx.GetComponent<RectTransform>().anchoredPosition = talkNumOnOffPoint;
+        }
+        else
+        {
+            curTalkIdx.GetComponent<RectTransform>().anchoredPosition = talkNumOnOffPoint + new Vector3(0f,30000f,0f);
+        }
+
+    }
     public void setAutoSpeed(float input)
     {
         this.autoSpeed = input;
@@ -548,6 +570,7 @@ public class TalkManager : MonoBehaviour
         if (opt == 0) itemKeys[idx] = input;
         if (opt == 1) underKeys[idx] = input;
     }
+    
     private void Update()
     {
         if (!talkingChk)
@@ -555,7 +578,7 @@ public class TalkManager : MonoBehaviour
             remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f, 7f);
         }
         else if (
-            autoActive && 
+            autoActive && !skipOnOff &&
             !optionManager.Instance.getOptionOn() && autoRemainTime > 0.0f)
         {
             autoRemainTime -= Time.deltaTime * autoSpeed;
