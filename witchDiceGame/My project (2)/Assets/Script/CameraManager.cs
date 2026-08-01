@@ -281,12 +281,13 @@ public class CameraManager : MonoBehaviour
     {
         int updateMoney = AdventureManager.Instance.getAdventureGold();
         money.text = "$" + updateMoney.ToString(); //돈 관련 텍스트 업데이트;
+        /*
         if (caseVal == 0) {
             money.text += " / 2 = ";
             AdventureManager.Instance.addMoney(0, (AdventureManager.Instance.getAdventureGold() / 2) * -1);
             money.text += AdventureManager.Instance.getAdventureGold().ToString();
         }
-        
+        */
         if(caseVal == 0) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_lose");
         if(caseVal == 1) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_giveUp");
         if (caseVal == 2) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
@@ -298,18 +299,18 @@ public class CameraManager : MonoBehaviour
                 if (caseVal == 0)
                 {
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = "Enemies you defeated : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    partGet.text = TalkManager.Instance.getDesc(246) + " : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
                 }
                 if (caseVal == 1)
                 {
 
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = "Enemies you defeated : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    partGet.text = TalkManager.Instance.getDesc(246) + " : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
                 }
                 if (caseVal == 2) //데모 클리어시 5배로 준다.
                 {
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = "Enemies you defeated : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    partGet.text = TalkManager.Instance.getDesc(246) + " : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
                     characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
                 }
             }

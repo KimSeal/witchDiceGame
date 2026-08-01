@@ -89,6 +89,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public GameObject skipButton;
     [SerializeField] public GameObject skipButtonOutline;
     [SerializeField] public GameObject prevButtonOutline;
+    [SerializeField] public TextMeshProUGUI skipTitle;
 
     [SerializeField] public GameObject autoButton;
     [SerializeField] public GameObject autoButtonOutline;
@@ -212,7 +213,7 @@ public class TalkManager : MonoBehaviour
         return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("£¿", "?")/*.Replace("¡£", ".").Replace("¡¢", ", ")*/.Replace("£¡", "!").Replace("£©",")").Replace("£¨", "(");
     }
 
-    private int[] lifeStartIdx = {3,  -99999, -99999, 69, -99999, 
+    private int[] lifeStartIdx = {3,  -99999, -99999, 34, 69, 
         -99999, -99999, -99999, -99999, -99999, 
         -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999 };
 
@@ -471,6 +472,7 @@ public class TalkManager : MonoBehaviour
     public void clickSkipButton()
     {
         skipOnOff = true;
+        skipTitle.text = TalkManager.instance.getDesc(249);
         skipEntity.GetComponent<RectTransform>().position = new Vector3(Screen.width/2, Screen.height/2, 0f);
     }
 
@@ -543,7 +545,7 @@ public class TalkManager : MonoBehaviour
     private bool talkNumOnOff = false;
     private Vector3 talkNumOnOffPoint;
 
-    private KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, 
+    private KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, 
         KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0, KeyCode.Minus, KeyCode.Equals};
     private KeyCode[] underKeys = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, 
         KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O };
@@ -581,7 +583,7 @@ public class TalkManager : MonoBehaviour
             autoActive && !skipOnOff &&
             !optionManager.Instance.getOptionOn() && autoRemainTime > 0.0f)
         {
-            autoRemainTime -= Time.deltaTime * autoSpeed;
+            autoRemainTime -= Time.deltaTime * autoSpeed * 1.2f;
             remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f - (370f * autoRemainTime / maxAutoTime), 7f);
             if (autoRemainTime < 0) { clickDescBox(); }
         }
@@ -777,6 +779,9 @@ public class TalkManager : MonoBehaviour
         if (a < 0) return;
         if (!talkingChk)
         {
+
+            setTalkNumOnOff(jsonDataManager.Instance.getTalkIdxOnOff());
+
             curTalkLastVal = listIdx[a + 1] - listIdx[a];
             curTalkStartVal = listIdx[a];
             characterTalkBack.GetComponent<Image>().color = new Color(255f, 255f, 255f);
@@ -1058,7 +1063,7 @@ public class TalkManager : MonoBehaviour
         talkLanArr[1] = talkList[a].TextEN;
         talkLanArr[2] = talkList[a].TextJP;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
-        maxAutoTime = 1.0f + (talkLanArr[jsonDataManager.Instance.getLanguage()].Length) * 0.2f;
+        maxAutoTime = 1.5f + (talkLanArr[jsonDataManager.Instance.getLanguage()].Length) * 0.1f;
         autoRemainTime = maxAutoTime;
         /*
         if (jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
@@ -1117,7 +1122,7 @@ public class TalkManager : MonoBehaviour
     }
     public void clickWishlist()
     {
-        fullUI.showFull(203);
-        //Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
+        //fullUI.showFull(203);
+        Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
     }
 }

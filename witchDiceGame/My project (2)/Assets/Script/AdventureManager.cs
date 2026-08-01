@@ -430,7 +430,9 @@ public class AdventureManager : MonoBehaviour
 
     public IEnumerator tutorial_Coroutine()
     {
+
         giveUpBtnAble(false);
+
         tagInit(0);
         resetDice();
         TalkManager.Instance.startTalk(2);
@@ -1047,7 +1049,7 @@ public class AdventureManager : MonoBehaviour
             activeGiveUpBoard(false);
             giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
         }
-        else if (tutorialVal == 0)
+        else if (tutorialVal == 0 || jsonDataManager.Instance.getTutorialDid())
         {
             giveUpText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(13);
             giveUpAble = true;
@@ -1089,7 +1091,7 @@ public class AdventureManager : MonoBehaviour
     {
         closeTryBuyItem(true);
 
-        if (tutorialVal != 0)
+        if (tutorialVal != 0 && !jsonDataManager.Instance.getTutorialDid())
         { //튜토리얼 중에는 항복 불가능
             fullUI.showFull(14);
             return;

@@ -297,7 +297,9 @@ public class optionManager : MonoBehaviour
     public void changeStory()
     {
         storyAutoSpeedText.text = TalkManager.Instance.getDesc(235);
+        storyAutoSpeedButton.GetComponent<soundDragAndDrop>().changeSoundMinMaxVal();
         storyAutoSpeedButton.GetComponent<soundDragAndDrop>().setUIButton();
+
         updateTalkIdxOff();
     }
 

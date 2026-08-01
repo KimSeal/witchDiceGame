@@ -173,6 +173,30 @@ public class upDownManager : MonoBehaviour
     public GameObject noSkillText;
 
     private Vector3 coverInitPoint;
+
+
+    [SerializeField]
+    public GameObject[] skillCoolTimeCover = new GameObject[8];
+
+    public void setSkillCoolTimeCover(int idx, bool onOff)
+    {
+        if (!onOff)
+        {
+            skillCoolTimeCover[idx].SetActive(false);
+        }
+        else
+        {
+            skillCoolTimeCover[idx].SetActive(true);
+        }
+    }
+    public void hoverInSkillCoolTime()
+    {
+        ToolBarManager.Instance.setToolBar(28);
+    }
+    public void hoverOutSkillCoolTime()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
     public void activeSkillCoverImage(bool onOff)
     {
         if (onOff) underSkillCoverSet.SetActive(true);
@@ -402,13 +426,13 @@ public class upDownManager : MonoBehaviour
     }
     public void makeItemCharacterDiceEff(int diceIdx)
     {
-        bigDiceItemCharacterDiceEffOrigin[diceIdx].GetComponent<Animator>().Play("Active");
+        bigDiceItemCharacterDiceEffOrigin[diceIdx].GetComponent<Animator>().Play("Active", -1, 0f);
         bigDiceItemCharacterDiceEff[diceIdx].GetComponent<Image>().sprite =
               bigDiceItemCharacterDiceEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
     }
     public void makeItemCharacterEquipEff(int equipIdx)
     {
-        bigDiceItemCharacterEquipEffOrigin[equipIdx].GetComponent<Animator>().Play("Active");
+        bigDiceItemCharacterEquipEffOrigin[equipIdx].GetComponent<Animator>().Play("Active", -1, 0f);
         bigDiceItemCharacterEquipEff[equipIdx].GetComponent<Image>().sprite =
               bigDiceItemCharacterEquipEffOrigin[equipIdx].GetComponent<SpriteRenderer>().sprite;
     }
@@ -479,19 +503,19 @@ public class upDownManager : MonoBehaviour
     
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
     {
-        bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString());
+        bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString(), -1, 0f);
         bigDicePowerButtonEff[diceIdx].GetComponent<Image>().sprite =
                bigDicePowerButtonEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
     }
     public void activePassiveItem(int itemIdx, int opt)//opt 0 : before 1 : after 2 : just boom
     {
-        if(opt == 0) upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active_passive");
-        else if (opt == 1) upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active_passive_2");
-        else upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active");
+        if(opt == 0) upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active_passive", -1, 0f);
+        else if (opt == 1) upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active_passive_2", -1, 0f);
+        else upperItemEffOrigin[itemIdx].GetComponent<Animator>().Play("Active", -1, 0f);
     }
     public void resetPassiveItemEff()
     {
-        for(int i=0;i<upperItemEffOrigin.Length;i++) upperItemEffOrigin[i].GetComponent<Animator>().Play("none");
+        for(int i=0;i<upperItemEffOrigin.Length;i++) upperItemEffOrigin[i].GetComponent<Animator>().Play("none", -1, 0f);
     }
     public void resetUI()
     {
@@ -1012,7 +1036,11 @@ public class upDownManager : MonoBehaviour
                 }
                 else
                 {
-                    changeUnderSkillCover(idx, true);
+                    if(BattleManager.Instance.getMyCoolTime(idx * 2) == 0) changeUnderSkillCover(idx,0, true);
+                    else changeUnderSkillCover(idx, 0, false);
+
+                    if (BattleManager.Instance.getMyCoolTime(idx * 2 + 1) == 0) changeUnderSkillCover(idx, 1, true);
+                    else changeUnderSkillCover(idx, 1, false);
                 }
             }
         }
@@ -1029,6 +1057,18 @@ public class upDownManager : MonoBehaviour
         {
             underSkillCover[characterIdx * 2].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
             underSkillCover[characterIdx * 2 + 1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        }
+    }
+
+    public void changeUnderSkillCover(int characterIdx, int skillIdx, bool onOff)
+    {
+        if (onOff)
+        {
+            underSkillCover[characterIdx * 2 + skillIdx].GetComponent<Image>().sprite = underSkillCoverSprite[characterIdx * 2 + skillIdx];
+        }
+        else
+        {
+            underSkillCover[characterIdx * 2 + skillIdx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         }
     }
 
@@ -1128,8 +1168,8 @@ public class upDownManager : MonoBehaviour
             if (tempArr[i] == 1)
             {
                 passiveExist = true;
-                if(opt == 0) upperItemEffOrigin[i].GetComponent<Animator>().Play("Active_passive");
-                else if(opt == 1) upperItemEffOrigin[i].GetComponent<Animator>().Play("Active_passive_2");
+                if(opt == 0) upperItemEffOrigin[i].GetComponent<Animator>().Play("Active_passive", -1, 0f);
+                else if(opt == 1) upperItemEffOrigin[i].GetComponent<Animator>().Play("Active_passive_2", -1, 0f);
                 upperItemEff[i].GetComponent<Image>().sprite = upperItemEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
             }
         }
@@ -1148,7 +1188,7 @@ public class upDownManager : MonoBehaviour
         {
             if (itemManager.Instance.getItemFromBag(3, i) != null && itemManager.Instance.getItemFromBag(3, i).getActiveTiming() == 0)
             {
-                upperItemEffOrigin[i].GetComponent<Animator>().Play("none");
+                upperItemEffOrigin[i].GetComponent<Animator>().Play("none", -1, 0f);
             }
         }
     }
@@ -1158,7 +1198,7 @@ public class upDownManager : MonoBehaviour
         for (int i = 0; i < upperItemEffOrigin.Length - 1; i++)
         {
             if (itemManager.Instance.getItemFromBag(3, i) != null && itemManager.Instance.getItemFromBag(3, i).getActiveTiming() == 1) {
-                upperItemEffOrigin[i].GetComponent<Animator>().Play("none");
+                upperItemEffOrigin[i].GetComponent<Animator>().Play("none", -1, 0f);
             } 
         }
     }

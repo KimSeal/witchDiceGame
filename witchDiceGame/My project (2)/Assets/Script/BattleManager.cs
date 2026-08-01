@@ -87,7 +87,7 @@ public class BattleManager : MonoBehaviour
     public GameObject[] enemyDiceUI = new GameObject[4];
     [SerializeField] private GameObject[] diceUIChk = new GameObject[8]; // obj_skill_Chk_(number)
     [SerializeField] private GameObject[] diceUIChain = new GameObject[6]; // obj_ my/enemyChain_ number
-    [SerializeField] public GameObject[] enemyChainAnim =new GameObject[4];
+    [SerializeField] public GameObject[] enemyChainAnim = new GameObject[4];
 
     [SerializeField] private GameObject[] myDiceStateUI = new GameObject[4];
     [SerializeField] private GameObject[] enemyDiceStateUI = new GameObject[4];
@@ -136,8 +136,8 @@ public class BattleManager : MonoBehaviour
     public GameObject rerollButton;
     private Item[] resultItem = new Item[3];
     private int[] resultPower = new int[3];
-    private int[] resultPowerNameArr = { 143,145,147,149,151};
-    private int[] resultPowerDescArr = { 144,146,148,150,152};
+    private int[] resultPowerNameArr = { 143, 145, 147, 149, 151 };
+    private int[] resultPowerDescArr = { 144, 146, 148, 150, 152 };
     //phase버튼 누를수 있는지
     //private bool clickAble = true;
     public int curPhase = -1;
@@ -159,7 +159,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] public GameObject[] witchPowerSelectObj = new GameObject[7];
     [SerializeField] public GameObject[] witchPowerSelectObjOutline = new GameObject[7];
     [SerializeField] private GameObject[] backGroundObj = new GameObject[5]; //obj_backGround_ field, witch_witchPowerSelect, backGround, witch_skillSelect_body, witch_skillSelect_face
-    
+
     //[SerializeField]
     //public GameObject[] diceArrow = new GameObject[8]; //obj_battleDice_arrow_(number)
 
@@ -203,6 +203,55 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     public GameObject itemNotGetEntity;
     public TextMeshProUGUI itemNotGetText;
+
+
+    public int[] myCoolTimeArr = { 0,0,0,0, 0, 0, 0, 0 };
+    public int[] enemyCoolTimeArr = { 0, 0, 0, 0 , 0, 0, 0, 0 };
+    public int getMyCoolTime(int idx) {
+        return myCoolTimeArr[idx];
+    }
+    public void setSkillCoolTime(bool team, int idx)
+    {
+        if (team)
+        {
+            myCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
+            upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true);
+            upDownManager.Instance.changeUnderSkillCover(idx / 10, idx % 10, false );
+        }
+        else
+        {
+            enemyCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
+        }
+    }
+    public void minusSkillCoolTime()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            if (myCharacter[i/2] != null && myCharacter[i/2].getCurState() == 0 )
+            {
+                if (myCoolTimeArr[i] > 0)
+                {
+                    myCoolTimeArr[i] -= 1;
+                }
+                if (myCoolTimeArr[i] == 0)
+                {
+                    upDownManager.Instance.setSkillCoolTimeCover(i, false);
+                    upDownManager.Instance.changeUnderSkillCover(i / 2, i % 2, true);
+                }
+            }
+            else {
+                upDownManager.Instance.setSkillCoolTimeCover(i, false);
+                upDownManager.Instance.changeUnderSkillCover(i / 2, i % 2, false);
+            }
+            if (enemyCharacter[i/2] != null && enemyCharacter[i/2].getCurState() == 0)
+            { 
+                if (enemyCoolTimeArr[i] > 0)
+                {
+                    enemyCoolTimeArr[i] -= 1;
+                }
+            }
+        }
+    }
 
     private int battleOttogi;
 
@@ -310,7 +359,7 @@ public class BattleManager : MonoBehaviour
     {
         if (!giveUpChk)
         {
-            if (AdventureManager.Instance.getTutorial() != 0)
+            if (AdventureManager.Instance.getTutorial() != 0 && !jsonDataManager.Instance.getTutorialDid())
             {
                 giveUpChk = false;
                 fullUI.showFull(14);
@@ -553,7 +602,7 @@ public class BattleManager : MonoBehaviour
         }
         for (int i = 0; i < 8; i++)
         {
-            if (enemySkillDiceNum[i] != -999) { liveSkillList.Add(i); }
+            if (enemySkillDiceNum[i] != -999 && enemyCoolTimeArr[i] == 0) { liveSkillList.Add(i); }
         }
 
         for (int skillIdx0 = liveSkillList.Count - 1; skillIdx0 >= 0; skillIdx0--)
@@ -983,6 +1032,8 @@ public class BattleManager : MonoBehaviour
     private bool tutorialBattleStartButtonCheck = false;
     private IEnumerator startPhaseManage()
     {
+        minusSkillCoolTime();
+        minusSkillCoolTime();
 
         setBattleFontSize(0,0);
         witchHatButton.SetActive(false);
@@ -993,6 +1044,8 @@ public class BattleManager : MonoBehaviour
         upDownManager.Instance.activeBattleStart(false);
         if (AdventureManager.Instance.getTutorial() > 0 && AdventureManager.Instance.getTutorial() < 16) tutorialBattleStartButtonCheck = true;
         else tutorialBattleStartButtonCheck = false;
+
+        
 
         do {
             InitSetOfEnemySkill();
@@ -1674,8 +1727,13 @@ public class BattleManager : MonoBehaviour
             else hoverRotateAble(enemyDiceUI[i], 1, false);
 
         }
-
-        if (AdventureManager.Instance.getTutorial() == 7)
+        if (AdventureManager.Instance.getTutorial() == 9)
+        {
+            TalkManager.Instance.startTalk(35);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+            AdventureManager.Instance.setTutorial(10);
+        }
+        else if (AdventureManager.Instance.getTutorial() == 7)
         {//만약 튜토리얼 중인경우 5번 대화(당황하는 남주인공)
             //TalkManager.Instance.startTalk(39);
             //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -1705,6 +1763,7 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.setTutorialArrow(11);
             upDownManager.Instance.activeBattleStart(true);
         }
+        
         if (AdventureManager.Instance.getTutorial() == 11)
         {//주사위 변경, 운명 마법 사용 관련
             TalkManager.Instance.setDescClickLock(true);
@@ -2696,7 +2755,8 @@ public class BattleManager : MonoBehaviour
             upDownManager.Instance.skillIconUpdate(idx * 2, "none2");
             upDownManager.Instance.skillIconUpdate(idx * 2 + 1, "none2");
             upDownManager.Instance.changeUnderSkillCover(idx, false);
-
+            upDownManager.Instance.setSkillCoolTimeCover(idx * 2, false);
+            upDownManager.Instance.setSkillCoolTimeCover(idx * 2+1, false);
             for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
             {
                 if (myDiceTake[i] / 10 == idx)
@@ -3557,7 +3617,6 @@ public class BattleManager : MonoBehaviour
                     {
                         TalkManager.Instance.startTalk(42);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                        AdventureManager.Instance.setTutorial(10);
                         TalkManager.Instance.setTutorialArrow(12);
                     }
 
@@ -3699,6 +3758,7 @@ public class BattleManager : MonoBehaviour
                             chainChk = false;
                             SoundManager_Sfx.Instance.playSound(74);
                         }
+
                         
                         skillAnimationControl(true, 3, i, curSkill, skillUseCharacter, -999, skillUseIdx);//타겟팅 전 애니메이션 실행
                         yield return new WaitUntil(() => myCharacterAtkReady[skillUseCharacter] == 0);
@@ -3727,6 +3787,7 @@ public class BattleManager : MonoBehaviour
                         initTextHeight();
                         sendSkillPacketTemp.addChanceNum();
                     }
+                    setSkillCoolTime(true, nextSkill);
 
                     for (int i = 0; i < 4; i++)
                     {
@@ -3872,6 +3933,7 @@ public class BattleManager : MonoBehaviour
                         initTextHeight();
                         
                     }
+                    setSkillCoolTime(false, nextSkill);
                     //diceArrowAnimationControl(nextDice + 4, false);
                     for (int i = 0; i < 4; i++)
                     {
@@ -4296,6 +4358,10 @@ public class BattleManager : MonoBehaviour
                     {
                         enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
                     }
+                    if(placeIdx != 1)
+                    {
+                        enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                    }
                     yield return new WaitForSeconds(0.2f);
                 }
 
@@ -4312,6 +4378,7 @@ public class BattleManager : MonoBehaviour
             curPhase = 1;
         }
         yield return new WaitForSeconds(0.2f);
+        minusSkillCoolTime();
     }
 
     public void hoverInReroll()

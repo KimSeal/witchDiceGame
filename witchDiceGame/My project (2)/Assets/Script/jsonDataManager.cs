@@ -55,6 +55,9 @@ public class jsonDataManager : MonoBehaviour
 
         optionManager.Instance.changeOption(1);
         optionManager.Instance.changeOption(2);
+        optionManager.Instance.changeOption(3);
+        optionManager.Instance.changeOption(4);
+        optionManager.Instance.changeOption(5);
         optionManager.Instance.changeOption(0);
 
         if (getChapterRead(1, 2) != 2) {
@@ -532,7 +535,7 @@ public class jsonDataManager : MonoBehaviour
         public int[] itemClickKey = new int[13];
         public int[] skillClickKey = new int[9];
 
-        public float talkAutoSpeed = 1f;
+        public float talkAutoSpeed = 1.0f;
 
         public bool talkIdxOnOff = false;
         public int battleOttogi = 0;
@@ -665,10 +668,10 @@ public class jsonDataManager : MonoBehaviour
             battleShakeOpt = 1;
 
             talkAuto = false;
-            talkAutoSpeed = 1f;
+            talkAutoSpeed = 1.0f;
 
-            KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote,  KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
-            KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Minus, KeyCode.Equals};
+            KeyCode[] itemKeys = new KeyCode[] { KeyCode.BackQuote, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
+            KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0,KeyCode.Minus, KeyCode.Equals};
             KeyCode[] underKeys = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
             KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O };
 
