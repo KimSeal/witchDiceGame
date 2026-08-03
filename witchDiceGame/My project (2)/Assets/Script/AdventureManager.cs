@@ -451,7 +451,7 @@ public class AdventureManager : MonoBehaviour
         CharacterManager.Instance.setTutotialCharacterSet(); //캐릭터는 주인공 혼자만
         itemManager.Instance.setTutorialInitDice(); //주인공 주사위 다 1로
         useFairDice = false;
-
+        
         StartCoroutine(tutorial_Coroutine());
     }
     public int getLastCharacter(int idx) {
@@ -883,7 +883,7 @@ public class AdventureManager : MonoBehaviour
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)
         {
-            adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
+            adventureEventArr[i] = 23; //i;이부분 조정해서 맵 테스트 진행
         }
 
         int EndPoint = adventureEventArr.Length - 1;
@@ -973,9 +973,9 @@ public class AdventureManager : MonoBehaviour
         
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
-            //StartCoroutine(phase_Manage_Coroutine(4));
+            StartCoroutine(phase_Manage_Coroutine(4));
             //StartCoroutine(phase_Manage_Coroutine(1));
-            StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
+            //StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
         else
         {
@@ -2684,7 +2684,7 @@ public class AdventureManager : MonoBehaviour
             {
                 clickAbleObjSet(diceObject[characterIdx], false, 1);
                 clickAbleObjSet(diceObject[characterIdx], false, 2);
-
+                lastCharacter[characterIdx] = -99999;
                 characterObj[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
                 Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
                 characterShadow[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -2696,12 +2696,14 @@ public class AdventureManager : MonoBehaviour
             clickAbleObjSet(diceObject[characterIdx], true, 2);
             if (Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face") != null)
             {
+                lastCharacter[characterIdx] = CharacterManager.Instance.getCharacter(characterIdx).getDestiny().getDestinyIdx();
                 characterObj[characterIdx].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + CharacterManager.Instance.getName_itemManager(characterIdx) + "/animator_" + CharacterManager.Instance.getName_itemManager(characterIdx));
                 characterShadow[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/spr_character_shadow_0");
                 //diceObject[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getCharacter(characterIdx).getName() + "_face");
             }
             else
             {
+                lastCharacter[characterIdx] = -99999;
                 characterObj[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
                 Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
                 characterShadow[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
@@ -3015,7 +3017,6 @@ public class AdventureManager : MonoBehaviour
         if (battleEventTrigger) //battle event가 발생해 배틀 canvas로 넘어가야 하는 경우
         {
             giveUpBtnAble(false);
-            Debug.Log("battle start trigger!");
            
             gameOverChk = false;
             curCanvasIsAdventure = false;

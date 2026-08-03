@@ -122,6 +122,9 @@ public class CharacterManager : MonoBehaviour
             setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
         }
         setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
+
+        setCharacter(3, 15);
+
         myCharacter[2].setReviveUnit(true);
         setFoodStreetInfo();
         //setCharacter(1, 1);

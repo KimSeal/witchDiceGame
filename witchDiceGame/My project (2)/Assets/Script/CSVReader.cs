@@ -20,6 +20,8 @@ public class SkillReader
     public int SkillIdx;
     public string SkillName;
 
+    public int myEffType;
+    public int enemyEffType;
     public int SpecialVal;
 
     public int NeedDiceNum;
@@ -156,6 +158,7 @@ public class TalkReader{
     public string backGround;
 
     public string TextKR;
+    public string TextCH;
     public string TextEN;
     public string TextJP;
 

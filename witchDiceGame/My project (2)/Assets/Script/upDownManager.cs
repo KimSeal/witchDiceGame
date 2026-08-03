@@ -177,16 +177,20 @@ public class upDownManager : MonoBehaviour
 
     [SerializeField]
     public GameObject[] skillCoolTimeCover = new GameObject[8];
-
-    public void setSkillCoolTimeCover(int idx, bool onOff)
+    public GameObject[] skillCoolTimeCoverOrigin = new GameObject[8];
+    public GameObject[] skillCoolTimeCover2 = new GameObject[8];
+    public GameObject[] skillCoolTimeCover2Origin = new GameObject[8];
+    public void setSkillCoolTimeCover(int idx, bool onOff, bool animOnOff)
     {
         if (!onOff)
         {
             skillCoolTimeCover[idx].SetActive(false);
+            if(animOnOff)skillCoolTimeCover2Origin[idx].GetComponent<Animator>().Play("Active");
         }
         else
         {
             skillCoolTimeCover[idx].SetActive(true);
+            if (animOnOff) skillCoolTimeCoverOrigin[idx].GetComponent<Animator>().Play("Active");
         }
     }
     public void hoverInSkillCoolTime()
@@ -340,6 +344,11 @@ public class upDownManager : MonoBehaviour
         if (!initSet)
         {
             initSet = true;
+            if (!jsonDataManager.Instance.getTutorialDid())
+            {
+                TalkManager.Instance.resetTutorialArrow();
+                TalkManager.Instance.makeTutorialArrow(0, new Vector3(-112 + (64 * 3) + 32, -55, 0), 0, 2);
+            }
             hoverOutUnderTitleButton();
         }
         for (int i = 0; i < 12; i++)
@@ -367,6 +376,12 @@ public class upDownManager : MonoBehaviour
             bigDiceItemCharacterEquipEff[i].GetComponent<Image>().sprite =
                    bigDiceItemCharacterEquipEffOrigin[i].GetComponent<SpriteRenderer>().sprite;
         }
+
+        for (int i=0;i<8;i++)
+        {
+            if(skillCoolTimeCover[i].activeSelf)skillCoolTimeCover[i].GetComponent<Image>().sprite = skillCoolTimeCoverOrigin[i].GetComponent<SpriteRenderer>().sprite;
+            skillCoolTimeCover2[i].GetComponent<Image>().sprite = skillCoolTimeCover2Origin[i].GetComponent<SpriteRenderer>().sprite;
+        }
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -387,7 +402,8 @@ public class upDownManager : MonoBehaviour
             if (jewelRotateVal > 100 * Mathf.PI) jewelRotateVal -= 100.0f * Mathf.PI;
             jewelLogo.GetComponent<RectTransform>().rotation = Quaternion.Euler(jewelLogo.transform.rotation.x, jewelLogo.transform.rotation.y, jewelRotateSize * Mathf.Sin(jewelRotateVal));
         }
-            
+
+        
     }
 
     public void goldJewelActive(bool onOff)
@@ -406,7 +422,7 @@ public class upDownManager : MonoBehaviour
 
     public void makeItemCharacterEff(int characterIdx, int opt, int val, int height)
     {
-        if (opt > 0)
+        if (opt >= 0)
         {
             bigDiceItemCharacterEffOrigin[characterIdx].GetComponent<Animator>().Play("2", -1, 0f);//("Active");
             bigDiceItemCharacterEff[characterIdx].GetComponent<Image>().sprite =
@@ -649,14 +665,18 @@ public class upDownManager : MonoBehaviour
         AdventureManager.Instance.mainExitButton(false);
         if (jsonDataManager.Instance.getTutorialDid())
         {
-            if(idx == 0) AdventureManager.Instance.activeTutorialButton(true);
+            if (idx == 0) AdventureManager.Instance.activeTutorialButton(true);
             if (idx == 1) TalkManager.Instance.clickWishlist();
-            if(idx == 7) AdventureManager.Instance.mainPlayButton(false);
+            if (idx == 7) AdventureManager.Instance.mainPlayButton(false);
         }
         else
         {
             if (idx == 0) TalkManager.Instance.clickWishlist();
-            if (idx == 7) AdventureManager.Instance.mainPlayButton(true);
+            if (idx == 7)
+            {
+                TalkManager.Instance.resetTutorialArrow();
+                AdventureManager.Instance.mainPlayButton(true);
+            }
         }
     } 
     public void hoverInUnderTitleButton(int idx)
@@ -693,6 +713,9 @@ public class upDownManager : MonoBehaviour
         }
 
         if (!jsonDataManager.Instance.getTutorialDid()) { // 아직 아무것도 안된 경우 튜토리얼만 열어두기.
+
+            
+
             underTitleNewMark[7].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
             underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");

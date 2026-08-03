@@ -738,7 +738,7 @@ public class itemManager : MonoBehaviour
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
             CharacterManager.Instance.CharacterUpgrade(characterIdx, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
             upDownManager.Instance.makeItemCharacterEff(characterIdx, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
-            upDownManager.Instance.makeItemCharacterEff(characterIdx, 0, ItemArr[0, itemIdx].getVal(3), 1);
+            upDownManager.Instance.makeItemCharacterEff(characterIdx, -999, ItemArr[0, itemIdx].getVal(3), 1);
         }
         if (useItem.getActiveTiming() == 41)
         { //모든 캐릭터에 대하여 1개 stat 업그레이드
@@ -760,7 +760,7 @@ public class itemManager : MonoBehaviour
                     CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1));
                     CharacterManager.Instance.CharacterUpgrade(i, ItemArr[0, itemIdx].getVal(2), ItemArr[0, itemIdx].getVal(3));
                     upDownManager.Instance.makeItemCharacterEff(i, ItemArr[0, itemIdx].getVal(0), ItemArr[0, itemIdx].getVal(1), 0);
-                    upDownManager.Instance.makeItemCharacterEff(i, 0, ItemArr[0, itemIdx].getVal(3), 1);
+                    upDownManager.Instance.makeItemCharacterEff(i, -999, ItemArr[0, itemIdx].getVal(3), 1);
                 }
             }
         }
@@ -1154,7 +1154,32 @@ public class itemManager : MonoBehaviour
                 itemArrLengthByChapter[i, j] = itemListChapter[i, j].Count;
             }
         }
+        
+        for (int i = 0; i < 6; i++)
+        {
+            ItemExistArr[0, i] = true;
+            ItemArr[0, i] = new Item(itemList[1][Random.Range(1,22)]);
+        }
+        
+        
+        ItemExistArr[3, 0] = true;
+        ItemArr[3, 0] = new Item(itemList[3][8]);
 
+        ItemExistArr[3, 1] = true;
+        ItemArr[3, 1] = new Item(itemList[3][7]);
+
+        ItemExistArr[3, 2] = true;
+        ItemArr[3, 2] = new Item(itemList[3][19]);
+
+        ItemExistArr[3, 3] = true;
+        ItemArr[3, 3] = new Item(itemList[3][9]);
+
+        ItemExistArr[3, 4] = true;
+        ItemArr[3, 4] = new Item(itemList[3][23]);
+
+        ItemExistArr[3, 5] = true;
+        ItemArr[3, 5] = new Item(itemList[3][14]);
+        
         //test Sample
         /*
         
@@ -1210,7 +1235,6 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 3] = new Item(itemList[2][1]);
         ItemArr[0, 4] = new Item(itemList[2][1]);
        */
-        
         updateInventory();
     }
 

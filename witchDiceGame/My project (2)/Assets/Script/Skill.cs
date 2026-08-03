@@ -104,6 +104,9 @@ public class Skill
     public int NeedDiceNum;
     public int[] NeedDice = new int[4];
 
+    public int myEffType = 0;
+    public int enemyEffType = 0;
+
     public int TargetAuto;
     public int TargetTeam;
     public int TargetObj;
@@ -129,6 +132,9 @@ public class Skill
         this.NeedDice[2] = skillReader.NeedDice2;
         this.NeedDice[3] = skillReader.NeedDice3;
 
+        this.myEffType = skillReader.myEffType;
+        this.enemyEffType = skillReader.enemyEffType;
+
         this.TargetAuto = skillReader.TargetAuto;
         this.TargetTeam = skillReader.TargetTeam;
         this.TargetObj = skillReader.TargetObj;
@@ -147,6 +153,9 @@ public class Skill
     }
     public Skill(Skill skillReader)
     {
+        this.myEffType = skillReader.myEffType;
+        this.enemyEffType = skillReader.enemyEffType;
+
         this.SkillIdx = skillReader.SkillIdx;
         this.SkillName = skillReader.SkillName;
         this.NeedDiceNum = skillReader.NeedDiceNum;
@@ -170,6 +179,14 @@ public class Skill
         this.SpecialVal = skillReader.SpecialVal;
     }
 
+    public int getMySkillEffType()
+    {
+        return myEffType;
+    }
+    public int getEnemySkillEffType()
+    {
+        return enemyEffType;
+    }
     //예전 전투 시스템에 사용된것
     public int getNeedDice()
     {

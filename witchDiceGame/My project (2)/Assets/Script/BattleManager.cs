@@ -215,7 +215,7 @@ public class BattleManager : MonoBehaviour
         if (team)
         {
             myCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
-            upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true);
+            upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true, true);
             upDownManager.Instance.changeUnderSkillCover(idx / 10, idx % 10, false );
         }
         else
@@ -232,15 +232,18 @@ public class BattleManager : MonoBehaviour
                 if (myCoolTimeArr[i] > 0)
                 {
                     myCoolTimeArr[i] -= 1;
+                    if (myCoolTimeArr[i] == 0) {
+                        upDownManager.Instance.setSkillCoolTimeCover(i, false, true);
+                    }
                 }
                 if (myCoolTimeArr[i] == 0)
                 {
-                    upDownManager.Instance.setSkillCoolTimeCover(i, false);
+                    upDownManager.Instance.setSkillCoolTimeCover(i, false, false);
                     upDownManager.Instance.changeUnderSkillCover(i / 2, i % 2, true);
                 }
             }
             else {
-                upDownManager.Instance.setSkillCoolTimeCover(i, false);
+                upDownManager.Instance.setSkillCoolTimeCover(i, false, false);
                 upDownManager.Instance.changeUnderSkillCover(i / 2, i % 2, false);
             }
             if (enemyCharacter[i/2] != null && enemyCharacter[i/2].getCurState() == 0)
@@ -2109,8 +2112,7 @@ public class BattleManager : MonoBehaviour
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
             curPhase = 4;
-            Debug.Log("curPhase : ");
-            Debug.Log(curPhase);
+
         }
     }
 
@@ -2755,8 +2757,8 @@ public class BattleManager : MonoBehaviour
             upDownManager.Instance.skillIconUpdate(idx * 2, "none2");
             upDownManager.Instance.skillIconUpdate(idx * 2 + 1, "none2");
             upDownManager.Instance.changeUnderSkillCover(idx, false);
-            upDownManager.Instance.setSkillCoolTimeCover(idx * 2, false);
-            upDownManager.Instance.setSkillCoolTimeCover(idx * 2+1, false);
+            upDownManager.Instance.setSkillCoolTimeCover(idx * 2, false, true);
+            upDownManager.Instance.setSkillCoolTimeCover(idx * 2+1, false, true);
             for (int i = 0; i < 4; i++)   // 죽은 캐릭터가 가지고 있는 스킬 모두 해제.
             {
                 if (myDiceTake[i] / 10 == idx)
@@ -3083,25 +3085,82 @@ public class BattleManager : MonoBehaviour
         //if (itemActive) SoundManager_Sfx.Instance.playSound(63);
     }
 
-    private void makeHitEffect(int tempTargetIdx)
+    private void makeHitEffect(int tempTargetIdx, int effOpt)
     {
+        Debug.Log(effOpt);
         //별이랑 원형 이펙트
-        for (int i = 0; i < 3; i++)
+        if (effOpt<0)
         {
-            GameObject startemp = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-            startemp.GetComponent<effMove>().changeSprite();
+            return;
         }
-
-        for (int i = 0; i < 5; i++) {
-            GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-            startemp2.GetComponent<effMove>().changeSprite(-999);
-        }
-
-
         GameObject temp = Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
-        temp.GetComponent<Animator>().Play("TargetDestroy", -1, 0f);
-        Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
-        SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
+        if (effOpt == 0)
+        {
+            temp.GetComponent<Animator>().Play("TargetDestroy", -1, 0f);
+            temp = Instantiate(hitEff, battleTargetUI[tempTargetIdx].transform.position + new Vector3(Random.Range(-15, 15), Random.Range(-15, 15), 0), Quaternion.Euler(0, 0, Random.Range(0, 4) * -90)); //사용된 아이템에 대해 effect
+
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject startemp = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp.GetComponent<effMove>().changeSprite();
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp2.GetComponent<effMove>().changeSprite(-999);
+            }
+
+            SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
+        }
+        else if (effOpt == 1)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp2.GetComponent<effMove>().changeSprite(-999);
+            }
+            temp.GetComponent<Animator>().Play("PurpleMagic", -1, 0f);
+        }
+        else if (effOpt == 2)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp2.GetComponent<effMove>().changeSprite(-999);
+            }
+            temp.GetComponent<Animator>().Play("WaterBound", -1, 0f);
+        }
+        else if (effOpt == 3)
+        {
+            temp.GetComponent<Animator>().Play("TargetDestroy", -1, 0f);
+            attackEff[tempTargetIdx].GetComponent<Animator>().Play("ailAttack");
+
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject startemp = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp.GetComponent<effMove>().changeSprite();
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp2.GetComponent<effMove>().changeSprite(-999);
+            }
+
+            SoundManager_Sfx.Instance.playSound(Random.Range(8, 11));
+        }
+        else if (effOpt == 4)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject startemp2 = Instantiate(starEff, battleTargetUI[tempTargetIdx].transform.position, Quaternion.Euler(0, 0, 0)); //사용된 아이템에 대해 effect
+                startemp2.GetComponent<effMove>().changeSprite(-999);
+            }
+            temp.GetComponent<Animator>().Play("TargetDestroy", -1, 0f);
+            attackEff[tempTargetIdx].GetComponent<Animator>().Play("racoFire");
+            SoundManager_Sfx.Instance.playSound(44);
+        }
     }
     private void makeGuardEffect(int tempTargetIdx)
     {
@@ -3267,7 +3326,8 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     public GameObject attackCharacterObj;
-    private IEnumerator battleHitAnim(int lastAttack, int lastDead, int motionOpt)
+    public GameObject[] attackEff = new GameObject[8];
+    private IEnumerator battleHitAnim(int lastAttack, int lastDead, int motionOpt, Skill skill )
     {
         int skillResult = 0;
         int tempTargetIdx = 0;
@@ -3284,8 +3344,8 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => !KillAnimationManager.Instance.getKillAnimationPlay());
         }
 
-        
 
+       
         if (specialHitVal == 0 && lastAttack < 4 && motionOpt > 0)
         {
             int[] tempQueueCopy = skillResultQueueForAnim.ToArray();
@@ -3367,9 +3427,14 @@ public class BattleManager : MonoBehaviour
                     }
                 }
 
+                if(skillResult == 3)
+                {
+                    makeHitEffect(tempTargetIdx, skill.getMySkillEffType());
+                }
+
                 if (skillResult == 1) {
 
-                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), skill.getEnemySkillEffType());
                     backGroundObj[4].GetComponent<Animator>().Play("BattleFaint", -1, 0f);
                     battleAnimationControl(tempTargetIdx, 2);
                     DeadCharacterUpdate(tempTargetIdx);
@@ -3382,7 +3447,7 @@ public class BattleManager : MonoBehaviour
 
                     if (skillResult == 0)
                     {  
-                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(),skill.getEnemySkillEffType());
                         backGroundObj[4].GetComponent<Animator>().Play("BattleHit", -1, 0f);
                         battleAnimationControl(tempTargetIdx, 1);
 
@@ -3419,9 +3484,15 @@ public class BattleManager : MonoBehaviour
                         }
                     }
                 }
+
+                if (skillResult == 3)
+                {
+                    makeHitEffect(tempTargetIdx, skill.getMySkillEffType());
+                }
+
                 if (skillResult == 1) //사망한 경우
                 {
-                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                    characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), skill.getEnemySkillEffType());
                     backGroundObj[4].GetComponent<Animator>().Play("BattleKill", -1, 0f);
                     battleAnimationControl(tempTargetIdx, 2);
                     DeadCharacterUpdate(tempTargetIdx);
@@ -3431,7 +3502,7 @@ public class BattleManager : MonoBehaviour
                 {
                     changeDiceState(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getStateChange());
                     if (skillResult == 0) { //대미지는 주었지만한 생존한 경우
-                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal());
+                        characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), skill.getEnemySkillEffType());
                         backGroundObj[4].GetComponent<Animator>().Play("BattleShine", -1, 0f);
                         battleAnimationControl(tempTargetIdx, 1);
 
@@ -3656,9 +3727,8 @@ public class BattleManager : MonoBehaviour
                                     preDamageArr[preDmgIdx] = takeSkillPacketArr2[takeIdx].getVal();
                                 }
                             }
-                            Debug.Log(preDamageArr[preDmgIdx]);
                         }
-                        Debug.Log("final damage Arr");
+
                         if (i != 0)
                         {
                             takeSkillPacketArr.Clear(); // 그저 데미지 Text를 보여주기 위한 부분 
@@ -3748,7 +3818,7 @@ public class BattleManager : MonoBehaviour
                         }
                         
                         battleHitAnimEndChk = true;
-                        StartCoroutine(battleHitAnim(lastAtk, lastDead, myCharacter[skillUseCharacter].getDestiny().getSkillMotion(skillUseIdx)));
+                        StartCoroutine(battleHitAnim(lastAtk, lastDead, myCharacter[skillUseCharacter].getDestiny().getSkillMotion(skillUseIdx), curSkill));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
                         for(int animInitIdx =0;animInitIdx<4;animInitIdx++) myCharacterObjUI[animInitIdx].GetComponent<SpriteRenderer>().enabled = true;
                         initTransBySkillUser();
@@ -3906,7 +3976,7 @@ public class BattleManager : MonoBehaviour
                         }
 
                         battleHitAnimEndChk = true;
-                        StartCoroutine(battleHitAnim(-1, -1, 0));
+                        StartCoroutine(battleHitAnim(-1, -1, 0, curSkill));
                         yield return new WaitUntil(() => !battleHitAnimEndChk);
                         initTransBySkillUser();
 
@@ -4847,7 +4917,7 @@ public class BattleManager : MonoBehaviour
 
 
 
-    private void characterDamageMove(int idx, int damage)
+    private void characterDamageMove(int idx, int damage, int skillOpt)
     {
         if (damage < 0)
         {
@@ -4871,7 +4941,7 @@ public class BattleManager : MonoBehaviour
         else CameraManager.Instance.attackShakeStart(Mathf.Sqrt(damage) * -1);
 
 
-        makeHitEffect(idx);
+        makeHitEffect(idx, skillOpt);
 
         //CameraManager.Instance.VibrateForeTime(0.1f, temp * 5);//데미지만큼 더 흔들리게
 

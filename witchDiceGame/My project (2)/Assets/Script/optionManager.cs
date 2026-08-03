@@ -467,6 +467,8 @@ public class optionManager : MonoBehaviour
         optionBtnText[1].text = TalkManager.Instance.getDesc(94);
         optionBtnText[2].text = TalkManager.Instance.getDesc(95);
         optionBtnText[3].text = TalkManager.Instance.getDesc(202);
+        optionBtnText[4].text = TalkManager.Instance.getDesc(250);
+        optionBtnText[5].text = TalkManager.Instance.getDesc(251);
     }
 
     public void changeTextSize(int val)

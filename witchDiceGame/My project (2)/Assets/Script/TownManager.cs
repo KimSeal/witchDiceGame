@@ -201,6 +201,7 @@ public class TownManager : MonoBehaviour
     }
     public void backToMain()
     {
+        
         upDownManager.Instance.hoverOutUnderTitleButton();
         clickTownUI(7);
         SoundManager_Sfx.Instance.playSound(0);
