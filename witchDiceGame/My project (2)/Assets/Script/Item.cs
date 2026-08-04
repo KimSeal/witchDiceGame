@@ -13,7 +13,8 @@ public class Item
     private int activeTiming =0;
     private int durability = 0;
 
-    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7, int activeTiming, int durability)
+    public Item(int idx, int type, string itemName, string contentKR, string contentEN, string contentJP, string contentCH,
+        int val0, int val1, int val2, int val3, int val4, int val5, int val6, int val7, int activeTiming, int durability)
     {
         this.type = type;
         this.idx = idx;
@@ -21,6 +22,7 @@ public class Item
         this.content[0] = contentKR;
         this.content[1]= contentEN;
         this.content[2] = contentJP;
+        this.content[3] = contentCH;
         this.val[0] = val0;
         this.val[1] = val1;
         this.val[2] = val2;
@@ -41,7 +43,7 @@ public class Item
         this.content[0] = TalkManager.Instance.SpecialTextChange(itemReader.contentKR);
         this.content[1] = TalkManager.Instance.SpecialTextChange(itemReader.contentEN);
         this.content[2] = TalkManager.Instance.SpecialTextChange(itemReader.contentJP);
-
+        this.content[3] = TalkManager.Instance.SpecialTextChange(itemReader.contentCH);
         this.val[0] = itemReader.val0;
         this.val[1] = itemReader.val1;
         this.val[2] = itemReader.val2;

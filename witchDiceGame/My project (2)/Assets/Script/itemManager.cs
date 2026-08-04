@@ -1154,7 +1154,8 @@ public class itemManager : MonoBehaviour
                 itemArrLengthByChapter[i, j] = itemListChapter[i, j].Count;
             }
         }
-        
+        //test Sample
+        /*
         for (int i = 0; i < 6; i++)
         {
             ItemExistArr[0, i] = true;
@@ -1179,8 +1180,8 @@ public class itemManager : MonoBehaviour
 
         ItemExistArr[3, 5] = true;
         ItemArr[3, 5] = new Item(itemList[3][14]);
-        
-        //test Sample
+        */
+
         /*
         
          ItemExistArr[1, 3] = true;

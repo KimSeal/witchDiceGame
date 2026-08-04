@@ -30,7 +30,7 @@ public class optionManager : MonoBehaviour
     public GameObject[] optionBtn = new GameObject[6];
     [SerializeField]
     public TextMeshProUGUI[] languageBigText = new TextMeshProUGUI[2];
-    public GameObject[] languageBtn = new GameObject[3];
+    public GameObject[] languageBtn = new GameObject[4];
     public GameObject[] underTextSizeButton = new GameObject[3];
     public TextMeshProUGUI[] underTextSizeButtonText = new TextMeshProUGUI[3];
 

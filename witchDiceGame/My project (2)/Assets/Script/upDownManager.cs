@@ -678,7 +678,9 @@ public class upDownManager : MonoBehaviour
                 AdventureManager.Instance.mainPlayButton(true);
             }
         }
-    } 
+    }
+    [SerializeField]
+    public GameObject mainhwaObj;
     public void hoverInUnderTitleButton(int idx)
     {
         if (jsonDataManager.Instance.getTutorialDid())
@@ -687,13 +689,26 @@ public class upDownManager : MonoBehaviour
             else if(idx == 1) skillDescUpdate("none", 0, 0, 0, 0, "Steam Wishlist", TalkManager.Instance.getDesc(153));
             else if(idx == 7) skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
             else skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
+
+            if(idx ==0 || idx == 1 || idx == 7)
+            {
+                mainhwaObj.GetComponent<mainhwa>().witchError(true);
+            }
+
         }
         else
         {
             if(idx == 7) skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
             else if (idx == 0) skillDescUpdate("none", 0, 0, 0, 0, "Steam Wishlist", TalkManager.Instance.getDesc(153));
             else skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
+
+            if (idx == 0 || idx == 7)
+            {
+                mainhwaObj.GetComponent<mainhwa>().witchError(true);
+            }
         }
+
+       
 
         underHoverBar[1].GetComponent<Image>().sprite = underTitleButton[idx].GetComponent<Image>().sprite;
 
@@ -713,9 +728,6 @@ public class upDownManager : MonoBehaviour
         }
 
         if (!jsonDataManager.Instance.getTutorialDid()) { // 아직 아무것도 안된 경우 튜토리얼만 열어두기.
-
-            
-
             underTitleNewMark[7].GetComponent<Image>().sprite
                     = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
             underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_deleteInitBtn");
@@ -727,6 +739,7 @@ public class upDownManager : MonoBehaviour
             underTitleButton[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_SteamBtn");
             underTitleButton[7].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_Hill");
         }
+        mainhwaObj.GetComponent<mainhwa>().witchError(false);
         skillDescUpdate("none", 0, 0, 0, 0, "", "");
         onOffUI(0, 0);
     }

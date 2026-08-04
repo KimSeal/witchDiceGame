@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 public class adventureEvent_Packet{
-    public string[] chooseText = new string[3];
-    public string[] resultText = new string[3];
+    public string[] chooseText = new string[4];
+    public string[] resultText = new string[4];
     private int selectType; // 0 : 대화문  1 : 아이템 취득  2: 아이템 버리기  3 : 능력치 감소  4 : 능력치 획득 5 : 능력치 감소 및 획득
                      // 6 : 배틀
     private int[] val = new int[8];
@@ -32,6 +32,9 @@ public class adventureEvent_Packet{
 
         this.chooseText[2] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.chooseTextJP);
         this.resultText[2] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.resultTextJP);
+
+        this.chooseText[3] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.chooseTextCH);
+        this.resultText[3] = TalkManager.Instance.SpecialTextChange(adventureEventPacketReader.resultTextCH);
 
         this.selectType = adventureEventPacketReader.selectType;
         this.val[0] = adventureEventPacketReader.selectVal0;
@@ -133,7 +136,7 @@ public class adventureEvent
     private int stageIdx; // 해당 이벤트가 나오게 되는 스테이지의 idx
     private int levelIdxStart; //해당 이벤트가 나올 수 있는 스테이지의 단계 최소값
     private int levelIdxEnd; // 해당 이벤가 나올 수 있는 스테이지의 최대값
-    public string[] selectText = new string[3]; // 이벤트 등장시 나오는 text
+    public string[] selectText = new string[4]; // 이벤트 등장시 나오는 text
 
     adventureEvent_Packet[] packet = new adventureEvent_Packet[6];
 
@@ -150,7 +153,7 @@ public class adventureEvent
         this.selectText[0] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextKR);
         this.selectText[1] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextEN);
         this.selectText[2] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextJP);
-
+        this.selectText[3] = TalkManager.Instance.SpecialTextChange(adventureEventReader.selectTextCH);
         this.eventType = adventureEventReader.eventType;
         this.NPCSprite = adventureEventReader.NPCSprite;
         this.backgroundSprite = adventureEventReader.backgroundSprite;

@@ -291,11 +291,10 @@ public class CameraManager : MonoBehaviour
         if(caseVal == 0) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_lose");
         if(caseVal == 1) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_giveUp");
         if (caseVal == 2) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
-        Debug.Log("lastCharacter");
+
         for (int i = 0; i < 4; i++) {
             
             int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.
-            Debug.Log(AdventureManager.Instance.getLastCharacter(i));
 
             if (destinyIdx != -99999)
             {

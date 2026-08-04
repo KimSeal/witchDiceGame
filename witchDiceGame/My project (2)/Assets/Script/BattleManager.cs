@@ -1829,13 +1829,16 @@ public class BattleManager : MonoBehaviour
     //스킬 선택 중 버튼 클릭에 대한 코드
     public void click_characterSkill_Button(int input)
     {
-        if (AdventureManager.Instance.getTutorial() == 7 && 
-            ( (input % 2 == 0) ||
-            BattleManager.Instance.getCharacter(input / 10) == null || BattleManager.Instance.getCharacter(input/10).getCurState() != 0 || BattleManager.Instance.getCharacter(input/10).getDestiny().getDestinyIdx() != 0)
-            )
-        {
-            fullUI.showFull(65);
-            return;
+        
+        if (AdventureManager.Instance.getTutorial() == 7) {
+            if (BattleManager.Instance.getCharacter(input / 10) == null || BattleManager.Instance.getCharacter(input / 10).getCurState() != 0 ) {
+                return;
+            }
+            if ( BattleManager.Instance.getCharacter(input / 10).getDestiny().getDestinyIdx() != 0 || input % 2 == 0 )
+            {
+                fullUI.showFull(65);
+                return;
+            }
         }
         if (curPhase == 3 && currentLightUI == 0 && currentMoveUI == 0)
         {
@@ -3087,7 +3090,6 @@ public class BattleManager : MonoBehaviour
 
     private void makeHitEffect(int tempTargetIdx, int effOpt)
     {
-        Debug.Log(effOpt);
         //별이랑 원형 이펙트
         if (effOpt<0)
         {
@@ -3194,7 +3196,6 @@ public class BattleManager : MonoBehaviour
         else
         {
             if (skillType == 0) {
-                Debug.Log("criticalChk");
                 specialTextManager.GetComponent<ExampleTextManager>().printBattleUpgrade(10, myTeam, idx, -1 * val, height); return true; 
             }    //damage
         }
@@ -4705,10 +4706,12 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (Input.GetKeyUp(KeyCode.Space))
         {
             specialTextManager.GetComponent<ExampleTextManager>().printTest();
         }
+        */
         
     }
     private bool resultItemPopChk = false;

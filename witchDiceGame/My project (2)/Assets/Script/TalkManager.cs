@@ -57,8 +57,8 @@ public class TalkManager : MonoBehaviour
     private int initIdx = -1;
     //private int curLight = 0;
 
-    private string[] descLanArr = new string[3];
-    private string[] talkLanArr = new string[3];
+    private string[] descLanArr = new string[4];
+    private string[] talkLanArr = new string[4];
 
 
     private bool talkingChk = false;
@@ -148,6 +148,7 @@ public class TalkManager : MonoBehaviour
             descLanArr[0] = "";
             descLanArr[1] = "";
             descLanArr[2] = "";
+            descLanArr[3] = "";
             setDescString("");
         }
         else
@@ -155,6 +156,7 @@ public class TalkManager : MonoBehaviour
             descLanArr[0] = descList[descIdx].KR;
             descLanArr[1] = descList[descIdx].EN;
             descLanArr[2] = descList[descIdx].JP;
+            descLanArr[3] = descList[descIdx].CH;
             setDescString(getDesc(descIdx));
         }
         
@@ -433,7 +435,7 @@ public class TalkManager : MonoBehaviour
     public TextMeshProUGUI skipSumText;
     public GameObject skipEntity;
     public Sprite[] skipButtonSprite = new Sprite[4];
-    public string [] sumText = new string[3];
+    private string [] sumText = new string[4];
 
     private bool skipOnOff = false;
     public void hoverInSkipYesButton()
@@ -494,12 +496,14 @@ public class TalkManager : MonoBehaviour
             sumList[i].SumKR = SpecialTextChange(sumList[i].SumKR);
             sumList[i].SumJP = SpecialTextChange(sumList[i].SumJP);
             sumList[i].SumEN = SpecialTextChange(sumList[i].SumEN);
+            sumList[i].SumCH = SpecialTextChange(sumList[i].SumCH);
         }
         for (int i = 0; i < talkList.Count; i++)
         {
             talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
             talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN);
             talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP);
+            talkList[i].TextCH = SpecialTextChange(talkList[i].TextCH);
         }
         descList = CSVReader.Read<DescReader>("Desc");
         for (int i = 0; i < descList.Count; i++)
@@ -507,6 +511,7 @@ public class TalkManager : MonoBehaviour
             descList[i].KR = SpecialTextChange(descList[i].KR);
             descList[i].EN = SpecialTextChange(descList[i].EN);
             descList[i].JP = SpecialTextChange(descList[i].JP);
+            descList[i].CH = SpecialTextChange(descList[i].CH);
         }
         
 
@@ -732,6 +737,7 @@ public class TalkManager : MonoBehaviour
         if(jsonDataManager.Instance.getLanguage() == 0) return descList[idx].KR;
         if (jsonDataManager.Instance.getLanguage() == 1) return descList[idx].EN;
         if (jsonDataManager.Instance.getLanguage() == 2) return descList[idx].JP;
+        if (jsonDataManager.Instance.getLanguage() == 3) return descList[idx].CH;
         return descList[idx].EN;
     }
 
@@ -823,6 +829,7 @@ public class TalkManager : MonoBehaviour
                 sumText[0] = sumList[a].SumKR;
                 sumText[1] = sumList[a].SumEN;
                 sumText[2] = sumList[a].SumJP;
+                sumText[3] = sumList[a].SumCH;
                 skipSumText.text = sumText[jsonDataManager.Instance.getLanguage()];
             }
             else {
@@ -1062,6 +1069,7 @@ public class TalkManager : MonoBehaviour
         talkLanArr[0] = talkList[a].TextKR;
         talkLanArr[1] = talkList[a].TextEN;
         talkLanArr[2] = talkList[a].TextJP;
+        talkLanArr[3] = talkList[a].TextCH;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
         maxAutoTime = 1.5f + (talkLanArr[jsonDataManager.Instance.getLanguage()].Length) * 0.1f;
         autoRemainTime = maxAutoTime;

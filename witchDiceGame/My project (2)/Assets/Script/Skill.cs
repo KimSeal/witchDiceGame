@@ -89,7 +89,7 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     public int getVal () { return val; }
     public int getStateChange() { return stateChange; }
     public void addVal(int val) { this.val += val; }
-    public void mulVal(int val) { this.val *= val; Debug.Log(this.val); }
+    public void mulVal(int val) { this.val *= val; }
     public void setStateChange(int val) { this.stateChange = val; }
     public bool getCritical() { return critical; }
     public void setCritical() { this.critical = true; }
@@ -115,7 +115,7 @@ public class Skill
     public int Var0;
     public int Var1;
     public int Var2;
-    public string[] Command = new string[3];
+    public string[] Command = new string[4];
     public int Anim;
     public int AnimMove;
 
@@ -146,7 +146,8 @@ public class Skill
         this.Command[0] = TalkManager.Instance.SpecialTextChange(skillReader.CommandKR);
         this.Command[1] = TalkManager.Instance.SpecialTextChange(skillReader.CommandEN);
         this.Command[2] = TalkManager.Instance.SpecialTextChange(skillReader.CommandJP);
-
+        this.Command[3] = TalkManager.Instance.SpecialTextChange(skillReader.CommandCH);
+        
         this.Anim = skillReader.Anim;
         this.AnimMove = skillReader.AnimMove;
         this.SpecialVal = skillReader.SpecialVal;
