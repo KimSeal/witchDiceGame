@@ -48,18 +48,18 @@ public class mainhwa : MonoBehaviour
 
     private void Update()
     {
-        /*
+        
         if (Input.GetKeyDown(KeyCode.Z))
         {
             witchError(true);
-            TalkManager.Instance.setDescString("Add WishList & Play Demo Now!");
-            TalkManager.Instance.setDescClickLock(true);
+            //TalkManager.Instance.setDescString("Add WishList & Play Demo Now!");
+            //TalkManager.Instance.setDescClickLock(true);
         }
         else if (Input.GetKeyDown(KeyCode.X))
         {
             witchError(false);
         }
-        */
+        
     }
 
     public void witchError(bool onOff)

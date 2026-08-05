@@ -125,11 +125,9 @@ public class CharacterManager : MonoBehaviour
 
         myCharacter[2].setReviveUnit(true);
         setFoodStreetInfo();
+        //setCharacter(0, 3);
+        //setCharacter(3, 4);
         //setCharacter(1, 1);
-        //setCharacter(3, 8);
-        //setCharacter(1, 1);
-        //setCharacter(2, 2);
-        //setCharacter(3, 3);
     }
     // Update is called once per frame
     void Update()
