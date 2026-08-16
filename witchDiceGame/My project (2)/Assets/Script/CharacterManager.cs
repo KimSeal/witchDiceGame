@@ -125,7 +125,7 @@ public class CharacterManager : MonoBehaviour
 
         myCharacter[2].setReviveUnit(true);
         setFoodStreetInfo();
-        //setCharacter(0, 3);
+        //setCharacter(0, 6);
         //setCharacter(3, 4);
         //setCharacter(1, 1);
     }

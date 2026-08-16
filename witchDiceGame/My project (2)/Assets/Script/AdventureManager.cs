@@ -868,17 +868,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void makeStageEventArr(int stageNum) //이번 스테이지의 나타나는 이벤트의 종류를 미리 배치한다.
     {
-        /*
-        if (tutorialVal > 0)
-        {
-            adventureEventArr = new int[adventureEventList[stageNum].Count];
-            for (int i = 0; i < adventureEventList[stageNum].Count; i++)
-            {
-                adventureEventArr[i] = i; //i;이부분 조정해서 맵 테스트 진행
-            }
-            return;
-        }
-        */
+
         // stage 순서를 랜덤으로 만든다.
         adventureEventArr = new int[adventureEventList[stageNum].Count];
         for (int i = 0; i < adventureEventList[stageNum].Count; i++)

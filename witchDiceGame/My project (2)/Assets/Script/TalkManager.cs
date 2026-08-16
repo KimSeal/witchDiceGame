@@ -1021,9 +1021,15 @@ public class TalkManager : MonoBehaviour
             if (nameArr[i] == "Village" || nameArr[i] == "Bard" || nameArr[i] == "Tom" || nameArr[i] == "Bob" || 
                 nameArr[i] == "ailBig0" || nameArr[i] == "Kaebi" || nameArr[i] == "grinYoung0" ||
                 nameArr[i] == "ailAdult" || nameArr[i] == "ailDark" || nameArr[i] == "graceWoman" 
-                || nameArr[i] == "killer" || nameArr[i] == "king")
+                || nameArr[i] == "killer" || nameArr[i] == "king" ||
+                nameArr[i] == "ailAdultPixel" || nameArr[i] == "ailDead" || nameArr[i] == "ailDeadTrue" || nameArr[i] == "ailHero" ||
+                nameArr[i] == "GreretMonster" || nameArr[i] == "grinYoung1" || nameArr[i] == "VillagePixel"|| nameArr[i] == "YongsaTrue")
             {
                 characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(204f, 216f);
+            }
+            else if (nameArr[i] == "Greret_4")
+            {
+                characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(306f, 216f);
             }
             else characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(102f, 216f);
 
