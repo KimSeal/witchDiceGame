@@ -489,7 +489,7 @@ public class TalkManager : MonoBehaviour
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
         libraryEntry = false;
-        talkList = CSVReader.Read<TalkReader>("Talk_2");
+        talkList = CSVReader.Read<TalkReader>("Talk_2 1");
         sumList = CSVReader.Read<SumReader>("TextSum");
         for (int i=0;i<sumList.Count;i++)
         {
@@ -1022,8 +1022,8 @@ public class TalkManager : MonoBehaviour
                 nameArr[i] == "ailBig0" || nameArr[i] == "Kaebi" || nameArr[i] == "grinYoung0" ||
                 nameArr[i] == "ailAdult" || nameArr[i] == "ailDark" || nameArr[i] == "graceWoman" 
                 || nameArr[i] == "killer" || nameArr[i] == "king" ||
-                nameArr[i] == "ailAdultPixel" || nameArr[i] == "ailDead" || nameArr[i] == "ailDeadTrue" || nameArr[i] == "ailHero" ||
-                nameArr[i] == "GreretMonster" || nameArr[i] == "grinYoung1" || nameArr[i] == "VillagePixel"|| nameArr[i] == "YongsaTrue")
+                nameArr[i] == "ailAdultPixel" || nameArr[i] == "ailDead" || nameArr[i] == "ailDeadTrue" || nameArr[i] == "ailHero" || nameArr[i] == "wolfMask" ||
+                nameArr[i] == "GreretMonster" || nameArr[i] == "grinYoung1" || nameArr[i] == "VillagePixel")
             {
                 characterImage[i].GetComponent<RectTransform>().sizeDelta = new Vector2(204f, 216f);
             }
