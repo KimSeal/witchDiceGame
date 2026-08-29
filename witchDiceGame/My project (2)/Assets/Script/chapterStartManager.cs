@@ -14,7 +14,12 @@ public class chapterStartManager : MonoBehaviour
 
     public TextMeshProUGUI[] chapterStartText = new TextMeshProUGUI[2];
 
+    private bool chapter5move = false;
+
     public string[] chapterTitle = new string[7];
+
+    [SerializeField]
+    public int startChapterIdx = 0;
     private void Awake()
     {
         if (null == instance)
@@ -43,10 +48,28 @@ public class chapterStartManager : MonoBehaviour
         chapterTitle[0] = "Lost People";
         chapterTitle[1] = "Expedient";
         chapterTitle[2] = "Liar";
+
+        chapterTitle[3] = "Crack";
+        chapterTitle[4] = "Push Back";
+        chapterTitle[5] = "Regret";
+        chapterTitle[6] = "Last Time";
     }
 
     private void FixedUpdate()
     {
+        if (chapter5move)
+        {
+            objectArr[0].GetComponent<RectTransform>().anchoredPosition =
+                objectArr[0].GetComponent<RectTransform>().anchoredPosition * 0.98f + 
+                new Vector2(-30f, objectArr[0].GetComponent<RectTransform>().anchoredPosition.y) * 0.02f;
+            if (objectArr[0].GetComponent<RectTransform>().anchoredPosition.x > -35)
+            {
+                objectOriginArr[0].GetComponent<Animator>().Play("WitchIdle");
+                
+                objectArr[0].GetComponent<Image>().sprite = objectOriginArr[0].GetComponent<SpriteRenderer>().sprite;
+                chapter5move = false;
+            }
+        }
         if (getChapterStartEnd())
         {
             for (int i = 0; i < objectArr.Length; i++)
@@ -57,6 +80,7 @@ public class chapterStartManager : MonoBehaviour
                objectOriginArr[i].GetComponent<SpriteRenderer>().sprite.bounds.size.y);
             }
         }
+       
     }
     // Update is called once per frame
     void Update()
@@ -64,7 +88,7 @@ public class chapterStartManager : MonoBehaviour
         
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            //startChater(2);
+            startChater(startChapterIdx);
         }
     }
     public void setAnim(int objIdx, string animName, Vector3 vectorTemp)
@@ -84,6 +108,7 @@ public class chapterStartManager : MonoBehaviour
     }
     public void initPos()
     {
+        chapter5move = false;
         chapterStartText[0].text = "";
         chapterStartText[1].text = "";
         for (int i=0;i<objectArr.Length;i++)
@@ -134,6 +159,39 @@ public class chapterStartManager : MonoBehaviour
             changeAnim(3, "Idle");
             changeAnim(4, "Idle");
         }
+        if (opt == 3)
+        {
+            setAnim(0, "brokenAil", new Vector3(0, -41, 0));
+            setAnim(1, "brokenAil", new Vector3(-55, -41, 0));
+            setAnim(2, "brokenAil", new Vector3(55, -41, 0));
+            changeAnim(0, "Idle");
+            changeAnim(1, "BrokenBody");
+            changeAnim(2, "BrokenArm");
+        }
+        if (opt == 4)
+        {
+            setAnim(0, "Chapter5", new Vector3(-70, -41, 0));
+            setAnim(1, "Chapter5", new Vector3(-30, -53, 0));
+            setAnim(2, "Chapter5", new Vector3(30, -41, 0));
+            setAnim(3, "Chapter5", new Vector3(93, -41, 0));
+            changeAnim(0, "AilIdle");
+            changeAnim(1, "FlutterIdle");
+            changeAnim(2, "WitchIdle");
+            changeAnim(3, "ThingIdle");
+        }
+        if (opt == 5)
+        {
+            setAnim(0, "Chapter6", new Vector3(-100, -41, 0));
+            setAnim(1, "Chapter6", new Vector3(35, -41, 0));
+            setAnim(2, "Chapter6", new Vector3(35, -41, 0));
+            changeAnim(0, "WitchBlack");
+            changeAnim(1, "Body");
+            changeAnim(2, "GreretOpenIdle");
+        }
+        if(opt == 6)
+        {
+            setAnim(0, "OdiBed", new Vector3(0f, -53f, 0f));
+        }
         blackCover.GetComponent<Image>().color = new Color(blackCover.GetComponent<Image>().color.r,
                blackCover.GetComponent<Image>().color.g,
                blackCover.GetComponent<Image>().color.b,
@@ -153,7 +211,7 @@ public class chapterStartManager : MonoBehaviour
 
         if (opt == 0)
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             changeAnim(0, "WatchRight");
             changeAnim(3, "WatchLeft");
             yield return new WaitForSeconds(1.5f);
@@ -165,7 +223,7 @@ public class chapterStartManager : MonoBehaviour
         }
         if (opt == 1)
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             changeAnim(1, "Spell");
             yield return new WaitForSeconds(0.5f);
             changeAnim(0, "Spell");
@@ -180,7 +238,7 @@ public class chapterStartManager : MonoBehaviour
         }
         if (opt == 2)
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             changeAnim(0, "LeftWatchSurprise");
             changeAnim(3, "FocusAngry");
             changeAnim(4, "Make");
@@ -191,7 +249,39 @@ public class chapterStartManager : MonoBehaviour
             changeAnim(4, "Boom");
             yield return new WaitForSeconds(3f);
         }
-
+        if (opt == 3)
+        {
+            yield return new WaitForSeconds(1f);
+            changeAnim(0, "Wake");
+            yield return new WaitForSeconds(1.5f);
+            changeAnim(0, "WakeEnd");
+            yield return new WaitForSeconds(1.5f);
+            changeAnim(0, "Fall");
+            yield return new WaitForSeconds(2f);
+        }
+        if (opt == 4)
+        {
+            yield return new WaitForSeconds(2f);
+            changeAnim(0, "AilIdle2");
+            changeAnim(1, "FlutterSad");
+            changeAnim(2, "WitchSurprise");
+            changeAnim(3, "ThingFall");
+            yield return new WaitForSeconds(1.5f);
+        }
+        if (opt == 5)
+        {
+            yield return new WaitForSeconds(1f);
+            changeAnim(0, "WitchWalkBlack");
+            changeAnim(2, "GreretOpen");
+            chapter5move = true;
+            yield return new WaitForSeconds(3f);
+            changeAnim(2, "GreretSmile");
+            yield return new WaitForSeconds(1f);
+        }
+        if (opt == 6)
+        {
+            yield return new WaitForSeconds(3f);
+        }
         while (blackCover.GetComponent<Image>().color.a < 1)
         {
             blackCover.GetComponent<Image>().color = new Color(blackCover.GetComponent<Image>().color.r,
