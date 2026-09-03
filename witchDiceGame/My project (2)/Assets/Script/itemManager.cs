@@ -1155,7 +1155,7 @@ public class itemManager : MonoBehaviour
             }
         }
         //test Sample
-        
+        /*
         for (int i = 0; i < 6; i++)
         {
             ItemExistArr[0, i] = true;
@@ -1236,6 +1236,7 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 3] = new Item(itemList[2][1]);
         ItemArr[0, 4] = new Item(itemList[2][1]);
        */
+        
         updateInventory();
     }
 
