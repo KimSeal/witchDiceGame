@@ -145,6 +145,22 @@ public class upDownManager : MonoBehaviour
     public GameObject[] changeBtn = new GameObject[4];
     public GameObject[] changeOutline = new GameObject[4];
 
+    [SerializeField]
+    public GameObject characterExitBtn;
+    public GameObject characterExitBtnOutline;
+
+    [SerializeField]
+    public GameObject skillExitBtn;
+    public GameObject skillExitBtnOutline;
+
+    [SerializeField]
+    public GameObject itemExitBtn;
+    public GameObject itemExitBtnOutline;
+
+    [SerializeField]
+    public GameObject powerExitBtn;
+    public GameObject powerExitBtnOutline;
+
     private int lockState = 0; //0 : free  1: underbar hover  2: upperbar hover 3: battleMode  4: witchPower 
     private int curSkill = -1;
     private int curItemIdx = -1;
@@ -936,7 +952,11 @@ public class upDownManager : MonoBehaviour
         }
         changeBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
-        itemManager.Instance.hoverInSwapOrDelete(0);
+        ToolBarManager.Instance.setToolBar(
+            TalkManager.Instance.getDesc(87),
+            TalkManager.Instance.getDesc(89),
+            Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_changeInitBtn"));
+        //itemManager.Instance.hoverInSwapOrDelete(0);
     }
 
     public void hoverOutChangeInitBtn()
@@ -949,7 +969,7 @@ public class upDownManager : MonoBehaviour
     {
         if (AdventureManager.Instance.getBattleEventChk())
         {
-            clickCharacterButton(-1);
+            //clickCharacterButton(-1);
             return;
         }
         changeChkEntity.SetActive(true);
@@ -991,6 +1011,72 @@ public class upDownManager : MonoBehaviour
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
 
+    public void hoverInItemExitBtn()
+    {
+        itemExitBtnOutline.GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        ToolBarManager.Instance.setToolBar(
+                    TalkManager.Instance.getDesc(252),
+                    TalkManager.Instance.getDesc(253),
+                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop"));
+    }
+    public void hoverOutItemExitBtn()
+    {
+        itemExitBtnOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void hoverInCharacterExitBtn()
+    {
+        characterExitBtnOutline.GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        ToolBarManager.Instance.setToolBar(
+                    TalkManager.Instance.getDesc(252),
+                    TalkManager.Instance.getDesc(253),
+                    Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop"));
+    }
+    public void hoverOutCharacterExitBtn()
+    {
+        characterExitBtnOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void hoverInSkillExitBtn()
+    {
+        Debug.Log("hover!");
+        skillExitBtnOutline.GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        ToolBarManager.Instance.setToolBar(
+                TalkManager.Instance.getDesc(252),
+                TalkManager.Instance.getDesc(253),
+                Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop"));
+
+    }
+    public void hoverOutSkillExitBtn()
+    {
+        Debug.Log("hover!");
+        skillExitBtnOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void hoverInPowerExitBtn()
+    { 
+
+        powerExitBtnOutline.GetComponent<Image>().sprite
+           = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
+        ToolBarManager.Instance.setToolBar(
+                TalkManager.Instance.getDesc(252),
+                TalkManager.Instance.getDesc(253),
+                Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_Stop"));
+    }
+    public void hoverOutPowerExitBtn()
+    {
+        Debug.Log("hover!");
+        powerExitBtnOutline.GetComponent<Image>().sprite
+            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
     public void clickDeleteBtn()
     {
         itemManager.Instance.deleteCharacter();
@@ -1011,7 +1097,11 @@ public class upDownManager : MonoBehaviour
         }
         deleteBtnInitOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
-        itemManager.Instance.hoverInSwapOrDelete(1);
+        ToolBarManager.Instance.setToolBar(
+            TalkManager.Instance.getDesc(88),
+            TalkManager.Instance.getDesc(90),
+            Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_getOutButton_active"));
+        //itemManager.Instance.hoverInSwapOrDelete(1);
     }
     public void hoverOutDeleteInitBtn()
     {
@@ -1029,7 +1119,7 @@ public class upDownManager : MonoBehaviour
         }
         if (AdventureManager.Instance.getBattleEventChk())
         {
-            clickCharacterButton(-1);
+            //clickCharacterButton(-1);
             return;
         }
         deleteChkText.text = TalkManager.Instance.getDesc(18);
@@ -1669,8 +1759,8 @@ public class upDownManager : MonoBehaviour
     public void underSkillClickAble(int idx, int opt)
     {
         if(opt == 1) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_on");
-        else if(opt == 0)underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off");
-        else if (opt == 2) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_warning");
+        //else if(opt == 0)underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off");
+        //else if (opt == 2) underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_off");//Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_diceChk_warning");
         else underSkillAble[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }
     public void hoverInSkillClickAble(int idx)
@@ -1719,7 +1809,7 @@ public class upDownManager : MonoBehaviour
         {
             //deleteOtherLock(1);
             backBlackSkill.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 108f, 0f);
-            bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 130f, 0f);
+            bigDiceSkillEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 120f, 0f);
             hoverInUnderBarSkill(curSkill);
             lockState = 1; //클릭시 현재 스킬에 대한 설명으로 고정.
             updateBigDiceSkill();
@@ -2265,7 +2355,18 @@ public class upDownManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            bigDiceSkillButton[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(0, i);
+
+            if (BattleManager.Instance.getDiceTake(i) >= 0) {
+                if (Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + BattleManager.Instance.getSkillTake(i).getSkillName()) != null)
+                {
+                    bigDiceSkillButton[i].GetComponent<Image>().sprite =
+                        Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + BattleManager.Instance.getSkillTake(i).getSkillName());
+                }
+            }
+            else {
+                bigDiceSkillButton[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(0, i); 
+            }
+
             bigDiceSkillState[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(1, i);
         }
         for (int i = 0; i < 3; i++)
@@ -2310,6 +2411,7 @@ public class upDownManager : MonoBehaviour
     {
         for (int i = 0; i < 8; i++) {
             bigDicePowerButton[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(0,i);
+            
             bigDicePowerState[i].GetComponent<Image>().sprite = BattleManager.Instance.getDiceSprite(1, i);
         }
         for (int i = 0; i < 3; i++){

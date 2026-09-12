@@ -38,6 +38,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     public GameObject brokenEff;
 
+
+   
+
     public int chooseDiceIdx;
 
     //선공 팀 구분
@@ -105,6 +108,7 @@ public class BattleManager : MonoBehaviour
     */
     [SerializeField]
     public GameObject[] myCharacterObjUI = new GameObject[4];
+    public GameObject[] myCharacterObjUIMid = new GameObject[4];
     public Animator[] myCharacterObjUIAnim = new Animator[4];
 
     [SerializeField]
@@ -114,6 +118,7 @@ public class BattleManager : MonoBehaviour
     private ParticleSystem[,] myFireObj = new ParticleSystem[4, 2];
 
     [SerializeField] private GameObject[] enemyCharacterObjUI = new GameObject[4];
+    [SerializeField] private GameObject[] enemyCharacterObjUIMid = new GameObject[4];
     private Animator[] enemyCharacterObjUIAnim = new Animator[4];
     [SerializeField] private GameObject[] enemyCharacterShadowObjUI = new GameObject[4];
     [SerializeField] private GameObject[] enemyCharacterObjEntityUI = new GameObject[4];
@@ -134,6 +139,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject[] resultObjInit = new GameObject[12]; //obj_resultUI _board, _itemLogo, _itemName, _itemDesc + (number)
     private GameObject[,] resultObj = new GameObject[3, 4];
     public GameObject rerollButton;
+    public GameObject itemNotGetButton;
     private Item[] resultItem = new Item[3];
     private int[] resultPower = new int[3];
     private int[] resultPowerNameArr = { 143, 145, 147, 149, 151 };
@@ -204,6 +210,93 @@ public class BattleManager : MonoBehaviour
     public GameObject itemNotGetEntity;
     public TextMeshProUGUI itemNotGetText;
 
+    [SerializeField]
+    public GameObject[] diceLine = new GameObject[8];
+    private bool diceLineActive = true;
+    private int[,] lineConnect = { { -1, -1, -1, -1, -1, -1, -1, -1 } ,
+                                    { -1, -1, -1, -1, -1, -1, -1, -1 }}; // idx가 색. 내용물이 연결 캐릭터
+    private string[] outlineColor = {"#F39591", "#7EC968", "#B8EAFB", "#FBF6B8" };
+
+    public void setLineConnect(int characterIdx, int diceIdx)
+    {
+        lineConnect[0, characterIdx] = diceIdx;
+        lineConnect[1, characterIdx] = diceIdx;
+        updateCharacterOutline(-1);
+    }
+    public void setLineConnect(int characterIdx, int diceIdx, int skillIdx)
+    {
+        lineConnect[skillIdx, characterIdx] = diceIdx;
+        updateCharacterOutline(-1);
+    }
+    public void drawLineDiceCharacter()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (!diceLineActive)
+            {
+                diceLine[i].GetComponent<LineRenderer>().positionCount = 0;
+            }
+            else
+            {
+                if (lineConnect[0, i] >= 0 && lineConnect[1, i] >= 0)
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 3;
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(0, diceUIChk[lineConnect[0, i]].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(1, myCharacterObjUIMid[i].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(2, diceUIChk[lineConnect[1, i]].transform.position);
+                }
+                else if (lineConnect[0, i] >= 0)
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 2;
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(0, diceUIChk[lineConnect[0, i]].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(1, myCharacterObjUIMid[i].transform.position);
+                }
+                else if (lineConnect[1, i] >= 0)
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 2;
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(0, diceUIChk[lineConnect[1, i]].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(1, myCharacterObjUIMid[i].transform.position);
+                }
+                else
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 0;
+                }
+            }
+        }
+        for (int i = 4; i < 8; i++)
+        {
+            if (!diceLineActive)
+            {
+                diceLine[i].GetComponent<LineRenderer>().positionCount = 0;
+            }
+            else
+            {
+                if (lineConnect[0, i] >= 0 && lineConnect[1, i] >= 0)
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 3;
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(0, diceUIChk[lineConnect[0, i]].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(1, enemyCharacterObjUIMid[i - 4].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(2, diceUIChk[lineConnect[1, i]].transform.position);
+                }
+                else if (lineConnect[0, i] >= 0)
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 2;
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(0, diceUIChk[lineConnect[0, i]].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(1, enemyCharacterObjUIMid[i - 4].transform.position);
+                }
+                else if (lineConnect[1, i] >= 0)
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 2;
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(0, diceUIChk[lineConnect[1, i]].transform.position);
+                    diceLine[i].GetComponent<LineRenderer>().SetPosition(1, enemyCharacterObjUIMid[i - 4].transform.position);
+                }
+                else
+                {
+                    diceLine[i].GetComponent<LineRenderer>().positionCount = 0;
+                }
+            }
+        }
+    }
 
     public int[] myCoolTimeArr = { 0,0,0,0, 0, 0, 0, 0 };
     public int[] enemyCoolTimeArr = { 0, 0, 0, 0 , 0, 0, 0, 0 };
@@ -335,27 +428,76 @@ public class BattleManager : MonoBehaviour
             ToolBarManager.Instance.setToolBar(myCharacter[idx]);
 
             //myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
-
-            myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+            updateCharacterOutline(idx);
+            //myCharacterObjUI[idx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[idx].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
         }
         else if (idx >= 4 && idx<8 && enemyCharacter[idx - 4] != null && enemyCharacter[idx-4].getCurState() == 0)
         {
             
             ToolBarManager.Instance.setToolBar(enemyCharacter[idx-4]);
             //enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
-
-            enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+            updateCharacterOutline(idx);
+            //enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[idx - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
         }
     }
 
     public void hoverOutCharacter(int idx)
     {
+        /*
         for (int i = 0; i < 4; i++)
         {
             enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
             myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
         }
+        */
+        updateCharacterOutline(-1);
         ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
+    public void updateCharacterOutline(int hoverIdx)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == hoverIdx)
+            {
+                myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[i].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[i].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+                myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", Color.white);
+            }
+            else
+            {
+                if (lineConnect[0, i] >= 0 || lineConnect[1, i] >= 0)
+                {
+                    myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(myCharacterObjUI[i].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(myCharacterObjUI[i].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+                    ColorUtility.TryParseHtmlString(outlineColor[i], out Color newColor);
+                    myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", newColor);
+                }
+                else
+                {
+                    myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+                }
+            }
+        }
+        for (int i = 4; i < 8; i++)
+        {
+            if (i == hoverIdx)
+            {
+                enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+                enemyCharacterObjUI[i-4].GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", Color.white);
+            }
+            else
+            {
+                if (lineConnect[0, i] >= 0 || lineConnect[1, i] >= 0)
+                {
+                    enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", (int)(enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit) * (int)(enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().sprite.pixelsPerUnit));
+                    ColorUtility.TryParseHtmlString(outlineColor[i - 4], out Color newColor);
+                    enemyCharacterObjUI[i - 4].GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", newColor) ;
+                }
+                else
+                {
+                    enemyCharacterObjUI[i-4].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 0);
+                }
+            }
+        }
     }
 
     public void useGiveUpBtn()
@@ -892,6 +1034,7 @@ public class BattleManager : MonoBehaviour
         {
             if (i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            setLineConnect(i, -1);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -902,13 +1045,13 @@ public class BattleManager : MonoBehaviour
                 {
                     if (myDiceTake[i] == curSkillVal)  //같은 값을 받았을때
                     {
-                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, false); //서브그리기
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, false, true); //서브그리기
                     }
                     else // 다른 값을 받았을때
                     {
                         updateDiceUI_draw_chain(curSkillVal / 10, curSkillVal % 10, startIdx, endIdx); //이전 기반으로 chain 걸기
                         curSkillVal = myDiceTake[i];
-                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true, true); //스타트 그리기
                         startIdx = i;
                     }
                     endIdx = i;   //end 업데이트
@@ -920,7 +1063,7 @@ public class BattleManager : MonoBehaviour
                 if (myDiceTake[i] != -999) // 해당 주사위가 빈칸이 아니면
                 {
                     curSkillVal = myDiceTake[i];
-                    updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                    updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true, true); //스타트 그리기
                     startIdx = i; endIdx = i;
                 }
             }
@@ -942,6 +1085,7 @@ public class BattleManager : MonoBehaviour
         {
             if (i < 7) diceUIChain[i - 1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+            setLineConnect(i, -1);
         }
         for (int i = 4; i < 8; i++)
         {
@@ -954,13 +1098,13 @@ public class BattleManager : MonoBehaviour
                 {
                     if (enemyDiceTake[i - 4] == curSkillVal)  //같은 값을 받았을때
                     {
-                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, false); //서브그리기
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, false, false); //서브그리기
                     }
                     else // 다른 값을 받았을때
                     {
                         updateDiceUI_draw_chain(curSkillVal / 10, curSkillVal % 10, startIdx - 1, endIdx - 1); //이전 기반으로 chain 걸기 (chain은 6개자리 사이즈를 사용하므로 1씩 빼주었다)
                         curSkillVal = enemyDiceTake[i - 4];
-                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                        updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true, false); //스타트 그리기
                         startIdx = i;
                     }
                     endIdx = i;   //end 업데이트
@@ -972,7 +1116,7 @@ public class BattleManager : MonoBehaviour
                 if (enemyDiceTake[i - 4] != -999) // 해당 주사위가 빈칸이 아니면
                 {
                     curSkillVal = enemyDiceTake[i - 4];
-                    updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true); //스타트 그리기
+                    updateDiceUI_draw(curSkillVal / 10, curSkillVal % 10, i, true, false); //스타트 그리기
                     startIdx = i; endIdx = i;
                 }
             }
@@ -985,17 +1129,26 @@ public class BattleManager : MonoBehaviour
     }
 
     //주사위를 그리기 위한 함수
-    void updateDiceUI_draw(int characterIdx, int skillIdx, int diceIdx, bool startPoint)
+    void updateDiceUI_draw(int characterIdx, int skillIdx, int diceIdx, bool startPoint, bool myTeam)
     {
         string strTemp = "dice_skillChk_";
-        if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
+        strTemp += "full_";
+        //if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
         strTemp += (characterIdx + 1).ToString();
 
+        
 
-        if (startPoint) diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp);
+        if (startPoint)
+        {
+            diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp);
+            if(myTeam)setLineConnect(characterIdx, diceIdx, skillIdx);
+            else setLineConnect(characterIdx + 4, diceIdx, skillIdx);
+        }
         else
         {
-            diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp + "_sub");
+            diceUIChk[diceIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/" + strTemp);// + "_sub");
+            //if (myTeam) setLineConnect(characterIdx, -1, skillIdx);
+            //else setLineConnect(characterIdx + 4, -1, skillIdx);
         }
         /*
         if (characterIdx < 4)
@@ -1011,6 +1164,7 @@ public class BattleManager : MonoBehaviour
     void updateDiceUI_draw_chain(int characterIdx, int skillIdx, int diceStartIdx, int diceEndIdx)
     {
         string strTemp = "dice_skillChk_";
+        //strTemp += "full_";
         if (skillIdx == 0) strTemp += "up_"; else strTemp += "down_";
         strTemp += (characterIdx + 1).ToString();
         for (int i = diceStartIdx; i < diceEndIdx; i++)
@@ -1930,7 +2084,7 @@ public class BattleManager : MonoBehaviour
     {
         if (curPhase == 3 && (myCharacter[diceIdx] == null || myCharacter[diceIdx].getCurState() != 0))
         {
-            setCurClickSkill(-1);
+            //setCurClickSkill(-1);
             return;
         }
         if (curPhase == 3 && myCharacter[diceIdx] != null && myCharacter[diceIdx].getCurState() == 0 && currentLightUI == 0 && currentMoveUI == 0)
@@ -1980,6 +2134,7 @@ public class BattleManager : MonoBehaviour
                         {
                             shakeObject(myDiceUI[i]);
                             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            setLineConnect(i, -1);
                             if (i < 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");//연결 체인도 제거
                                                                                                                                                                //myDiceTake[i] = -999;
                             myDiceChange(i, 0, -999);
@@ -3365,6 +3520,7 @@ public class BattleManager : MonoBehaviour
                 attackCharacterObj.GetComponent<Animator>().runtimeAnimatorController =
                          myCharacterObjUIAnim[lastAttack].runtimeAnimatorController;
                 myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = false;
+                diceLineActive = false;
                 if (motionOpt == 2) {  //공격전 모션 필요 시,
                     if (zoomVal != 0)
                     {
@@ -3553,8 +3709,11 @@ public class BattleManager : MonoBehaviour
             CameraManager.Instance.moveStart(new Vector3(0f, 0f, CameraManager.Instance.cameraPointZ()), 1f);
             
         }
-        if(lastAttack>=0 && lastAttack<4) myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = true;
-
+        if (lastAttack >= 0 && lastAttack < 4)
+        {
+            myCharacterObjUI[lastAttack].GetComponent<SpriteRenderer>().enabled = true;
+            diceLineActive = true;
+        }
         if (boomChk) SoundManager_Sfx.Instance.playSound(75);
 
         battleHitAnimEndChk = false;
@@ -3568,8 +3727,11 @@ public class BattleManager : MonoBehaviour
 
     public void initTransBySkillUser()
     {
+        
         for (int i=0;i<4;i++)
         {
+            diceLine[i].GetComponent<LineRenderer>().sortingOrder = 0;
+            diceLine[i+4].GetComponent<LineRenderer>().sortingOrder = 0;
             myCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 4 - i;
             enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 1 + i;
 
@@ -3583,22 +3745,26 @@ public class BattleManager : MonoBehaviour
         if (skillUseCharacterIdx < 4)
         {
             for (int i = 0; i < 4; i++){
+                diceLine[i].GetComponent<LineRenderer>().sortingOrder = 0;
                 myCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 4 - i;
                 if(myCharacter[i] != null && myCharacter[i].getCurState() == 0) myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
                 else myCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             }
-            myCharacterObjUI[skillUseCharacterIdx].GetComponent<SpriteRenderer>().sortingOrder = 5;
+            diceLine[skillUseCharacterIdx].GetComponent<LineRenderer>().sortingOrder = 5;
+            myCharacterObjUI[skillUseCharacterIdx].GetComponent<SpriteRenderer>().sortingOrder = 6;
             myCharacterObjUI[skillUseCharacterIdx].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
         }
         else if(skillUseCharacterIdx >= 4)
         {
             for (int i = 0; i < 4; i++)
             {
+                diceLine[i + 4].GetComponent<LineRenderer>().sortingOrder = 0;
                 enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().sortingOrder = 1 + i;
                 if (enemyCharacter[i] != null && enemyCharacter[i].getCurState() == 0) enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.7f);
                 else enemyCharacterObjUI[i].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
             }
-            enemyCharacterObjUI[skillUseCharacterIdx - 4].GetComponent<SpriteRenderer>().sortingOrder = 5;
+            diceLine[skillUseCharacterIdx].GetComponent<LineRenderer>().sortingOrder = 5;
+            enemyCharacterObjUI[skillUseCharacterIdx - 4].GetComponent<SpriteRenderer>().sortingOrder = 6;
             enemyCharacterObjUI[skillUseCharacterIdx - 4].GetComponent<SpriteRenderer>().material.SetFloat("_Transparency", 0.0f);
         }
     }
@@ -3867,6 +4033,7 @@ public class BattleManager : MonoBehaviour
                             myDiceChange(i, 0, -999);
                             myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                             diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                            setLineConnect(i, -1);
                             //if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         }
                     }
@@ -4036,11 +4203,13 @@ public class BattleManager : MonoBehaviour
                 myDiceChange(i, 0, -999);
                 myDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                 diceUIChk[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                setLineConnect(i, -1);
                 if (i != 3) diceUIChain[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
 
                 enemyDiceChange(i, -999);
                 enemyDiceUI[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                 diceUIChk[i + 4].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                setLineConnect(i+4, -1);
                 if (i + 3 != 6) diceUIChain[i + 3].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             }
             nextDice = 0;
@@ -4464,6 +4633,18 @@ public class BattleManager : MonoBehaviour
             Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_rerollBtn_0");
         ToolBarManager.Instance.toolBarOnOff(0);
     }
+    public void hoverInNotGetItem()
+    {
+        itemNotGetButton.GetComponent<SpriteRenderer>().sprite =
+            Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_noBtn");
+        ToolBarManager.Instance.setToolBar(29);
+    }
+    public void hoverOutNotGetItem()
+    {
+        itemNotGetButton.GetComponent<SpriteRenderer>().sprite =
+            Resources.Load<Sprite>("sprite/TestSprite/witchPower/witchPowerUI/spr_ui_library_noBtn_base");
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
     public void clickReroll()
     {
         if (AdventureManager.Instance.getAdventureGold() >= getRerollNeedGold())
@@ -4585,6 +4766,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
+        diceLineActive = true;
         rerollNeedGold = 10;
         rerollCount = 0;
         clickItemNotGetNoButton();
@@ -4706,13 +4888,14 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        drawLineDiceCharacter();
         /*
         if (Input.GetKeyUp(KeyCode.Space))
         {
             specialTextManager.GetComponent<ExampleTextManager>().printTest();
         }
         */
-        
+
     }
     private bool resultItemPopChk = false;
     private bool resultItemPopChk_2 = false;

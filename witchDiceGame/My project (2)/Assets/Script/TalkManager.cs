@@ -47,6 +47,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public GameObject wishlistButton;
     [SerializeField] public Sprite[] wishlistSprite = new Sprite[2];
 
+    [SerializeField] public GameObject lineDrawerObj;
     [SerializeField] public GameObject[] tutorialArrow = new GameObject[8];
     [SerializeField] public GameObject[] tutorialArrowOrigin = new GameObject[8];
     private List<TalkReader> talkList = new List<TalkReader>();
@@ -320,6 +321,8 @@ public class TalkManager : MonoBehaviour
 
     public void makeTutorialArrow(int idx, Vector3 position, int opt, int rotation)
     {
+        if (idx == 0) lineDrawerObj.GetComponent<LineDrawer>().setLine(position);
+
         this.tutorialArrow[idx].GetComponent<RectTransform>().localPosition = position;
         this.tutorialArrowOrigin[idx].GetComponent<Animator>().Play(opt.ToString() + "_" + rotation.ToString());
         tutorialArrow[idx].GetComponent<Image>().sprite = tutorialArrowOrigin[idx].GetComponent<SpriteRenderer>().sprite;
