@@ -54,6 +54,7 @@ public class upDownManager : MonoBehaviour
     public GameObject[] underTitleButton = new GameObject[8];
     public GameObject[] underTitleOutline = new GameObject[8];
     public GameObject[] underTitleNewMark = new GameObject[8];
+    public TextMeshProUGUI underTitleText;
 
     [SerializeField]
     public GameObject backBlackItem;
@@ -378,6 +379,7 @@ public class upDownManager : MonoBehaviour
                 TalkManager.Instance.resetTutorialArrow();
                 TalkManager.Instance.makeTutorialArrow(0, new Vector3(-112 + (64 * 3) + 32, -55, 0), 0, 2);
             }
+            TalkManager.Instance.makeTutorialLine(113f, -92f);
             hoverOutUnderTitleButton();
         }
         for (int i = 0; i < 12; i++)
@@ -720,11 +722,16 @@ public class upDownManager : MonoBehaviour
     {
         clickUpperItemTypeInit(false);
         AdventureManager.Instance.mainExitButton(false);
+        
+        
         if (jsonDataManager.Instance.getTutorialDid())
         {
+            
+            
             if (idx == 0) AdventureManager.Instance.activeTutorialButton(true);
             if (idx == 1) TalkManager.Instance.clickWishlist();
             if (idx == 7) AdventureManager.Instance.mainPlayButton(false);
+            
         }
         else
         {
@@ -735,6 +742,7 @@ public class upDownManager : MonoBehaviour
                 AdventureManager.Instance.mainPlayButton(true);
             }
         }
+        
     }
     [SerializeField]
     public GameObject mainhwaObj;
@@ -834,6 +842,8 @@ public class upDownManager : MonoBehaviour
         clickUpperItemTypeInit(false);
         if (townCondition(idx))
         {
+            
+
             curTownIdx = idx;
             TownManager.Instance.clickTownUI(idx);
             hoverOutUnderTownButton();
@@ -1259,8 +1269,14 @@ public class upDownManager : MonoBehaviour
     // 2 : characterUI
     // 3 : titleUI
 
+    public bool getOptionOnOff(int idx)
+    {
+        return optionOnOff[idx];
+    }
+    
     public void changeOption(int i, bool onOff)
     {
+        if (i == 3 && !onOff) TalkManager.Instance.resetTutorialArrow();
         optionOnOff[i] = onOff;
 
         underTitleEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -50f, 0f);
@@ -1269,6 +1285,7 @@ public class upDownManager : MonoBehaviour
 
         if (optionOnOff[3]) { //title SelectUI
             underTitleEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 18f, 0f);
+            
             //hoverOutUnderTitleButton();
             return;
         }

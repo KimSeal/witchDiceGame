@@ -26,6 +26,11 @@ public class AdventureReadyManager : MonoBehaviour
     [SerializeField]
     public GameObject warningObj;
     public TextMeshPro warningText;
+
+    [SerializeField]
+    public GameObject ChapterNoGoEntity;
+    public TextMeshProUGUI ChapterNoGoText;
+
     private void Awake()
     {
 
@@ -63,6 +68,7 @@ public class AdventureReadyManager : MonoBehaviour
         }
         spark[0] = -1; spark[1] = -1;
         sparkVal[0] = 0;  sparkVal[1] = 0.5f;
+        clickChapterNoGoButton();
     }
 
     // Update is called once per frame
@@ -213,6 +219,22 @@ public class AdventureReadyManager : MonoBehaviour
     {
         enterButton.GetComponent<SpriteRenderer>().sprite = towerSprite[0];
     }
+    public void clickAdventureTower()
+    {
+        if (warningClickAble(0))
+        {
+            ChapterNoGoEntity.SetActive(true);
+            ChapterNoGoText.text = TalkManager.Instance.getDesc(259);
+        }
+        else
+        {
+            startAdventure();
+        }
+    }
+    public void clickChapterNoGoButton()
+    {
+        ChapterNoGoEntity.SetActive(false);
+    }
     public void startAdventure()
     {
 
@@ -229,7 +251,13 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void enterAdventureReady()
     {
+
+        if (jsonDataManager.Instance.getChapterRead(0, 0) == 0)
+        {
+            TalkManager.Instance.makeTutorialLine(60f, 0f);
+        }
         if (!jsonDataManager.Instance.getTowerEntry()) {
+            
             newMark.GetComponent<Animator>().Play("NewEvent");
         }
         else newMark.GetComponent<Animator>().Play("Empty");

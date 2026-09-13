@@ -962,6 +962,7 @@ public class AdventureManager : MonoBehaviour
         //지금은 시작 버튼 누르면 바로 시작
 
         upDownManager.Instance.setUpperBarLock(false); //아이템 창 활성화
+        TalkManager.Instance.resetTutorialArrow();
 
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {

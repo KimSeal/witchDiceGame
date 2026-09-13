@@ -249,9 +249,18 @@ public class TalkManager : MonoBehaviour
     }
     public void clickDescBox()
     {
+        
         if (!talkingChk && !descChk) return;
 
         if (!talkingChk && descClickLock) return;
+
+        if (upDownManager.Instance.getOptionOnOff(3))
+        {
+            setDescIdx(-1);
+            upDownManager.Instance.clickUnderTitleButton(7);
+            return;
+        }
+
         if (!descClickLock)
         {
             if (MapperLock != 0)
@@ -559,10 +568,10 @@ public class TalkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         clickSkipNoButton();
         wishlistButton.SetActive(false);
         resetTutorialArrow();
+
         talkNumOnOffPoint = curTalkIdx.GetComponent<RectTransform>().anchoredPosition;
         loseChk = false;
         characterTalkBack.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, -1100f, 0f);
@@ -613,8 +622,6 @@ public class TalkManager : MonoBehaviour
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             talkImage[1].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             entity.SetActive(false);
-
-            
     }
 
     [SerializeField]
@@ -1188,7 +1195,10 @@ public class TalkManager : MonoBehaviour
             talkImage[0].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
             entity.SetActive(false);
             changeTalkState(0, false);
-
+            if (talkList[curIdx].talkIdx == 16)
+            { 
+                TalkManager.Instance.makeTutorialLine(-42f, 0f);
+            }
             if (talkList[curIdx].talkIdx == 54) {
                 if (TownManager.Instance.curTownIdx == 7)
                 {

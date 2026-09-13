@@ -90,6 +90,14 @@ public class TownManager : MonoBehaviour
         upDownManager.Instance.clickCharacterButton(-1);
         MapperManager.Instance.exitMapper();
         FoodStreetManager.Instance.exitFoodStreet();
+
+        TalkManager.Instance.resetTutorialArrow();
+
+        if (i != 1 && jsonDataManager.Instance.getChapterRead(i, 2) == 1) 
+        {
+            TalkManager.Instance.makeTutorialLine(112f, -93f);
+        }
+        
         //0 : 타워 1 : 집 2: 도서관 3: 아카이브 4:음식거리   7: 로비
         if (i == 0)
         {
