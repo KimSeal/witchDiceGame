@@ -1367,6 +1367,11 @@ public class BattleManager : MonoBehaviour
                     SoundManager_Sfx.Instance.playSound(2);
                     yield return new WaitForSeconds(0.25f);
                     enemyDice[i].throwDice();
+                    if(AdventureManager.Instance.getTutorial() == 11)
+                    {
+                        enemyDice[i].throwDice(5);
+                    }
+
                     enemyDiceNum[i] = enemyDice[i].getNum();
 
                     enemyDiceUI[i].transform.rotation = Quaternion.Euler(0, 0, enemyDice[i].getDir() * -90);
@@ -1621,7 +1626,11 @@ public class BattleManager : MonoBehaviour
         if (getCharacter(idx) == null || getCharacter(idx).getCurState() != 0) {
             return;
         }
-
+        if (idx<4 && AdventureManager.Instance.getTutorial() == 15)
+        {
+            fullUI.showFull(65);
+            return;
+        }
         if (witchPowerClickState == 2) { //다중 선택일 경우, 다음거 선택할수 있도록 설정.
             witchPowerClickState = 1;
             clickedDice[witchPowerClickState] = idx;
@@ -1906,11 +1915,13 @@ public class BattleManager : MonoBehaviour
             
             yield return new WaitUntil(() => myDiceTake[0] >= 0 || myDiceTake[1] >= 0 || myDiceTake[2] >= 0 || myDiceTake[3] >= 0);
             TalkManager.Instance.resetTutorialArrow();
+            TalkManager.Instance.setTutorialArrow(999);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(64);
             
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 9);
+            TalkManager.Instance.resetTutorialArrow();
             TalkManager.Instance.setDescClickLock(false);
             TalkManager.Instance.setDescIdx(-1);
             
@@ -1933,16 +1944,20 @@ public class BattleManager : MonoBehaviour
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 12);
             TalkManager.Instance.resetTutorialArrow();
+            TalkManager.Instance.setTutorialArrow(20);
             TalkManager.Instance.setDescClickLock(true);
-            TalkManager.Instance.setDescIdx(60);
+            TalkManager.Instance.setDescIdx(60); //주사위 사용 지점
             //TalkManager.Instance.startTalk(44);
             //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 13);
+            TalkManager.Instance.resetTutorialArrow();
+            TalkManager.Instance.setTutorialArrow(999);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(61);
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 14);
+            TalkManager.Instance.resetTutorialArrow();
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(62);
             TalkManager.Instance.setTutorialArrow(14);
@@ -1958,7 +1973,7 @@ public class BattleManager : MonoBehaviour
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 16);
             TalkManager.Instance.resetTutorialArrow();
-
+            TalkManager.Instance.setTutorialArrow(999);
             TalkManager.Instance.setDescClickLock(true);
             TalkManager.Instance.setDescIdx(64);
 
@@ -4479,6 +4494,7 @@ public class BattleManager : MonoBehaviour
                     if (bossResult == 0)
                     {
                         rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
+                        itemNotGetButton.transform.position = new Vector3(165f, -26f, rerollButton.transform.position.z);
                     }
 
                     if (AdventureManager.Instance.getTutorial() == 17)
@@ -4517,7 +4533,8 @@ public class BattleManager : MonoBehaviour
                     resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 300f,0f);
                     resultEff[i].transform.position = new Vector3(100f * i - 100f, 300f, 0f);//eff 삭제
                 }
-                rerollButton.transform.position = new Vector3(0f, 300f, 0f); 
+                rerollButton.transform.position = new Vector3(0f, 300f, 0f);
+                itemNotGetButton.transform.position = new Vector3(0f, 330f, 0f);
                 CharacterManager.Instance.character_reset();
                 bool reviveChk = false;
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기

@@ -48,6 +48,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] public Sprite[] wishlistSprite = new Sprite[2];
 
     [SerializeField] public GameObject lineDrawerObj;
+    [SerializeField] public GameObject lineDrawerObj2;
     [SerializeField] public GameObject[] tutorialArrow = new GameObject[8];
     [SerializeField] public GameObject[] tutorialArrowOrigin = new GameObject[8];
     private List<TalkReader> talkList = new List<TalkReader>();
@@ -250,6 +251,7 @@ public class TalkManager : MonoBehaviour
     {
         if (!talkingChk && !descChk) return;
 
+        if (!talkingChk && descClickLock) return;
         if (!descClickLock)
         {
             if (MapperLock != 0)
@@ -294,6 +296,7 @@ public class TalkManager : MonoBehaviour
         else if (loseChk)
         {
             CameraManager.Instance.loseScreenUnActive();
+            upDownManager.Instance.setUpperBarLock(true);
         }
         else
         {
@@ -318,11 +321,17 @@ public class TalkManager : MonoBehaviour
             
         }
     }
+    public void makeTutorialLine(float x, float y)
+    {
+        lineDrawerObj.GetComponent<LineDrawer>().setLine(new Vector3(x, y, 0));
+    }
+    public void makeTutorialLine2(float x, float y)
+    {
+        lineDrawerObj2.GetComponent<LineDrawer>().setLine(new Vector3(x, y, 0));
+    }
 
     public void makeTutorialArrow(int idx, Vector3 position, int opt, int rotation)
     {
-        if (idx == 0) lineDrawerObj.GetComponent<LineDrawer>().setLine(position);
-
         this.tutorialArrow[idx].GetComponent<RectTransform>().localPosition = position;
         this.tutorialArrowOrigin[idx].GetComponent<Animator>().Play(opt.ToString() + "_" + rotation.ToString());
         tutorialArrow[idx].GetComponent<Image>().sprite = tutorialArrowOrigin[idx].GetComponent<SpriteRenderer>().sprite;
@@ -334,86 +343,138 @@ public class TalkManager : MonoBehaviour
     public void resetTutorialArrow()
     {
         for(int idx=0;idx<tutorialArrow.Length;idx++) this.tutorialArrow[idx].GetComponent<RectTransform>().localPosition = new Vector3(0f, 200f, 0f);
+        lineDrawerObj.GetComponent<LineDrawer>().deleteLine();
+        lineDrawerObj2.GetComponent<LineDrawer>().deleteLine();
     }
     public void setTutorialArrow(int opt)
     {
         resetTutorialArrow();
-        if(opt == 1) {
-            makeTutorialArrow(0, new Vector3(-77,50,0), 0, 2);
+        if (opt == 1)
+        {
+            makeTutorialLine(-77f, 20f);
+            makeTutorialArrow(0, new Vector3(-77, 50, 0), 0, 2);
             makeTutorialArrow(1, new Vector3(80, 20, 0), 1, 2);
             makeTutorialArrow(2, new Vector3(160, 60, 0), 1, 2);
         }
-        if(opt == 2)
+        if (opt == 2)
         {
+            makeTutorialLine(-77f, 20f);
             makeTutorialArrow(0, new Vector3(-77, 50, 0), 0, 2);
             makeTutorialArrow(1, new Vector3(35, -20, 0), 1, 2);
         }
-        if(opt == 3) {
+        if (opt == 3)
+        {
+            makeTutorialLine(90f, 20f);
             makeTutorialArrow(0, new Vector3(60, 18, 0), 0, 1);
         }
-        if (opt == 4)
+        if (opt == 4) //캐릭터 클릭
         {
+            makeTutorialLine(-75f, -50f);
+            makeTutorialLine2(-135f, -50f);
             makeTutorialArrow(0, new Vector3(-75, 0, 0), 0, 2);
             makeTutorialArrow(1, new Vector3(-135, 0, 0), 0, 2);
         }
-        if(opt == 5)
+        if (opt == 5) //캐릭터창 나가기
         {
+            makeTutorialLine(160f, 53f);
             makeTutorialArrow(0, new Vector3(-72, -29, 0), 1, 2);
             makeTutorialArrow(1, new Vector3(55, -30, 0), 1, 1);
-            makeTutorialArrow(2, new Vector3(105, 53, 0), 1, 1);
+            makeTutorialArrow(2, new Vector3(70, 53, 0), 1, 1);
         }
-        if (opt == 6)
+        if (opt == 6) //아이템 보상 첫 조우
         {
+            makeTutorialLine(90f, 18f);
+            makeTutorialLine2(120f, 18f);
+            upDownManager.Instance.setUpperBarLock(false);
             makeTutorialArrow(0, new Vector3(60, 18, 0), 0, 1);
             makeTutorialArrow(1, new Vector3(150, 18, 0), 0, 3);
         }
-        if (opt == 7)
+        if (opt == 7) //상단 바 사용
         {
-            makeTutorialArrow(0, new Vector3(-100, 65, 0), 0, 0);
+            makeTutorialLine(-50f, 98f);
+            makeTutorialLine2(-130f, 98f);
+            makeTutorialArrow(0, new Vector3(-50, 65, 0), 0, 0);
             makeTutorialArrow(1, new Vector3(-130, 65, 0), 0, 0);
         }
-        if (opt == 8)
+        if (opt == 8) //아이템 사용 & 제거
         {
+            makeTutorialLine(121f, 98f);
             makeTutorialArrow(0, new Vector3(121, 65, 0), 0, 0);
-            makeTutorialArrow(1, new Vector3(-135, 0, 0), 0, 1);
+            for (int i = 0; i < 4; i++)
+            {
+                if (CharacterManager.Instance.getCharacter(i) != null && CharacterManager.Instance.getCharacter(i).getCurState() == 0)
+                {
+                    makeTutorialLine2(-90 + 60f * i, 0f);
+                    makeTutorialArrow(1, new Vector3(-135 + 60f * i, 0, 0), 0, 1);
+                    break;
+                }
+            }
         }
-        if(opt == 9)
+        if (opt == 9) //첫 스킬 사용
         {
             int tempIdx = 0;
-            for (int i=0;i<4;i++)
+            for (int i = 0; i < 4; i++)
             {
-                if(BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0 && BattleManager.Instance.getCharacter(i).getDestiny().getDestinyIdx() == 0)
+                if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0 && BattleManager.Instance.getCharacter(i).getDestiny().getDestinyIdx() == 0)
                 {
                     //makeTutorialArrow(tempIdx, new Vector3(-112 + (i * 64), -55, 0), 0, 2);
                     makeTutorialArrow(tempIdx + 1, new Vector3(-112 + (64 * i) + 32, -55, 0), 0, 2);
+                    makeTutorialLine(-112 + (64 * i) + 32, -95);
                     tempIdx += 2;
                 }
             }
-            
+
         }
-        if(opt == 10) 
+        if (opt == 10) //전투 주사위 배치
         {
-            makeTutorialArrow(1, new Vector3(110, -10, 0), 1, 2);
+            makeTutorialArrow(1, new Vector3(-130, -10, 0), 1, 2);
             for (int i = 0; i < 4; i++)
             {
                 if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
                 {
-                    makeTutorialArrow(2, new Vector3(-90 + (60 * i) , 60, 0), 0, 2);
+                    makeTutorialArrow(2, new Vector3(-90 + (60 * i), 40, 0), 0, 2);
+                    makeTutorialLine(-90 + (60 * i), 12);
                     break;
                 }
             }
 
         }
-        if(opt == 11)
+        if (opt == 11) //전투 시작 버튼
         {
-            //makeTutorialArrow(0, new Vector3(-135, 20, 0), 0, 1);
+            makeTutorialLine(152, -90);
             makeTutorialArrow(0, new Vector3(152, -55, 0), 0, 2);// 전투 시작 버튼 관련
         }
-        if(opt == 12) makeTutorialArrow(0, new Vector3(5, -20, 0), 0, 1);
-        if(opt == 13) makeTutorialArrow(0, new Vector3(-100, 65, 0), 0, 0); //주사위 획득
-        if(opt == 14) makeTutorialArrow(0, new Vector3(-5, 15, 0), 0, 0);//마녀 모자 클릭
-        if(opt == 15)
+        if (opt == 12) //타겟팅인듯?
         {
+            makeTutorialLine(42, -30);
+            makeTutorialArrow(0, new Vector3(5, -20, 0), 0, 1);
+        }
+        if (opt == 13) // Fair 주사위 획득
+        {
+            makeTutorialLine(-50f, 98f);
+            makeTutorialArrow(0, new Vector3(-50, 65, 0), 0, 0);
+        }
+        if (opt == 20) //Fair 주사위 사용
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (BattleManager.Instance.getCharacter(i) != null && BattleManager.Instance.getCharacter(i).getCurState() == 0)
+                {
+                    makeTutorialArrow(1, new Vector3(-135 + 60f * i, 0, 0), 0, 1);
+                    makeTutorialLine(-90 + 60f * i, 0f);
+                    break;
+                }
+            }
+            makeTutorialLine2(-75, -46f);
+        }
+        if (opt == 14) //전투 중 마녀모자 클릭
+        {
+            makeTutorialLine(-5f, 45f);
+            makeTutorialArrow(0, new Vector3(-5, 15, 0), 0, 0);
+        }
+        if (opt == 15) //마녀가 주사위 바꾸는 거긴 한데.. 일단 대기
+        {
+            /*
             int tempIdx = 0;
             for (int i = 0; i < 4; i++)
             {
@@ -423,13 +484,27 @@ public class TalkManager : MonoBehaviour
                     tempIdx += 1;
                 }
             }
-            for (int i=0;i<3;i++)
+            */
+
+            for (int i = 1; i < 3; i++)
             {
-                makeTutorialArrow(i+2, new Vector3(35 + (i * 30), -15, 0), 0, 2);
+                makeTutorialArrow(i + 2, new Vector3(35 + (i * 30), -15, 0), 0, 2);
+                
             }
+            makeTutorialLine(35 + (1 * 30), -45f);
+            makeTutorialLine2(35 + (2 * 30), -45f);
             makeTutorialArrow(7, new Vector3(-80, 70, 0), 1, 2);
         }
-        if(opt == 16) makeTutorialArrow(0, new Vector3(-60, 50, 0), 0, 3);
+        if (opt == 16) //모험중 주사위 누르기
+        {
+            makeTutorialLine(-94f, 50f);
+            makeTutorialArrow(0, new Vector3(-60, 50, 0), 0, 3);
+        }
+
+        if(opt == 999) //나가기 버튼 전용
+        {
+            makeTutorialLine(160f, 53f);
+        }
     }
     [SerializeField]
     public GameObject skipBoard;

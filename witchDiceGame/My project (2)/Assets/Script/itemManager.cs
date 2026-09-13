@@ -166,6 +166,7 @@ public class itemManager : MonoBehaviour
             } 
         }
         itemMaxNum = number;
+        upDownManager.Instance.upperBarInventoryChangeNum(itemMaxNum);
         updateInventory();
     }
     public bool getItemExistArr(int idx)
@@ -546,9 +547,9 @@ public class itemManager : MonoBehaviour
 
         characterInfoEntity.SetActive(true);
         characterName.text = tempCharacter.getName();
-        characterAtk.text = tempCharacter.getPhyAtk().ToString() + "(" + tempCharacter.getPhyAtk(0).ToString() + "/" + tempCharacter.getPhyAtk(1) + ")";
-        characterMag.text = tempCharacter.getMagAtk().ToString() + "(" + tempCharacter.getMagAtk(0).ToString() + "/" + tempCharacter.getMagAtk(1) + ")"; ;
-        characterSpd.text = tempCharacter.getSpeed().ToString() + "(" + tempCharacter.getSpeed(0).ToString() + "/" + tempCharacter.getSpeed(1) + ")"; ;
+        characterAtk.text = tempCharacter.getPhyAtk().ToString(); //+ "(" + tempCharacter.getPhyAtk(0).ToString() + "/" + tempCharacter.getPhyAtk(1) + ")";
+        characterMag.text = tempCharacter.getMagAtk().ToString();// + "(" + tempCharacter.getMagAtk(0).ToString() + "/" + tempCharacter.getMagAtk(1) + ")"; ;
+        characterSpd.text = tempCharacter.getSpeed().ToString();// + "(" + tempCharacter.getSpeed(0).ToString() + "/" + tempCharacter.getSpeed(1) + ")"; ;
         characterArmor.text = tempCharacter.getArmor().ToString();
         characterDescTitle.text = "";
         for (int i = 0; i < 5; i++) characterHp[i].text = tempCharacter.getHp().ToString() + "/" + tempCharacter.getMaxHp().ToString();
@@ -1038,8 +1039,11 @@ public class itemManager : MonoBehaviour
 
     string [] typeArr = { "consume", "dice", "equip", "passive", "destiny"}; //item type string 
     string[] typeArr2 = { "- CONSUME -", "- DICE -", "- EQUIP -", "- PASSIVE -", "- DESTINY -" };
+
     private void updateInventory() //전체 inventory 업데이트
     {
+        
+
         for (int i = 0; i < 11; i++)
         {
             if (i >= itemMaxNum)
@@ -1190,7 +1194,7 @@ public class itemManager : MonoBehaviour
         ItemArr[3, 5] = new Item(itemList[3][14]);
         
 
-        /*
+        
         
          ItemExistArr[1, 3] = true;
         ItemArr[1, 3] = new Item(itemList[1][18]);

@@ -960,7 +960,9 @@ public class AdventureManager : MonoBehaviour
         
         resetDice();
         //지금은 시작 버튼 누르면 바로 시작
-        
+
+        upDownManager.Instance.setUpperBarLock(false); //아이템 창 활성화
+
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
             //StartCoroutine(phase_Manage_Coroutine(4));
@@ -2039,7 +2041,7 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.resetTutorialArrow();
                         setTutorialVal4ErrorChk(false);
                         
-                        TalkManager.Instance.startTalk(37);
+                        //TalkManager.Instance.startTalk(37);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         TalkManager.Instance.setTutorialArrow(5);
                         
@@ -2077,8 +2079,10 @@ public class AdventureManager : MonoBehaviour
                         TalkManager.Instance.setDescIdx(57);
                         yield return new WaitUntil(() => tutorialVal == 6);
                         TalkManager.Instance.resetTutorialArrow();
-                        TalkManager.Instance.setDescIdx(53);
+                        TalkManager.Instance.setTutorialArrow(999);
+                        TalkManager.Instance.setDescIdx(64);
                         yield return new WaitUntil(() => tutorialVal == 7);
+                        TalkManager.Instance.resetTutorialArrow();
                         TalkManager.Instance.setDescClickLock(false);
                         TalkManager.Instance.setDescIdx(54);
                         clickAble = true;
@@ -2623,9 +2627,17 @@ public class AdventureManager : MonoBehaviour
 
                 if (curDiceEvent.getEventType() == 6)
                 {
+                    eventWatchNum = inputNum - 1;
+                    ToolBarManager.Instance.setToolBar(
+                        TalkManager.Instance.getDesc(163),
+                        curDiceEvent.getPacket(eventWatchNum).getChooseText(),
+                        Resources.Load<Sprite>("sprite/TestSprite/extraUIButton/spr_knowButton")
+                        );
+                    /*
                     ToolBarManager.Instance.setToolBar(15);
                     eventWatchNum = inputNum - 1;
                     TalkManager.Instance.setDescChooseText(curDiceEvent.getPacket(eventWatchNum));
+                    */
                 }
                 else if(curDiceEvent.getEventType() >= 3 && curDiceEvent.getEventType() <= 5)
                 {
