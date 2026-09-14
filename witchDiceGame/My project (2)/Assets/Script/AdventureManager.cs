@@ -1040,13 +1040,15 @@ public class AdventureManager : MonoBehaviour
         {
             giveUpAble = false;
             activeGiveUpBoard(false);
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 3");
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
         }
         else if (tutorialVal == 0 || jsonDataManager.Instance.getTutorialDid())
         {
             giveUpText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(13);
             giveUpAble = true;
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
         }
     }
 
@@ -1054,22 +1056,26 @@ public class AdventureManager : MonoBehaviour
     {
         if (giveUpAble)
         {
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 2");
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
         }
         else
         {
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 3");
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
         }
     }
     public void hoverOutExitButton()
     {
         if (giveUpAble)
         {
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
         }
         else
         {
-            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 3");
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_lock");
         }
     }
 

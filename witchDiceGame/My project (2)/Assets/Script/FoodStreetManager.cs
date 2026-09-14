@@ -203,9 +203,10 @@ public class FoodStreetManager : MonoBehaviour
             else if(i==1) statText[i].GetComponent<TextMeshPro>().text    = ailCharacter.getPhyAtk() + "(+" + statArr[i].ToString() + ")";
             else if (i == 2) statText[i].GetComponent<TextMeshPro>().text = ailCharacter.getMagAtk() + "(+" + statArr[i].ToString() + ")";
             else if (i == 3) statText[i].GetComponent<TextMeshPro>().text = ailCharacter.getSpeed() + "(+" + statArr[i].ToString() + ")";
-        }
 
-        
+            if(statArr[i] == 0) upgradeAnim[i].GetComponent<Animator>().Play("0_2");
+            else upgradeAnim[i].GetComponent<Animator>().Play("Empty");
+        }
 
         ailFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());
         grinFaceObj.GetComponent<Animator>().Play((maxRemainFood - curRemainFood).ToString());

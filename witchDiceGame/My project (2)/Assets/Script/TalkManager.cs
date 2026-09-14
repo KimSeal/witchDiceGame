@@ -692,7 +692,11 @@ public class TalkManager : MonoBehaviour
                 }
                 else if (i > 0 && Input.GetKeyDown(itemKeys[i]))
                 {
-                    SimulateClickAtPosition(new Vector2(((460f + (102.5f * (i-1))) * Screen.width / 1920f), (1020f * Screen.height / 1080f)));
+                    float tempInit = 460f + (51.25f * (11 - itemManager.Instance.getItemMaxNum()));
+                    SimulateClickAtPosition(new Vector2(((tempInit + (102.5f * (i - 1))) * Screen.width / 1920f),
+                        (1020f * Screen.height / 1080f)));
+                    //SimulateClickAtPosition(new Vector2(((460f + (102.5f * (i-1))) * Screen.width / 1920f), 
+                    //    (1020f * Screen.height / 1080f)));
                     inputChk = true;
                 }
             }

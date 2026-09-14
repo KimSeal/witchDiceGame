@@ -368,6 +368,7 @@ public class upDownManager : MonoBehaviour
     [SerializeField]
     public GameObject optionButton;
     public GameObject exitButton;
+    public TextMeshProUGUI exitText;
 
     void Update()
     {
@@ -487,6 +488,7 @@ public class upDownManager : MonoBehaviour
     }
     public void clickExitButton()
     {
+        optionManager.Instance.unactiveOptionBoard();
         if (AdventureManager.Instance.getAdventureStartChk())
         {
             AdventureManager.Instance.clickGiveUpButton();
@@ -506,10 +508,17 @@ public class upDownManager : MonoBehaviour
         if (AdventureManager.Instance.getAdventureStartChk())
         {
             AdventureManager.Instance.hoverInExitButton();
+            exitText.text = TalkManager.Instance.getDesc(260);
         }
         else
         {
-            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
+            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 2");
+            if (upDownManager.Instance.getOptionOnOff(3))
+            {
+                exitText.text = TalkManager.Instance.getDesc(262);
+            }
+            else exitText.text = TalkManager.Instance.getDesc(261);
+            //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
         }
     }
     public void hoverOutExitButton()
@@ -517,10 +526,17 @@ public class upDownManager : MonoBehaviour
         if (AdventureManager.Instance.getAdventureStartChk())
         {
             AdventureManager.Instance.hoverOutExitButton();
+            exitText.text = TalkManager.Instance.getDesc(260);
         }
         else
         {
-            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
+            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
+            if (upDownManager.Instance.getOptionOnOff(3))
+            {
+                exitText.text = TalkManager.Instance.getDesc(262);
+            }
+            else exitText.text = TalkManager.Instance.getDesc(261);
+            //= Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
         }
     }
     public void hoverInOptionButton()
@@ -532,7 +548,7 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-            optionButton.GetComponent<Image>().sprite
+            optionButton.GetComponent<Image>().sprite 
             = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionExitButton_on");
         }
     }
@@ -545,7 +561,7 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-            optionButton.GetComponent<Image>().sprite
+            optionButton.GetComponent<Image>().sprite 
             = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_optionExitButton_off");
         }
     }

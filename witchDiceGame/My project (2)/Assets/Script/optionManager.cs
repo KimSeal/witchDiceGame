@@ -35,6 +35,9 @@ public class optionManager : MonoBehaviour
     public TextMeshProUGUI[] underTextSizeButtonText = new TextMeshProUGUI[3];
 
     [SerializeField]
+    public GameObject GiveUpButton;
+
+    [SerializeField]
     public GameObject[] screenSizeBtn = new GameObject[5];
     [SerializeField]
     public GameObject[] soundBtn = new GameObject[2];
@@ -230,13 +233,23 @@ public class optionManager : MonoBehaviour
     {
         Debug.Log("double click");
     }
+    public void giveUpButtonOnOff(bool onOff)
+    { 
+        if (onOff) { GiveUpButton.GetComponent<RectTransform>().position = new Vector3(960f, 540f, 0); }
+        else { GiveUpButton.GetComponent<RectTransform>().position = new Vector3(-359f, -1177f, 0); }
+    }
     public void activeOptionBoard()
     {
+        upDownManager.Instance.hoverOutExitButton();
+        giveUpButtonOnOff(true);
+
         optionOn = true;
         optionBoard.SetActive(true);
         optionBackBoard.SetActive(true);
         optionBackBoard.transform.position = new Vector3(CameraManager.Instance.cameraPointX(), CameraManager.Instance.cameraPointY(), 0);
 
+        optionIdx = -1;
+        /*
         for (int i = 0; i < optionBoards.Length; i++)
         {
             if (i == optionIdx)
@@ -245,6 +258,7 @@ public class optionManager : MonoBehaviour
             }
             else optionBoards[i].SetActive(false);
         }
+        */
         changeOption(optionIdx);
         if (AdventureManager.Instance.getTutorial() == 0)
         {
@@ -258,6 +272,7 @@ public class optionManager : MonoBehaviour
     }
     public void unactiveOptionBoard()
     {
+        giveUpButtonOnOff(false);
         optionOn = false ;
         optionBoard.SetActive(false);
         optionBackBoard.SetActive(false);
@@ -286,6 +301,8 @@ public class optionManager : MonoBehaviour
                 optionBoards[i].SetActive(false);
             }
         }
+        if(idx >= 0) giveUpButtonOnOff(false);
+
         if (idx == 0) { changeLanguage(jsonDataManager.Instance.getLanguage()); changeTextSize(jsonDataManager.Instance.getFontSize()); }
         else if (idx == 1) changeScreenSize(jsonDataManager.Instance.getScreenSize());
         else if (idx == 2) changeSound();
