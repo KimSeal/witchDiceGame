@@ -254,7 +254,7 @@ public class AdventureReadyManager : MonoBehaviour
 
         if (jsonDataManager.Instance.getChapterRead(0, 0) == 0)
         {
-            TalkManager.Instance.makeTutorialLine(60f, 0f);
+            //TalkManager.Instance.makeTutorialLine(60f, 0f);
         }
         if (!jsonDataManager.Instance.getTowerEntry()) {
             

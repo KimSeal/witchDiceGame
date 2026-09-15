@@ -85,11 +85,12 @@ public class chapterStartManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        /*
         if (Input.GetKeyUp(KeyCode.Space))
         {
             startChater(startChapterIdx);
         }
+        */
     }
     public void setAnim(int objIdx, string animName, Vector3 vectorTemp)
     {

@@ -235,8 +235,8 @@ public class optionManager : MonoBehaviour
     }
     public void giveUpButtonOnOff(bool onOff)
     { 
-        if (onOff) { GiveUpButton.GetComponent<RectTransform>().position = new Vector3(960f, 540f, 0); }
-        else { GiveUpButton.GetComponent<RectTransform>().position = new Vector3(-359f, -1177f, 0); }
+        if (onOff) { GiveUpButton.GetComponent<RectTransform>().position = new Vector3(Screen.width/2, Screen.height / 2f, 0); }
+        else { GiveUpButton.GetComponent<RectTransform>().position = new Vector3(Screen.width / 2, 3000f + Screen.height / 2f, 0); }
     }
     public void activeOptionBoard()
     {

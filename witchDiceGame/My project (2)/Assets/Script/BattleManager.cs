@@ -1978,6 +1978,7 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.setDescIdx(64);
 
             yield return new WaitUntil(() => AdventureManager.Instance.getTutorial() == 17);
+            TalkManager.Instance.resetTutorialArrow();
             upDownManager.Instance.activeBattleStart(true);
             TalkManager.Instance.setDescClickLock(false);
             TalkManager.Instance.setDescIdx(-1);
@@ -3792,6 +3793,7 @@ public class BattleManager : MonoBehaviour
     private int passiveCoroutineDamage;
     private IEnumerator battlePhase()
     {
+        bool tutorial9BugFix = false;
         clickDice_battlePhase = -999;
         //아직 스킬 애니메이션과의 연동 & 스킬 데미지 연동이 안되어있음.
         if (curPhase == 5)
@@ -3866,8 +3868,9 @@ public class BattleManager : MonoBehaviour
                     //yield return new WaitUntil(() => !passiveItemChk);
 
 
-                    if (AdventureManager.Instance.getTutorial() == 9)
+                    if (!tutorial9BugFix && AdventureManager.Instance.getTutorial() == 9)
                     {
+                        tutorial9BugFix = true;
                         TalkManager.Instance.startTalk(42);
                         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         TalkManager.Instance.setTutorialArrow(12);
