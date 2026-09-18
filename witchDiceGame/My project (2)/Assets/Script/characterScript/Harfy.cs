@@ -36,7 +36,6 @@ public class Harfy : Character
             packets.Add(new TakeSkillPacket(1, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
             packets.Add(new TakeSkillPacket(2, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
             packets.Add(new TakeSkillPacket(3, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 1, 0, 3)); //본인 특수 변수를 1으로 만든다.
         }
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1)
         {
@@ -49,7 +48,6 @@ public class Harfy : Character
             {
                 packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk() + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
             }
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 0, 0, 3)); //본인 특수 변수를 0으로 만든다.
         }
         return packets;
     }

@@ -538,8 +538,6 @@ public class Nubi : Character
         {//고블린의 두번째 스킬이 호출된 경우
 
             int emptySpace = -999;
-            if (this.getCharacter_battle().getSpecialVal() == 0)
-            {
                 if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
                 {
                     for (int i = 4; i < 8; i++)
@@ -552,7 +550,6 @@ public class Nubi : Character
                         }
                     }
                 }
-            }
 
             if (sendSkillPacket.targetIdx[0] >= 4 && sendSkillPacket.targetIdx[0] < 8)
             {

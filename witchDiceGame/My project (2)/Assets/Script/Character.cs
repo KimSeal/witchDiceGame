@@ -10,7 +10,6 @@ public class Character_battle{
     private int armor;
     private int diceState;
     private int characterState;
-    private int specialVal = 0;
     private int skillUseCount0 = 0;
     private int skillUseCount1 = 0;
     public Character_battle()
@@ -21,7 +20,6 @@ public class Character_battle{
         spd = 0;
         armor = 0;
         diceState = 0;
-        specialVal = 0;
 
         skillUseCount0 = 0;
         skillUseCount1 = 0;
@@ -71,14 +69,7 @@ public class Character_battle{
     public void setArmor(int a) {
         this.armor = a;
     }
-    public int getSpecialVal()
-    {
-        return specialVal;
-    }
-    public void setSpecialVal(int a)
-    {
-        specialVal = a;
-    }
+
 
     public void upgrade(int idx, int val)
     {
@@ -399,11 +390,7 @@ public abstract class Character
             this.character_battle.upgrade(2, takeSkillPacket.getVal());
             return 3;
         }
-        else if (takeSkillPacket.getSkillType() == 3) //특수 변수 변화인경우
-        {
-            this.character_battle.setSpecialVal(takeSkillPacket.getVal()); // 변수를 해당 값으로 변화시킨다.
-            return 3;
-        }
+
         else if (takeSkillPacket.getSkillType() == 4) //마법감응력 업인 경우
         {
             this.character_battle.upgrade(4, takeSkillPacket.getVal());

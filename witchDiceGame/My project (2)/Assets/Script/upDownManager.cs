@@ -1194,7 +1194,6 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverInSkillExitBtn()
     {
-        Debug.Log("hover!");
         skillExitBtnOutline.GetComponent<Image>().sprite
            = Resources.Load<Sprite>("sprite/TestSprite/diceImage/outline1");
         ToolBarManager.Instance.setToolBar(
@@ -1416,7 +1415,6 @@ public class upDownManager : MonoBehaviour
         if (getCharacterExist(idx))
         //if (BattleManager.Instance.getCharacter(idx) != null && BattleManager.Instance.getCharacter(idx).getCurState() == 0)
         {
-            Debug.Log(idx);
             if (BattleManager.Instance.getDiceTake(idx) != -999)
             {
                 ToolBarManager.Instance.setToolBar(BattleManager.Instance.getSkillTake(idx));

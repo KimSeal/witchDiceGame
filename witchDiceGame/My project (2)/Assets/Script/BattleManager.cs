@@ -38,8 +38,46 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     public GameObject brokenEff;
 
+    [SerializeField]
+    public GameObject[] deadEventObj = new GameObject[4];
+    public GameObject[] deadEventObjSprite = new GameObject[4];
 
-   
+    private int[] noThrowCharacter = { 10003,10004,10012,10013,  10023, 10033,   10036,   10044,10045 };
+    public void doDeadEvent(int characterIdx, int damage) //적 대상 애니메이션
+    {
+        for (int i=0;i<noThrowCharacter.Length;i++)
+        {
+            if(enemyCharacter[characterIdx].getDestiny().getDestinyIdx() == noThrowCharacter[i])
+            {
+                enemyCharacterObjUIAnim[characterIdx].Play("Dead", -1, 0f);
+                return;
+            }
+        }
+        if (damage < 100) {
+            enemyCharacterObjUIAnim[characterIdx].Play("Dead", -1, 0f);
+        }
+        else
+        {
+            deadEventObjSprite[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
+                   enemyCharacterObjUIAnim[characterIdx].GetComponent<Animator>().runtimeAnimatorController;
+            deadEventObjSprite[characterIdx].GetComponent<Animator>().Play("Hit");
+            deadEventObjSprite[characterIdx].GetComponent<Animator>().speed = 0f;
+            
+            enemyCharacterObjUI[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
+                Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+            enemyCharacterShadowObjUI[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+
+            if ( damage < 1000)
+            {
+                deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().setMode(enemyCharacterObjUI[characterIdx].transform.position + new Vector3(0, 25, 0), 1, damage);
+            }
+            else if (damage >= 1000)
+            {
+                deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().setMode(enemyCharacterObjUI[characterIdx].transform.position + new Vector3(0, 25, 0), 2, damage);
+            }
+            
+        }
+    }
 
     public int chooseDiceIdx;
 
@@ -756,10 +794,6 @@ public class BattleManager : MonoBehaviour
             int characterIdxTemp = liveSkillList[skillIdx0] % 4;
             int skillIdxTemp = liveSkillList[skillIdx0] / 4;
             //만약 special한 공격이고(스택사용)
-            if (enemyCharacter[characterIdxTemp].getCharacter_battle().getSpecialVal() != enemyCharacter[characterIdxTemp].skillUse(skillIdxTemp).getSpecialVal()) //만약 조건하고 다른경우 건너뛴다.
-            {
-                continue;
-            }
 
             int skillIdx = liveSkillList[skillIdx0];
             for (int diceIdx = 0; diceIdx <= liveCharacterList.Count - enemySkillDiceNum[skillIdx]; diceIdx++)
@@ -2805,7 +2839,7 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    private void battleAnimationControl(int characterIdx, int option)
+    private void battleAnimationControl(int characterIdx, int option, int damage)
     {
         //option은 변화시킬 대상에 대한 정보
         //0 : empty(아마 원복에 쓸듯해서 방치)
@@ -2826,8 +2860,8 @@ public class BattleManager : MonoBehaviour
         {
             characterIdx -= 4;
             if (option == 1) enemyCharacterObjUIAnim[characterIdx].Play("Hit", -1, 0f);
-            else if (option == 2) { 
-                enemyCharacterObjUIAnim[characterIdx].Play("Dead", -1, 0f);
+            else if (option == 2) {
+                doDeadEvent(characterIdx, damage);
             } 
         }
     }
@@ -3609,7 +3643,7 @@ public class BattleManager : MonoBehaviour
 
                     characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), skill.getEnemySkillEffType());
                     backGroundObj[4].GetComponent<Animator>().Play("BattleFaint", -1, 0f);
-                    battleAnimationControl(tempTargetIdx, 2);
+                    battleAnimationControl(tempTargetIdx, 2,0);
                     DeadCharacterUpdate(tempTargetIdx);
                     boomChk = true;
                 }
@@ -3622,7 +3656,7 @@ public class BattleManager : MonoBehaviour
                     {  
                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(),skill.getEnemySkillEffType());
                         backGroundObj[4].GetComponent<Animator>().Play("BattleHit", -1, 0f);
-                        battleAnimationControl(tempTargetIdx, 1);
+                        battleAnimationControl(tempTargetIdx, 1,0);
 
                         itemManager.Instance.useEquipItem(textHeight, 100, tempTargetIdx, null);
                         //여기에 피격 아이템 관련 처리 필요.
@@ -3667,7 +3701,7 @@ public class BattleManager : MonoBehaviour
                 {
                     characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), skill.getEnemySkillEffType());
                     backGroundObj[4].GetComponent<Animator>().Play("BattleKill", -1, 0f);
-                    battleAnimationControl(tempTargetIdx, 2);
+                    battleAnimationControl(tempTargetIdx, 2, takeSkillPacketArr[takeSkillArrIdx].getVal());
                     DeadCharacterUpdate(tempTargetIdx);
                     boomChk = true;
                 }
@@ -3677,7 +3711,7 @@ public class BattleManager : MonoBehaviour
                     if (skillResult == 0) { //대미지는 주었지만한 생존한 경우
                         characterDamageMove(tempTargetIdx, takeSkillPacketArr[takeSkillArrIdx].getVal(), skill.getEnemySkillEffType());
                         backGroundObj[4].GetComponent<Animator>().Play("BattleShine", -1, 0f);
-                        battleAnimationControl(tempTargetIdx, 1);
+                        battleAnimationControl(tempTargetIdx, 1, 0);
 
                         itemManager.Instance.useEquipItem(textHeight, 100, tempTargetIdx, null);
                     }
@@ -4908,6 +4942,11 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            doDeadEvent(0,100);
+        }
+
         drawLineDiceCharacter();
         /*
         if (Input.GetKeyUp(KeyCode.Space))
