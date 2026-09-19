@@ -4942,10 +4942,6 @@ public class BattleManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            doDeadEvent(0,100);
-        }
 
         drawLineDiceCharacter();
         /*

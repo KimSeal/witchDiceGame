@@ -29,15 +29,17 @@ public class DeadCharacterMove : MonoBehaviour
     public float rotateTest1;
 
     public GameObject wallTouchObj;
+    public GameObject circleEffObj;
+    public GameObject fieldDustObj;
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(mode == 0)
+        if (mode == 0)
         {
 
         }
-        else if(mode == 1) // 그냥 돌면서 날아가기
+        else if (mode == 1) // 그냥 돌면서 날아가기
         {
             this.transform.position += new Vector3(xSpeed, ySpeed, 0f);
             ySpeed -= gravityVal;
@@ -45,20 +47,40 @@ public class DeadCharacterMove : MonoBehaviour
             this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
             rotateVal += rotateChangeVal;
 
-            if (this.transform.position.y < -200f || this.transform.position.x > 200f) initMode();
+            if (this.transform.position.y < -150f)
+            {
+                GameObject temp = Instantiate(wallTouchObj, new Vector3(this.transform.position.x - 30f, -100, this.transform.position.z), new Quaternion(0, 0, 0, 0));
+                temp.GetComponent<Animator>().Play("anim_dropDust_" + Random.Range(0, 3).ToString());
+                ColorUtility.TryParseHtmlString("#977955", out Color newColor);
+                temp.GetComponent<SpriteRenderer>().material.SetColor("_OutlineColor", newColor);
+                temp.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
+
+                // Z축 기준으로 회전 적용
+                temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+
+                int circleNum = Random.Range(3, 7);
+                for (int i = 0; i < circleNum; i++)
+                {
+                    GameObject temp2 = Instantiate(fieldDustObj, temp.transform.position, new Quaternion(0, 0, 0, 0));
+                    temp2.GetComponent<fieldDustEff>().setSpeed(Random.Range(-4f, 4f), Random.Range(6f, 8f));
+                    //temp2.GetComponent<effMove>().setWallCollistion( (angle - 90f + Random.Range(-30f, 30f))/360f * 2 * Mathf.PI );
+                }
+                CameraManager.Instance.attackShakeStart(3);
+                initMode();
+            }
         }
-        else if(mode == 2) // 흔들리기 1차
+        else if (mode == 2) // 흔들리기 1차
         {
             dir = Random.Range(0, 360);
             this.transform.position = initPoint + (shakeVal + shakeDefault) * new Vector3(Mathf.Sin(dir), Mathf.Cos(dir), 0f);
             shakeVal += shakeDescVal;
-            if(shakeVal >= 2)
+            if (shakeVal >= 2)
             {
                 dir = rotateTest0;
                 mode = 3;
             }
         }
-        else if(mode == 3) //흔들리고 직선으로 날아가기 
+        else if (mode == 3) //흔들리고 직선으로 날아가기 
         {
             this.transform.position = this.transform.position + throwVal * new Vector3(Mathf.Sin(dir), Mathf.Cos(dir), 0f);
             this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
@@ -67,17 +89,35 @@ public class DeadCharacterMove : MonoBehaviour
             {
                 if (this.transform.position.y > 120f) this.transform.position = new Vector3(this.transform.position.x - 30f, 120f, this.transform.position.z);
                 if (this.transform.position.x > 200f) this.transform.position = new Vector3(200, this.transform.position.y - 30f, this.transform.position.z);
-                GameObject temp = Instantiate(wallTouchObj, this.transform.position, new Quaternion(0, 0, 0,0));
+                GameObject temp = Instantiate(wallTouchObj, this.transform.position, new Quaternion(0, 0, 0, 0));
 
                 Vector2 direction = new Vector3(0, 0, 0) - transform.position;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 // Z축 기준으로 회전 적용
                 temp.transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
 
+                int circleNum = Random.Range(3, 7);
+                for (int i = 0; i < circleNum; i++)
+                {
+                    GameObject temp2 = Instantiate(circleEffObj, this.transform.position, new Quaternion(0, 0, 0, 0));
+                    temp2.GetComponent<Animator>().Play("circle_S_W");
+                    temp2.GetComponent<effMove>().setWallCollistion((angle - 150f) / 360f * Mathf.PI + Random.Range(-0.5f, 0.5f));
+                    //temp2.GetComponent<effMove>().setWallCollistion( (angle - 90f + Random.Range(-30f, 30f))/360f * 2 * Mathf.PI );
+                }
+                circleNum = Random.Range(3, 7);
+                for (int i = 0; i < circleNum; i++)
+                {
+                    GameObject temp2 = Instantiate(fieldDustObj, temp.transform.position, new Quaternion(0, 0, 0, 0));
+                    if(this.transform.position.y > 120f) temp2.GetComponent<fieldDustEff>().setSpeed(Random.Range(-5, 0f), Random.Range(-2f, 1f));
+                    else temp2.GetComponent<fieldDustEff>().setSpeed(Random.Range(-5, 0f), Random.Range(-1f, 4f));
+                    //temp2.GetComponent<effMove>().setWallCollistion( (angle - 90f + Random.Range(-30f, 30f))/360f * 2 * Mathf.PI );
+                }
+                CameraManager.Instance.attackShakeStart(5);
                 initMode();
             }
         }
         
+
     }
     public void initMode()
     {
@@ -105,7 +145,7 @@ public class DeadCharacterMove : MonoBehaviour
         if(modeVal == 1)
         {
             ySpeed = 5.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
-            xSpeed = 2.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
+            xSpeed = 1.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
             rotateChangeVal = -20f + 0.01f * damage + Random.Range(0f, -3f);
         }
         if(modeVal == 2)

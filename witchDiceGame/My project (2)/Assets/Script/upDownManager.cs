@@ -39,6 +39,7 @@ public class upDownManager : MonoBehaviour
     public GameObject[] underSkillAble = new GameObject[4];
     public GameObject underBattleButton;
     public GameObject underBattleOutline;
+    public GameObject underSkillDiceDescEntity;
     public GameObject[] underSkillDiceDescImage = new GameObject[4];
     public TextMeshProUGUI[] underSkillDiceDescText = new TextMeshProUGUI[4];
 
@@ -207,6 +208,12 @@ public class upDownManager : MonoBehaviour
     public GameObject[] skillCoolTimeCoverOrigin = new GameObject[8];
     public GameObject[] skillCoolTimeCover2 = new GameObject[8];
     public GameObject[] skillCoolTimeCover2Origin = new GameObject[8];
+
+    public void underSkillDescActive(bool onOff)
+    {
+        underSkillDiceDescEntity.GetComponent<Image>().raycastTarget = onOff;
+        for(int i=2;i<underHoverBar.Length;i++) underHoverBar[i].GetComponent<Image>().raycastTarget = onOff;
+    }
     public void setSkillCoolTimeCover(int idx, bool onOff, bool animOnOff)
     {
         if (!onOff)
@@ -568,6 +575,7 @@ public class upDownManager : MonoBehaviour
     
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
     {
+        
         bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString(), -1, 0f);
         bigDicePowerButtonEff[diceIdx].GetComponent<Image>().sprite =
                bigDicePowerButtonEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
@@ -685,7 +693,7 @@ public class upDownManager : MonoBehaviour
     
     public void hoverInUnderTownButton(int idx)
     {
-        
+        underSkillDescActive(false);
         if (townCondition(idx) ) // chapter1 clear
         {
             skillDescUpdate("none", 0, 0, 0, 0, townName[idx], TalkManager.Instance.getDesc(30 + idx));
@@ -703,6 +711,7 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutUnderTownButton()
     {
+        underSkillDescActive(true);
         for (int i = 0; i < underTownButton.Length; i++) {
             if (townCondition(i)) { 
                 underTownButton[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/townImage/spr_town_" + townName[i]);
