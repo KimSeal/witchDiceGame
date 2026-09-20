@@ -6,7 +6,7 @@ public class DeadCharacterMove : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public int mode = 0;
+    public int mode = 0; //박힌 상태는 999로 칭하기. 
     [SerializeField]
     public float ySpeed = 0;
     public float xSpeed = 0;
@@ -24,10 +24,12 @@ public class DeadCharacterMove : MonoBehaviour
     public float dir = 0;
 
     public float throwVal = 0;
-
+    public float wallColliderVal = 0;
     public float rotateTest0;
     public float rotateTest1;
 
+    public bool wallStopChk = false;
+    public GameObject dustEff;
     public GameObject wallTouchObj;
     public GameObject circleEffObj;
     public GameObject fieldDustObj;
@@ -114,19 +116,69 @@ public class DeadCharacterMove : MonoBehaviour
                 }
                 CameraManager.Instance.attackShakeStart(5);
                 initMode();
+                if (wallStopChk)
+                {
+                    this.transform.position = temp.transform.position + new Vector3(Random.Range(0f,-5f),0f,0f);
+                    this.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
+                    mode = 999;//박힌 상태는 999로 칭한다.'
+
+                    //if (Random.Range(0,2) == 0) { 
+                    //    this.transform.rotation = Quaternion.Euler(0, 0, Random.Range(45f, 135f)); 
+                    //}
+                    //else {
+                    //this.transform.rotation = Quaternion.Euler(0, 0, Random.Range(45f +180f, 135f + 180f)); 
+                    //}
+                }
             }
         }
-        
+        else if (mode == 4) //흔들리고 직선으로 날아가기 
+        {
+            this.transform.position = this.transform.position + throwVal * new Vector3(Mathf.Sin(dir), Mathf.Cos(dir), 0f);
+            this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
+            rotateVal += rotateChangeVal;
+            if (wallColliderVal < 3 && (this.transform.position.x < -200f || this.transform.position.x > 200f))
+            {
+                dir *= -1;
+                wallColliderVal += 1;
+                int circleNum = Random.Range(2, 5);
+
+                for (int i = 0; i < circleNum; i++)
+                {
+                    GameObject temp2 = Instantiate(fieldDustObj, this.transform.position, new Quaternion(0, 0, 0, 0));
+                    if (wallColliderVal % 2 == 1)
+                    {
+                        this.transform.position = new Vector3(200f, this.transform.position.y, this.transform.position.z);
+                        temp2.GetComponent<fieldDustEff>().setSpeed(Random.Range(-5, 0f), Random.Range(-1f, 4f));
+                    }
+                    else
+                    {
+                        this.transform.position = new Vector3(-200f, this.transform.position.y, this.transform.position.z);
+                        temp2.GetComponent<fieldDustEff>().setSpeed(Random.Range(0, 5f), Random.Range(-1f, 4f));
+                    }
+                    //temp2.GetComponent<effMove>().setWallCollistion( (angle - 90f + Random.Range(-30f, 30f))/360f * 2 * Mathf.PI );
+                }
+                CameraManager.Instance.attackShakeStart(2);
+            }
+            if (this.transform.position.y > 150f || this.transform.position.y < -150f)
+            {
+                initMode();
+            }
+        }
 
     }
     public void initMode()
     {
+        if(mode > 0)
+        {
+            GameObject temp = Instantiate(dustEff, this.transform.position, new Quaternion(0, 0, 0, 0));
+            temp.GetComponent<Animator>().Play("Smoke_" + Random.Range(0, 3).ToString());
+        }
         mode = 0;
         
         ySpeed = 0;
         xSpeed = 0;
         rotateVal = 0;
-
+        wallColliderVal = 0;
         shakeVal = 0;
         initPoint = new Vector3(10000f, 0, 0);
         this.transform.position = initPoint;
@@ -141,22 +193,44 @@ public class DeadCharacterMove : MonoBehaviour
         this.initPoint = initPoint;
         this.transform.position = initPoint;
         mode = modeVal;
-
-        if(modeVal == 1)
+        wallStopChk = false;
+        if (modeVal == 1)
         {
             ySpeed = 5.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
             xSpeed = 1.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
             rotateChangeVal = -20f + 0.01f * damage + Random.Range(0f, -3f);
         }
-        if(modeVal == 2)
+        if(modeVal == 2) // super smash
         {
             rotateVal = Random.Range(0.1f, 3.0f);
             this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
             shakeVal = 0;
-            shakeDefault = 3f + 0.001f * damage;
-            rotateTest0 = Random.Range(0.3f,1.3f);
+            shakeDefault = 3f + 0.0001f * damage;
+            rotateTest0 = Random.Range(0.9f,1.5f);
             rotateChangeVal = Random.Range(-30f,-40f);
             throwVal = Random.Range(40f, 50f);
+            wallStopChk = true;
+        }
+        if (modeVal == 4) //튕기면서 날아감.
+        {
+            rotateVal = Random.Range(0.1f, 3.0f);
+            this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
+            dir = Random.Range(1.3f, 1.5f);
+            rotateChangeVal = -15 + (0.001f * damage);
+            throwVal = 25f + (0.001f * damage);
+        }
+        if(modeVal == 5)
+        {
+            rotateVal = Random.Range(0.1f, 3.0f);
+            this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
+            shakeVal = 0;
+            shakeDefault = 6f;
+            rotateTest0 = Random.Range(0.6f, 1.2f);
+            rotateChangeVal = Random.Range(-30f, -40f);
+            throwVal = Random.Range(40f, 50f);
+            wallStopChk = false;
+            
+            mode = 2;
         }
     }
 }

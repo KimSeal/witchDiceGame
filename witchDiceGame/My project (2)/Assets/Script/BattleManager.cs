@@ -60,7 +60,7 @@ public class BattleManager : MonoBehaviour
         {
             deadEventObjSprite[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
                    enemyCharacterObjUIAnim[characterIdx].GetComponent<Animator>().runtimeAnimatorController;
-            deadEventObjSprite[characterIdx].GetComponent<Animator>().Play("Hit");
+            deadEventObjSprite[characterIdx].GetComponent<Animator>().Play("Hit", -1, 0.75f);
             deadEventObjSprite[characterIdx].GetComponent<Animator>().speed = 0f;
             
             enemyCharacterObjUI[characterIdx].GetComponent<Animator>().runtimeAnimatorController =
@@ -71,11 +71,19 @@ public class BattleManager : MonoBehaviour
             {
                 deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().setMode(enemyCharacterObjUI[characterIdx].transform.position + new Vector3(0, 25, 0), 1, damage);
             }
-            else if (damage >= 1000)
+            else if (damage < 10000)
+            {
+                deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().setMode(enemyCharacterObjUI[characterIdx].transform.position + new Vector3(0, 25, 0), 4, damage);
+            }
+            else if (damage < 100000)
             {
                 deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().setMode(enemyCharacterObjUI[characterIdx].transform.position + new Vector3(0, 25, 0), 2, damage);
             }
-            
+            else
+            {
+                deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().setMode(enemyCharacterObjUI[characterIdx].transform.position + new Vector3(0, 25, 0), 5, damage);
+            }
+
         }
     }
 
@@ -4572,6 +4580,10 @@ public class BattleManager : MonoBehaviour
                 }
                 rerollButton.transform.position = new Vector3(0f, 300f, 0f);
                 itemNotGetButton.transform.position = new Vector3(0f, 330f, 0f);
+                for (int characterIdx=0;characterIdx<4;characterIdx++)
+                {
+                    deadEventObj[characterIdx].GetComponent<DeadCharacterMove>().initMode();
+                }
                 CharacterManager.Instance.character_reset();
                 bool reviveChk = false;
                 for (int i = 0; i < 4; i++) //캐릭터 원래 위치에 character 넣기
