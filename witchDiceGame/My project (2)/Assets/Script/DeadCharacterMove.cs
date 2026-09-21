@@ -136,6 +136,11 @@ public class DeadCharacterMove : MonoBehaviour
             this.transform.position = this.transform.position + throwVal * new Vector3(Mathf.Sin(dir), Mathf.Cos(dir), 0f);
             this.transform.rotation = Quaternion.Euler(0, 0, rotateVal);
             rotateVal += rotateChangeVal;
+            if (wallColliderVal >= 3 && (this.transform.position.x > 400f || this.transform.position.x < -400f
+                || this.transform.position.y > 150f || this.transform.position.y < -150f))
+            {
+                initMode();
+            }
             if (wallColliderVal < 3 && (this.transform.position.x < -200f || this.transform.position.x > 200f))
             {
                 dir *= -1;
@@ -159,10 +164,7 @@ public class DeadCharacterMove : MonoBehaviour
                 }
                 CameraManager.Instance.attackShakeStart(2);
             }
-            if (this.transform.position.y > 150f || this.transform.position.y < -150f)
-            {
-                initMode();
-            }
+            
         }
 
     }
