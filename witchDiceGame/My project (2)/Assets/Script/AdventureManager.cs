@@ -967,7 +967,7 @@ public class AdventureManager : MonoBehaviour
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
             //StartCoroutine(phase_Manage_Coroutine(4));
-            //StartCoroutine(phase_Manage_Coroutine(1));
+            //StartCoroutine(phase_Manage_Coroutine(2));
             StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }
         else

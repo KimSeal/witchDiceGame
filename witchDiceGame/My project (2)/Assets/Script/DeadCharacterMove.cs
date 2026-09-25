@@ -118,6 +118,7 @@ public class DeadCharacterMove : MonoBehaviour
                 initMode();
                 if (wallStopChk)
                 {
+                    Debug.Log("asdf00");
                     this.transform.position = temp.transform.position + new Vector3(Random.Range(0f,-5f),0f,0f);
                     this.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
                     mode = 999;//¹ÚÈù »óÅÂ´Â 999·Î ÄªÇÑ´Ù.'
@@ -141,7 +142,7 @@ public class DeadCharacterMove : MonoBehaviour
             {
                 initMode();
             }
-            if (wallColliderVal < 3 && (this.transform.position.x < -200f || this.transform.position.x > 200f))
+            else if (wallColliderVal < 3 && (this.transform.position.x < -200f || this.transform.position.x > 200f))
             {
                 dir *= -1;
                 wallColliderVal += 1;
@@ -201,6 +202,7 @@ public class DeadCharacterMove : MonoBehaviour
             ySpeed = 5.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
             xSpeed = 1.5f + 0.002f * damage + Random.Range(-0.5f, 0.5f);
             rotateChangeVal = -20f + 0.01f * damage + Random.Range(0f, -3f);
+            wallStopChk = false;
         }
         if(modeVal == 2) // super smash
         {
@@ -220,6 +222,7 @@ public class DeadCharacterMove : MonoBehaviour
             dir = Random.Range(1.3f, 1.5f);
             rotateChangeVal = -15 + (0.001f * damage);
             throwVal = 25f + (0.001f * damage);
+            wallStopChk = false;
         }
         if(modeVal == 5)
         {
