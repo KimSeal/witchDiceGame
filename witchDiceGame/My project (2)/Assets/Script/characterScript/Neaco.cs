@@ -155,7 +155,7 @@ public class SHA : Character
         if (sendSkillPacket.useSkillIdx == 1) //
         {
             packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], 
-                9999,//3 * this.getPhyAtk() + this.getPhyAtk(), 
+                3 * this.getPhyAtk() + this.getPhyAtk(), 
                 0));
             packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 0, 3, -999));
         }
