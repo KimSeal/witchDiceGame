@@ -1166,15 +1166,36 @@ public class itemManager : MonoBehaviour
                 itemArrLengthByChapter[i, j] = itemListChapter[i, j].Count;
             }
         }
-        //test Sample
         /*
+        ItemExistArr[3, 0] = true;
+        ItemArr[3, 0] = new Item(itemList[3][29]);
+
+        ItemExistArr[3, 1] = true;
+        ItemArr[3, 1] = new Item(itemList[3][23]);
+
+        ItemExistArr[3, 2] = true;
+        ItemArr[3, 2] = new Item(itemList[3][7]);
+
+        ItemExistArr[3, 3] = true;
+        ItemArr[3, 3] = new Item(itemList[3][9]);
+
+        ItemExistArr[3, 4] = true;
+        ItemArr[3, 4] = new Item(itemList[3][23]);
+
+        ItemExistArr[3, 5] = true;
+        ItemArr[3, 5] = new Item(itemList[3][4]);
+        */
+        //test Sample
+        
         for (int i = 0; i < 6; i++)
         {
             ItemExistArr[0, i] = true;
-            ItemArr[0, i] = new Item(itemList[1][Random.Range(1,22)]);
+            ItemArr[0, i] = new Item(itemList[0][Random.Range(1,22)]);
+            ItemExistArr[3, i] = true;
+            ItemArr[3, i] = new Item(itemList[3][Random.Range(1, 32)]);
         }
         
-        
+        /*
         ItemExistArr[3, 0] = true;
         ItemArr[3, 0] = new Item(itemList[3][8]);
 
@@ -1247,8 +1268,8 @@ public class itemManager : MonoBehaviour
         ItemArr[0, 2] = new Item(itemList[2][1]);
         ItemArr[0, 3] = new Item(itemList[2][1]);
         ItemArr[0, 4] = new Item(itemList[2][1]);
-       */
-        
+       
+        */
         updateInventory();
     }
 

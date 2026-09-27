@@ -82,7 +82,7 @@ public class AdventureManager : MonoBehaviour
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
 
-    public List<adventureEvent>[] adventureEventList = new List<adventureEvent>[5]; //
+    public List<adventureEvent>[] adventureEventList = new List<adventureEvent>[100]; //
 
     public List<AdventureEventReader> adventureEventReaderList = new List<AdventureEventReader>(); // 
     public List<AdventureEventPacketReader> adventureEventPacketReaderList = new List<AdventureEventPacketReader>(); // 
@@ -966,7 +966,7 @@ public class AdventureManager : MonoBehaviour
 
         if (jsonDataManager.Instance.getChapterRead(0, 2) == 2)
         {
-            //StartCoroutine(phase_Manage_Coroutine(4));
+            //StartCoroutine(phase_Manage_Coroutine(5));
             //StartCoroutine(phase_Manage_Coroutine(2));
             StartCoroutine(phase_Manage_Coroutine(Random.Range(1,3)));
         }

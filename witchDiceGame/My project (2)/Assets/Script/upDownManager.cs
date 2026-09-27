@@ -788,7 +788,7 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-            if(idx == 7) skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
+            if (idx == 7)  skillDescUpdate("none", 0, 0, 0, 0, "Tutorial", TalkManager.Instance.getDesc(123));
             else if (idx == 0) skillDescUpdate("none", 0, 0, 0, 0, "Steam Wishlist", TalkManager.Instance.getDesc(153));
             else skillDescUpdate("none", 0, 0, 0, 0, "???", TalkManager.Instance.getDesc(38));
 

@@ -70,6 +70,7 @@ public class ToolBarManager : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        
         if (toolBarState != 0)
         {
             toolBarObj.GetComponent<RectTransform>().position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
@@ -81,6 +82,7 @@ public class ToolBarManager : MonoBehaviour
         }
         else
         {
+        
             toolBarNeedDiceInfo.GetComponent<RectTransform>().position = new Vector3(-30000, -30000, 0);
         }
     }
