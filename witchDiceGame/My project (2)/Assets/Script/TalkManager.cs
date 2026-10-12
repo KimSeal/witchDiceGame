@@ -1166,7 +1166,24 @@ public class TalkManager : MonoBehaviour
         talkLanArr[2] = talkList[a].TextJP;
         talkLanArr[3] = talkList[a].TextCH;
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
-        maxAutoTime = 1.5f + (talkLanArr[jsonDataManager.Instance.getLanguage()].Length) * 0.1f;
+
+        
+
+        if ((talkLanArr[jsonDataManager.Instance.getLanguage()].Length) <= 1)
+        {
+            if (talkList[a].imagePlace == 0)
+            {
+                maxAutoTime = 1.0f;
+            }
+            else
+            {
+                maxAutoTime = 2.5f;
+            }
+        }
+        else
+        {
+            maxAutoTime = 1.5f + (talkLanArr[jsonDataManager.Instance.getLanguage()].Length) * 0.1f;
+        }
         autoRemainTime = maxAutoTime;
         /*
         if (jsonDataManager.Instance.getLanguage() == 0) characterTalk.GetComponent<TextMeshProUGUI>().text = talkList[a].TextKR;
