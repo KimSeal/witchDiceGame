@@ -4,13 +4,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class slideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class mapperSlideBar0 : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     GameObject woodBar;
     private float initY;
     private Vector3 initWoodPosition;
     private bool chkBegin = false;
     Vector3 defaultPoint;
+
+    [SerializeField]
+    public int mode = 0;
+    public float leftX = -45f;
+    public float rightX = 75f;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,8 +39,8 @@ public class slideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDrag
         if (chkBegin)
         { //이동중이면 움직임 X
             float mouseY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
-            if(mouseY > 75) mouseY = 75;
-            if(mouseY < -45) mouseY = -45;
+            if(mouseY > rightX) mouseY = rightX;
+            if(mouseY < leftX) mouseY = leftX;
             this.transform.position = new Vector3(this.transform.position.x, mouseY, this.transform.position.z);//eventData.position;//currentPos;
             woodBar.transform.position = initWoodPosition + new Vector3(0f,  3 * (initY -this.transform.position.y ),0f);
         }

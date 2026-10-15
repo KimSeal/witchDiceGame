@@ -31,6 +31,76 @@ public class AdventureReadyManager : MonoBehaviour
     public GameObject ChapterNoGoEntity;
     public TextMeshProUGUI ChapterNoGoText;
 
+    [SerializeField]
+    public Sprite[] levelSelectSprite = new Sprite[4];
+    public Sprite[] activeButtonSprite = new Sprite[4];
+    public TextMeshPro[] levelSelectText = new TextMeshPro[10]; // normal level, infinity level, curlevelText, val0, val1, val2, val3, 
+    public GameObject levelSelectBoard;
+    public GameObject levelSelectActiveButton;
+    public GameObject levelSelectActiveOutline;
+    public GameObject levelSelectArrow;
+
+    public GameObject levelSelectImage;
+    public GameObject levelMask;
+    
+    private int curLevelMode = 0;
+    private bool levelSelectOnOff = false;
+
+    public void hoverInLevelSelectSlider(int idx)
+    {
+        if (idx == 0) ToolBarManager.Instance.setToolBar(11);
+        if (idx == 1) ToolBarManager.Instance.setToolBar(12);
+        if (idx == 2) ToolBarManager.Instance.setToolBar(13);
+    }
+    public void hoverOutLevelSelectSlider(int opt)
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+    public void setAdventureLevel(int opt, float val)
+    {
+        Debug.Log(val);
+    }
+
+    public void hoverInLevelSelect(int opt)
+    {
+        if (opt != curLevelMode)
+        {
+            levelSelectBoard.GetComponent<SpriteRenderer>().sprite = levelSelectSprite[curLevelMode + 2];
+        }
+        
+    }
+    public void hoverOutLevelSelect()
+    {
+        if (curLevelMode == 0) { levelSelectText[0].color = Color.black; levelSelectText[1].color = Color.white; }
+        if (curLevelMode == 1) { levelSelectText[0].color = Color.white; levelSelectText[1].color = Color.black; }
+        levelSelectBoard.GetComponent<SpriteRenderer>().sprite = levelSelectSprite[curLevelMode];
+        levelSelectArrow.transform.position = new Vector3(-1075f + curLevelMode * 150f, levelSelectArrow.transform.position.y, levelSelectArrow.transform.position.z);
+    }
+    public void clickLevelSelect(int opt)
+    {
+        curLevelMode = opt;
+        hoverOutLevelSelect();
+    }
+    public void hoverInActiveLevelSelect() {
+        levelSelectActiveOutline.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[2];
+    }
+    public void hoverOutActiveLevelSelect() {
+        levelSelectActiveOutline.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[3];
+    }
+    public void clickActiveLevelSelect()
+    {
+        activeLevelSelect(!levelSelectOnOff);
+    }
+    public void activeLevelSelect(bool onOff)
+    {
+
+        levelSelectOnOff = onOff;
+
+        if (!onOff) { hoverOutLevelSelect(); hoverOutActiveLevelSelect(); levelSelectActiveButton.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[0]; }
+        levelSelectBoard.SetActive(onOff);
+        if (onOff) { hoverOutLevelSelect(); hoverOutActiveLevelSelect(); levelSelectActiveButton.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[1]; }
+    }
+
     private void Awake()
     {
 
@@ -69,6 +139,7 @@ public class AdventureReadyManager : MonoBehaviour
         spark[0] = -1; spark[1] = -1;
         sparkVal[0] = 0;  sparkVal[1] = 0.5f;
         clickChapterNoGoButton();
+        activeLevelSelect(false);
     }
 
     // Update is called once per frame
@@ -228,6 +299,7 @@ public class AdventureReadyManager : MonoBehaviour
         }
         else
         {
+            activeLevelSelect(false);
             startAdventure();
         }
     }
@@ -267,7 +339,7 @@ public class AdventureReadyManager : MonoBehaviour
         warningTextArr[1] = 176;
         warningTextArr[2] = 177;
         updateWarningImage();
-        
+        activeLevelSelect(false);
         CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
         CharacterManager.Instance.setFoodStreetInfo();
 
@@ -310,7 +382,7 @@ public class AdventureReadyManager : MonoBehaviour
         //TownManager.Instance.backToTownUI();
         enterCharacterObj[0].transform.position = new Vector3(-1032f, -514f, 0f);
         enterCharacterObj[1].transform.position = new Vector3(-1032f, -514f, 0f);
-
+        activeLevelSelect(false);
         //enterCharacterObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         //enterCharacterObj[1].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
     }

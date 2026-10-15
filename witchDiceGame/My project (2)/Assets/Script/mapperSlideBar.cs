@@ -11,6 +11,12 @@ public class mapperSlideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     private bool chkBegin = false;
     Vector3 defaultPoint;
     // Start is called before the first frame update
+
+    [SerializeField]
+    public int opt = 0;
+    public float leftX = -1075f;
+    public float rightX = -860f;
+
     void Start()
     {
         initX = this.transform.position.x;
@@ -31,10 +37,16 @@ public class mapperSlideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         if (chkBegin)
         { //이동중이면 움직임 X
             float mouseX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x;
-            if(mouseX > -860) mouseX = -860;
-            if(mouseX < -1075) mouseX = -1075;
-            MapperManager.Instance.setEventIdxText(mouseX);
-            this.transform.position = new Vector3( mouseX, this.transform.position.y, this.transform.position.z);//eventData.position;//currentPos;
+            if (mouseX > rightX) mouseX = rightX;
+            if (mouseX < leftX) mouseX = leftX;
+
+            if (opt == 0) { // mapper swipe
+                MapperManager.Instance.setEventIdxText(mouseX);
+            }
+            if(opt == 1) {
+                AdventureReadyManager.Instance.setAdventureLevel(opt, mouseX - leftX);
+            }
+            this.transform.position = new Vector3(mouseX, this.transform.position.y, this.transform.position.z);//eventData.position;//currentPos;
         }
     }
    
@@ -51,6 +63,11 @@ public class mapperSlideBar : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
     public void moveToNextIdx(float movePoint)
     {
         this.transform.position = new Vector3(movePoint, this.transform.position.y, this.transform.position.z);
+    }
+
+    public void moveToPercent(float percent)
+    {
+        this.transform.position = new Vector3(leftX + ((rightX - leftX) * percent / 100f), this.transform.position.y, this.transform.position.z);
     }
 
     // Update is called once per frame
