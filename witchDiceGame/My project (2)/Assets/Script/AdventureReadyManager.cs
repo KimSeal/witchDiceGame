@@ -35,6 +35,7 @@ public class AdventureReadyManager : MonoBehaviour
     public Sprite[] levelSelectSprite = new Sprite[4];
     public Sprite[] activeButtonSprite = new Sprite[4];
     public TextMeshPro[] levelSelectText = new TextMeshPro[10]; // normal level, infinity level, curlevelText, val0, val1, val2, val3, 
+                                                                //curLevelText2
     public GameObject levelSelectBoard;
     public GameObject levelSelectActiveButton;
     public GameObject levelSelectActiveOutline;
@@ -48,9 +49,10 @@ public class AdventureReadyManager : MonoBehaviour
 
     public void hoverInLevelSelectSlider(int idx)
     {
-        if (idx == 0) ToolBarManager.Instance.setToolBar(11);
-        if (idx == 1) ToolBarManager.Instance.setToolBar(12);
-        if (idx == 2) ToolBarManager.Instance.setToolBar(13);
+        if (idx == 0) ToolBarManager.Instance.setToolBar(31);
+        if (idx == 1) ToolBarManager.Instance.setToolBar(32);
+        if (idx == 2) ToolBarManager.Instance.setToolBar(33);
+        if (idx == 3) ToolBarManager.Instance.setToolBar(34);
     }
     public void hoverOutLevelSelectSlider(int opt)
     {
@@ -78,7 +80,14 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void clickLevelSelect(int opt)
     {
-        curLevelMode = opt;
+        if (false)//demo version lock
+        {
+            curLevelMode = opt;
+        }
+        else
+        {
+            fullUI.showFull(5);
+        }
         hoverOutLevelSelect();
     }
     public void hoverInActiveLevelSelect() {
@@ -93,12 +102,26 @@ public class AdventureReadyManager : MonoBehaviour
     }
     public void activeLevelSelect(bool onOff)
     {
+        if (!onOff) {
+            if (levelSelectOnOff == true) { hoverOutLevelSelect(); hoverOutActiveLevelSelect(); } 
+            levelSelectActiveButton.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[0];
+            levelSelectText[7].text = TalkManager.Instance.getDesc(273) + ":\n-Easy-\n" + TalkManager.Instance.getDesc(271);
+        }
 
-        levelSelectOnOff = onOff;
-
-        if (!onOff) { hoverOutLevelSelect(); hoverOutActiveLevelSelect(); levelSelectActiveButton.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[0]; }
         levelSelectBoard.SetActive(onOff);
-        if (onOff) { hoverOutLevelSelect(); hoverOutActiveLevelSelect(); levelSelectActiveButton.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[1]; }
+        
+        if (onOff) { 
+            hoverOutLevelSelect(); hoverOutActiveLevelSelect(); levelSelectActiveButton.GetComponent<SpriteRenderer>().sprite = activeButtonSprite[1];
+            levelSelectText[0].text = TalkManager.Instance.getDesc(271);
+            levelSelectText[1].text = TalkManager.Instance.getDesc(272);
+            levelSelectText[3].text = TalkManager.Instance.getDesc(263) + "\n*1.0";
+            levelSelectText[4].text = TalkManager.Instance.getDesc(265) + "\n+0";
+            levelSelectText[5].text = TalkManager.Instance.getDesc(267) + "\n" + TalkManager.Instance.getDesc(242);
+            levelSelectText[6].text = TalkManager.Instance.getDesc(269) + "\n+0.0";
+            levelSelectText[7].text = "";
+
+        }
+        levelSelectOnOff = onOff;
     }
 
     private void Awake()

@@ -267,6 +267,8 @@ public class optionManager : MonoBehaviour
             upDownManager.Instance.clickItem(-1);
             upDownManager.Instance.hoverOutWitchPowerButton();
             BattleManager.Instance.setCurClickSkill(-1);
+            AdventureReadyManager.Instance.activeLevelSelect(false);
+            AdventureReadyManager.Instance.updateWarningImage();
         }
         updateOptionButtonText();
     }
@@ -276,6 +278,8 @@ public class optionManager : MonoBehaviour
         optionOn = false ;
         optionBoard.SetActive(false);
         optionBackBoard.SetActive(false);
+        AdventureReadyManager.Instance.activeLevelSelect(false);
+        AdventureReadyManager.Instance.updateWarningImage();
     }
 
     public void changeOption(int idx)
