@@ -52,6 +52,7 @@ public class optionManager : MonoBehaviour
 
     [SerializeField]
     public GameObject optionBackBoard;
+    public GameObject optionBackBoardTrue;
     [SerializeField]
     public GameObject[] optionBoards = new GameObject[6];
    
@@ -213,6 +214,16 @@ public class optionManager : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        
+        if(optionOn && optionBackBoardTrue.GetComponent<Image>().color.a < 1.0f)
+        {
+            optionBackBoardTrue.GetComponent<Image>().color = new Color(0, 0, 0, optionBackBoardTrue.GetComponent<Image>().color.a + 0.01f);
+        } 
+        
+    }
+
     public void clickOptionButton()
     {
         curSelectKeyBoard = -1;
@@ -244,9 +255,11 @@ public class optionManager : MonoBehaviour
         giveUpButtonOnOff(true);
 
         optionOn = true;
+        upDownManager.Instance.hoverOutOptionButton();
         optionBoard.SetActive(true);
         optionBackBoard.SetActive(true);
         optionBackBoard.transform.position = new Vector3(CameraManager.Instance.cameraPointX(), CameraManager.Instance.cameraPointY(), 0);
+        optionBackBoardTrue.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
 
         optionIdx = -1;
         /*
@@ -275,7 +288,8 @@ public class optionManager : MonoBehaviour
     public void unactiveOptionBoard()
     {
         giveUpButtonOnOff(false);
-        optionOn = false ;
+        optionOn = false;
+        upDownManager.Instance.hoverOutOptionButton();
         optionBoard.SetActive(false);
         optionBackBoard.SetActive(false);
         AdventureReadyManager.Instance.activeLevelSelect(false);

@@ -4952,16 +4952,22 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private int skillIdx = 0;
     private void Update()
     {
 
         drawLineDiceCharacter();
-        /*
+        
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            specialTextManager.GetComponent<ExampleTextManager>().printTest();
+            ToolBarManager.Instance.setToolBar(CharacterManager.Instance.getSkillListDesc(skillIdx++));
+           /*
+                upDownManager.Instance.skillDescUpdate("noImage", 0, 0,
+            0, 0, "", CharacterManager.Instance.getSkillListDesc(skillIdx++));
+            */
+            //specialTextManager.GetComponent<ExampleTextManager>().printTest();
         }
-        */
+        
 
     }
     private bool resultItemPopChk = false;
@@ -5036,7 +5042,8 @@ public class BattleManager : MonoBehaviour
 
                     if (myCharacterPunch[i] > 0.4f && myCharacterPunch[i] < 0.6f) myCharacterAtkReady[i] = 2; // 당기기 끝난다는 거 체크
 
-                    if (myCharacterSwing[i] < 0.75f) myCharacterSwing[i] += 0.05f; //당기는 정도
+                    if (myCharacterSwing[i] < 0.4f) myCharacterSwing[i] += 0.03f; //당기는 정도
+                    //if (myCharacterSwing[i] < 0.75f) myCharacterSwing[i] += 0.05f; //당기는 정도
                 }
                 else if (myCharacterAtkReady[i] == 3)
                 { //공격 준비 상태인경우

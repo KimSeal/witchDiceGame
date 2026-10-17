@@ -24,6 +24,8 @@ public class hoverRotateUI : MonoBehaviour
     private float expandVal = 0.1f;
     [SerializeField]
     private bool textExist = true;
+    [SerializeField]
+    public float leftGap = 15f;
 
     private float shakeAmount = 0;
     private float rotateVal = 0;
@@ -68,7 +70,7 @@ public class hoverRotateUI : MonoBehaviour
             transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSize = 12f * (sizeVal * Mathf.Abs(Mathf.Sin(sizeLerpVal))) + 24f;
             if (!lanOnOff)
             {
-                if (transform.GetChild(0).transform.localPosition.x > 0f)
+                if (transform.GetChild(0).transform.localPosition.x > leftGap - 15f)
                 {
                     transform.GetChild(0).transform.localPosition -= new Vector3(15, 0, 0);
                 }

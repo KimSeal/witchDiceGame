@@ -864,11 +864,10 @@ public class upDownManager : MonoBehaviour
     }
     public void clickUnderTownButton(int idx)
     {
+        
         clickUpperItemTypeInit(false);
         if (townCondition(idx))
         {
-            
-
             curTownIdx = idx;
             TownManager.Instance.clickTownUI(idx);
             hoverOutUnderTownButton();

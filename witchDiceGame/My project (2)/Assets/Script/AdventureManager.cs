@@ -1904,7 +1904,8 @@ public class AdventureManager : MonoBehaviour
                     int battleSoundTemp = 5;
                     if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 100)
                     { // 올빼미 선배
-                        if (jsonDataManager.Instance.setChapterDid(0, 4)) { 
+                        if (jsonDataManager.Instance.setChapterDid(0, 4))
+                        {
                             TalkManager.Instance.startTalk(21);
                             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                         }
@@ -1930,7 +1931,8 @@ public class AdventureManager : MonoBehaviour
                     }
                     else if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 98 ||
                         adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 99 ||
-                        adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101) {
+                        adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() == 101)
+                    {
                         battleSoundTemp = 18;
                     }
 
@@ -1973,11 +1975,21 @@ public class AdventureManager : MonoBehaviour
                         selectDiceCharacterIdx = -1; //전투 후 돌아오면 해당 캐릭터가 생존했는지 확인한 다음 돌아올 수 있게 바꿀것. 
                         standObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
                     }
-                    
+
                     //for(int i=0;i<4;i++) CharacterManager.Instance.emptyEnemyCharacter(i); //돌아오면 적군 캐릭터 모두 없애기
 
                     adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                    TalkManager.Instance.setDescIdx(16);
+                    
+                    if (curDiceEventPacket.getItemExist() == 0)
+                    {
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescString("   ");
+                       
+                    }
+                    else
+                    {
+                        TalkManager.Instance.setDescIdx(16);
+                    }
                     //selectInfo.GetComponent<TextMeshPro>().text = TalkManager.Instance.getDesc(16);
                 }
 
@@ -2228,6 +2240,12 @@ public class AdventureManager : MonoBehaviour
                 if (gameOverChk == false)
                 {
                     eventEndClick = true;
+
+                    if (curDiceEventPacket.getSelectType() == 6 && curDiceEventPacket.getItemExist() == 0)
+                    {
+                        TalkManager.Instance.setDescClickLock(false);
+                        eventEndClick = false;
+                    }
                     //nextBtnObj.transform.rotation = Quaternion.Euler(0, 0, 0);
                     //nextBtnObj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_dice_goAhead");
                     giveUpBtnAble(true);

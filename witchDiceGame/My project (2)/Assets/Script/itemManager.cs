@@ -1186,7 +1186,7 @@ public class itemManager : MonoBehaviour
         ItemArr[3, 5] = new Item(itemList[3][4]);
         */
         //test Sample
-        
+        /*
         for (int i = 0; i < 6; i++)
         {
             ItemExistArr[0, i] = true;
@@ -1195,6 +1195,7 @@ public class itemManager : MonoBehaviour
             ItemArr[3, i] = new Item(itemList[3][Random.Range(1, 32)]);
         }
         
+        */
         /*
         ItemExistArr[3, 0] = true;
         ItemArr[3, 0] = new Item(itemList[3][8]);

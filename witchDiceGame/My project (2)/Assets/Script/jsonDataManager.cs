@@ -40,6 +40,31 @@ public class jsonDataManager : MonoBehaviour
         if (!File.Exists(fileName))
         {
             playerPlayData = new PlayerPlayData();
+
+            SystemLanguage currentLang = Application.systemLanguage;
+
+            switch (currentLang)
+            {
+                case SystemLanguage.Korean:
+                    playerPlayData.setLanguage(0);
+                    break;
+                case SystemLanguage.Japanese:
+                    playerPlayData.setLanguage(2);
+                    break;
+                case SystemLanguage.Chinese:
+                    playerPlayData.setLanguage(3);
+                    break;
+                case SystemLanguage.ChineseSimplified:
+                    playerPlayData.setLanguage(3);
+                    break;
+                case SystemLanguage.ChineseTraditional:
+                    playerPlayData.setLanguage(3);
+                    break;
+                default:
+                    playerPlayData.setLanguage(1); // 지원하지 않는 언어는 기본 영어로 처리
+                    break;
+            }
+
             SoundManager_Main.Instance.setBackgroundVolume(1.0f);
             if (File.Exists(preFileName))
             {

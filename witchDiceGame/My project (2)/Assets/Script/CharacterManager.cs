@@ -43,6 +43,11 @@ public class CharacterManager : MonoBehaviour
     public RuntimeAnimatorController[] flutterOriginAnimator = new RuntimeAnimatorController[5];
     public RuntimeAnimatorController[] graceOriginAnimator = new RuntimeAnimatorController[5];
 
+    public Skill getSkillListDesc(int idx)
+    {
+        return skillList[idx];//skillList[idx].Command[jsonDataManager.Instance.getLanguage()];
+    }
+
     public RuntimeAnimatorController getOriginAnimator(int destinyIdx)
     {
  

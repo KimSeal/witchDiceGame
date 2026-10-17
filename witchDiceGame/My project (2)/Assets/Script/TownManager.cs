@@ -203,8 +203,14 @@ public class TownManager : MonoBehaviour
         for (int i = 0; i < cloudObj.Length; i++) cloudObj[i].GetComponent<cloudMove>().cloudActive();
         SoundManager_Main.Instance.playSound(7);
         setTownActive(true);
-        clickTownUI(7);
-
+        if (CameraManager.Instance.getGoHomeButtonClicked())
+        {
+            clickTownUI(1);
+        }
+        else
+        {
+            clickTownUI(7);
+        }
         
     }
     public void backToMain()

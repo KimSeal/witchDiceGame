@@ -44,7 +44,8 @@ public class CameraManager : MonoBehaviour
     public float speedInput;
     public float zoomValInput;
     public float zoomSpeedInput;
-    
+    public GameObject goHomeButton;
+    public Sprite[] goHomeButtonSprite;
 
     // Start is called before the first frame update
     public void VibrateForeTime(float time) {
@@ -70,6 +71,7 @@ public class CameraManager : MonoBehaviour
     public float startZoomVal;
     public float endZoomVal;
 
+    private bool goHomeButtonActive = false;
     void Start()
     {
         Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
@@ -90,6 +92,7 @@ public class CameraManager : MonoBehaviour
         endPoint = new Vector3(0f, 0f, 0f);
 
         startZoomVal = 108;
+        goHomeButtonClicked = false;
     }
 
     int tempSize;
@@ -98,6 +101,31 @@ public class CameraManager : MonoBehaviour
 
     bool windowChk = false;
 
+    public void activeGoHomeButton(bool onOff)
+    {
+        goHomeButtonActive = onOff;
+        goHomeButton.transform.localPosition = new Vector3(237f, goHomeButton.transform.localPosition.y, goHomeButton.transform.localPosition.z);
+    }
+    public void hoverInGoHomeButton()
+    {
+        goHomeButton.GetComponent<SpriteRenderer>().sprite = goHomeButtonSprite[1];
+        ToolBarManager.Instance.setToolBar(35);
+    }
+    public void hoverOutGoHomeButton() { goHomeButton.GetComponent<SpriteRenderer>().sprite = goHomeButtonSprite[0];
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
+    public bool goHomeButtonClicked = false;
+    public bool getGoHomeButtonClicked() { return goHomeButtonClicked; }
+    public void clickGoHomeButton()
+    {
+       
+        TalkManager.Instance.clickDescBox();
+        goHomeButtonClicked = true;
+        hoverOutGoHomeButton();
+        //TownManager.Instance.clickTownUI(1);
+        //upDownManager.Instance.clickUnderTownButton(1);
+    }
     public void changeScreenSize(int idx)
     {
         if(idx >=0 && idx<5)jsonDataManager.Instance.setScreenSize(idx);
@@ -178,7 +206,11 @@ public class CameraManager : MonoBehaviour
     }
     void FixedUpdate()
     {
-
+        if (goHomeButtonActive && 
+            goHomeButton.transform.localPosition.x > 137f) {
+            goHomeButton.transform.localPosition = new Vector3(137f * 0.05f + goHomeButton.transform.localPosition.x * 0.95f, goHomeButton.transform.localPosition.y, goHomeButton.transform.localPosition.z);
+            if(goHomeButton.transform.localPosition.x < 138f) goHomeButton.transform.localPosition = new Vector3(137f, goHomeButton.transform.localPosition.y, goHomeButton.transform.localPosition.z);
+        } 
     }
     private void LateUpdate()
     {
@@ -279,6 +311,21 @@ public class CameraManager : MonoBehaviour
     bool loseChk = false;
     public void resultScreenActive(int caseVal)
     {
+        goHomeButtonClicked = false;
+        hoverOutGoHomeButton();
+        activeGoHomeButton(false);
+        for (int i = 0; i <6; i++)
+        {
+            for (int j = 0; j < 3; j++) {
+                if(jsonDataManager.Instance.getChapterRead(i,j) == 1)
+                {
+                    activeGoHomeButton(true);
+                    break;
+                }
+            }
+            if (goHomeButtonActive) break;
+        }
+
         int updateMoney = AdventureManager.Instance.getAdventureGold();
         money.text = "$" + updateMoney.ToString(); //돈 관련 텍스트 업데이트;
         /*
@@ -302,18 +349,18 @@ public class CameraManager : MonoBehaviour
                 if (caseVal == 0)
                 {
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = TalkManager.Instance.getDesc(246) + " : 3" + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    partGet.text = TalkManager.Instance.getDesc(274) + AdventureManager.Instance.getDeadEnemyCount().ToString() + TalkManager.Instance.getDesc(275);
                 }
                 if (caseVal == 1)
                 {
 
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = TalkManager.Instance.getDesc(246) + " : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    partGet.text = TalkManager.Instance.getDesc(274) + AdventureManager.Instance.getDeadEnemyCount().ToString() + TalkManager.Instance.getDesc(275);
                 }
                 if (caseVal == 2) //데모 클리어시 5배로 준다.
                 {
                     jsonDataManager.Instance.addCharacterToken(destinyIdx, 1); //캐릭터들의 토큰을 얻는다.
-                    partGet.text = TalkManager.Instance.getDesc(246) + " : " + AdventureManager.Instance.getDeadEnemyCount().ToString();
+                    partGet.text = TalkManager.Instance.getDesc(274) + AdventureManager.Instance.getDeadEnemyCount().ToString() + TalkManager.Instance.getDesc(275); ;
                 }
                 characterPart[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(destinyIdx).getName() + "_face");
             }
@@ -350,6 +397,7 @@ public class CameraManager : MonoBehaviour
         upDownManager.Instance.clickItem(-1);
         upDownManager.Instance.clickItem(-1);
         upDownManager.Instance.clickUpperItemTypeInit(false);
+        goHomeButtonClicked = false;
         loseChk = false;
         loseUI.transform.position = new Vector3(0,300, loseUI.transform.position.z);
         AdventureManager.Instance.exitBattleCanvas(false);
