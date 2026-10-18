@@ -24,10 +24,6 @@ public class Harfy : Character
     public override List<TakeSkillPacket> doSkill(SendSkillPacket sendSkillPacket)
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
-        /*for (int i=sendSkillPacket.targetIdx[0]; i<sendSkillPacket.targetIdx[1] ; i++)
-        {
-            packets.Add(new TakeSkillPacket(i , sendSkillPacket.useDice[0] , 0));
-        }*/
         
         if (this.skillIdx[sendSkillPacket.useSkillIdx] == 0){ //다 같은 눈으로 만들고,
             packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx +4, 0, sendSkillPacket.diceNum[0], 2));

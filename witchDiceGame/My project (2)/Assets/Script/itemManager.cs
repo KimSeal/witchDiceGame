@@ -122,6 +122,8 @@ public class itemManager : MonoBehaviour
     public GameObject[] characterDiceOutline = new GameObject[6];
     public GameObject[] characterSkillOutline = new GameObject[2];
     public GameObject[] characterEquipOutline = new GameObject[2];
+    public GameObject[] characterSkillCooltimeImage = new GameObject[2];
+    public Sprite[] characterSkillCoolTimeSprite = new Sprite[2];
     public GameObject characterDescImage;
     public TextMeshProUGUI characterDescTitle;
     public TextMeshProUGUI characterDescText;
@@ -522,6 +524,8 @@ public class itemManager : MonoBehaviour
         {
             characterUIEntity.GetComponent<RectTransform>().anchoredPosition = new Vector3(-85f, 89f, 0f);
             characterBoard_update();
+
+
         }
         else
         {
@@ -568,6 +572,32 @@ public class itemManager : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             characterEquip[i].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemSprite/equipItemSprite/spr_item_equip_" + tempCharacter.getItem(i).getItemName());
+        }
+        if (characterSelectIdx < 4)
+        {
+            for (int i = 0; i < 2; i++) {
+                if (BattleManager.Instance.getMyCoolTime(characterSelectIdx * 2 + i) > 0) {
+                    characterSkillCooltimeImage[i].GetComponent<Image>().sprite = characterSkillCoolTimeSprite[1];
+                }
+                else
+                {
+                    characterSkillCooltimeImage[i].GetComponent<Image>().sprite = characterSkillCoolTimeSprite[0];
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (BattleManager.Instance.getEnemyCooltime(characterSelectIdx - 4 + (4 * i)) > 0)
+                {
+                    characterSkillCooltimeImage[i].GetComponent<Image>().sprite = characterSkillCoolTimeSprite[1];
+                }
+                else
+                {
+                    characterSkillCooltimeImage[i].GetComponent<Image>().sprite = characterSkillCoolTimeSprite[0];
+                }
+            }
         }
     }
 

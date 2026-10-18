@@ -71,12 +71,11 @@ public class ToolBarManager : MonoBehaviour
     private void FixedUpdate()
     {
         
-        //if (toolBarState != 0)
+        if (toolBarState != 0)
         {
             toolBarObj.GetComponent<RectTransform>().position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         }
-        /*
-        if(toolBarState_needDice != 0)
+        else if(toolBarState_needDice != 0)
         {
             toolBarNeedDiceInfo.GetComponent<RectTransform>().position = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         }
@@ -85,7 +84,7 @@ public class ToolBarManager : MonoBehaviour
         
             toolBarNeedDiceInfo.GetComponent<RectTransform>().position = new Vector3(-30000, -30000, 0);
         }
-        */
+        
     }
     public void activeToolBarNeedDice(bool onOff)
     {

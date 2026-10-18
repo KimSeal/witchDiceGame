@@ -217,7 +217,8 @@ public class TalkManager : MonoBehaviour
         return inputStr.Replace("\\n", "\n").Replace("+o", ",").Replace("£¿", "?")/*.Replace("¡£", ".").Replace("¡¢", ", ")*/.Replace("£¡", "!").Replace("£©",")").Replace("£¨", "(");
     }
 
-    private int[] lifeStartIdx = {3,  -99999, -99999, 34, 69, 
+    private int[] lifeStartIdx = {-99999,//3,
+        -99999, -99999, 34, 69, 
         -99999, -99999, -99999, -99999, -99999, 
         -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999, -99999 };
 
@@ -228,12 +229,16 @@ public class TalkManager : MonoBehaviour
     }
     public bool stageStart(int stageStart)
     {
+        /*
         if(stageStart == 0)
         {
             startTalk(lifeStartIdx[stageStart]);
             return true;
         }
-        else if (jsonDataManager.Instance.getStageWatched(stageStart) || lifeStartIdx[stageStart] < 0)
+        
+        else 
+        */
+        if (jsonDataManager.Instance.getStageWatched(stageStart) || lifeStartIdx[stageStart] < 0)
         {
             return false;
         }
@@ -1246,6 +1251,8 @@ public class TalkManager : MonoBehaviour
     public void clickWishlist()
     {
         //fullUI.showFull(203);
-        Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
+        Application.OpenURL("steam://store/4022200");
+    //https://store.steampowered.com/app/4022200/Destiny_Is_Dice/
+        //Application.OpenURL("https://store.steampowered.com/app/4022200/Destiny_Is_Dice/#game_area_purchase");
     }
 }

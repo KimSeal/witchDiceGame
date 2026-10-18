@@ -349,6 +349,10 @@ public class BattleManager : MonoBehaviour
     public int getMyCoolTime(int idx) {
         return myCoolTimeArr[idx];
     }
+    public int getEnemyCooltime(int idx)
+    {
+        return enemyCoolTimeArr[idx];
+    }
     public void setSkillCoolTime(bool team, int idx)
     {
         if (team)
@@ -359,11 +363,14 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            enemyCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
+            Debug.Log("enemy : cool time set 2");
+
+            enemyCoolTimeArr[idx / 10 + idx % 10 * 4] = 2;
         }
     }
     public void minusSkillCoolTime()
     {
+        Debug.Log("minus cool time chk");
         for (int i = 0; i < 8; i++)
         {
             if (myCharacter[i/2] != null && myCharacter[i/2].getCurState() == 0 )
@@ -385,8 +392,8 @@ public class BattleManager : MonoBehaviour
                 upDownManager.Instance.setSkillCoolTimeCover(i, false, false);
                 upDownManager.Instance.changeUnderSkillCover(i / 2, i % 2, false);
             }
-            if (enemyCharacter[i/2] != null && enemyCharacter[i/2].getCurState() == 0)
-            { 
+            if (enemyCharacter[i % 4] != null && enemyCharacter[i % 4].getCurState() == 0)
+            {
                 if (enemyCoolTimeArr[i] > 0)
                 {
                     enemyCoolTimeArr[i] -= 1;
@@ -791,9 +798,17 @@ public class BattleManager : MonoBehaviour
                 liveCharacterList.Add(i);
             }
         }
+        Debug.Log("add");
         for (int i = 0; i < 8; i++)
         {
-            if (enemySkillDiceNum[i] != -999 && enemyCoolTimeArr[i] == 0) { liveSkillList.Add(i); }
+            if (enemyCharacter[i%4] != null && enemyCharacter[i%4].getCurState() == 0 &&
+                //enemySkillDiceNum[i/2] != -999 && 
+                enemyCoolTimeArr[i] == 0) {
+               
+                liveSkillList.Add(i);
+                Debug.Log(i);
+                Debug.Log(enemyCoolTimeArr[i]);
+            }
         }
 
         for (int skillIdx0 = liveSkillList.Count - 1; skillIdx0 >= 0; skillIdx0--)
@@ -3008,6 +3023,9 @@ public class BattleManager : MonoBehaviour
 
             updateEquipUI(idx, 0);
             updateEquipUI(idx, 1);
+
+            myCoolTimeArr[idx*2 ] = 0;
+            myCoolTimeArr[idx*2 + 1] = 0;
         }
         else
         {
@@ -3090,6 +3108,9 @@ public class BattleManager : MonoBehaviour
             }
             updateEquipUI(idx+4, 0);
             updateEquipUI(idx+4, 1);
+
+            enemyCoolTimeArr[idx] = 0;
+            enemyCoolTimeArr[idx+4] = 0;
         }
 
         
@@ -4960,7 +4981,7 @@ public class BattleManager : MonoBehaviour
         
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            ToolBarManager.Instance.setToolBar(CharacterManager.Instance.getSkillListDesc(skillIdx++));
+            //ToolBarManager.Instance.setToolBar(CharacterManager.Instance.getSkillListDesc(skillIdx++));
            /*
                 upDownManager.Instance.skillDescUpdate("noImage", 0, 0,
             0, 0, "", CharacterManager.Instance.getSkillListDesc(skillIdx++));

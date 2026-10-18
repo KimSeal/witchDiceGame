@@ -82,7 +82,6 @@ public class soundDragAndDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandle
             jsonDataManager.Instance.setTalkAutoSpeed((nextX - minVal) * 2.5f / (maxVal - minVal));
             TalkManager.Instance.setAutoSpeed((nextX - minVal) * 2.5f / (maxVal - minVal));
         }
-        Debug.Log((nextX - minVal) * 2.5f / (maxVal - minVal));
 
     }
 }
