@@ -1174,11 +1174,11 @@ public class TalkManager : MonoBehaviour
 
         
 
-        if ((talkLanArr[jsonDataManager.Instance.getLanguage()].Length) <= 1)
+        if ((talkLanArr[jsonDataManager.Instance.getLanguage()].Length) <= 5)
         {
             if (talkList[a].imagePlace == 0)
             {
-                maxAutoTime = 1.0f;
+                maxAutoTime = 2.0f;
             }
             else
             {

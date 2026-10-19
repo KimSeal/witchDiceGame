@@ -84,7 +84,7 @@ public class AdventureReadyManager : MonoBehaviour
         {
             curLevelMode = opt;
         }
-        else
+        else if(opt == 1)
         {
             fullUI.showFull(5);
         }

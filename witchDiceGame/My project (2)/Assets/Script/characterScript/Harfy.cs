@@ -25,16 +25,7 @@ public class Harfy : Character
     {
         List<TakeSkillPacket> packets = new List<TakeSkillPacket>();
         
-        if (this.skillIdx[sendSkillPacket.useSkillIdx] == 0){ //다 같은 눈으로 만들고,
-            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx +4, 0, sendSkillPacket.diceNum[0], 2));
-
-            packets.Add(new TakeSkillPacket(0, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
-            packets.Add(new TakeSkillPacket(1, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
-            packets.Add(new TakeSkillPacket(2, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
-            packets.Add(new TakeSkillPacket(3, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
-        }
-        if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1)
-        {
+        if (this.skillIdx[sendSkillPacket.useSkillIdx] == 0){ 
             //타겟이 있고, 주사위 숫자가 같으면 강한 공격!
             if (sendSkillPacket.targetIdx[0] != -999 && sendSkillPacket.diceNum[0] == BattleManager.Instance.getDiceNum(sendSkillPacket.targetIdx[0]))
             {
@@ -44,6 +35,16 @@ public class Harfy : Character
             {
                 packets.Add(new TakeSkillPacket(sendSkillPacket.targetIdx[0], sendSkillPacket.diceNum[0] + this.getPhyAtk() + this.getPhyAtk(), 0)); //선택한 1개의 대상에게 / 대상이 사용한 주사위 값을 기반으로 Damage / 상태변화 없음
             }
+        }
+        if (this.skillIdx[sendSkillPacket.useSkillIdx] == 1)//다 같은 눈으로 만들고,
+        {
+            
+            packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx + 4, 0, sendSkillPacket.diceNum[0], 2));
+
+            packets.Add(new TakeSkillPacket(0, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
+            packets.Add(new TakeSkillPacket(1, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
+            packets.Add(new TakeSkillPacket(2, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
+            packets.Add(new TakeSkillPacket(3, sendSkillPacket.diceNum[0] + this.getPhyAtk(), sendSkillPacket.diceNum[0], 0));
         }
         return packets;
     }
