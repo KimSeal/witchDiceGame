@@ -781,6 +781,7 @@ public class AdventureManager : MonoBehaviour
         activeGiveUpBoard(false);
         //activeTutorialButton(false);
 
+        giveUpAble_Talk = true;
     }
 
     private float[] characterMoveSize = new float[4];
@@ -1021,6 +1022,7 @@ public class AdventureManager : MonoBehaviour
     }
 
     private bool giveUpAble = false;
+    private bool giveUpAble_Talk = false;
     [SerializeField]
     public GameObject giveUpBtn;
     [SerializeField]
@@ -1035,7 +1037,9 @@ public class AdventureManager : MonoBehaviour
 
     public void giveUpBtnAble(bool onOff)
     {
-
+        giveUpAble = onOff;
+        updateGiveUpBtnAble();
+        /*
         if (!onOff)
         {
             giveUpAble = false;
@@ -1050,11 +1054,33 @@ public class AdventureManager : MonoBehaviour
             giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
             //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
         }
+        */
     }
-
+    public void updateGiveUpBtnAble()
+    {
+        if(getGiveUpAbleTotal() && (tutorialVal == 0 || jsonDataManager.Instance.getTutorialDid())) // can giveup + not tutorial
+        {
+            giveUpText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(13);
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
+        }
+        else //cant giveup
+        {
+            activeGiveUpBoard(false);
+            giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 3");
+        }
+    }
+    public void setGiveUpAble_Talk(bool onOff)
+    {
+        giveUpAble_Talk = onOff;
+        updateGiveUpBtnAble();
+    }
+    public bool getGiveUpAbleTotal()
+    {
+        return giveUpAble && giveUpAble_Talk;
+    }
     public void hoverInExitButton()
     {
-        if (giveUpAble)
+        if (getGiveUpAbleTotal())
         {
             giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 2");
             //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_on");
@@ -1067,7 +1093,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void hoverOutExitButton()
     {
-        if (giveUpAble)
+        if (getGiveUpAbleTotal())
         {
             giveUpBtn.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
             //Resources.Load<Sprite>("sprite/TestSprite/itemSprite/spr_ui_exitButton_off");
@@ -1100,7 +1126,7 @@ public class AdventureManager : MonoBehaviour
     }
     public void activeGiveUpBoard(bool onOff)
     {
-        if (giveUpAble && onOff)
+        if (getGiveUpAbleTotal() && onOff)
         {
             giveUpBoard.SetActive(true);
             giveUpText.GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(13);

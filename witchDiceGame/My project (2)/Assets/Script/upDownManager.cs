@@ -495,6 +495,11 @@ public class upDownManager : MonoBehaviour
     }
     public void clickExitButton()
     {
+        if (!AdventureManager.Instance.getGiveUpAbleTotal())
+        {
+            return;
+        }
+
         optionManager.Instance.unactiveOptionBoard();
         if (AdventureManager.Instance.getAdventureStartChk())
         {
@@ -519,7 +524,14 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 2");
+            if (AdventureManager.Instance.getGiveUpAbleTotal())
+            {
+                exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 2");
+            }
+            else
+            {
+                exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 3");
+            }
             if (upDownManager.Instance.getOptionOnOff(3))
             {
                 exitText.text = TalkManager.Instance.getDesc(262);
@@ -537,7 +549,15 @@ public class upDownManager : MonoBehaviour
         }
         else
         {
-            exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
+            if (AdventureManager.Instance.getGiveUpAbleTotal())
+            {
+                exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 1");
+            }
+            else
+            {
+                exitButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/itemUI/spr_btn_backSwitch 3");
+            }
+            
             if (upDownManager.Instance.getOptionOnOff(3))
             {
                 exitText.text = TalkManager.Instance.getDesc(262);

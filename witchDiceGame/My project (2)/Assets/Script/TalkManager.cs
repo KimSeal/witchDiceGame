@@ -670,6 +670,7 @@ public class TalkManager : MonoBehaviour
     
     private void Update()
     {
+
         if (!talkingChk)
         {
             remainTimeUI.GetComponent<RectTransform>().sizeDelta = new Vector2(370f, 7f);
@@ -839,6 +840,7 @@ public class TalkManager : MonoBehaviour
     {
         if (opt == 0) {
             talkingChk = onOff;
+            AdventureManager.Instance.setGiveUpAble_Talk(!onOff);
         }
         if (opt == 1) {
             descChk = onOff;
