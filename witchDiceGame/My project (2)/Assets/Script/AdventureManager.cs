@@ -435,6 +435,8 @@ public class AdventureManager : MonoBehaviour
 
         tagInit(0);
         resetDice();
+        TalkManager.Instance.startTalk(1);
+        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         //튜토리얼이 시작되었음을 알림.
