@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 using TMPro;
 public class jsonDataManager : MonoBehaviour
@@ -32,15 +33,56 @@ public class jsonDataManager : MonoBehaviour
     private PlayerPlayData playerPlayData;
     private int[] witchPowerMoney = {0, 0, 0, 500, 100, 200, 500, 100, 200, 500, 100, 200, 500 };
     private string jsonFileName = "playerData3.json";
+
+    private bool lanSetChk = true;
+    [SerializeField]
+    public GameObject languageSelectEntity;
+    public GameObject[] languageSelectButton = new GameObject[4];
+    public Sprite[] languageSelectButtonImage = new Sprite[2];
+    public TextMeshProUGUI languageSelectDescText;
+    public TextMeshProUGUI[] languageSelectButtonText = new TextMeshProUGUI[4];
+    public void hoverInLanguageSelectButton(int idx)
+    {
+        languageSelectDescText.text = TalkManager.Instance.getDesc(idx, 278);
+        languageSelectButton[idx].GetComponent<Image>().sprite = languageSelectButtonImage[1];
+    }
+    public void hoverOutLanguageSelectButton()
+    {
+        Debug.Log("whhat out");
+        for (int i=0;i<4;i++)
+        {
+            languageSelectButton[i].GetComponent<Image>().sprite = languageSelectButtonImage[0];
+        }
+    }
+    public void ClickLanguageSelectButton(int opt)
+    {
+        playerPlayData.setLanguage(opt);
+        SavePlayerDataToJson();
+        languageSelectEntity.SetActive(false);
+    }
+    private void Update()
+    {
+        if (!lanSetChk)
+        {
+            lanSetChk = true;
+            languageSelectEntity.SetActive(true);
+        }
+    }
+
     void Start()
     {
         string fileName = Path.Combine(Application.persistentDataPath, jsonFileName);
         string preFileName = Path.Combine(Application.dataPath, jsonFileName);
+        languageSelectEntity.SetActive(false);
+        lanSetChk = true;
 
         if (!File.Exists(fileName))
         {
             playerPlayData = new PlayerPlayData();
+            lanSetChk = false;
 
+
+            /*
             SystemLanguage currentLang = Application.systemLanguage;
 
             switch (currentLang)
@@ -60,11 +102,15 @@ public class jsonDataManager : MonoBehaviour
                 case SystemLanguage.ChineseTraditional:
                     playerPlayData.setLanguage(3);
                     break;
+                case SystemLanguage.English:
+                    playerPlayData.setLanguage(1);
+                    break;
                 default:
-                    playerPlayData.setLanguage(1); // 지원하지 않는 언어는 기본 영어로 처리
+                    playerPlayData.setLanguage(-1); // 지원하지 않는 언어는 기본 영어로 처리
                     break;
             }
-
+            */
+            playerPlayData.setLanguage(1);
             SoundManager_Main.Instance.setBackgroundVolume(1.0f);
             if (File.Exists(preFileName))
             {

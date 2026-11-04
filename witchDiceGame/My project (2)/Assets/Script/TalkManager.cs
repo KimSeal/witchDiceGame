@@ -670,6 +670,7 @@ public class TalkManager : MonoBehaviour
     
     private void Update()
     {
+        
 
         if (!talkingChk)
         {
@@ -829,13 +830,16 @@ public class TalkManager : MonoBehaviour
         if (descList.Count == 0) {
             return "";
         }
-        if(jsonDataManager.Instance.getLanguage() == 0) return descList[idx].KR;
-        if (jsonDataManager.Instance.getLanguage() == 1) return descList[idx].EN;
-        if (jsonDataManager.Instance.getLanguage() == 2) return descList[idx].JP;
-        if (jsonDataManager.Instance.getLanguage() == 3) return descList[idx].CH;
+        return getDesc(jsonDataManager.Instance.getLanguage(), idx);
+    }
+    public string getDesc(int lan, int idx)
+    {
+        if (lan == 0) return descList[idx].KR;
+        if (lan == 1) return descList[idx].EN;
+        if (lan == 2) return descList[idx].JP;
+        if (lan == 3) return descList[idx].CH;
         return descList[idx].EN;
     }
-
     public void changeTalkState(int opt, bool onOff)
     {
         if (opt == 0) {
