@@ -435,7 +435,7 @@ public class AdventureManager : MonoBehaviour
 
         tagInit(0);
         resetDice();
-        TalkManager.Instance.startTalk(1);
+        TalkManager.Instance.startTalk(0);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
         TalkManager.Instance.startTalk(2);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());

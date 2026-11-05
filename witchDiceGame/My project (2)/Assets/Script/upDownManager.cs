@@ -1248,7 +1248,7 @@ public class upDownManager : MonoBehaviour
     }
     public void hoverOutPowerExitBtn()
     {
-        Debug.Log("hover!");
+
         powerExitBtnOutline.GetComponent<Image>().sprite
             = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_test_empty");
         ToolBarManager.Instance.toolBarOnOff(0);

@@ -118,7 +118,6 @@ public class DeadCharacterMove : MonoBehaviour
                 initMode();
                 if (wallStopChk)
                 {
-                    Debug.Log("asdf00");
                     this.transform.position = temp.transform.position + new Vector3(Random.Range(0f,-5f),0f,0f);
                     this.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
                     mode = 999;//¹ÚÈù »óÅÂ´Â 999·Î ÄªÇÑ´Ù.'

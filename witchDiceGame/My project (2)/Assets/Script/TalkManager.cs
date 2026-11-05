@@ -747,7 +747,6 @@ public class TalkManager : MonoBehaviour
             // 가장 앞에 있는 UI 요소에 클릭 이벤트 전달
             
             GameObject targetObject = results[0].gameObject;
-            Debug.Log(targetObject);
             ExecuteEvents.Execute(targetObject, eventData, ExecuteEvents.pointerClickHandler);
         }
     }
@@ -1050,8 +1049,8 @@ public class TalkManager : MonoBehaviour
         curTalkIdx.GetComponent<TextMeshProUGUI>().text = (curIdx - curTalkStartVal + 1).ToString() +" / "+curTalkLastVal.ToString();
 
         if (talkList[a].eventType == 1) FadeUIScript2.fadeIn();
-       // if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);
-
+        // if (talkList[a].eventType == 2) CameraManager.Instance.VibrateForeTime(0.2f, 0.5f);
+        if (talkList[a].eventType >= 10000) BattleManager.Instance.talkAnim(talkList[a].eventType);
         /*
         if (a == listIdx[2] + 36)
         {

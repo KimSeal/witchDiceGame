@@ -19,6 +19,8 @@ public class optionManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+
+        Application.targetFrameRate = 60;
     }
 
     private int optionIdx = 0;

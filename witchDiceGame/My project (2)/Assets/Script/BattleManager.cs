@@ -363,14 +363,20 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("enemy : cool time set 2");
-
             enemyCoolTimeArr[idx / 10 + idx % 10 * 4] = 2;
         }
     }
+    public void initSkillCoolTime()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            myCoolTimeArr[i] = 0;
+            enemyCoolTimeArr[i] = 0;
+        }
+        minusSkillCoolTime();
+    }
     public void minusSkillCoolTime()
     {
-        Debug.Log("minus cool time chk");
         for (int i = 0; i < 8; i++)
         {
             if (myCharacter[i/2] != null && myCharacter[i/2].getCurState() == 0 )
@@ -616,12 +622,35 @@ public class BattleManager : MonoBehaviour
 
     int bossResult = 0;
     int bossPhase = 0;
+
+    public void talkAnim(int idx)
+    {
+        if(idx == 10048) //cut bard
+        {
+            enemyCharacterObjUIAnim[1].Play("CutIdle");
+        }
+    }
     public void changeBossPhase(int a)
     {
         bossPhase = 0;
         bossResult = 0;
-        if(a >= 100){bossResult = 1;}
-        if (a >= 100) bossPhase = a;
+        bosang_click = true;
+
+        
+        if (a >= 100)
+        {
+            bossResult = 1;
+            bossPhase = a;
+            if (bossPhase == 100 && !jsonDataManager.Instance.getOwlBattleWin())
+            {
+                    bosang_click = false;
+            }
+            if(bossPhase == 101) { bosang_click = false; }
+            if (bossPhase == 103 && !jsonDataManager.Instance.getGraceBattleWin())
+            {
+                    bosang_click = false;
+            }
+        }
     }
     private void myDiceChange(int idx, int characterIdx, int skillIdx)
     {
@@ -798,7 +827,6 @@ public class BattleManager : MonoBehaviour
                 liveCharacterList.Add(i);
             }
         }
-        Debug.Log("add");
         for (int i = 0; i < 8; i++)
         {
             if (enemyCharacter[i%4] != null && enemyCharacter[i%4].getCurState() == 0 &&
@@ -806,8 +834,7 @@ public class BattleManager : MonoBehaviour
                 enemyCoolTimeArr[i] == 0) {
                
                 liveSkillList.Add(i);
-                Debug.Log(i);
-                Debug.Log(enemyCoolTimeArr[i]);
+
             }
         }
 
@@ -1003,8 +1030,6 @@ public class BattleManager : MonoBehaviour
 
     public void click_dice(int diceIdx)
     {
-        
-
         if (currentLightUI == 0 && currentMoveUI == 0)
         {
             if (curPhase == 3)
@@ -1246,8 +1271,7 @@ public class BattleManager : MonoBehaviour
     private bool tutorialBattleStartButtonCheck = false;
     private IEnumerator startPhaseManage()
     {
-        minusSkillCoolTime();
-        minusSkillCoolTime();
+        initSkillCoolTime();
 
         setBattleFontSize(0,0);
         witchHatButton.SetActive(false);
@@ -1777,6 +1801,9 @@ public class BattleManager : MonoBehaviour
         clickedDice[0] = -1;
         clickedDice[1] = -1;
         upDownManager.Instance.updateBigDicePower();
+
+        //ToolBarManager.Instance.toolBarOnOff(0);
+        upDownManager.Instance.hoverInBigDicePowerButton(idx);
         //주사위 선택 종료시 버튼 이동
         //직관성을 위해 나눔
 
@@ -4478,7 +4505,7 @@ public class BattleManager : MonoBehaviour
             TalkManager.Instance.setLostChk(false);
             TalkManager.Instance.setDescString("");
             //CameraManager.Instance.loseScreenUnActive();
-
+            initSkillCoolTime();
             AdventureManager.Instance.exitBattleCanvas(false); // 게임이 오버되었음을 전달
 
             
@@ -4516,15 +4543,17 @@ public class BattleManager : MonoBehaviour
             if(bossPhase == 102 ) //bard 이긴경우.
             {
                 if (jsonDataManager.Instance.getChapterRead(1, 2) == 0) {
+
                     TalkManager.Instance.startTalk(65);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    bosang_click = false;
                 }
                 bossPhase = 0;
+               
             }
 
             if (bossPhase == 0)
             {
-
                 upDownManager.Instance.changeOption(1, false);
 
                 for (int i = 0; i < 4; i++)
@@ -4534,48 +4563,50 @@ public class BattleManager : MonoBehaviour
                 }
 
                 characterInfoOpenAble = false;
-                bosang_click = true;
-
-                if (AdventureManager.Instance.getTutorial() != 10)
+                //bosang_click = true;
+                if (bosang_click == true)
                 {
-                    rerollCount = 0;
-                    hoverOutReroll();
-                    itemManager.Instance.endOfBattlePhase();
-                    TalkManager.Instance.setDescClickLock(true);
-                    TalkManager.Instance.setDescIdx(92);
-                    //랜덤 아이템 배정하고 출력
-                    makeRandomResult();
-                    resultItemTemp = 0.0f;
-                    resultItemPopChk = true;
-                    resultItemPopChk_2 = true;
-                    clickItemNotGetNoButton();
-                    resultObj_all.transform.position = new Vector3(0f, 0f, resultObj_all.transform.position.z);
-                    resultObj_all.GetComponent<Animator>().Play("Change", -1, 0f);
-                    yield return new WaitUntil(() => !resultItemPopChk); // 튀어오른 아이템이 0에 도달시
-                    for (int i = 0; i < 3; i++) printRandomResult(i, false, 0); //eff 시작
-
-                    yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
-                    resultItemPopChk_2 = false;
-                    for (int i = 0; i < 3; i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
-                    if (bossResult == 0)
+                    if (AdventureManager.Instance.getTutorial() != 10)
                     {
-                        rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
-                        itemNotGetButton.transform.position = new Vector3(165f, -26f, rerollButton.transform.position.z);
-                    }
+                        rerollCount = 0;
+                        hoverOutReroll();
+                        itemManager.Instance.endOfBattlePhase();
+                        TalkManager.Instance.setDescClickLock(true);
+                        TalkManager.Instance.setDescIdx(92);
+                        //랜덤 아이템 배정하고 출력
+                        makeRandomResult();
+                        resultItemTemp = 0.0f;
+                        resultItemPopChk = true;
+                        resultItemPopChk_2 = true;
+                        clickItemNotGetNoButton();
+                        resultObj_all.transform.position = new Vector3(0f, 0f, resultObj_all.transform.position.z);
+                        resultObj_all.GetComponent<Animator>().Play("Change", -1, 0f);
+                        yield return new WaitUntil(() => !resultItemPopChk); // 튀어오른 아이템이 0에 도달시
+                        for (int i = 0; i < 3; i++) printRandomResult(i, false, 0); //eff 시작
 
-                    if (AdventureManager.Instance.getTutorial() == 17)
+                        yield return new WaitForSeconds(0.25f); //effect 끝날때까지 대기
+                        resultItemPopChk_2 = false;
+                        for (int i = 0; i < 3; i++) resultObj[i, 0].transform.position = new Vector3(-100 + 100f * i, 0f, resultObj_all.transform.position.z);
+                        if (bossResult == 0)
+                        {
+                            rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
+                            itemNotGetButton.transform.position = new Vector3(165f, -26f, rerollButton.transform.position.z);
+                        }
+
+                        if (AdventureManager.Instance.getTutorial() == 17)
+                        {
+                            //TalkManager.Instance.startTalk(48);
+                            //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                            AdventureManager.Instance.setTutorial(18);
+                        }
+
+
+                    }
+                    else if (AdventureManager.Instance.getTutorial() == 10) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
                     {
-                        //TalkManager.Instance.startTalk(48);
-                        //yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                        AdventureManager.Instance.setTutorial(18);
+                        AdventureManager.Instance.setTutorial(11);
+                        bosang_click = false;
                     }
-
-                    
-                }
-                else if (AdventureManager.Instance.getTutorial() == 10) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
-                {
-                    AdventureManager.Instance.setTutorial(11);
-                    bosang_click = false;
                 }
                 
   
@@ -4627,6 +4658,7 @@ public class BattleManager : MonoBehaviour
                 {
                     yield return new WaitForSeconds(0.5f);
                 }
+                initSkillCoolTime();
                 characterInfoOpenAble = true;
                 for (int i = 0; i < 4; i++)
                 {

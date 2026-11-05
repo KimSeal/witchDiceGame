@@ -48,7 +48,6 @@ public class jsonDataManager : MonoBehaviour
     }
     public void hoverOutLanguageSelectButton()
     {
-        Debug.Log("whhat out");
         for (int i=0;i<4;i++)
         {
             languageSelectButton[i].GetComponent<Image>().sprite = languageSelectButtonImage[0];
@@ -81,7 +80,6 @@ public class jsonDataManager : MonoBehaviour
             playerPlayData = new PlayerPlayData();
             lanSetChk = false;
 
-
             /*
             SystemLanguage currentLang = Application.systemLanguage;
 
@@ -111,11 +109,12 @@ public class jsonDataManager : MonoBehaviour
             }
             */
             playerPlayData.setLanguage(1);
+            Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+            setScreenSize(4);
             SoundManager_Main.Instance.setBackgroundVolume(1.0f);
             if (File.Exists(preFileName))
             {
                 LoadPlayerFromJson_pre();
-
             }
             SavePlayerDataToJson();
         }
@@ -236,7 +235,6 @@ public class jsonDataManager : MonoBehaviour
     }
     public void setPlayerCharacterAble(int destinyIdx)
     {
-        Debug.Log("seve character Destiny" + destinyIdx.ToString());
         playerPlayData.playCharacterAble[destinyIdx] = true;
         SavePlayerDataToJson();
     }
