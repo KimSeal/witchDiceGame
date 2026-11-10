@@ -207,8 +207,11 @@ public abstract class Character
             //return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp + "_2");
             return CharacterManager.Instance.getOriginAnimator(this.getDestiny().getDestinyIdx());
         }
-        
-        return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+
+        if (Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp) != null) {
+            return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
+        }
+        return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/originalVersion/" + temp + "/animator_" + temp);
     }
 
     public Sprite getBackSprite()
