@@ -1257,7 +1257,13 @@ public class BattleManager : MonoBehaviour
 
     public void updateBattleBackground(string backgroundStr)
     {
-        backGroundObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/spr_field_" + backgroundStr);
+        if (Resources.Load<Sprite>("sprite/battleUI/spr_field_" + backgroundStr) == null)
+        {
+            backGroundObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/originalVersion/spr_field_" + backgroundStr);
+        }
+        else {
+            backGroundObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/spr_field_" + backgroundStr);
+        } 
     }
 
     //phase包府甫 困茄 内风凭

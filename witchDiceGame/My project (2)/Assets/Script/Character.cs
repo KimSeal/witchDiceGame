@@ -200,18 +200,21 @@ public abstract class Character
         
         if (
             (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10012 || this.getDestiny().getDestinyIdx() == 10003 || this.getDestiny().getDestinyIdx() == 10004)) ||
-            (jsonDataManager.Instance.getChapterRead(2, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10044 || this.getDestiny().getDestinyIdx() == 10045 || this.getDestiny().getDestinyIdx() == 10046 || 
-            this.getDestiny().getDestinyIdx() == 10047 || this.getDestiny().getDestinyIdx() == 10048))
+            (jsonDataManager.Instance.getChapterRead(2, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10044 || this.getDestiny().getDestinyIdx() == 10045 || this.getDestiny().getDestinyIdx() == 10046 || this.getDestiny().getDestinyIdx() == 10047 || this.getDestiny().getDestinyIdx() == 10048)) ||
+            (jsonDataManager.Instance.getChapterRead(3, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10059 )) ||
+            (jsonDataManager.Instance.getChapterRead(4, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10070 || this.getDestiny().getDestinyIdx() == 10071)) 
             )
         {
             //return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp + "_2");
             return CharacterManager.Instance.getOriginAnimator(this.getDestiny().getDestinyIdx());
         }
-
+        return CharacterManager.Instance.getPixelAnimator(this.getDestiny().getDestinyIdx());
+        /*
         if (Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp) != null) {
             return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/" + temp + "/animator_" + temp);
         }
         return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/originalVersion/" + temp + "/animator_" + temp);
+        */
     }
 
     public Sprite getBackSprite()
@@ -564,7 +567,8 @@ public abstract class Character
     }
 
     public int downGrade(int idx, int val)
-    {  //0 : 체력 / 1: 최대체력  / 4:방어도 / 5:공격력 / 6:마법 감응력/ 7 : 스피드
+    {  //0 : 체력 / 1: 최대체력  / 4:방어도
+       /// 5:공격력 / 6:마법 감응력/ 7 : 스피드
         if (idx == 0) //체력이 줄었고 
         {
             if (downGradeDamage(val) == 1) return 1;

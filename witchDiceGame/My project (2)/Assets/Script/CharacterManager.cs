@@ -40,12 +40,26 @@ public class CharacterManager : MonoBehaviour
 
     // Start is called before the first frame update
     [SerializeField]
+    public RuntimeAnimatorController[] pixelMyAnimator = new RuntimeAnimatorController[100];
+    public RuntimeAnimatorController[] pixelEnemyAnimator = new RuntimeAnimatorController[100];
     public RuntimeAnimatorController[] flutterOriginAnimator = new RuntimeAnimatorController[5];
     public RuntimeAnimatorController[] graceOriginAnimator = new RuntimeAnimatorController[5];
+    public RuntimeAnimatorController[] ailOriginAnimator = new RuntimeAnimatorController[5];
+    public RuntimeAnimatorController[] odiOriginAnimator = new RuntimeAnimatorController[5];
 
     public Skill getSkillListDesc(int idx)
     {
         return skillList[idx];//skillList[idx].Command[jsonDataManager.Instance.getLanguage()];
+    }
+
+    public RuntimeAnimatorController getPixelAnimator(int destinyIdx)
+    {
+        if (destinyIdx > 10000) //enemy case
+        {
+            return pixelEnemyAnimator[destinyIdx - 10001];
+        }
+        //my case
+        return pixelMyAnimator[destinyIdx];
     }
 
     public RuntimeAnimatorController getOriginAnimator(int destinyIdx)
@@ -54,6 +68,12 @@ public class CharacterManager : MonoBehaviour
         if (destinyIdx >= 10044 && destinyIdx <= 10048) return graceOriginAnimator[destinyIdx - 10044];
         if (destinyIdx == 10012) return flutterOriginAnimator[0];
         if (destinyIdx == 10003 || destinyIdx == 10004) return flutterOriginAnimator[destinyIdx - 10002];
+
+        if (destinyIdx == 10059) return ailOriginAnimator[0];
+
+        if (destinyIdx == 10069) return odiOriginAnimator[0];
+        if (destinyIdx == 10070) return odiOriginAnimator[1];
+
         return null;
     }
 
