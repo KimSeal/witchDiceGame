@@ -47,6 +47,8 @@ public class CharacterManager : MonoBehaviour
     public RuntimeAnimatorController[] ailOriginAnimator = new RuntimeAnimatorController[5];
     public RuntimeAnimatorController[] odiOriginAnimator = new RuntimeAnimatorController[5];
 
+    public RuntimeAnimatorController[] endingOriginAnimator = new RuntimeAnimatorController[5];
+
     public Skill getSkillListDesc(int idx)
     {
         return skillList[idx];//skillList[idx].Command[jsonDataManager.Instance.getLanguage()];
@@ -64,15 +66,19 @@ public class CharacterManager : MonoBehaviour
 
     public RuntimeAnimatorController getOriginAnimator(int destinyIdx)
     {
- 
+        Debug.Log("find origin anim");
+        Debug.Log(destinyIdx);
         if (destinyIdx >= 10044 && destinyIdx <= 10048) return graceOriginAnimator[destinyIdx - 10044];
         if (destinyIdx == 10012) return flutterOriginAnimator[0];
         if (destinyIdx == 10003 || destinyIdx == 10004) return flutterOriginAnimator[destinyIdx - 10002];
 
         if (destinyIdx == 10059) return ailOriginAnimator[0];
 
-        if (destinyIdx == 10069) return odiOriginAnimator[0];
-        if (destinyIdx == 10070) return odiOriginAnimator[1];
+        if (destinyIdx == 10070) return odiOriginAnimator[0];
+        if (destinyIdx == 10071) return odiOriginAnimator[1];
+
+        if(destinyIdx < 0 ) return endingOriginAnimator[destinyIdx * -1];
+
 
         return null;
     }
@@ -455,6 +461,92 @@ public class CharacterManager : MonoBehaviour
                     character = new PurpleSoulRapier(0, destinyList_monster[characterIdx]); break;
                 case 47:
                     character = new RedSoulRapier(0, destinyList_monster[characterIdx]); break;
+                case 48:
+                    character = new CowTree(0, destinyList_monster[characterIdx]); break;
+                case 49:
+                    character = new GoomBang(0, destinyList_monster[characterIdx]); break;
+                case 50:
+                    character = new Bear(0, destinyList_monster[characterIdx]); break;
+                case 51:
+                    character = new Nicky(0, destinyList_monster[characterIdx]); break;
+                case 52:
+                    character = new Arwen(0, destinyList_monster[characterIdx]); break;
+                case 53:
+                    character = new Wayne(0, destinyList_monster[characterIdx]); break;
+                case 54:
+                    character = new GuildMaster(0, destinyList_monster[characterIdx]); break;
+                case 55:
+                    character = new Tem(0, destinyList_monster[characterIdx]); break;
+                case 56:
+                    character = new FireArm(0, destinyList_monster[characterIdx]); break;
+                case 57:
+                    character = new FrameArm(0, destinyList_monster[characterIdx]); break;
+                case 58:
+                    character = new Ail_Adult(0, destinyList_monster[characterIdx]); break;
+                case 59:
+                    character = new Deadline(0, destinyList_monster[characterIdx]); break;
+                case 60:
+                    character = new AM(0, destinyList_monster[characterIdx]); break;
+                case 61:
+                    character = new PM(0, destinyList_monster[characterIdx]); break;
+                case 62:
+                    character = new SmallDevil(0, destinyList_monster[characterIdx]); break;
+                case 63:
+                    character = new BigDevil(0, destinyList_monster[characterIdx]); break;
+                case 64:
+                    character = new WizardDevil(0, destinyList_monster[characterIdx]); break;
+                case 65:
+                    character = new DevilLord(0, destinyList_monster[characterIdx]); break;
+                case 66:
+                    character = new Chihua(0, destinyList_monster[characterIdx]); break;
+                case 67:
+                    character = new S_Chihua(0, destinyList_monster[characterIdx]); break;
+                case 68:
+                    character = new Bero(0, destinyList_monster[characterIdx]); break;
+                case 69:
+                    character = new Odi(0, destinyList_monster[characterIdx]); break;
+                case 70:
+                    character = new OdiDark(0, destinyList_monster[characterIdx]); break;
+                case 71:
+                    character = new Rover(0, destinyList_monster[characterIdx]); break;
+                case 72:
+                    character = new Docuwoman(0, destinyList_monster[characterIdx]); break;
+                case 73:
+                    character = new JewelMaker(0, destinyList_monster[characterIdx]); break;
+                case 74:
+                    character = new ClubWolf(0, destinyList_monster[characterIdx]); break;
+                case 75:
+                    character = new ShieldSeal(0, destinyList_monster[characterIdx]); break;
+                case 76:
+                    character = new SnowBunny(0, destinyList_monster[characterIdx]); break;
+                case 77:
+                    character = new Teacher(0, destinyList_monster[characterIdx]); break;
+                case 78:
+                    character = new Greret(0, destinyList_monster[characterIdx]); break;
+                case 79:
+                    character = new Regret(0, destinyList_monster[characterIdx]); break;
+                case 80:
+                    character = new DiceGame(0, destinyList_monster[characterIdx]); break;
+                case 81:
+                    character = new Berry99(0, destinyList_monster[characterIdx]); break;
+                case 82:
+                    character = new SketchBook(0, destinyList_monster[characterIdx]); break;
+                case 83:
+                    character = new Nurse(0, destinyList_monster[characterIdx]); break;
+                case 84:
+                    character = new Bagrin(0, destinyList_monster[characterIdx]); break;
+                case 85:
+                    character = new Grinous(0, destinyList_monster[characterIdx]); break;
+                case 86:
+                    character = new Witch(0, destinyList_monster[characterIdx]); break;
+                case 87:
+                    character = new Grin(0, destinyList_monster[characterIdx]); break;
+                case 88:
+                    character = new DiceAil(0, destinyList_monster[characterIdx]); break;
+                case 89:
+                    character = new DiceGrin(0, destinyList_monster[characterIdx]); break;
+                case 90:
+                    character = new DiceGreret(0, destinyList_monster[characterIdx]); break;
             }
             character.getCharacter_battle().upgrade(6, destinyList_monster[characterIdx].getArmor());
             for(int i=0;i<6;i++) character.changeDiceNum(i, destinyList_monster[characterIdx].getBaseDiceNum(i));

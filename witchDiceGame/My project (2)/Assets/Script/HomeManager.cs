@@ -42,12 +42,11 @@ public class HomeManager : MonoBehaviour
     private List<DescReader> homeNPCText = new List<DescReader>();
 
     private int[] chapterIdx = { 6, 1, 2 };
-    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 }, { 76,79,82 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    private int[,] chapterTalk = //{ { 118, 121, 135 }, { 136, 137, 138 }, { 139, 140, 141 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    { { 24,27, 30 }, { 56, 59, 62 },  { 77, 80, 83 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63}, { 78, 81, 84 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-    private int[] chapterClear = { 19, 70, 0, 0, 0, 0};
-    private int[] chapterStartIdx = { 54, 72, 0, 0, 0, 0 };
+    private int[,] chapterTalkBefore = {  { 23, 26, 29 }, { 55, 58, 61 }, { 76,79,82 }, { 90, 93, 96 }, { 103, 107, 0 }, { 117, 120, 123 } };
+    private int[,] chapterTalk =  { { 24,27, 30 }, { 56, 59, 62 },  { 77, 80, 83 }, { 91, 94, 97 }, { 104, 108, 110 }, { 118, 121, 124 } };
+    private int[,] chapterTalkAfter = {{ 25, 28, 31 }, { 57,60,63}, { 78, 81, 84 }, { 92, 95, 98 }, { 105, 109, 111 }, { 119, 122, 125 } };
+    private int[] chapterClear = { 19, 70, 86, 70, 79, 19};
+    private int[] chapterStartIdx = { 54, 72, 87, 99, 112, 126 };
     private int homeSoundIdx = 19;
     private float textBoxTimer = 0f;
 
@@ -225,16 +224,18 @@ public class HomeManager : MonoBehaviour
     {
         int chapterNum = diceIdxToChapter[jewelBigNum];
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
-
-        TalkManager.Instance.startTalk(chapterTalkBefore[chapterNum, detailIdx]);
-        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-
+        if (!(chapterNum == 5 && detailIdx == 2))
+        {
+            TalkManager.Instance.startTalk(chapterTalkBefore[chapterNum, detailIdx]);
+            yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+        }
         TalkManager.Instance.startTalk(chapterTalk[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
         TalkManager.Instance.startTalk(chapterTalkAfter[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
+        if(chapterNum == 6 && detailIdx == 2) { jsonDataManager.Instance.setLastMeet(1); } //마지막 챕터 설득을 위한 체크
 
         if (detailIdx == 2) {
             if (chapterClear[chapterNum] != 0) {
@@ -250,23 +251,15 @@ public class HomeManager : MonoBehaviour
             }
             if (chapterStartIdx[chapterNum] != 0)
             {
-                if (chapterNum == 0)
-                {
-                    chapterStartManager.Instance.startChater(1);
-                    yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
-                }
-                if (chapterNum == 1)
-                {
-                    chapterStartManager.Instance.startChater(2);
-                    yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
-                }
-                
-                if (chapterNum < 2) //for demo에서는 chapter3 까지만!
-                {
-                    TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
+                chapterStartManager.Instance.startChater(chapterNum + 1);
+                yield return new WaitUntil(() => !chapterStartManager.Instance.getChapterStartEnd());
+
+                //if (chapterNum < 2) //for demo에서는 chapter3 까지만!
+                //{
+                TalkManager.Instance.startTalk(chapterStartIdx[chapterNum]);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                    jsonDataManager.Instance.setChapterDid(diceIdxToChapter[chapterNum] + 1, 1);
-                }
+                    jsonDataManager.Instance.setChapterDid(chapterNum + 1, 1);
+                //}
             }
         }
 
@@ -291,6 +284,11 @@ public class HomeManager : MonoBehaviour
             if (chapterNum == 3 && detailIdx == 1 && jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 0)
             {
                 StartCoroutine(jewelTalk(52));
+            }
+            else if (chapterNum == 5 && detailIdx == 1 &&
+                jsonDataManager.Instance.getChapterRead(diceIdxToChapter[5], 1) >= 1 && jsonDataManager.Instance.getChapterRead(diceIdxToChapter[5], 2) == 0)
+            {
+                StartCoroutine(jewelTalk(106));
             }
             else if (jsonDataManager.Instance.getChapterRead(diceIdxToChapter[chapterNum], detailIdx) == 2) {//스토리 진행된 부분이라면 틀어주기.
                 StartCoroutine(jewelTalk(chapterTalk[diceIdxToChapter[chapterNum],detailIdx]));

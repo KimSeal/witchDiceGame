@@ -33,7 +33,7 @@ public class Yongsa : Character
         {
             if (sendSkillPacket.useSkillIdx == 0) //용사 기본 스킬
             {
-                /*
+                
                 for (int i = 0; i < 4; i++)
                 {
                     if (BattleManager.Instance.getCharacter(i + 4) != null && BattleManager.Instance.getCharacter(i + 4).getCurState() == 0)
@@ -44,7 +44,7 @@ public class Yongsa : Character
                         packets.Add(new TakeSkillPacket(i + 4, 2000 + this.getPhyAtk(), 0)); //대상이 사용한 주사위 값을 기반으로 Damage를 기반으로
                     }
                 }
-                */
+                
                 //packets.Add(new TakeSkillPacket(sendSkillPacket.useCharacterIdx, 1, 0, 6));
                 //원래 스킬
 

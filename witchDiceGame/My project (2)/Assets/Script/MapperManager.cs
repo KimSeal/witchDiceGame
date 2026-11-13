@@ -283,7 +283,7 @@ public class MapperManager : MonoBehaviour
 
     public void clickStageNumButton(int idx)
     {
-        if (idx > 4) return;
+        if (idx > 8) return;
         
         stageNum = idx;
         stageIdx = 0;
@@ -408,7 +408,7 @@ public class MapperManager : MonoBehaviour
         TalkManager.Instance.setDescClickLock(false);
         watchNumObjectEntity.SetActive(false);
         TalkManager.Instance.setMapperLock(1);
-
+        
         if (!jsonDataManager.Instance.getEventMeet(curDiceEvent.getEventIdx()))
         {
             notMeetChk = true;
@@ -416,7 +416,7 @@ public class MapperManager : MonoBehaviour
             TalkManager.Instance.setDescString(TalkManager.Instance.getDesc(132));
             return;
         }
-
+        
         
         if (curDiceEvent.getEventType() == 6)
         { //이벤트에서 숫자가 의미 있을 경우, 주사위 별 선택지를 확인. 아닌 경우 확인 불가능하도록
@@ -434,8 +434,8 @@ public class MapperManager : MonoBehaviour
         TalkManager.Instance.setDescSelectText(curDiceEvent);
         //TalkManager.Instance.setDescString(curDiceEvent.getSelectText());
 
-        adventureBackground.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/background/spr_ui_adventureBack_" + curDiceEvent.getBackgroundSprite());
-        adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEvent.getNPCSprite());
+        adventureBackground.GetComponent<SpriteRenderer>().sprite = AdventureManager.Instance.getAdventureBackgroundImage(curDiceEvent.getBackgroundSprite());
+        adventureNPC.GetComponent<SpriteRenderer>().sprite = AdventureManager.Instance.getAdventureNPCImage(curDiceEvent.getNPCSprite());
     }
     public void clickMapperDice(int num)
     {
@@ -463,7 +463,7 @@ public class MapperManager : MonoBehaviour
         if (curDiceEvent.getEventType() == 6) //주사위를 굴리는 이벤트일 경우, 주사위 결과 반영해 NPC 스프라이트 변경
         {
             curDiceEventPacket = curDiceEvent.getPacket(eventWatchNum);
-            adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/" + curDiceEvent.getEventName() + "/spr_ui_NPC_" + curDiceEvent.getEventName() + "_" + curDiceEventPacket.getSpriteIndex());
+            adventureNPC.GetComponent<SpriteRenderer>().sprite = AdventureManager.Instance.getAdventureNPCImage(curDiceEvent.getEventName(), curDiceEventPacket.getSpriteIndex());
 
             TalkManager.Instance.setDescResultText(curDiceEventPacket);
             //TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
@@ -471,7 +471,7 @@ public class MapperManager : MonoBehaviour
         else
         {
             curDiceEventPacket = curDiceEvent.getPacket(0); // 주사위 결과가 의미 없는 경우 0번째 packet으로 변경
-            adventureNPC.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/adventureUI/NPC/spr_ui_NPC_" + curDiceEventPacket.getSpriteIndex()); //적힌 sprite받아오기
+            adventureNPC.GetComponent<SpriteRenderer>().sprite = AdventureManager.Instance.getAdventureNPCImage(curDiceEventPacket.getSpriteIndex());
             TalkManager.Instance.setDescResultText(curDiceEventPacket);
             //TalkManager.Instance.setDescString(curDiceEventPacket.getResultText());
         }

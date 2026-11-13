@@ -7,7 +7,9 @@ using AnimatedBattleText.Examples;
 using System.Linq;
 public class BattleManager : MonoBehaviour
 {
-
+    [SerializeField]
+    public GameObject[] endingSelectObj = new GameObject[5]; //entity, button-saveAil, button-killAil 
+    public TextMeshProUGUI[] endingSelectText = new TextMeshProUGUI[2]; // saveText, killText
 
     [SerializeField]
     public GameObject[] equipUI = new GameObject[16];
@@ -42,7 +44,8 @@ public class BattleManager : MonoBehaviour
     public GameObject[] deadEventObj = new GameObject[4];
     public GameObject[] deadEventObjSprite = new GameObject[4];
 
-    private int[] noThrowCharacter = { 10003,10004,10012,10013,  10023, 10033,   10036,   10044,10045 };
+    private int[] noThrowCharacter = { 10003,10004,10012,10013,  10023, 10033,   10036,   10044,10045, //여기까지 데모버전 애들
+                                        10056, 10066, 10067, 10068, 10069,10070, 10079,10080,10087, 10088, 10090,};
     public void doDeadEvent(int characterIdx, int damage) //적 대상 애니메이션
     {
         for (int i=0;i<noThrowCharacter.Length;i++)
@@ -85,6 +88,18 @@ public class BattleManager : MonoBehaviour
             }
 
         }
+    }
+    private bool endingType = false;
+    private bool endingSelect = false;
+    public void selectEndlingType(bool sel)
+    {
+        endingType = sel; //false : bad true : harfy or happy
+        endingSelect = true;
+        onOffEndingSelect(false);
+    }
+    public bool getEndingType()
+    {
+        return endingType;
     }
 
     public int chooseDiceIdx;
@@ -214,6 +229,28 @@ public class BattleManager : MonoBehaviour
 
     //[SerializeField]
     //public GameObject[] diceArrow = new GameObject[8]; //obj_battleDice_arrow_(number)
+
+    public void updateBattleWitchBack(int opt)
+    {
+        if (opt == 0) {
+            if (jsonDataManager.Instance.getChapterRead(4, 2) != 2)
+            {
+                backGroundObj[3].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/battleUI/anim_witch_battle_body_0");
+                backGroundObj[4].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/battleUI/spr_witch_battle_face_0");
+            }
+            else
+            {
+                backGroundObj[3].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/battleUI/OwlBig/animcon_owl_battle_body_0");
+                backGroundObj[4].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/battleUI/OwlBig/animcon_owl_battle_face_0");
+            }
+        } 
+        
+        if (opt == 2)
+        {
+            backGroundObj[3].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/battleUI/anim_empty_battle_body");
+            backGroundObj[4].GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/battleUI/spr_empty_battle_face");
+        }
+    }
 
     private int[] clickedDice = new int[2];
 
@@ -357,9 +394,9 @@ public class BattleManager : MonoBehaviour
     {
         if (team)
         {
-            myCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
-            upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true, true);
-            upDownManager.Instance.changeUnderSkillCover(idx / 10, idx % 10, false );
+            //myCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
+            //upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true, true);
+            //upDownManager.Instance.changeUnderSkillCover(idx / 10, idx % 10, false );
         }
         else
         {
@@ -622,6 +659,7 @@ public class BattleManager : MonoBehaviour
 
     int bossResult = 0;
     int bossPhase = 0;
+    int lastMeet = 0;
 
     public void talkAnim(int idx)
     {
@@ -629,16 +667,45 @@ public class BattleManager : MonoBehaviour
         {
             enemyCharacterObjUIAnim[1].Play("CutIdle");
         }
+        if (idx == 10000) //revive greret dolls
+        {
+            enemyCharacterObjUIAnim[0].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
+            enemyCharacterObjUIAnim[2].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
+            enemyCharacterObjUIAnim[3].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
+            for(int i=0;i<4;i++) enemyCharacterObjUIAnim[i].Play("Create", -1, 0f);
+        }
+        if (idx == 10049)
+        {
+            for(int i=0;i<4;i++) enemyCharacterObjUIAnim[i].Play("Empty", -1, 0f);
+            enemyCharacterObjUIAnim[2].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10080);
+            enemyCharacterObjUIAnim[2].Play("GreretBug", -1, 0f); 
+        }
+        if (idx == 10050)
+        {
+            enemyCharacterObjUIAnim[2].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10080);
+            enemyCharacterObjUIAnim[2].Play("Idle", -1, 0f);
+            updateBattleBackground("grinBoss_1");
+        }
+        if(idx == 10051)
+        {
+            enemyCharacterObjUIAnim[1].runtimeAnimatorController = CharacterManager.Instance.getOriginAnimator(-2);
+            enemyCharacterObjUIAnim[1].Play("OnlyGrin", -1, 0f);
+        }
     }
     public void changeBossPhase(int a)
     {
         bossPhase = 0;
         bossResult = 0;
+        lastMeet = 0;
         bosang_click = true;
 
         
         if (a >= 100)
         {
+            
+            lastMeet = bossPhase - 100;
+            if (bossPhase == 100) lastMeet = 1;
+            
             bossResult = 1;
             bossPhase = a;
             if (bossPhase == 100 && !jsonDataManager.Instance.getOwlBattleWin())
@@ -649,6 +716,10 @@ public class BattleManager : MonoBehaviour
             if (bossPhase == 103 && !jsonDataManager.Instance.getGraceBattleWin())
             {
                     bosang_click = false;
+            }
+            if(bossPhase == 105 && jsonDataManager.Instance.getChapterRead(4, 2) == 0)
+            {
+                bosang_click = false;
             }
         }
     }
@@ -1265,6 +1336,12 @@ public class BattleManager : MonoBehaviour
             backGroundObj[0].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/spr_field_" + backgroundStr);
         } 
     }
+    public void updateBattleFieldBack(int opt)
+    {
+        if(opt == 0) backGroundObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/spr_background_test");
+        if(opt == 1) backGroundObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/originalVersion/spr_fieldBack_grinBoss_1");
+        if(opt == 2) backGroundObj[2].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/battleUI/originalVersion/spr_fieldBack_grinBoss_2");
+    }
 
     //phase관리를 위한 코루틴
     //(코루틴이 너무 중첩해서 생기는 거 방지를 위해 만들어둠)
@@ -1503,8 +1580,18 @@ public class BattleManager : MonoBehaviour
             }
 
 
-            if (AdventureManager.Instance.getTutorial() != 0 && AdventureManager.Instance.getTutorial() < 11) { witchHatButton.SetActive(false); }
-            else witchHatButton.SetActive(true);
+            if (AdventureManager.Instance.getTutorial() != 0 && AdventureManager.Instance.getTutorial() < 11)
+            {
+                witchHatButton.SetActive(false);
+            }
+            else if (bossPhase == 110 || bossPhase == 111 || bossPhase == 112)
+            {
+                witchHatButton.SetActive(false);
+            }
+            else
+            {
+                witchHatButton.SetActive(true);
+            }
             //임시로 넣어둠. 이곳에 적군 스킬 자동배치 함수가 들어가야 한다!
             MakeEnemyAttackSet();
             updateEnemyDiceUI();
@@ -4555,11 +4642,126 @@ public class BattleManager : MonoBehaviour
                     bosang_click = false;
                 }
                 bossPhase = 0;
-               
             }
+            if (bossPhase == 104) //ail을 이긴경우.
+            {
+                if (jsonDataManager.Instance.getChapterRead(3, 2) == 0)
+                {
+                    TalkManager.Instance.startTalk(89);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    bosang_click = false;
+                }
+                bossPhase = 0;
+            }
+            if (bossPhase == 109) //greret을 이긴경우.
+            {
+                if (jsonDataManager.Instance.getChapterRead(4, 2) == 0)
+                {
+                    TalkManager.Instance.startTalk(102);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    bosang_click = false;
+                }
+                bossPhase = 0;
+            }
+            if (bossPhase == 108) //greret을 이긴경우.
+            {
+                if (jsonDataManager.Instance.getChapterRead(5, 2) == 0)
+                {
+                    TalkManager.Instance.startTalk(116);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    bosang_click = false;
+                }
+                bossPhase = 0;
+            }
+            if (bossPhase == 112) //grin을 이긴경우.
+            {
+                AdventureManager.Instance.giveUpBtnAble(false);
 
+                endingType = false; //ending chk
+                if (jsonDataManager.Instance.getWitchMeet() == 3)
+                {
+                    jsonDataManager.Instance.setWitchMeet(4);
+                    TalkManager.Instance.startTalk(136);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
+                
+
+                endingSelect = false;
+                onOffEndingSelect(true);
+                //ending 선택 - selectEndlingType(bool sel) 함수 사용
+                yield return new WaitUntil(() => endingSelect);
+
+                if (!endingType)
+                { //bad ending
+                    TalkManager.Instance.startTalk(137);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                }
+                else //harfy or happy ending
+                {
+                    TalkManager.Instance.startTalk(139);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                    endingType = false;
+                    //harfy가 grin 대려가는 것+ 연출용 화면을 위한 camera 이동 필요
+                    yield return new WaitUntil(() => endingType);
+
+                    TalkManager.Instance.startTalk(140);
+                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+
+                    endingType = false;
+                    //harfy가 grin을 데리고 아예 화면 밖으로 나간다.
+                    yield return new WaitUntil(() => endingType);
+                }
+
+                AdventureManager.Instance.giveUpBtnAble(true);
+
+                bosang_click = false;
+                
+                bossPhase = 0;
+            }
             if (bossPhase == 0)
             {
+                //최종 챕터에서 설득하는 씬을 위한 대화들
+                {
+                    if (jsonDataManager.Instance.getLastMeet() == 1 && lastMeet == 1) //최종 챕터 대화를 위한 부분
+                    {
+                        jsonDataManager.Instance.setLastMeet(2);
+                        TalkManager.Instance.startTalk(127);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    else if (jsonDataManager.Instance.getLastMeet() == 2 && lastMeet == 2) //최종 챕터 대화를 위한 부분
+                    {
+                        jsonDataManager.Instance.setLastMeet(3);
+                        TalkManager.Instance.startTalk(128);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    else if (jsonDataManager.Instance.getLastMeet() == 3 && lastMeet == 3) //최종 챕터 대화를 위한 부분
+                    {
+                        jsonDataManager.Instance.setLastMeet(4);
+                        TalkManager.Instance.startTalk(129);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    else if (jsonDataManager.Instance.getLastMeet() == 4 && lastMeet == 4) //최종 챕터 대화를 위한 부분
+                    {
+                        jsonDataManager.Instance.setLastMeet(5);
+                        TalkManager.Instance.startTalk(130);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    else if (jsonDataManager.Instance.getLastMeet() == 5 && lastMeet == 5) //최종 챕터 대화를 위한 부분
+                    {
+                        jsonDataManager.Instance.setLastMeet(6);
+                        TalkManager.Instance.startTalk(131);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    else if (jsonDataManager.Instance.getLastMeet() == 6 && lastMeet == 6) //최종 챕터 대화를 위한 부분
+                    {
+                        jsonDataManager.Instance.setLastMeet(7);
+                        TalkManager.Instance.startTalk(132);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                }
+
+
                 upDownManager.Instance.changeOption(1, false);
 
                 for (int i = 0; i < 4; i++)
@@ -4675,67 +4877,188 @@ public class BattleManager : MonoBehaviour
                 }
                 curPhase = 0;
             }
-            else if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
+            else //phase가 더있는 경우,
             {
                 hoverOutCharacter(4);
-                if (jsonDataManager.Instance.getChapterRead(0, 2) == 0)
+                if (bossPhase == 100) //안경 선배가 보스고 1페이즈 인경우
                 {
-                    TalkManager.Instance.startTalk(22);
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    
+                    if (jsonDataManager.Instance.getChapterRead(0, 2) == 0)
+                    {
+                        TalkManager.Instance.startTalk(22);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    bossPhase = 0; //보스 페이즈를 0으로 변경
+                    setEnemyCharacter(0, 10013);
                 }
-                bossPhase = 0; //보스 페이즈를 0으로 변경
-                curPhase = 1;
-                setEnemyCharacter(0, 10013);
-                
-            }
-            else if (bossPhase == 103) //그레이스가 보스고 1페이즈 인경우
-            {
-                hoverOutCharacter(4);
-                if (jsonDataManager.Instance.getChapterRead(2, 2) == 0)
+                else if (bossPhase == 103) //그레이스가 보스고 1페이즈 인경우
                 {
-                    TalkManager.Instance.startTalk(74);
-                    yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                }
-                bossPhase = 0; //보스 페이즈를 0으로 변경
-                
-
-                for (int i = 0; i < 4; i++)
-                {
-                    CharacterManager.Instance.emptyEnemyCharacter(i);
-                }
-
-                CharacterManager.Instance.setCharacter(0, 10046); //캐릭터 세팅
-                CharacterManager.Instance.setCharacter(1, 10045); //캐릭터 세팅
-                CharacterManager.Instance.setCharacter(2, 10047); //캐릭터 세팅
-                CharacterManager.Instance.setCharacter(3, 10048); //캐릭터 세팅
-                yield return new WaitForSeconds(0.2f);
-                for (int placeIdx = 0; placeIdx < 4; placeIdx++)
-                {
-                    CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
-                    enemyDice[placeIdx] = new Dice();
-                    enemyDiceUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
-
                     if (jsonDataManager.Instance.getChapterRead(2, 2) == 0)
                     {
-                        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimator[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+                        TalkManager.Instance.startTalk(74);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    bossPhase = 0; //보스 페이즈를 0으로 변경
+
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        CharacterManager.Instance.emptyEnemyCharacter(i);
+                    }
+
+                    CharacterManager.Instance.setCharacter(0, 10046); //캐릭터 세팅
+                    CharacterManager.Instance.setCharacter(1, 10045); //캐릭터 세팅
+                    CharacterManager.Instance.setCharacter(2, 10047); //캐릭터 세팅
+                    CharacterManager.Instance.setCharacter(3, 10048); //캐릭터 세팅
+                    yield return new WaitForSeconds(0.2f);
+                    for (int placeIdx = 0; placeIdx < 4; placeIdx++)
+                    {
+                        CharacterManager.Instance.character_deepCopy(ref enemyCharacter[placeIdx], CharacterManager.Instance.getCharacter(false, placeIdx));
+                        enemyDice[placeIdx] = new Dice();
+                        enemyDiceUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
+
+                        if (jsonDataManager.Instance.getChapterRead(2, 2) == 0)
+                        {
+                            enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimator[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+                        }
+                        else
+                        {
+                            enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+                        }
+                        if (placeIdx != 1)
+                        {
+                            enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+                        }
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                }
+                else if (bossPhase == 105) //오디 1phase 종료
+                {
+
+                    if (jsonDataManager.Instance.getChapterRead(4, 2) == 0)
+                    {
+                        TalkManager.Instance.startTalk(101);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    }
+                    bossPhase = 109; //보스 페이즈를 0으로 변경
+                    setEnemyCharacter(1, 10071);
+                    enemyCharacterObjUIAnim[1].Play("Create", -1, 0f);
+                }
+                else if (bossPhase == 106)
+                {
+                    enemyCharacterObjUIAnim[0].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
+                    enemyCharacterObjUIAnim[2].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
+                    enemyCharacterObjUIAnim[3].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
+                    enemyCharacterObjUIAnim[0].Play("Empty", -1, 0f);
+                    enemyCharacterObjUIAnim[2].Play("Empty", -1, 0f);
+                    enemyCharacterObjUIAnim[3].Play("Empty", -1, 0f);
+                    if (jsonDataManager.Instance.getChapterRead(5, 2) == 0)
+                    {
+                        TalkManager.Instance.startTalk(114);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        FadeUIScript2.fadeIn();
+                        for (int i = 0; i < 4; i++)
+                        {
+                            setEnemyCharacter(i, 10079);
+                        }
                     }
                     else
                     {
-                        enemyCharacterObjUIAnim[placeIdx].runtimeAnimatorController = graceAnimatorPixel[placeIdx + 1];//enemyCharacter[placeIdx].getAnimator(false);
+                        
+                        for (int i = 0; i < 4; i++)
+                        {
+                            setEnemyCharacter(i, 10079);
+                            enemyCharacterObjUIAnim[2].Play("Create", -1, 0f);
+                        }
                     }
-                    if(placeIdx != 1)
-                    {
-                        enemyCharacterShadowObjUI[placeIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
-                    }
-                    yield return new WaitForSeconds(0.2f);
+                    bossPhase = 107;
                 }
+                else if(bossPhase == 107)
+                {
+                    if (jsonDataManager.Instance.getChapterRead(5, 2) == 0)
+                    {
+                        TalkManager.Instance.startTalk(115);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                       
+                        FadeUIScript2.fadeIn();
+                        for (int i = 0; i < 4; i++)
+                        {
+                            enemyCharacterObjUIAnim[i].Play("Empty", -1, 0f);
+                            CharacterManager.Instance.emptyEnemyCharacter(i);
+                        }
+                        setEnemyCharacter(2, 10080);
+                        updateBattleBackground("greretBoss_1");
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            enemyCharacterObjUIAnim[i].Play("Empty", -1, 0f);
+                            CharacterManager.Instance.emptyEnemyCharacter(i);
+                        }
+                        FadeUIScript2.fadeIn();
+                        updateBattleBackground("greretBoss_1");
+                        setEnemyCharacter(2, 10080);
+                        enemyCharacterObjUIAnim[2].Play("GreretCreate", -1, 0f);
+                    }
+                    SoundManager_Main.Instance.playSound(41);
+                    SoundManager_Main.Instance.stopSound(40);
+                    bossPhase = 108;
+                }
+                else if(bossPhase == 110)
+                {
+                    AdventureManager.Instance.giveUpBtnAble(false);
+                    setEnemyCharacter(1, 10087);
+                    if (jsonDataManager.Instance.getWitchMeet() == 1)
+                    {
+                        jsonDataManager.Instance.setWitchMeet(2);
 
-                //캐릭터 세팅을 반영
+                        enemyCharacterObjUIAnim[1].Play("Create", -1, 0f);
+                        TalkManager.Instance.startTalk(134);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        enemyCharacterObjUIAnim[1].Play("Break_0", -1, 0f);
+                    }
+                    else
+                    {
+                        enemyCharacterObjUIAnim[1].Play("CreateBreak", -1, 0f);
+                    }
+                    SoundManager_Main.Instance.stopSound(42);
+                    yield return new WaitForSeconds(3f);
+                    //화면 꺠지고, flutter가 막히는 연출
+                    updateBattleFieldBack(1);
+                    CameraManager.Instance.attackShakeStart(5f);
+                    updateBattleBackground("grinBoss_1");
+                    updateBattleWitchBack(2);
+                    SoundManager_Main.Instance.playSound(43);
+
+                    yield return new WaitForSeconds(1f);
+                    enemyCharacterObjUIAnim[1].Play("BreakEnd", -1, 0f);
+
+                    bossPhase = 111;
+                    AdventureManager.Instance.giveUpBtnAble(true);
+                }
+                else if (bossPhase == 111)
+                {
+                    AdventureManager.Instance.giveUpBtnAble(false);
+                    if (jsonDataManager.Instance.getWitchMeet() == 2)
+                    {
+                        TalkManager.Instance.startTalk(135);
+                        yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                        jsonDataManager.Instance.setWitchMeet(3);
+                    }
+                    updateBattleFieldBack(2);
+                    updateBattleBackground("grinBoss_2");
+                    CameraManager.Instance.attackShakeStart(5f);
+                    setEnemyCharacter(1, 10088);
+                    SoundManager_Main.Instance.playSound(44);
+                    SoundManager_Main.Instance.stopSound(43);
+                    bossPhase = 112;
+                    AdventureManager.Instance.giveUpBtnAble(true);
+                }
                 curPhase = 1;
                 updateHp();
                 InitSetOfEnemySkill();
-            }
-
+            } 
         }
         //전투 지속 필요
         else
@@ -4889,8 +5212,24 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public void onOffEndingSelect(bool onOff)
+    {
+        if (!onOff)
+        {
+            endingSelectObj[0].SetActive(false);
+        }
+        else
+        {
+            endingSelectObj[0].SetActive(true);
+            endingSelectText[0].text = TalkManager.Instance.getDesc(279);
+            endingSelectText[1].text = TalkManager.Instance.getDesc(280);
+        }
+    }
+
     void Start()
     {
+        onOffEndingSelect(false);
+
         diceLineActive = true;
         rerollNeedGold = 10;
         rerollCount = 0;
@@ -5293,7 +5632,12 @@ public class BattleManager : MonoBehaviour
 
         adventureStartChk = true;
         setBattleOttogi(jsonDataManager.Instance.getBattleOttogi());
-
+        updateBattleFieldBack(0);
+        updateBattleWitchBack(0);
+        if(bossPhase == 110)
+        {
+            enemyCharacterObjUIAnim[2].Play("Create", -1, 0f);
+        }
         StartCoroutine(startPhaseManage());
     }
 

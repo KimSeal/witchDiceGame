@@ -60,6 +60,7 @@ public class TalkManager : MonoBehaviour
     //private int curLight = 0;
 
     private string[] descLanArr = new string[4];
+    private string[] nameLanArr = new string[4];
     private string[] talkLanArr = new string[4];
 
 
@@ -106,6 +107,7 @@ public class TalkManager : MonoBehaviour
         if (talkingChk)
         {
             characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
+            characterName.GetComponent<TextMeshProUGUI>().text = nameLanArr[jsonDataManager.Instance.getLanguage()];
             skipSumText.text = sumText[jsonDataManager.Instance.getLanguage()];
         }
         else if (descChk)
@@ -592,6 +594,11 @@ public class TalkManager : MonoBehaviour
         }
         for (int i = 0; i < talkList.Count; i++)
         {
+            talkList[i].NameKR = SpecialTextChange(talkList[i].NameKR);
+            talkList[i].NameJP = SpecialTextChange(talkList[i].NameJP);
+            talkList[i].NameCH = SpecialTextChange(talkList[i].NameCH);
+            talkList[i].NameEN = SpecialTextChange(talkList[i].NameEN);
+
             talkList[i].TextKR = SpecialTextChange(talkList[i].TextKR);
             talkList[i].TextEN = SpecialTextChange(talkList[i].TextEN);
             talkList[i].TextJP = SpecialTextChange(talkList[i].TextJP);
@@ -1162,19 +1169,25 @@ public class TalkManager : MonoBehaviour
         }
 
         //언어따라 다른 text
-        characterName.GetComponent<TextMeshProUGUI>().text = SpecialTextChange(talkList[a].Name);
+        
 
-        if (talkList[a].Name == "" || talkList[a].Name == " " || talkList[a].Name == "  " || talkList[a].Name == "   ") { 
+        if (talkList[a].NameKR == "" || talkList[a].NameKR == " " || talkList[a].NameKR == "  " || talkList[a].NameKR == "   ") { 
             nameBackground.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
         }
         else
         {
             nameBackground.GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/spr_ui_communicate_back");
         }
+        nameLanArr[0] = talkList[a].NameKR;
+        nameLanArr[1] = talkList[a].NameEN;
+        nameLanArr[2] = talkList[a].NameJP;
+        nameLanArr[3] = talkList[a].NameCH;
+
         talkLanArr[0] = talkList[a].TextKR;
         talkLanArr[1] = talkList[a].TextEN;
         talkLanArr[2] = talkList[a].TextJP;
         talkLanArr[3] = talkList[a].TextCH;
+        characterName.GetComponent<TextMeshProUGUI>().text = SpecialTextChange(nameLanArr[jsonDataManager.Instance.getLanguage()]);
         characterTalk.GetComponent<TextMeshProUGUI>().text = talkLanArr[jsonDataManager.Instance.getLanguage()];
 
         

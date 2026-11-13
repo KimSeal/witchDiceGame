@@ -158,7 +158,12 @@ public class TalkReader{
     public int imagePlace;
     public int imageIdx;
     public int eventType;
-    public string Name;
+    public string NameKR;
+    public string NameEN;
+    public string NameJP;
+    public string NameCH;
+   
+
     public string backGround;
 
     public string TextKR;

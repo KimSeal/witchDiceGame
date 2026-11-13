@@ -41,6 +41,11 @@ public class jsonDataManager : MonoBehaviour
     public Sprite[] languageSelectButtonImage = new Sprite[2];
     public TextMeshProUGUI languageSelectDescText;
     public TextMeshProUGUI[] languageSelectButtonText = new TextMeshProUGUI[4];
+
+    public int getWitchMeet() { return playerPlayData.getWitchMeet(); }
+    public void setWitchMeet(int idx) { playerPlayData.setWitchMeet(idx); }
+    public int getLastMeet() { return playerPlayData.getLastMeet(); }
+    public void setLastMeet(int idx) { playerPlayData.setLastMeet(idx); }
     public void hoverInLanguageSelectButton(int idx)
     {
         languageSelectDescText.text = TalkManager.Instance.getDesc(idx, 278);
@@ -319,6 +324,9 @@ public class jsonDataManager : MonoBehaviour
     
     public bool setChapterDid(int chapterIdx, int num)
     {
+        Debug.Log(chapterIdx);
+        Debug.Log(num);
+
         if (playerPlayData.chapterDid[chapterIdx] < num)
         {
             playerPlayData.chapterDid[chapterIdx] = num;
@@ -609,6 +617,15 @@ public class jsonDataManager : MonoBehaviour
         public bool talkIdxOnOff = false;
         public int battleOttogi = 0;
 
+        public int witchMeet = 0;
+        public int lastMeet = 0;
+        public int getLastMeet()
+        {
+            return lastMeet;
+        }
+        public void setLastMeet(int i) { lastMeet = i; }
+        public int getWitchMeet() { return witchMeet; }
+        public void setWitchMeet(int idx) { witchMeet = idx; }
         public int getClickKey(int opt, int idx)
         {
             if (opt == 0) return itemClickKey[idx];
