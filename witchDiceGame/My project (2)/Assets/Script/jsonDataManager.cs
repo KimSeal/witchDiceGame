@@ -324,9 +324,6 @@ public class jsonDataManager : MonoBehaviour
     
     public bool setChapterDid(int chapterIdx, int num)
     {
-        Debug.Log(chapterIdx);
-        Debug.Log(num);
-
         if (playerPlayData.chapterDid[chapterIdx] < num)
         {
             playerPlayData.chapterDid[chapterIdx] = num;

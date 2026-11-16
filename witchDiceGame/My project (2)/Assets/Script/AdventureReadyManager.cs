@@ -326,6 +326,12 @@ public class AdventureReadyManager : MonoBehaviour
             startAdventure();
         }
     }
+    public void clickChapterYesGoButton()
+    {
+        startAdventure();
+        ChapterNoGoEntity.SetActive(false);
+    }
+
     public void clickChapterNoGoButton()
     {
         ChapterNoGoEntity.SetActive(false);
