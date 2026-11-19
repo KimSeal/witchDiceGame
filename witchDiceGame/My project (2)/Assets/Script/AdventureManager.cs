@@ -1695,7 +1695,7 @@ public class AdventureManager : MonoBehaviour
                 stageIdx++;
                 balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length).ToString();
                 
-                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 98) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 100) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
                     if (i + 1 + 2 < 10)  balpanEffObj[i + 1 + 2].GetComponent<Animator>().Play("Update");
                     jsonDataManager.Instance.setEventMeet(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventIdx()); //이벤트 만난거 처리
@@ -2447,6 +2447,7 @@ public class AdventureManager : MonoBehaviour
                 else if (stageDepth == stageDepthMax)    //스테이지가 Max까지 도달한 경우
                 {
                     CameraManager.Instance.resultScreenActive(2);
+                    if (demoEndChk == 8) { SoundManager_Main.Instance.stopSound(3); } //기본 브금 제거
                     if (demoEndChk == 2)
                     { //튜토리얼 종료
                         TalkManager.Instance.startTalk(50);
@@ -2468,7 +2469,7 @@ public class AdventureManager : MonoBehaviour
                         {
                             TalkManager.Instance.startTalk(141);
                             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
-                            if (false)                                 //happy end
+                            if (true)                                 //happy end
                             {
                                 TalkManager.Instance.startTalk(142);
                                 yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());

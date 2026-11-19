@@ -43,9 +43,15 @@ public class jsonDataManager : MonoBehaviour
     public TextMeshProUGUI[] languageSelectButtonText = new TextMeshProUGUI[4];
 
     public int getWitchMeet() { return playerPlayData.getWitchMeet(); }
-    public void setWitchMeet(int idx) { playerPlayData.setWitchMeet(idx); }
+    public void setWitchMeet(int idx) { 
+        playerPlayData.setWitchMeet(idx);
+        SavePlayerDataToJson();
+    }
     public int getLastMeet() { return playerPlayData.getLastMeet(); }
-    public void setLastMeet(int idx) { playerPlayData.setLastMeet(idx); }
+    public void setLastMeet(int idx) { 
+        playerPlayData.setLastMeet(idx);
+        SavePlayerDataToJson();
+    }
     public void hoverInLanguageSelectButton(int idx)
     {
         languageSelectDescText.text = TalkManager.Instance.getDesc(idx, 278);
@@ -297,7 +303,7 @@ public class jsonDataManager : MonoBehaviour
     public void setStageWatched(int i)
     {
         playerPlayData.setStageWatched(i);
-        jsonDataManager.Instance.SavePlayerDataToJson();
+        SavePlayerDataToJson();
     }
     public void downGradeRevive()
     {
@@ -324,7 +330,7 @@ public class jsonDataManager : MonoBehaviour
     
     public bool setChapterDid(int chapterIdx, int num)
     {
-        if (playerPlayData.chapterDid[chapterIdx] < num)
+        if ( chapterIdx < 6 && playerPlayData.chapterDid[chapterIdx] < num)
         {
             playerPlayData.chapterDid[chapterIdx] = num;
             SavePlayerDataToJson();

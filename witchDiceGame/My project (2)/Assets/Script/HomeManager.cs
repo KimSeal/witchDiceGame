@@ -223,8 +223,12 @@ public class HomeManager : MonoBehaviour
     IEnumerator jewelTalk(int jewelBigNum, int detailIdx)
     {
         int chapterNum = diceIdxToChapter[jewelBigNum];
+
+        Debug.Log(chapterNum);
+
+
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
-        if (!(chapterNum == 5 && detailIdx == 2))
+        if (!(chapterNum == 4 && detailIdx == 2))
         {
             TalkManager.Instance.startTalk(chapterTalkBefore[chapterNum, detailIdx]);
             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -235,7 +239,10 @@ public class HomeManager : MonoBehaviour
         TalkManager.Instance.startTalk(chapterTalkAfter[chapterNum, detailIdx]);
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
-        if(chapterNum == 6 && detailIdx == 2) { jsonDataManager.Instance.setLastMeet(1); } //마지막 챕터 설득을 위한 체크
+        if(chapterNum == 5 && detailIdx == 2) { 
+            Debug.Log("**");
+            jsonDataManager.Instance.setLastMeet(1); 
+        } //마지막 챕터 설득을 위한 체크
 
         if (detailIdx == 2) {
             if (chapterClear[chapterNum] != 0) {

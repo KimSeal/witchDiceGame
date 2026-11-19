@@ -304,7 +304,7 @@ public class CameraManager : MonoBehaviour
     {
         stopMove();
 
-        initialPosition = vec;
+        initialPosition = new Vector3(vec.x, vec.y, transform.position.z);
         ShakeTime = 0.0f;
         FadeUIScript.fadeIn();
     }

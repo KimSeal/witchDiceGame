@@ -48,6 +48,13 @@ public class BattleManager : MonoBehaviour
                                         10056, 10066, 10067, 10068, 10069,10070, 10079,10080,10087, 10088, 10090,};
     public void doDeadEvent(int characterIdx, int damage) //적 대상 애니메이션
     {
+        if(enemyCharacter[characterIdx].getDestiny().getDestinyIdx() == 10089 ||
+            enemyCharacter[characterIdx].getDestiny().getDestinyIdx() == 10090 ||
+            enemyCharacter[characterIdx].getDestiny().getDestinyIdx() == 10091)
+        {
+            enemyCharacterShadowObjUI[characterIdx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
+        }
+
         for (int i=0;i<noThrowCharacter.Length;i++)
         {
             if(enemyCharacter[characterIdx].getDestiny().getDestinyIdx() == noThrowCharacter[i])
@@ -91,6 +98,11 @@ public class BattleManager : MonoBehaviour
     }
     private bool endingType = false;
     private bool endingSelect = false;
+    private bool endingTiming = false;
+    public void setEndingTiming(bool onOff)
+    {
+        endingTiming = onOff;
+    }
     public void selectEndlingType(bool sel)
     {
         endingType = sel; //false : bad true : harfy or happy
@@ -674,6 +686,25 @@ public class BattleManager : MonoBehaviour
             enemyCharacterObjUIAnim[3].runtimeAnimatorController = CharacterManager.Instance.getPixelAnimator(10079);
             for(int i=0;i<4;i++) enemyCharacterObjUIAnim[i].Play("Create", -1, 0f);
         }
+
+        if (idx == 10021) // grin summon ail body
+        {
+            endingManager.Instance.endingPhase1(1);
+        }
+        if(idx == 10022) // grin take destiny from ail doll
+        {
+            endingManager.Instance.endingPhase1(2);
+        }
+        if(idx == 10023)
+        {
+            endingManager.Instance.endingPhase2(0);
+        }
+        if (idx == 10024)
+        {
+            endingManager.Instance.endingPhase2(1);
+        }
+
+
         if (idx == 10049)
         {
             for(int i=0;i<4;i++) enemyCharacterObjUIAnim[i].Play("Empty", -1, 0f);
@@ -703,8 +734,8 @@ public class BattleManager : MonoBehaviour
         if (a >= 100)
         {
             
-            lastMeet = bossPhase - 100;
-            if (bossPhase == 100) lastMeet = 1;
+            lastMeet = a - 100;
+            if (a == 100) lastMeet = 1;
             
             bossResult = 1;
             bossPhase = a;
@@ -794,10 +825,14 @@ public class BattleManager : MonoBehaviour
     }
     public void updateHp()
     {
+        //아이템 창 나오는 중에는 안보이게
+        if (curPhase == 6 && winningCheck() == 1)
+        {
+            return;
+        }
+
         for (int i = 0; i < 4; i++)
         {
-
-
             if (myCharacter[i] != null && myCharacter[i].getCurState() == 0)
             {
                 myHpUI[i].GetComponent<TextMeshPro>().text = myCharacter[i].getHp().ToString();
@@ -4698,25 +4733,49 @@ public class BattleManager : MonoBehaviour
                 }
                 else //harfy or happy ending
                 {
+                    endingManager.Instance.endingPhase1(0);
+                    CameraManager.Instance.updateInitPosition(new Vector3(2500f, 0f, 0f));
+                    
                     TalkManager.Instance.startTalk(139);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
-                    endingType = false;
+                    endingManager.Instance.endingPhase1(3); //하피가 grin을 데려감.
+
+                    endingTiming = false;
                     //harfy가 grin 대려가는 것+ 연출용 화면을 위한 camera 이동 필요
-                    yield return new WaitUntil(() => endingType);
+                    yield return new WaitUntil(() => endingTiming);
+
+                    yield return new WaitForSeconds(1f);
 
                     TalkManager.Instance.startTalk(140);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
-                    endingType = false;
+                    FadeUIScript2.fadeIn();
+                    endingManager.Instance.endingPhase2(2);
+
+                    yield return new WaitForSeconds(3f);
+
+                    endingManager.Instance.endingPhase2(3);
+
+                    yield return new WaitForSeconds(1.5f);
+
+                    endingManager.Instance.endingPhase2(4);
+
+                    yield return new WaitForSeconds(0.5f);
+
+                    endingManager.Instance.endingPhase2(5);
+
+                    endingTiming = false;
                     //harfy가 grin을 데리고 아예 화면 밖으로 나간다.
-                    yield return new WaitUntil(() => endingType);
+                    yield return new WaitUntil(() => endingTiming);
+                    
+                    yield return new WaitForSeconds(2f);
+                    endingManager.Instance.endingPhase2(6);
                 }
 
                 AdventureManager.Instance.giveUpBtnAble(true);
 
                 bosang_click = false;
-                
                 bossPhase = 0;
             }
             if (bossPhase == 0)
@@ -4798,8 +4857,8 @@ public class BattleManager : MonoBehaviour
                         if (bossResult == 0)
                         {
                             rerollButton.transform.position = new Vector3(165f, -56f, rerollButton.transform.position.z);
-                            itemNotGetButton.transform.position = new Vector3(165f, -26f, rerollButton.transform.position.z);
                         }
+                        itemNotGetButton.transform.position = new Vector3(165f, -26f, rerollButton.transform.position.z);
 
                         if (AdventureManager.Instance.getTutorial() == 17)
                         {
@@ -5008,6 +5067,7 @@ public class BattleManager : MonoBehaviour
                 else if(bossPhase == 110)
                 {
                     AdventureManager.Instance.giveUpBtnAble(false);
+
                     setEnemyCharacter(1, 10087);
                     if (jsonDataManager.Instance.getWitchMeet() == 1)
                     {
@@ -5029,6 +5089,7 @@ public class BattleManager : MonoBehaviour
                     CameraManager.Instance.attackShakeStart(5f);
                     updateBattleBackground("grinBoss_1");
                     updateBattleWitchBack(2);
+                    SoundManager_Sfx.Instance.playSound(39);
                     SoundManager_Main.Instance.playSound(43);
 
                     yield return new WaitForSeconds(1f);
