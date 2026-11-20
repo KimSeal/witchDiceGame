@@ -697,13 +697,21 @@ public class BattleManager : MonoBehaviour
         }
         if(idx == 10023)
         {
+            endingManager.Instance.endingPhase1(-1);
             endingManager.Instance.endingPhase2(0);
         }
         if (idx == 10024)
         {
             endingManager.Instance.endingPhase2(1);
         }
-
+        if(idx == 10025)
+        {
+            endingManager.Instance.setRockDropState(0);
+        }
+        if(idx == 10026)
+        {
+            endingManager.Instance.setRockDropState(1);
+        }
 
         if (idx == 10049)
         {
@@ -4711,6 +4719,7 @@ public class BattleManager : MonoBehaviour
             if (bossPhase == 112) //grin을 이긴경우.
             {
                 AdventureManager.Instance.giveUpBtnAble(false);
+                upDownManager.Instance.changeOption(1, false);
 
                 endingType = false; //ending chk
                 if (jsonDataManager.Instance.getWitchMeet() == 3)
@@ -4733,6 +4742,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else //harfy or happy ending
                 {
+                    endingManager.Instance.setRockDropState(0);
                     endingManager.Instance.endingPhase1(0);
                     CameraManager.Instance.updateInitPosition(new Vector3(2500f, 0f, 0f));
                     
@@ -4745,18 +4755,25 @@ public class BattleManager : MonoBehaviour
                     //harfy가 grin 대려가는 것+ 연출용 화면을 위한 camera 이동 필요
                     yield return new WaitUntil(() => endingTiming);
 
-                    yield return new WaitForSeconds(1f);
+                    yield return new WaitForSeconds(2f);
+                    endingManager.Instance.setRockDropState(2);
 
                     TalkManager.Instance.startTalk(140);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
+                    
 
                     FadeUIScript2.fadeIn();
                     endingManager.Instance.endingPhase2(2);
-
+                    CameraManager.Instance.startZoom(54f, 1f);
+                    CameraManager.Instance.stopZoom();
+                    CameraManager.Instance.moveStart(new Vector3(2460f, -20f, CameraManager.Instance.cameraPointZ()), 1);
                     yield return new WaitForSeconds(3f);
-
+                    
                     endingManager.Instance.endingPhase2(3);
+                    yield return new WaitForSeconds(2f);
 
+                    CameraManager.Instance.startZoom(108f, 1f);
+                    CameraManager.Instance.moveStart(new Vector3(2500f, 0f, CameraManager.Instance.cameraPointZ()), 1);
                     yield return new WaitForSeconds(1.5f);
 
                     endingManager.Instance.endingPhase2(4);
@@ -4764,12 +4781,15 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.5f);
 
                     endingManager.Instance.endingPhase2(5);
-
+                    
                     endingTiming = false;
                     //harfy가 grin을 데리고 아예 화면 밖으로 나간다.
                     yield return new WaitUntil(() => endingTiming);
+                    yield return new WaitForSeconds(1f);
+                    endingManager.Instance.setRockDropState(0);
+
+                    yield return new WaitForSeconds(3f);
                     
-                    yield return new WaitForSeconds(2f);
                     endingManager.Instance.endingPhase2(6);
                 }
 

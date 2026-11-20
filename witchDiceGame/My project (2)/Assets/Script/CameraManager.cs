@@ -253,9 +253,9 @@ public class CameraManager : MonoBehaviour
     }
     public void stopZoom()
     {
-        zoomSpeed = 0;
-        zoomVal = 0;
-        this.GetComponent<Camera>().orthographicSize = startZoomVal * (1 - (zoomVal) * (zoomVal)) + (endZoomVal * (zoomVal) * (zoomVal));
+        zoomSpeed = 0f;
+        zoomVal = 0f;
+        this.GetComponent<Camera>().orthographicSize = endZoomVal * (1 - (zoomVal) * (zoomVal)) + (startZoomVal * (zoomVal) * (zoomVal));
     }
     public void stopMove()
     {

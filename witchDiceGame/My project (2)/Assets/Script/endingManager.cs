@@ -42,10 +42,16 @@ public class endingManager : MonoBehaviour
     public GameObject[] dropObj2 = new GameObject[5];
     public GameObject[] shadowObj = new GameObject[2];
 
+    public GameObject[] brokenFieldObj = new GameObject[2];
+    public GameObject[] brokenBackObj = new GameObject[2];
+
     public GameObject whiteFullObj;
 
     public Sprite[] fieldSprite = new Sprite[2];
     public Sprite[] backSprite = new Sprite[2];
+
+    public Sprite[] brokenFieldSprite = new Sprite[5];
+    public Sprite[] brokenBackSprite = new Sprite[5];
 
     private bool jewelMove = false;
     private bool harfyMove = false;
@@ -54,7 +60,133 @@ public class endingManager : MonoBehaviour
     [SerializeField]
     private float whiteChangeVal = 0.05f;
 
+    [SerializeField]
+    private float fieldSpeedX;
+    [SerializeField]
+    private float backSpeedX;
+
+    [SerializeField]
+    private float[] dropRockSpeedY = new float[4]; //0-1 small random y speed, 2-3 big random y speed
+    [SerializeField]
+    private float[] dropRockSpeedX = new float[2]; // 
+    [SerializeField]
+    private float[] dropRockPointX = new float[8]; // 0-1: small stop 2-3 smallmove
+    [SerializeField]
+    private float[] dropRockPointY = new float[8];// 4-5 big stop 6-7 big move
+
     private int harfyTake = 0;
+
+    private int rockDropState =0;
+
+    private float[] curDropBigRockSpeedY = new float[5];
+    private float[] curDropSmallRockSpeedY = new float[5];
+    // 0 : 파괴 X
+    // 1: 파괴는 하되, 움직임 X
+    // 2 : 파괴 + 움직임
+    public void setRockDropState(int opt)
+    {
+
+        if (opt <= 2)
+        {   //3, 4는 위치 초기화 용도로만 사용
+            //0->1 or 1->0 일때만
+            if ((opt == 0 && rockDropState == 1) || (opt == 1 && rockDropState == 0)) FadeUIScript2.fadeIn();
+            rockDropState = opt;
+        }
+
+        if(opt == 0) //모든 drop없애고 위치 초기화
+        {
+            brokenFieldObj[0].transform.position = 
+            new Vector3(2116f, brokenFieldObj[0].transform.position.y, brokenFieldObj[0].transform.position.z);
+            brokenBackObj[0].transform.position =
+            new Vector3(2116f, brokenBackObj[0].transform.position.y, brokenBackObj[0].transform.position.z);
+            brokenFieldObj[0].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[0];
+            brokenBackObj[0].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[0];
+            brokenFieldObj[1].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[0];
+            brokenBackObj[1].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[0];
+            
+            for (int i = 0; i < dropObj2.Length; i++) {
+                dropObj2[i].transform.position = new Vector3(2500, 120, 0);
+            }
+            for (int i = 0; i < dropObj.Length; i++)
+            {
+                dropObj[i].transform.position = new Vector3(2500, 120, 0);
+            }
+        }
+        if(opt == 1)
+        {
+            brokenFieldObj[0].transform.position =
+            new Vector3(2116f, brokenFieldObj[0].transform.position.y, brokenFieldObj[0].transform.position.z);
+            brokenBackObj[0].transform.position =
+            new Vector3(2116f, brokenBackObj[0].transform.position.y, brokenBackObj[0].transform.position.z);
+            brokenFieldObj[0].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[1];
+            brokenBackObj[0].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[1];
+            brokenFieldObj[1].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[1];
+            brokenBackObj[1].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[1];
+
+            for (int i = 0; i < dropObj2.Length; i++)
+            {
+                dropObj2[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                dropObj2[i].transform.position = 
+                    new Vector3(Random.Range(dropRockPointX[0], dropRockPointX[1]), 
+                    Random.Range(dropRockPointY[0], dropRockPointY[1]), 0);
+                curDropSmallRockSpeedY[i] = Random.Range(dropRockSpeedY[0], dropRockSpeedY[1]);
+            }
+            for (int i = 0; i < dropObj.Length; i++)
+            {
+                dropObj[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                dropObj[i].transform.position =
+                    new Vector3(Random.Range(dropRockPointX[4], dropRockPointX[5]),
+                    Random.Range(dropRockPointY[4], dropRockPointY[5] + 500f), 0);
+                curDropBigRockSpeedY[i] = Random.Range(dropRockSpeedY[2], dropRockSpeedY[3]);
+            }
+        }
+        if (opt == 2) //harfy 등장 후 초기화
+        {
+            //위치 초기화
+            brokenFieldObj[0].transform.position =
+            new Vector3(2116f, brokenFieldObj[0].transform.position.y, brokenFieldObj[0].transform.position.z);
+            brokenBackObj[0].transform.position =
+            new Vector3(2116f, brokenBackObj[0].transform.position.y, brokenBackObj[0].transform.position.z);
+            //필드, 배경 랜덤 이미지
+            brokenFieldObj[1].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[Random.Range(1, 4)];
+            brokenBackObj[1].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[Random.Range(1, 4)];
+            
+            brokenFieldObj[0].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[Random.Range(1,4)];
+            brokenBackObj[0].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[Random.Range(1,4)];
+            
+            //종유석 위치 초기화
+            for (int i = 0; i < dropObj2.Length; i++)
+            {
+                dropObj2[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                dropObj2[i].transform.position =
+                    new Vector3(Random.Range(dropRockPointX[2], dropRockPointX[3]),
+                    Random.Range(dropRockPointY[2], dropRockPointY[3]), 0);
+                curDropSmallRockSpeedY[i] = Random.Range(dropRockSpeedY[0], dropRockSpeedY[1]);
+            }
+            for (int i = 0; i < dropObj.Length; i++)
+            {
+                dropObj[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                dropObj[i].transform.position =
+                    new Vector3(Random.Range(dropRockPointX[6], dropRockPointX[7]),
+                    Random.Range(dropRockPointY[6], dropRockPointY[7] +1000), 0);
+                curDropBigRockSpeedY[i] = Random.Range(dropRockSpeedY[2], dropRockSpeedY[3]);
+            }
+        }
+        if(opt == 3) //field X 넘어갈 경우 초기화
+        {
+            brokenFieldObj[0].transform.position =
+            new Vector3(2116f, brokenFieldObj[0].transform.position.y, brokenFieldObj[0].transform.position.z);
+            brokenFieldObj[1].GetComponent<SpriteRenderer>().sprite = brokenFieldObj[0].GetComponent<SpriteRenderer>().sprite;
+            brokenFieldObj[0].GetComponent<SpriteRenderer>().sprite = brokenFieldSprite[Random.Range(1, 4)];
+        }
+        if(opt == 4) //back 넘어갈 경우 초기화
+        {
+            brokenBackObj[0].transform.position =
+            new Vector3(2116f, brokenBackObj[0].transform.position.y, brokenBackObj[0].transform.position.z);
+            brokenBackObj[1].GetComponent<SpriteRenderer>().sprite = brokenBackObj[0].GetComponent<SpriteRenderer>().sprite;
+            brokenBackObj[0].GetComponent<SpriteRenderer>().sprite = brokenBackSprite[Random.Range(1, 4)];
+        }
+    }
 
     public void endingPhase1(int opt)
     {
@@ -66,7 +198,7 @@ public class endingManager : MonoBehaviour
             ailObj.GetComponent<Animator>().Play("Empty");
             jewelObj.GetComponent<Animator>().Play("Empty");
             witchObj.GetComponent<Animator>().Play("Empty");
-            harfyObj.GetComponent<Animator>().Play("Empty");
+            //harfyObj.GetComponent<Animator>().Play("Empty");
 
             jewelObj.transform.position = ailObj.transform.position;
             //harfyObj.transform.position = new Vector3(2750f, -75f, 0f);
@@ -168,7 +300,7 @@ public class endingManager : MonoBehaviour
             whiteSpeed = whiteChangeVal;
             harfyObj.transform.position = new Vector3(2500f, -75f, 0f);
             harfyObj.GetComponent<Animator>().Play("Idle0");
-
+            harfyPoint = new Vector3(2500f, -75f, 0f); 
             setHarfyTake(1);
         }
         if (opt == 1) //싸움
@@ -205,14 +337,18 @@ public class endingManager : MonoBehaviour
         harfyMoveVal = 0f;
         harfyMoveMoveVal = 0.01f;
         harfyTake = opt;
+        if(opt == 1)
+        {
+            harfyObj.transform.position = Vector3.Lerp(harfyPoint, harfyObj.transform.position, 1f - (harfyMoveVal * harfyMoveVal));
+        }
     }
 
     private void FixedUpdate()
     {
         if (jewelMove)
         {
-            jewelObj.transform.position += new Vector3(0.5f, 0f, 0f);
-            if (jewelObj.transform.position.x >= witchObj.transform.position.x)
+            jewelObj.transform.position += new Vector3(1.0f, 0f, 0f);
+            if (jewelObj.transform.position.x >= witchObj.transform.position.x - 15f)
             {
                 jewelMove = false;
                 jewelObj.GetComponent<Animator>().Play("Destroy");
@@ -223,16 +359,17 @@ public class endingManager : MonoBehaviour
         {
             if (harfyObj.transform.position.x > 2450f)
             {
-                harfyObj.transform.position -= new Vector3(10f, 0f, 0f);
+                harfyObj.transform.position -= new Vector3(20f, 0f, 0f);
             }
             if (harfyObj.transform.position.x < 2550f && !whiteMove)
             {
                 whiteMove = true;
-                whiteSpeed = whiteChangeVal;
+                whiteSpeed = whiteChangeVal * 5f;
                 whiteFullObj.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0);
                 
                 harfyMove = false;
-                endingPhase1(-1);
+                
+                harfyObj.GetComponent<Animator>().Play("Black");
                 BattleManager.Instance.setEndingTiming(true);
             }
         }
@@ -298,6 +435,126 @@ public class endingManager : MonoBehaviour
         if (whiteMove && whiteFullObj.GetComponent<SpriteRenderer>().color.a < 1f)
         {
             whiteFullObj.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, whiteFullObj.GetComponent<SpriteRenderer>().color.a + whiteSpeed);
+        }
+
+        if (rockDropState  == 1)
+        {
+            for(int i = 0; i < dropObj.Length; i++)
+            {
+                if (curDropBigRockSpeedY[i] > 0f)
+                {
+                    dropObj[i].transform.position -= new Vector3(0f, curDropBigRockSpeedY[i], 0f);
+                    if (dropObj[i].transform.position.y < -250f)
+                    {
+                        if (whiteFullObj.GetComponent<SpriteRenderer>().color.a == 0f) CameraManager.Instance.attackShakeStart(Random.Range(1f, 3f));
+                        curDropBigRockSpeedY[i] = Random.Range(-120f, -300f);
+                        dropObj[i].transform.position =
+                            new Vector3(dropObj[i].transform.position.x, -110f, dropObj[i].transform.position.z);
+                        dropObj[i].GetComponent<Animator>().Play("Boom" + Random.Range(0, 3).ToString());
+                    }
+                }
+                else //폭발시
+                {
+                    curDropBigRockSpeedY[i] += 1.0f;
+                    if (curDropBigRockSpeedY[i] >= 0f) //쿨타임 끝나면 바로 소롼
+                    {
+                        dropObj[i].transform.position = new Vector3(
+                            Random.Range(dropRockPointX[4], dropRockPointX[5]), Random.Range(dropRockPointY[4], dropRockPointY[5]), dropObj[i].transform.position.z);
+                        curDropBigRockSpeedY[i] = Random.Range(dropRockSpeedY[2], dropRockSpeedY[3]);
+                        dropObj[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                    }
+                }
+            }
+
+            for (int i = 0; i < dropObj2.Length; i++)
+            {
+                if (curDropSmallRockSpeedY[i] > 0f) // 낙하 중
+                {
+                    dropObj2[i].transform.position -= new Vector3(0f, curDropSmallRockSpeedY[i], 0f);
+                    if (dropObj2[i].transform.position.y < -52f)
+                    {
+                        curDropSmallRockSpeedY[i] = Random.Range(-120f, -300f);
+                        dropObj2[i].transform.position =
+                            new Vector3(dropObj2[i].transform.position.x, -28f, dropObj2[i].transform.position.z);
+                        dropObj2[i].GetComponent<Animator>().Play("Boom" + Random.Range(0, 3).ToString());
+                    }
+                }
+                else //폭발중
+                {
+                    curDropSmallRockSpeedY[i] += 1.0f;
+                    if (curDropSmallRockSpeedY[i] >= 0f) //쿨타임 끝날시 새로 소환
+                    {
+                        
+                        dropObj2[i].transform.position = new Vector3(
+                            Random.Range(dropRockPointX[0], dropRockPointX[1]), Random.Range(dropRockPointY[0], dropRockPointY[1]), dropObj[i].transform.position.z);
+                        curDropSmallRockSpeedY[i] = Random.Range(dropRockSpeedY[0], dropRockSpeedY[1]);
+                        dropObj2[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                    }
+                }
+            }
+        }
+        if(rockDropState == 2)
+        {
+            for (int i = 0; i < dropObj.Length; i++)
+            {
+                if (dropObj[i].transform.position.x < 3500f) dropObj[i].transform.position += new Vector3(dropRockSpeedX[1], 0f, 0f);
+                if (curDropBigRockSpeedY[i] > 0f)
+                {
+                    dropObj[i].transform.position -= new Vector3(0f, curDropBigRockSpeedY[i], 0f);
+                    if (dropObj[i].transform.position.y < -250f)
+                    {
+                        if (whiteFullObj.GetComponent<SpriteRenderer>().color.a <= 0f && harfyTake < 2) CameraManager.Instance.attackShakeStart(Random.Range(1f, 3f));
+                        curDropBigRockSpeedY[i] = Random.Range(-120f, -300f);
+                        dropObj[i].transform.position =
+                            new Vector3(dropObj[i].transform.position.x, -110f, dropObj[i].transform.position.z);
+                        dropObj[i].GetComponent<Animator>().Play("Boom" + Random.Range(0, 3).ToString());
+                    }
+                }
+                else //폭발시
+                {
+                    curDropBigRockSpeedY[i] += 1.0f;
+                    if (curDropBigRockSpeedY[i] >= 0f) //쿨타임 끝나면 바로 소롼
+                    {
+                        
+                        dropObj[i].transform.position = new Vector3(
+                            Random.Range(dropRockPointX[6], dropRockPointX[7]), Random.Range(dropRockPointY[6], dropRockPointY[7]), dropObj[i].transform.position.z);
+                        curDropBigRockSpeedY[i] = Random.Range(dropRockSpeedY[2], dropRockSpeedY[3]);
+                        dropObj[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                    }
+                }
+            }
+
+            for (int i = 0; i < dropObj2.Length; i++)
+            {
+                if(dropObj2[i].transform.position.x < 3500f) dropObj2[i].transform.position += new Vector3(dropRockSpeedX[0], 0f, 0f);
+
+                if (curDropSmallRockSpeedY[i] > 0f) // 낙하 중
+                {
+                    dropObj2[i].transform.position -= new Vector3(0f, curDropSmallRockSpeedY[i], 0f);
+                    if (dropObj2[i].transform.position.y < -52f)
+                    {
+                        curDropSmallRockSpeedY[i] = Random.Range(-120f, -300f);
+                        dropObj2[i].transform.position =
+                            new Vector3(dropObj2[i].transform.position.x, -28f, dropObj2[i].transform.position.z);
+                        dropObj2[i].GetComponent<Animator>().Play("Boom_" + Random.Range(0, 3).ToString());
+                    }
+                }
+                else //폭발중
+                {
+                    curDropSmallRockSpeedY[i] += 1.0f;
+                    if (curDropSmallRockSpeedY[i] >= 0f) //쿨타임 끝날시 새로 소환
+                    {
+                        dropObj2[i].transform.position = new Vector3(
+                            Random.Range(dropRockPointX[2], dropRockPointX[3]), Random.Range(dropRockPointY[2], dropRockPointY[3]), dropObj2[i].transform.position.z);
+                        curDropSmallRockSpeedY[i] = Random.Range(dropRockSpeedY[0], dropRockSpeedY[1]);
+                        dropObj2[i].GetComponent<Animator>().Play("Rock" + Random.Range(0, 4).ToString());
+                    }
+                }
+            }
+            brokenFieldObj[0].transform.position += new Vector3(fieldSpeedX,0f,0f);
+            if (brokenFieldObj[0].transform.position.x > 2500f) setRockDropState(3);
+            brokenBackObj[0].transform.position += new Vector3(backSpeedX, 0f, 0f);
+            if (brokenBackObj[0].transform.position.x > 2500f) setRockDropState(4);
         }
     }
 }

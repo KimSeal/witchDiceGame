@@ -774,6 +774,9 @@ public class jsonDataManager : MonoBehaviour
             }
 
             talkIdxOnOff = false;
+
+            lastMeet = 0;
+            witchMeet = 0;
             battleOttogi = 0;
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
@@ -841,6 +844,8 @@ public class jsonDataManager : MonoBehaviour
             }
 
             talkIdxOnOff = playerPlayerData.talkIdxOnOff;
+            lastMeet = playerPlayerData.lastMeet;
+            witchMeet = playerPlayerData.witchMeet;
             battleOttogi = playerPlayerData.battleOttogi;
         }
         public bool getTalkIdxOnOff()
