@@ -406,9 +406,12 @@ public class BattleManager : MonoBehaviour
     {
         if (team)
         {
-            //myCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
-            //upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true, true);
-            //upDownManager.Instance.changeUnderSkillCover(idx / 10, idx % 10, false );
+            if (AdventureManager.Instance.getAdminMode() == 0)
+            {
+                myCoolTimeArr[idx / 10 * 2 + idx % 10] = 2;
+                upDownManager.Instance.setSkillCoolTimeCover(idx / 10 * 2 + idx % 10, true, true);
+                upDownManager.Instance.changeUnderSkillCover(idx / 10, idx % 10, false);
+            }
         }
         else
         {

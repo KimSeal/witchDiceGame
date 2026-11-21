@@ -43,6 +43,9 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
+    private int adminMode = 1;
+    public int getAdminMode() { return adminMode; }
+
     [SerializeField]
     private GameObject diceRollEff;
 
@@ -1665,7 +1668,7 @@ public class AdventureManager : MonoBehaviour
             diceBtnFire.Stop();
 
 
-            int moveCount = 99;//selectDiceNum;
+            int moveCount = (getAdminMode() == 0) ? selectDiceNum : 99;
             if(stageIdx + selectDiceNum >= adventureEventList[stageNum].Count)  // 넘어간 경우 자제한다
             {
                 moveCount = adventureEventList[stageNum].Count - 1 - stageIdx;
@@ -1695,7 +1698,7 @@ public class AdventureManager : MonoBehaviour
                 stageIdx++;
                 balpanCurPointText.GetComponent<TextMeshPro>().text = (stageIdx+1).ToString() + " / " + (adventureEventArr.Length).ToString();
                 
-                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= 100) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
+                if (adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventType() >= ((getAdminMode() < 2) ? 98 : 100)) //만약 무조건 멈춰야 하는 곳인 경우 정지시킨다.
                 {
                     if (i + 1 + 2 < 10)  balpanEffObj[i + 1 + 2].GetComponent<Animator>().Play("Update");
                     jsonDataManager.Instance.setEventMeet(adventureEventList[stageNum][adventureEventArr[stageIdx]].getEventIdx()); //이벤트 만난거 처리
