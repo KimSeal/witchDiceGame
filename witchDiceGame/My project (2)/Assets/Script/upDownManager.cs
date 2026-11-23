@@ -595,8 +595,12 @@ public class upDownManager : MonoBehaviour
     
     public void activeWitchPowerDice(int powerIdx, int diceIdx)
     {
-        
-        bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString(), -1, 0f);
+        //not diceArr
+        if (diceIdx < 0 || diceIdx >= 8) return;
+
+        if (powerIdx == -1) { bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play("Empty", -1, 0f); }
+        else if(powerIdx == -2) { bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play("selectStart", -1, 0f); }
+        else { bigDicePowerButtonEffOrigin[diceIdx].GetComponent<Animator>().Play(powerIdx.ToString(), -1, 0f); }
         bigDicePowerButtonEff[diceIdx].GetComponent<Image>().sprite =
                bigDicePowerButtonEffOrigin[diceIdx].GetComponent<SpriteRenderer>().sprite;
     }
@@ -2519,7 +2523,7 @@ public class upDownManager : MonoBehaviour
         underSkillButton[idx].GetComponent<Image>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_" + str);
 
     }
-    public string[] powerName = { "Reroll Origin", "Reroll", "Add", "Sub"};
+    public string[] powerName = { "Reroll Origin", "Reroll", "Add", "Sub", "Copy", "Memory", "Swap" };
     
     public void updateUpperHoverBar(int option, Item item)
     {

@@ -66,8 +66,6 @@ public class CharacterManager : MonoBehaviour
 
     public RuntimeAnimatorController getOriginAnimator(int destinyIdx)
     {
-        Debug.Log("find origin anim");
-        Debug.Log(destinyIdx);
         if (destinyIdx >= 10044 && destinyIdx <= 10048) return graceOriginAnimator[destinyIdx - 10044];
         if (destinyIdx == 10012) return flutterOriginAnimator[0];
         if (destinyIdx == 10003 || destinyIdx == 10004) return flutterOriginAnimator[destinyIdx - 10002];

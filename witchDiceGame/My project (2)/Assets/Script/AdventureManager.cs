@@ -43,7 +43,7 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    private int adminMode = 1;
+    private int adminMode = 0;
     public int getAdminMode() { return adminMode; }
 
     [SerializeField]

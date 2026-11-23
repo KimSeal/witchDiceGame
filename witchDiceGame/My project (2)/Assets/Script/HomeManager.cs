@@ -224,9 +224,6 @@ public class HomeManager : MonoBehaviour
     {
         int chapterNum = diceIdxToChapter[jewelBigNum];
 
-        Debug.Log(chapterNum);
-
-
         SoundManager_Main.Instance.stopSound(homeSoundIdx);
         if (!(chapterNum == 4 && detailIdx == 2))
         {
@@ -240,7 +237,7 @@ public class HomeManager : MonoBehaviour
         yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
 
         if(chapterNum == 5 && detailIdx == 2) { 
-            Debug.Log("**");
+            //Debug.Log("**");
             jsonDataManager.Instance.setLastMeet(1); 
         } //마지막 챕터 설득을 위한 체크
 

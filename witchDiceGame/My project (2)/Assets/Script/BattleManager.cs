@@ -45,7 +45,7 @@ public class BattleManager : MonoBehaviour
     public GameObject[] deadEventObjSprite = new GameObject[4];
 
     private int[] noThrowCharacter = { 10003,10004,10012,10013,  10023, 10033,   10036,   10044,10045, //여기까지 데모버전 애들
-                                        10056, 10066, 10067, 10068, 10069,10070, 10079,10080,10087, 10088, 10090,};
+                                        10056, 10059, 10066, 10067, 10068, 10069,10070, 10079,10080,10087, 10088, 10090,};
     public void doDeadEvent(int characterIdx, int damage) //적 대상 애니메이션
     {
         if(enemyCharacter[characterIdx].getDestiny().getDestinyIdx() == 10089 ||
@@ -197,6 +197,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject[] enemyCharacterObjEntityUI = new GameObject[4];
     private ParticleSystem[,] enemyFireObj = new ParticleSystem[4, 2];
 
+    [SerializeField] public GameObject specialObj;
+
     private int[] myCharacterAtkReady = { 0, 0, 0, 0 };
     private int[] enemyCharacterAtkReady = { 0, 0, 0, 0 };
 
@@ -311,6 +313,9 @@ public class BattleManager : MonoBehaviour
     private int[,] lineConnect = { { -1, -1, -1, -1, -1, -1, -1, -1 } ,
                                     { -1, -1, -1, -1, -1, -1, -1, -1 }}; // idx가 색. 내용물이 연결 캐릭터
     private string[] outlineColor = {"#F39591", "#7EC968", "#B8EAFB", "#FBF6B8" };
+
+
+    private int specialVal = 0;// 1 : chihuahua 전용
 
     public void setLineConnect(int characterIdx, int diceIdx)
     {
@@ -1658,9 +1663,16 @@ public class BattleManager : MonoBehaviour
 
     public bool witchPowerAble(int powerIdx)
     {
+        if (AdventureManager.Instance.getAdminMode() != 0) {
+            return true;
+        }
+        // 0 : reroll 자유 추가 필요
         if (powerIdx == 1) return true;
         if ((powerIdx == 2) && jsonDataManager.Instance.getChapterRead(0, 2) == 2) return true;
         if ((powerIdx == 3) && jsonDataManager.Instance.getChapterRead(1, 2) == 2) return true;
+        if ((powerIdx == 4) && jsonDataManager.Instance.getChapterRead(2, 2) == 2) return true;
+        if ((powerIdx == 5) && jsonDataManager.Instance.getChapterRead(3, 2) == 2) return true;
+        if ((powerIdx == 6) && jsonDataManager.Instance.getChapterRead(4, 2) == 2) return true;
         return false;
     }
     //witch Power 선택 시작!
@@ -1753,12 +1765,14 @@ public class BattleManager : MonoBehaviour
         int witchPowerTemp = idx;
         int diceNum = 6;
         if (witchPowerTemp >= 0 && witchPowerTemp <= 3) diceNum = 1; // 능력이 reroll0, reroll, add, sub, 이어서 주사위 하나만 쓰는 경우
-        if (witchPowerTemp == 4 || witchPowerTemp == 5) diceNum = 2; // 능력이 swap, copy 여서 주사위 2개를 쓰는 경우
-        if (witchPowerTemp == 6) diceNum = 1; //능력이 모두 바꾸기라서 주사위 하나만 쓰는 경우.
+        if (witchPowerTemp == 4 || witchPowerTemp == 6) diceNum = 2; // 능력이 copy, swap, 여서 주사위 2개를 쓰는 경우
+        if (witchPowerTemp == 5) diceNum = 1; //능력이 저장이라서 주사위 하나만 쓰는 경우.
 
+        upDownManager.Instance.activeWitchPowerDice(-1, clickedDice[1]);
+        upDownManager.Instance.activeWitchPowerDice(-1, clickedDice[0]);
         clickedDice[0] = -1;
-        clickedDice[1] = -1;
-
+        clickedDice[1] = -1; //이거 1차 선택한 주사위에 대해 없어지는것도 출력필요
+       
         witchPowerClickState = diceNum;
         witchPowerState = idx;
         witchPowerObj[0].GetComponent<Animator>().Play(witchPowerTemp.ToString(), -1, 0f);
@@ -1787,7 +1801,6 @@ public class BattleManager : MonoBehaviour
     public void witchPowerState_Change(int dir)
     {
         SoundManager_Sfx.Instance.playSound(0);
-
 
         //);
         witchPowerClickState = 6;
@@ -1818,7 +1831,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public int[] needJewel = {0, 1, 3, 3, 2, 3, 1};
+    private int[] needJewel = {0, 1, 3, 3, 0, 0, 0};
     //주사위 고르기. 마녀 스킬 추가되면 여기서 작업할것
 
     public Sprite getDiceSprite(int opt, int idx)
@@ -1853,11 +1866,13 @@ public class BattleManager : MonoBehaviour
         }
         if (witchPowerClickState == 2) { //다중 선택일 경우, 다음거 선택할수 있도록 설정.
             witchPowerClickState = 1;
-            clickedDice[witchPowerClickState] = idx;
+            clickedDice[1] = idx;
+            upDownManager.Instance.activeWitchPowerDice(-2, clickedDice[1]);
             return;
         }
 
         if (witchPowerClickState == 1 && clickedDice[1] != -1 && clickedDice[0] == clickedDice[1]) {//같은 거 선택 금지
+            hoverInWitchPowerNum(witchPowerState); //같은거 선택 시 취소
             return;
         }
 
@@ -1898,7 +1913,34 @@ public class BattleManager : MonoBehaviour
             SoundManager_Sfx.Instance.playSound(16);
             upDownManager.Instance.activeWitchPowerDice(3, clickedDice[0]);
         }
-        
+
+        if (witchPowerTemp == 4)  //copy 스킬 사용시
+        {
+            copyDice(clickedDice[1], clickedDice[0]);
+            SoundManager_Sfx.Instance.playSound(16);
+            upDownManager.Instance.activeWitchPowerDice(4, clickedDice[1]);
+            upDownManager.Instance.activeWitchPowerDice(4, clickedDice[0]);
+            clickedDice[0] = -1;
+            clickedDice[1] = -1;
+            witchPowerClickState = 2;
+        }
+        if (witchPowerTemp == 5)  //memory 스킬 사용시
+        {
+            memoryDice(clickedDice[0]);
+            SoundManager_Sfx.Instance.playSound(16);
+            upDownManager.Instance.activeWitchPowerDice(5, clickedDice[0]);
+        }
+        if (witchPowerTemp == 6)  //swap 스킬 사용시
+        {
+            swapDice(clickedDice[1], clickedDice[0]);
+            SoundManager_Sfx.Instance.playSound(16);
+            upDownManager.Instance.activeWitchPowerDice(6, clickedDice[1]);
+            upDownManager.Instance.activeWitchPowerDice(6, clickedDice[0]);
+            clickedDice[0] = -1;
+            clickedDice[1] = -1;
+            witchPowerClickState = 2;
+        }
+
         /*
         //스킬 사용되었으니 변경 값에 대하여 이펙트 생성
         for (int i = 0; i < 2; i++)
@@ -1934,7 +1976,7 @@ public class BattleManager : MonoBehaviour
        
         updateMyDiceUI();
         updateEnemyDiceUI();
-        
+
         //setCurClickSkill(-1);
 
         clickedDice[0] = -1;
@@ -1962,6 +2004,14 @@ public class BattleManager : MonoBehaviour
         curClickSkill = input;
         upDownManager.Instance.clickSkill(curClickSkill);
     }
+    private void memoryDice(int idx)
+    {
+        int num;
+        if (idx < 4) num = myDiceNum[idx];
+        else num = enemyDiceNum[idx - 4];
+        changeDiceState(idx, num);
+    }
+   
     private void addDice(int idx, bool add)
     {
         int num;
@@ -1994,6 +2044,86 @@ public class BattleManager : MonoBehaviour
         }
         witchPowerClickState = -1;
     }
+    private void copyDice(int idx, int idx2)
+    {
+        int num;
+        if (idx < 4) num = myDiceNum[idx];
+        else num = enemyDiceNum[idx - 4];
+
+        if (idx2 < 4)
+        {
+            if (myDice[idx2] != null)
+            {
+                myDiceNum[idx2] = num;
+                myDiceUI[idx2].transform.rotation = Quaternion.Euler(0, 0, 0);
+                myDiceUI[idx2].GetComponent<SpriteRenderer>().sprite = diceSprite[num - 1];
+            }
+        }
+        else
+        {
+            idx2 -= 4;
+            if (enemyDice[idx2] != null)
+            {
+                enemyDiceNum[idx2] = num;
+                enemyDiceUI[idx2].transform.rotation = Quaternion.Euler(0, 0, 0);
+                enemyDiceUI[idx2].GetComponent<SpriteRenderer>().sprite = diceSprite[num - 1];
+            }
+        }
+
+        witchPowerClickState = -1;
+    }
+    private void swapDice(int idx, int idx2)
+    {
+        int num, num2;
+        if (idx < 4) num = myDiceNum[idx];
+        else num = enemyDiceNum[idx - 4];
+
+        if (idx2 < 4) num2 = myDiceNum[idx2];
+        else num2 = enemyDiceNum[idx2 - 4];
+        
+        if (idx < 4)
+        {
+            if (myDice[idx] != null)
+            {
+                myDiceNum[idx] = num2;
+                myDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, 0);
+                myDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[num2 - 1];
+            }
+        }
+        else
+        {
+            idx -= 4;
+            if (enemyDice[idx] != null)
+            {
+                enemyDiceNum[idx] = num2;
+                enemyDiceUI[idx].transform.rotation = Quaternion.Euler(0, 0, 0);
+                enemyDiceUI[idx].GetComponent<SpriteRenderer>().sprite = diceSprite[num2 - 1];
+            }
+        }
+
+        if (idx2 < 4)
+        {
+            if (myDice[idx2] != null)
+            {
+                myDiceNum[idx2] = num;
+                myDiceUI[idx2].transform.rotation = Quaternion.Euler(0, 0, 0);
+                myDiceUI[idx2].GetComponent<SpriteRenderer>().sprite = diceSprite[num - 1];
+            }
+        }
+        else
+        {
+            idx2 -= 4;
+            if (enemyDice[idx2] != null)
+            {
+                enemyDiceNum[idx2] = num;
+                enemyDiceUI[idx2].transform.rotation = Quaternion.Euler(0, 0, 0);
+                enemyDiceUI[idx2].GetComponent<SpriteRenderer>().sprite = diceSprite[num - 1];
+            }
+        }
+
+        witchPowerClickState = -1;
+    }
+
     private void rerollDice(int idx)
     {
         if (idx < 4)
@@ -2020,6 +2150,8 @@ public class BattleManager : MonoBehaviour
         }
         witchPowerClickState = -1;
     }
+
+
     //turn Dice는 직관성 문제로 인해 제거됨.
     public void turnDice(int input)
     {
@@ -3899,6 +4031,15 @@ public class BattleManager : MonoBehaviour
                     battleAnimationControl(tempTargetIdx, 2, takeSkillPacketArr[takeSkillArrIdx].getVal());
                     DeadCharacterUpdate(tempTargetIdx);
                     boomChk = true;
+
+
+                    if (winningCheck() == 1 &&  specialVal == 1)
+                    {
+                        enemyCharacterObjUIAnim[0].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+                        enemyCharacterObjUIAnim[1].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+                        enemyCharacterObjUIAnim[2].runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+                        specialObj.GetComponent<Animator>().Play("Dead");
+                    }
                 }
                 else
                 {
@@ -4665,7 +4806,7 @@ public class BattleManager : MonoBehaviour
         //적군 전멸
         else if (result == 1)
         {
-
+            
             infoBtn.GetComponent<BoxCollider2D>().enabled = false;
 
             if (AdventureManager.Instance.getTutorial() == 17) //만약 튜토리얼 중인경우 7번 대화(마녀의 운명 마법 사용)
@@ -5323,7 +5464,7 @@ public class BattleManager : MonoBehaviour
     //캐릭터 정보하고 아이템 창 control을 위한 변수
         characterInfoOpenAble = true;
         getLoseChk = false;
-        needJewel[0] = 0;needJewel[1] = 1;needJewel[2] = 3;needJewel[3] = 3;needJewel[4] = 2;needJewel[5] = 3; needJewel[6] = 1;
+        needJewel[0] = 0;needJewel[1] = 1;needJewel[2] = 3;needJewel[3] = 3;needJewel[4] = 0;needJewel[5] = 0; needJewel[6] = 0;
 
         for (int i = 0; i < 4; i++)
         {
@@ -5920,6 +6061,17 @@ public class BattleManager : MonoBehaviour
             enemyCharacterObjUIAnim[i].Play("Idle", -1, 0f);
         }
 
+        //특수 이벤트 경우 : 현재는 치와와 만
+        specialVal = 0;
+        specialObj.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
+
+        if (enemyCharacter[0] != null && enemyCharacter[0].getDestiny().getDestinyIdx() == 10067 &&
+            enemyCharacter[1] != null && enemyCharacter[1].getDestiny().getDestinyIdx() == 10068 &&
+            enemyCharacter[2] != null && enemyCharacter[2].getDestiny().getDestinyIdx() == 10069 )
+        {
+            specialVal = 1;
+            specialObj.GetComponent<Animator>().runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/originalVersion/AboutOdi/ChihuahuaBody/Animator_ChihuahuaBody");
+        }
         witchPowerObj[0].SetActive(false);
         witchPowerObj[1].SetActive(false);
         witchPowerObj[2].SetActive(false);
