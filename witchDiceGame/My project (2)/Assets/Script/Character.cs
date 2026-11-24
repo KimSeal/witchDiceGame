@@ -108,6 +108,7 @@ public abstract class Character
     protected Item[] item = new Item[2];
     //버프, 디버프, 상태이상, 패시브, 지닌 주사위
     protected int[] skillIdx = new int[2] { 0, 1 };
+    protected Skill[] skillArr = new Skill[2];
     protected Destiny destiny; //할당된 운명에 대한 클래스.
     public Dice dice;
     protected Character_battle character_battle;
@@ -132,6 +133,10 @@ public abstract class Character
             skillIdx[0] = 0;//destiny.getSkillIdx(0); 
             skillIdx[1] = 1;//destiny.getSkillIdx(1);
 
+
+            skillArr[0] = new Skill(destiny.findSkill(0));
+            skillArr[1] = new Skill(destiny.findSkill(1));
+
             item[0] = new Item(itemManager.Instance.getItem(2, 0)); //빈 아이템을 넣어준다.
             item[1] = new Item(itemManager.Instance.getItem(2, 0));
         }
@@ -154,7 +159,12 @@ public abstract class Character
         this.item[1] = new Item(character.getItem(1));
         this.skillIdx[0] = character.skillIdx[0];
         this.skillIdx[1] = character.skillIdx[1];
+
         this.destiny = new Destiny(character.getDestiny());
+
+        skillArr[0] = new Skill(character.skillArr[0]);
+        skillArr[1] = new Skill(character.skillArr[1]);
+
         this.dice = new Dice(character.getDiceTrue());
         this.character_battle = new Character_battle();
         this.reviveUnit = character.reviveUnit;
@@ -176,6 +186,10 @@ public abstract class Character
         this.item[1] = new Item(character.getItem(1));
         this.skillIdx[0] = character.skillIdx[0];
         this.skillIdx[1] = character.skillIdx[1];
+
+        skillArr[0] = new Skill(character.skillArr[0]);
+        skillArr[1] = new Skill(character.skillArr[1]);
+
         this.destiny = new Destiny(character.getDestiny());
         this.dice = new Dice(character.getDiceTrue());
         this.character_battle = new Character_battle();
@@ -184,9 +198,6 @@ public abstract class Character
         this.shadow = character.shadow;
         this.money = character.getMoney();
     }
-
-
-    
 
     public RuntimeAnimatorController getAnimator(bool deadOk)
     {
@@ -197,7 +208,6 @@ public abstract class Character
             return Resources.Load<RuntimeAnimatorController>("sprite/TestSprite/CharacterImg/animator_noneCharacter");
         }
 
-        
         if (
             (jsonDataManager.Instance.getChapterRead(0, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10012 || this.getDestiny().getDestinyIdx() == 10003 || this.getDestiny().getDestinyIdx() == 10004)) ||
             (jsonDataManager.Instance.getChapterRead(2, 2) == 0 && (this.getDestiny().getDestinyIdx() == 10044 || this.getDestiny().getDestinyIdx() == 10045 || this.getDestiny().getDestinyIdx() == 10046 || this.getDestiny().getDestinyIdx() == 10047 || this.getDestiny().getDestinyIdx() == 10048)) ||
@@ -278,10 +288,6 @@ public abstract class Character
     public int throwDiceExcept() {
         return this.dice.throwDiceExcept();
     }
-    public int needDice(int skillNum)
-    {
-        return destiny.getNeedDice(skillIdx[skillNum]);
-    } 
 
     public void setDice(int diceIdx, int val)
     {
@@ -329,11 +335,11 @@ public abstract class Character
     public int getMaxHp() { return maxHp; }
     public Skill skillUse(int selNum)
     {
-        return destiny.findSkill(skillIdx[selNum]);
+        return skillArr[selNum];//destiny.findSkill(skillIdx[selNum]);
     }
     public string getSkillName(int selNum)
     {
-        return destiny.findSkill(skillIdx[selNum]).getSkillName();
+        return skillUse(selNum).getSkillName();
     }
 
     public int getSkillVal(int selNum, int idx) {

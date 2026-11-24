@@ -33,8 +33,6 @@ public class FoodStreetManager : MonoBehaviour
     public int maxRemainFood = 0;
     public int curRemainFood = 0;
 
-    public Character ailCharacter;
-
     private void Awake()
     {
         if (null == instance)
@@ -131,7 +129,7 @@ public class FoodStreetManager : MonoBehaviour
     public void hoverInAil()
     {
         ailBodyObj.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
-        ToolBarManager.Instance.setToolBar(ailCharacter);
+        ToolBarManager.Instance.setToolBar(CharacterManager.Instance.makeCurCharacter(1));
     }
     public void hoverOutAil()
     {
@@ -145,9 +143,7 @@ public class FoodStreetManager : MonoBehaviour
 
     public void hoverInSkill(int skillIdx)
     {
-        Skill thisSkill = null;
-        thisSkill = ailCharacter.skillUse(skillIdx);
-        ToolBarManager.Instance.setToolBar(thisSkill);
+        ToolBarManager.Instance.setToolBar(CharacterManager.Instance.makeCurCharacter(1).skillUse(skillIdx));
         //skillObj[skillIdx].GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
         skillOutline[skillIdx].SetActive(true);
     }
@@ -193,8 +189,7 @@ public class FoodStreetManager : MonoBehaviour
     }
     public void updateFoodTowerChange()
     {
-        CharacterManager.Instance.setCharacter_destinyBase(ref ailCharacter, jsonDataManager.Instance.getCharacterSelect(1));
-        upgradeInitStat(ref ailCharacter);
+        Character ailCharacter = CharacterManager.Instance.makeCurCharacter(1);
 
         for (int i=0;i<statArr.Length;i++){ //food tower Y update
             foodTower[i].transform.position = new Vector3(foodTower[i].transform.position.x,

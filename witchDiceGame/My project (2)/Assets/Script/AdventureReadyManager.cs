@@ -301,6 +301,18 @@ public class AdventureReadyManager : MonoBehaviour
             warningText.text = "";
         }
     }
+    public void hoverInBack(int idx)
+    {
+        if (CharacterManager.Instance.makeCurCharacter(idx) != null)
+        {
+            ToolBarManager.Instance.setToolBar(CharacterManager.Instance.makeCurCharacter(idx));
+        }
+    }
+    public void hoverOutBack()
+    {
+        ToolBarManager.Instance.toolBarOnOff(0);
+    }
+
     public void hoverInTower()
     {
         enterButton.GetComponent<SpriteRenderer>().sprite = towerSprite[1];
@@ -369,8 +381,10 @@ public class AdventureReadyManager : MonoBehaviour
         warningTextArr[2] = 177;
         updateWarningImage();
         activeLevelSelect(false);
-        CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
-        CharacterManager.Instance.setFoodStreetInfo();
+
+        CharacterManager.Instance.setTestCharacterSet();
+        //CharacterManager.Instance.setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
+        //CharacterManager.Instance.setFoodStreetInfo();
 
         if (jsonDataManager.Instance.getCharacterSelect(0) > 0) CharacterManager.Instance.setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
         else CharacterManager.Instance.emptyMyCharacter(1);

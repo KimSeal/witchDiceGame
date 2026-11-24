@@ -98,10 +98,7 @@ public class Destiny
     {
         return this.DestinyIdx;
     }
-    public int getNeedDice(int idx)
-    {
-        return this.skillArr[idx].getNeedDice(); 
-    }
+
     public Skill findSkill(int curSel)
     {
         return this.skillArr[curSel];

@@ -82,6 +82,7 @@ public class AdventureManager : MonoBehaviour
     [SerializeField] private GameObject resultObj; //obj_adventureResuilt
     [SerializeField] private GameObject[] resultObjArr = new GameObject[4]; //obj_adventureResult_Item_(number)
     [SerializeField] private GameObject[] resultNewMark = new GameObject[4];
+    [SerializeField] private GameObject[] resultEff = new GameObject[4];
     private int[,] resultItemArr = new int[4, 2]; //결과로 주어지는 아이템들 정보.
 
 
@@ -2101,36 +2102,44 @@ public class AdventureManager : MonoBehaviour
                     {
                         resultItemArr[i, 0] = curDiceEventPacket.getItemType(i);
                         resultItemArr[i, 1] = curDiceEventPacket.getItemIdx(i);
+                        resultEff[i].GetComponent<Animator>().Play("resultEmpty");
                         resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         //결과로 나오는 아이템에 대한 이미지 처리
                         if (resultItemArr[i, 0] == -99999 || resultItemArr[i, 1] == -99999)
                         {
-                            
+
                             clickAbleObjSet(resultObjArr[i], false, 1);
                             clickAbleObjSet(resultObjArr[i], false, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/characterSkill/spr_skill_none");
                         }
                         else  //캐릭터를 얻는 이벤트의 경우
                         {
+
                             clickAbleObjSet(resultObjArr[i], true, 1);
                             clickAbleObjSet(resultObjArr[i], true, 2);
-                            if (resultItemArr[i, 0] == 4) {
+                            if (resultItemArr[i, 0] == 4)
+                            {
                                 resultCharacterSkillUIEntity.SetActive(true);
-                                
+                                resultEff[i].GetComponent<Animator>().Play("pinkPassiveActive");
                                 CharacterManager.Instance.setCharacter_destinyBase(ref resultCharacter[i], resultItemArr[i, 1]); //getCharacter(resultItemArr[i, 1]);
                                 for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, Random.Range(1, 7));
-                                
+
                                 if (tutorialVal != 0) //튜토리얼에서는 1만 넣는다.
                                 {
                                     for (int j = 0; j < 6; j++) resultCharacter[i].changeDiceNum(j, 1);
                                 }
-                                if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1])) { 
-                                    resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark"); 
+                                if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1]))
+                                {
+                                    resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
                                 }
                                 resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/faceImage/spr_" + CharacterManager.Instance.getDestiny(resultItemArr[i, 1]).getName() + "_face");
                                 characterSkillUpdate(0);
                             }
-                            else resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                            else
+                            {
+                                resultEff[i].GetComponent<Animator>().Play("passiveItemActtive_1");
+                                resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
+                            }
                         }
                     }
                     if (tutorialVal == 2) //아이템 칸 설명을 위한 대화로 넘어가기.
@@ -2214,6 +2223,7 @@ public class AdventureManager : MonoBehaviour
                     resultCharacterSkillUIEntity.SetActive(false);
                     for (int i = 0; i < 4; i++)   // 보상 수만큼 해주기
                     {
+                        resultEff[i].GetComponent<Animator>().Play("resultEmpty");
                         resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         if (curDiceEventPacket.getItemExist() % 10 > i) //아이템 수 만큼만 지급.
                         {
@@ -2236,6 +2246,7 @@ public class AdventureManager : MonoBehaviour
                         }
                         else
                         {
+                            resultEff[i].GetComponent<Animator>().Play("passiveItemActtive_1");
                             clickAbleObjSet(resultObjArr[i], true, 1);
                             clickAbleObjSet(resultObjArr[i], true, 2);
                             resultObjArr[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(itemManager.Instance.getItemSprite(resultItemArr[i, 0], resultItemArr[i, 1]));
@@ -2248,6 +2259,7 @@ public class AdventureManager : MonoBehaviour
                     resultCharacterSkillUIEntity.SetActive(true);
                     for (int i = 0; i < 4; i++)   
                     {
+                        resultEff[i].GetComponent<Animator>().Play("resultEmpty");
                         resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
                         if (curDiceEventPacket.getItemExist() % 10 > i) // 지정된 캐릭터 보상 수만큼 해주기
                         {
@@ -2271,6 +2283,7 @@ public class AdventureManager : MonoBehaviour
                         }
                         else if (resultItemArr[i, 0] == 4) //캐릭터를 얻는 이벤트의 경우
                         {
+                            resultEff[i].GetComponent<Animator>().Play("pinkPassiveActive");
                             if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[i, 1]))
                             {
                                 resultNewMark[i].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/diceImage/spr_newMark");
@@ -2722,11 +2735,16 @@ public class AdventureManager : MonoBehaviour
 
                     resultNewMark[idx].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/CharacterImg/empty_0");
 
+                    if (!jsonDataManager.Instance.getPlayerCharacterAble(resultItemArr[idx, 1]))
+                    {
+                        jsonDataManager.Instance.setPlayerCharacterAble(resultItemArr[idx, 1]);
+                    }
 
                     resultItemArr[idx, 0] = -99999;
                     resultItemArr[idx, 1] = -99999;
                     clickAbleObjSet(resultObjArr[idx], false, 1);
                     clickAbleObjSet(resultObjArr[idx], false, 2);
+                    resultEff[idx].GetComponent<Animator>().Play("resultEmptyStart");
                     characterSkillUpdate(-1);
                     updateCharacterFace();
                 }
@@ -2743,7 +2761,7 @@ public class AdventureManager : MonoBehaviour
                     resultItemArr[idx, 1] = -99999;
                     clickAbleObjSet(resultObjArr[idx], false, 1);
                     clickAbleObjSet(resultObjArr[idx], false, 2);
-
+                    resultEff[idx].GetComponent<Animator>().Play("resultEmptyStart");
                 }
                 else if (result == 1) //꽉차서 못담는 경우.
                 {

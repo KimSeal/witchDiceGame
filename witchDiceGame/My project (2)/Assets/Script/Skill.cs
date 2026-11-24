@@ -57,6 +57,7 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
         this.stateChange = stateChange;
         this.skillType = 0;
         this.critical = false;
+        this.useCharacterIdx = -999;
     }
 
     public TakeSkillPacket(int targetIdx, int val, int stateChange, int skillType)
@@ -66,6 +67,7 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
         this.stateChange = stateChange;
         this.skillType =skillType;
         this.critical = false;
+        this.useCharacterIdx = -999;
     }
 
 
@@ -73,10 +75,16 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     private int val;
     private int stateChange;
     private int diceChange;
+    private int useCharacterIdx = 0;
 
     private int skillType;
     private bool critical = false;
     // 0 : 데미지. 1: 회복, 2: 단순 상태 변경
+
+    public void setUseCharacterIdx(int idx)
+    {
+        this.useCharacterIdx = idx;
+    }
 
     public int getTargetIdx()
     {
@@ -189,11 +197,6 @@ public class Skill
         return enemyEffType;
     }
     //예전 전투 시스템에 사용된것
-    public int getNeedDice()
-    {
-        return 9;
-        //return this.NeedDiceNum;
-    }
 
     public int getNeedDice(int idx)
     {

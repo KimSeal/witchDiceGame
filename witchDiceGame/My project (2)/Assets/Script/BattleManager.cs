@@ -1667,6 +1667,7 @@ public class BattleManager : MonoBehaviour
             return true;
         }
         // 0 : reroll 자유 추가 필요
+        if (powerIdx == 0) return true;
         if (powerIdx == 1) return true;
         if ((powerIdx == 2) && jsonDataManager.Instance.getChapterRead(0, 2) == 2) return true;
         if ((powerIdx == 3) && jsonDataManager.Instance.getChapterRead(1, 2) == 2) return true;
@@ -1892,7 +1893,7 @@ public class BattleManager : MonoBehaviour
         if (witchPowerTemp == 0) //reroll 스킬 사용시 
         {
             rerollDice(clickedDice[0]);
-            SoundManager_Sfx.Instance.playSound(2);
+            SoundManager_Sfx.Instance.playSound(96);
             upDownManager.Instance.activeWitchPowerDice(0,clickedDice[0]);
         }
         if (witchPowerTemp == 1) //reroll 스킬 사용시 
@@ -1917,7 +1918,7 @@ public class BattleManager : MonoBehaviour
         if (witchPowerTemp == 4)  //copy 스킬 사용시
         {
             copyDice(clickedDice[1], clickedDice[0]);
-            SoundManager_Sfx.Instance.playSound(16);
+            SoundManager_Sfx.Instance.playSound(72);
             upDownManager.Instance.activeWitchPowerDice(4, clickedDice[1]);
             upDownManager.Instance.activeWitchPowerDice(4, clickedDice[0]);
             clickedDice[0] = -1;
@@ -1927,13 +1928,13 @@ public class BattleManager : MonoBehaviour
         if (witchPowerTemp == 5)  //memory 스킬 사용시
         {
             memoryDice(clickedDice[0]);
-            SoundManager_Sfx.Instance.playSound(16);
+            SoundManager_Sfx.Instance.playSound(93);
             upDownManager.Instance.activeWitchPowerDice(5, clickedDice[0]);
         }
         if (witchPowerTemp == 6)  //swap 스킬 사용시
         {
             swapDice(clickedDice[1], clickedDice[0]);
-            SoundManager_Sfx.Instance.playSound(16);
+            SoundManager_Sfx.Instance.playSound(95);
             upDownManager.Instance.activeWitchPowerDice(6, clickedDice[1]);
             upDownManager.Instance.activeWitchPowerDice(6, clickedDice[0]);
             clickedDice[0] = -1;
@@ -3801,6 +3802,7 @@ public class BattleManager : MonoBehaviour
         bool[] check = { false, false, false, false, false };
         for (int i = 0; i < takeSkillPackets.Count; i++)
         {
+            takeSkillPackets[i].setUseCharacterIdx(skillUseCharacter);
             if (takeSkillPackets[i].getSkillType() >= 0 && takeSkillPackets[i].getSkillType() <= 4 
                 && takeSkillPackets[i].getVal() != 0) check[takeSkillPackets[i].getSkillType()] = true;
         }
@@ -4471,6 +4473,7 @@ public class BattleManager : MonoBehaviour
                     sendSkillPacketTemp = new SendSkillPacket(skillUseCharacter, enemyCharacter[skillUseCharacter].getSkillIdx(skillUseIdx), clickCharacter, makeDiceArrToMakePacket);
                     takeSkillPacketArr.Clear();
                     takeSkillPacketArr = enemyCharacter[skillUseCharacter].doSkill(sendSkillPacketTemp);
+                    takeSkillPacketLastFix(skillUseCharacter, takeSkillPacketArr);
                     activeEquipBeforeSkillUse(skillUseCharacter + 4, takeSkillPacketArr, makeDiceArrToMakePacket); //스킬 사용시 타입에 해당하는 장비 시전.
                     
                     ////
@@ -4925,7 +4928,9 @@ public class BattleManager : MonoBehaviour
                     yield return new WaitForSeconds(0.5f);
 
                     endingManager.Instance.endingPhase2(5);
-                    
+
+                    SoundManager_Sfx.Instance.playSound(43);
+
                     endingTiming = false;
                     //harfy가 grin을 데리고 아예 화면 밖으로 나간다.
                     yield return new WaitUntil(() => endingTiming);

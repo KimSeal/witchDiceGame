@@ -49,6 +49,20 @@ public class CharacterManager : MonoBehaviour
 
     public RuntimeAnimatorController[] endingOriginAnimator = new RuntimeAnimatorController[5];
 
+    public Character makeCurCharacter(int idx) // 0 : 동료 1 : 주인공
+    {
+        //동료고, ail이 할당되어 있으면 불가능.
+        if (idx == 0 && jsonDataManager.Instance.getCharacterSelect(0) == 0) return null;
+
+        Character temp = null;
+        setCharacter_destinyBase(ref temp, jsonDataManager.Instance.getCharacterSelect(idx)); // 0: 동료 1 : 주인공
+        if (idx == 1)
+        {
+            FoodStreetManager.Instance.upgradeInitStat(ref temp); //음식거리만큼 업데이트
+        }
+        return temp;
+    }
+
     public Skill getSkillListDesc(int idx)
     {
         return skillList[idx];//skillList[idx].Command[jsonDataManager.Instance.getLanguage()];
@@ -148,12 +162,17 @@ public class CharacterManager : MonoBehaviour
         */
         if (jsonDataManager.Instance.getCharacterSelect(0) != 0) //1챕터에서도 동료는 골렘 주기
         {
-            setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
+            myCharacter[1] = makeCurCharacter(0);
+            //setCharacter(1, jsonDataManager.Instance.getCharacterSelect(0));
         }
-        setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
+        myCharacter[2] = makeCurCharacter(1);
+        //setCharacter(2, jsonDataManager.Instance.getCharacterSelect(1));
 
         myCharacter[2].setReviveUnit(true);
-        setFoodStreetInfo();
+
+        //FoodStreetManager.Instance.upgradeInitStat(ref myCharacter[2]);
+        //setFoodStreetInfo();
+
         //setCharacter(0, 10);
         //setCharacter(3, 13);
         //setCharacter(2, 1);
@@ -353,9 +372,9 @@ public class CharacterManager : MonoBehaviour
                 case 17:
                     character = new Enzi(0, destinyList[characterIdx]); break;
             }
-            if (!jsonDataManager.Instance.getPlayerCharacterAble(characterIdx)) {
-                jsonDataManager.Instance.setPlayerCharacterAble(characterIdx);
-            }
+            //if (!jsonDataManager.Instance.getPlayerCharacterAble(characterIdx)) {
+            //    jsonDataManager.Instance.setPlayerCharacterAble(characterIdx);
+            //}
         }
         //몬스터
         if (characterIdx > 10000)
@@ -598,12 +617,6 @@ public class CharacterManager : MonoBehaviour
     {
         if(myTeam) return myCharacter[idx];
         return enemyCharacter[idx];
-    }
-
-
-    public void setFoodStreetInfo()
-    {
-        FoodStreetManager.Instance.upgradeInitStat(ref myCharacter[2]);
     }
 
     public string getName_itemManager(int idx)
