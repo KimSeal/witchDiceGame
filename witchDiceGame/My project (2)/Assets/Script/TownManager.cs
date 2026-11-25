@@ -90,6 +90,7 @@ public class TownManager : MonoBehaviour
         upDownManager.Instance.clickCharacterButton(-1);
         MapperManager.Instance.exitMapper();
         FoodStreetManager.Instance.exitFoodStreet();
+        diceChangeManager.Instance.exitDiceChange();
 
         TalkManager.Instance.resetTutorialArrow();
 
@@ -163,7 +164,15 @@ public class TownManager : MonoBehaviour
             clickAndImageChange.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/townUI/spr_town_town_on");
             */
         }
-        
+
+        if (i == 5)
+        {
+            curTownIdx = 5;
+            diceChangeManager.Instance.enterDiceChange();
+            SoundManager_Sfx.Instance.playSound(70);
+            CameraManager.Instance.updateInitPosition(new Vector3(-500f, -1500f, CameraManager.Instance.cameraPointZ()));
+        }
+
         if (i == 7) {
             for (int newMarkIdx=0;newMarkIdx<7;newMarkIdx++)
             {

@@ -42,6 +42,15 @@ public class jsonDataManager : MonoBehaviour
     public TextMeshProUGUI languageSelectDescText;
     public TextMeshProUGUI[] languageSelectButtonText = new TextMeshProUGUI[4];
 
+    public int getDiceChangeCost(int curCharacterIdx, int idx)
+    {
+        return playerPlayData.getChangeDiceCost(curCharacterIdx, idx);
+    }
+    public void setDiceChangeCost(int curCharacterIdx, int idx, int val)
+    {
+        playerPlayData.setChangeDiceCost(curCharacterIdx, idx, val);
+    }
+
     public int getWitchMeet() { return playerPlayData.getWitchMeet(); }
     public void setWitchMeet(int idx) { 
         playerPlayData.setWitchMeet(idx);
@@ -622,6 +631,22 @@ public class jsonDataManager : MonoBehaviour
 
         public int witchMeet = 0;
         public int lastMeet = 0;
+
+        public int[] changeDiceCost0 = { 0, 0, 0, 0, 0, 0 };
+        public int[] changeDiceCost1 = { 0, 0, 0, 0, 0, 0 };
+        public int[] initItemIdx = { 0, 0, 0, 0, 0, 0 };
+
+        public int getChangeDiceCost(int characterIdx, int diceIdx)
+        {
+            if (characterIdx == 0) return changeDiceCost0[diceIdx];
+            else return changeDiceCost1[diceIdx];
+        }
+        public void setChangeDiceCost(int characterIdx, int diceIdx, int val)
+        {
+            if(characterIdx == 0)changeDiceCost0[diceIdx] = val;
+            if (characterIdx == 1) changeDiceCost1[diceIdx] = val;
+        }
+
         public int getLastMeet()
         {
             return lastMeet;
@@ -778,6 +803,15 @@ public class jsonDataManager : MonoBehaviour
             lastMeet = 0;
             witchMeet = 0;
             battleOttogi = 0;
+
+            Debug.Log("costChange");
+            for (int i=0;i<6;i++)
+            {
+                changeDiceCost0[i] = 0;
+                changeDiceCost1[i] = 0;
+                initItemIdx[i] = 0;
+            }
+            
         }
         public PlayerPlayData(PlayerPlayData playerPlayerData)
         {
@@ -847,6 +881,13 @@ public class jsonDataManager : MonoBehaviour
             lastMeet = playerPlayerData.lastMeet;
             witchMeet = playerPlayerData.witchMeet;
             battleOttogi = playerPlayerData.battleOttogi;
+
+            for (int i = 0; i < 6; i++)
+            {
+                changeDiceCost0[i] = playerPlayerData.changeDiceCost0[i];
+                changeDiceCost1[i] = playerPlayerData.changeDiceCost1[i];
+                initItemIdx[i] = playerPlayerData.initItemIdx[i];
+            }
         }
         public bool getTalkIdxOnOff()
         {

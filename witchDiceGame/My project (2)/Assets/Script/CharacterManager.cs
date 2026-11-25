@@ -60,6 +60,11 @@ public class CharacterManager : MonoBehaviour
         {
             FoodStreetManager.Instance.upgradeInitStat(ref temp); //음식거리만큼 업데이트
         }
+
+        diceChangeManager.Instance.updateDiceChange(idx, ref temp);
+
+
+
         return temp;
     }
 
@@ -372,6 +377,7 @@ public class CharacterManager : MonoBehaviour
                 case 17:
                     character = new Enzi(0, destinyList[characterIdx]); break;
             }
+            for (int i = 0; i < 6; i++) character.changeDiceNum(i, destinyList[characterIdx].getBaseDiceNum(i));
             //if (!jsonDataManager.Instance.getPlayerCharacterAble(characterIdx)) {
             //    jsonDataManager.Instance.setPlayerCharacterAble(characterIdx);
             //}

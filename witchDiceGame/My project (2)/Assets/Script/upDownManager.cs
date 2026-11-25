@@ -884,6 +884,10 @@ public class upDownManager : MonoBehaviour
         {
             return true;
         }
+
+        // 
+        if (idx == 5) return true;
+        if (idx == 6) return true;
         return false;
     }
     public void clickUnderTownButton(int idx)
