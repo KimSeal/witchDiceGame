@@ -43,7 +43,7 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    private int adminMode = 0;
+    private int adminMode = 2;
     public int getAdminMode() { return adminMode; }
 
     [SerializeField]
@@ -2476,7 +2476,15 @@ public class AdventureManager : MonoBehaviour
                     if(demoEndChk == 8) //엔딩 부분
                     {
                         AdventureManager.Instance.giveUpBtnAble(false);
-                        if (!BattleManager.Instance.getEndingType()) //bad end
+
+                        endingManager.Instance.startEndingCredit(!endingManager.Instance.getEndingType()); //credit start
+                        
+
+                        yield return new WaitUntil(() => endingManager.Instance.getEndingCreditEnd() == 0);
+                        endingManager.Instance.finishEndingCredit();
+
+                        FadeUIScript2.fadeIn();
+                        if (!endingManager.Instance.getEndingType()) //bad end
                         {
                             TalkManager.Instance.startTalk(138);
                             yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());

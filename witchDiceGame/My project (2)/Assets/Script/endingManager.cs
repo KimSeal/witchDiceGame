@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class endingManager : MonoBehaviour
 {
@@ -25,6 +27,66 @@ public class endingManager : MonoBehaviour
             if (null == instance) { return null; }
             return instance;
         }
+    }
+
+    //about select phase
+    [SerializeField]
+    public GameObject[] endingSelectObj = new GameObject[5]; //entity, button-saveAil, button-killAil, save outline, kill Outline
+    public TextMeshProUGUI[] endingSelectText = new TextMeshProUGUI[2]; // saveText, killText
+    public Sprite[] endingSelectSpriteArr = new Sprite[8]; // 0-5 : button by num, 6 : none outline 7 : outline
+    private bool endingType = false;
+    private bool endingSelect = false;
+    private bool endingTiming = false;
+    public bool getEndingSelect()
+    {
+        return endingSelect;
+    }
+    public void setEndingSelect(bool opt)
+    {
+        endingSelect = opt;
+    }
+    public bool getEndingTiming()
+    {
+        return endingTiming;
+    }
+    public void setEndingTiming(bool onOff)
+    {
+        endingTiming = onOff;
+    }
+    public void selectEndlingType(bool sel)
+    {
+        endingType = sel; //false : bad true : harfy or happy
+        endingSelect = true;
+        onOffEndingSelect(false);
+    }
+    public bool getEndingType()
+    {
+        return endingType;
+    }
+    public void setEndingType(bool opt) { endingType = opt; }
+    public void onOffEndingSelect(bool onOff)
+    {
+        if (!onOff)
+        {
+            endingSelectObj[0].SetActive(false);
+        }
+        else
+        {
+            hoverOutEndingSelect(0);
+            endingSelectObj[0].SetActive(true);
+            endingSelectText[0].text = TalkManager.Instance.getDesc(279);
+            endingSelectText[1].text = TalkManager.Instance.getDesc(280);
+        }
+    }
+
+    public void hoverInEndingSelect(int idx)
+    {
+        endingSelectObj[3 + idx].GetComponent<Image>().sprite = endingSelectSpriteArr[7];
+    }
+    public void hoverOutEndingSelect(int idx)
+    {
+        endingSelectObj[3].GetComponent<Image>().sprite = endingSelectSpriteArr[6];
+        endingSelectObj[4].GetComponent<Image>().sprite = endingSelectSpriteArr[6];
     }
 
     private Vector3 harfyPoint;
@@ -80,6 +142,100 @@ public class endingManager : MonoBehaviour
 
     private float[] curDropBigRockSpeedY = new float[5];
     private float[] curDropSmallRockSpeedY = new float[5];
+
+    [SerializeField]
+    public GameObject[] creditObj = new GameObject[6]; //entity, background, text, skipButton, skipText, fadeObj
+    private int textAlphaChange = 0;
+    private string[] creditText = {"Developer\n<size=36>SinPoDo</size>" , "test1", "test2"};
+    public int endingCreditEnd = 0;
+    public int endingTextIdx;
+
+    private Coroutine endCreditCoroutine; 
+
+    public void startEndingCredit(bool mode)//false :bad   true :happy
+    {
+        creditObj[0].SetActive(true);
+        endingTextIdx = 0;
+        endingCreditEnd = 1;
+
+        if (!mode)
+        {
+            creditObj[1].GetComponent<Image>().color = new Color(255,255,255,1);
+            creditObj[5].GetComponent<Image>().color = new Color(255, 255, 255, 1);
+            creditObj[2].GetComponent<TextMeshProUGUI>().color = new Color(0, 0, 0, 1);
+        }
+        else
+        {
+            creditObj[1].GetComponent<Image>().color = new Color(0, 0, 0, 1);
+            creditObj[5].GetComponent<Image>().color = new Color(0, 0, 0, 1);
+            creditObj[2].GetComponent<TextMeshProUGUI>().color = new Color(255, 255, 255, 1);
+        }
+        
+        creditObj[4].GetComponent<TextMeshProUGUI>().text = TalkManager.Instance.getDesc(281);
+        creditObj[5].GetComponent<Image>().color = new Color
+                    (creditObj[5].GetComponent<Image>().color.r,
+                    creditObj[5].GetComponent<Image>().color.g,
+                    creditObj[5].GetComponent<Image>().color.b,
+                    1f);
+        textAlphaChange = 0;
+
+        endCreditCoroutine = StartCoroutine(creditCoroutine());
+    }
+    public void finishEndingCredit()
+    {
+        if (endCreditCoroutine != null)
+        {
+            StopCoroutine(endCreditCoroutine);
+        }
+        endingTextIdx = 0;
+        endingCreditEnd = 0;
+
+        setCreditAlphaMode(0);
+        creditObj[0].SetActive(false);
+    }
+    public int getEndingCreditEnd()
+    {
+        return endingCreditEnd;
+    }
+    public void setCreditAlphaMode(int opt)
+    {   // 0 : 비활성화 1: 하향 2 : 하향 종료 3: 상승 4 : 상승 종료
+        textAlphaChange = opt;
+
+        if (opt == 1 || opt == 4) // 하향 또는 상승 종료
+        {
+            creditObj[5].GetComponent<Image>().color = new Color
+           (creditObj[5].GetComponent<Image>().color.r,
+           creditObj[5].GetComponent<Image>().color.g,
+           creditObj[5].GetComponent<Image>().color.b,
+           1f);
+        }
+        if(opt == 0 || opt == 3 || opt == 2) // 비활성화 또는 상승 또는 하향 종료
+        {
+            creditObj[5].GetComponent<Image>().color = new Color
+            (creditObj[5].GetComponent<Image>().color.r,
+            creditObj[5].GetComponent<Image>().color.g,
+            creditObj[5].GetComponent<Image>().color.b,
+            0f);
+        }
+    }
+    public void creditTextChange(int idx)
+    {
+        creditObj[2].GetComponent<TextMeshProUGUI>().text = creditText[idx]; 
+    }
+    public void hoverInSkipButton()
+    {
+        Debug.Log("hoverIn");
+    }
+    public void hoverOutSkipButton()
+    {
+        Debug.Log("hoverOut");
+    }
+    public void clickSkipButton()
+    {
+        Debug.Log("clickSkip");
+        endingCreditEnd = 0;
+    }
+
     // 0 : 파괴 X
     // 1: 파괴는 하되, 움직임 X
     // 2 : 파괴 + 움직임
@@ -343,8 +499,63 @@ public class endingManager : MonoBehaviour
         }
     }
 
+    private IEnumerator creditCoroutine()
+    {
+        for (int i=0;i<creditText.Length;i++) {
+            
+            creditTextChange(i);
+
+            setCreditAlphaMode(1); // 하향
+            yield return new WaitUntil(() => textAlphaChange == 2);
+
+            yield return new WaitForSeconds(3f);
+
+            setCreditAlphaMode(3); // 상승
+            yield return new WaitUntil(() => textAlphaChange == 4);
+        }
+        endingCreditEnd = 0;
+    }
+
+    private void Start()
+    {
+        onOffEndingSelect(false);
+        finishEndingCredit();
+    }
+
     private void FixedUpdate()
     {
+
+        if (textAlphaChange == 1) // 하향
+        {
+            if (creditObj[5].GetComponent<Image>().color.a > 0f) {
+                creditObj[5].GetComponent<Image>().color = new Color
+                    (creditObj[5].GetComponent<Image>().color.r,
+                    creditObj[5].GetComponent<Image>().color.g,
+                    creditObj[5].GetComponent<Image>().color.b,
+                    creditObj[5].GetComponent<Image>().color.a - 0.02f);
+                if (creditObj[5].GetComponent<Image>().color.a <= 0f)
+                {
+                    setCreditAlphaMode(2);
+                }
+            }
+        }
+        else if (textAlphaChange == 3) // 상승
+        {
+            if (creditObj[5].GetComponent<Image>().color.a < 1.0f)
+            {
+                creditObj[5].GetComponent<Image>().color = new Color
+                    (creditObj[5].GetComponent<Image>().color.r,
+                    creditObj[5].GetComponent<Image>().color.g,
+                    creditObj[5].GetComponent<Image>().color.b,
+                    creditObj[5].GetComponent<Image>().color.a + 0.02f);
+                if (creditObj[5].GetComponent<Image>().color.a >= 1f)
+                {
+                    setCreditAlphaMode(4);
+                }
+            }
+        }
+
+
         if (jewelMove)
         {
             jewelObj.transform.position += new Vector3(1.0f, 0f, 0f);
@@ -370,7 +581,7 @@ public class endingManager : MonoBehaviour
                 harfyMove = false;
                 
                 harfyObj.GetComponent<Animator>().Play("Black");
-                BattleManager.Instance.setEndingTiming(true);
+                endingManager.Instance.setEndingTiming(true);
             }
         }
 
@@ -417,7 +628,7 @@ public class endingManager : MonoBehaviour
                     whiteSpeed = whiteChangeVal * 2f;
                     harfyMove = false;
                     endingPhase1(-1);
-                    BattleManager.Instance.setEndingTiming(true);
+                    endingManager.Instance.setEndingTiming(true);
                 }
             }
         }

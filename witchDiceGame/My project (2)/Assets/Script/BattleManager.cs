@@ -7,9 +7,6 @@ using AnimatedBattleText.Examples;
 using System.Linq;
 public class BattleManager : MonoBehaviour
 {
-    [SerializeField]
-    public GameObject[] endingSelectObj = new GameObject[5]; //entity, button-saveAil, button-killAil 
-    public TextMeshProUGUI[] endingSelectText = new TextMeshProUGUI[2]; // saveText, killText
 
     [SerializeField]
     public GameObject[] equipUI = new GameObject[16];
@@ -96,23 +93,8 @@ public class BattleManager : MonoBehaviour
 
         }
     }
-    private bool endingType = false;
-    private bool endingSelect = false;
-    private bool endingTiming = false;
-    public void setEndingTiming(bool onOff)
-    {
-        endingTiming = onOff;
-    }
-    public void selectEndlingType(bool sel)
-    {
-        endingType = sel; //false : bad true : harfy or happy
-        endingSelect = true;
-        onOffEndingSelect(false);
-    }
-    public bool getEndingType()
-    {
-        return endingType;
-    }
+    
+    
 
     public int chooseDiceIdx;
 
@@ -4868,21 +4850,21 @@ public class BattleManager : MonoBehaviour
                 AdventureManager.Instance.giveUpBtnAble(false);
                 upDownManager.Instance.changeOption(1, false);
 
-                endingType = false; //ending chk
+                SoundManager_Main.Instance.stopSound(44);
+                endingManager.Instance.setEndingType(false); //ending chk
                 if (jsonDataManager.Instance.getWitchMeet() == 3)
                 {
                     jsonDataManager.Instance.setWitchMeet(4);
                     TalkManager.Instance.startTalk(136);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
                 }
-                
 
-                endingSelect = false;
-                onOffEndingSelect(true);
+                endingManager.Instance.setEndingSelect(false);
+                endingManager.Instance.onOffEndingSelect(true);
                 //ending 선택 - selectEndlingType(bool sel) 함수 사용
-                yield return new WaitUntil(() => endingSelect);
-
-                if (!endingType)
+                yield return new WaitUntil(() => endingManager.Instance.getEndingSelect());
+                upDownManager.Instance.setUpperBarLock(true); //아이템 창 활성화
+                if (!endingManager.Instance.getEndingType())
                 { //bad ending
                     TalkManager.Instance.startTalk(137);
                     yield return new WaitUntil(() => !TalkManager.Instance.getTalkChk());
@@ -4898,9 +4880,9 @@ public class BattleManager : MonoBehaviour
 
                     endingManager.Instance.endingPhase1(3); //하피가 grin을 데려감.
 
-                    endingTiming = false;
+                    endingManager.Instance.setEndingTiming(false);
                     //harfy가 grin 대려가는 것+ 연출용 화면을 위한 camera 이동 필요
-                    yield return new WaitUntil(() => endingTiming);
+                    yield return new WaitUntil(() => endingManager.Instance.getEndingTiming());
 
                     yield return new WaitForSeconds(2f);
                     endingManager.Instance.setRockDropState(2);
@@ -4931,9 +4913,9 @@ public class BattleManager : MonoBehaviour
 
                     SoundManager_Sfx.Instance.playSound(43);
 
-                    endingTiming = false;
+                    endingManager.Instance.setEndingTiming(false);
                     //harfy가 grin을 데리고 아예 화면 밖으로 나간다.
-                    yield return new WaitUntil(() => endingTiming);
+                    yield return new WaitUntil(() => endingManager.Instance.getEndingTiming());
                     yield return new WaitForSeconds(1f);
                     endingManager.Instance.setRockDropState(0);
 
@@ -5442,23 +5424,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void onOffEndingSelect(bool onOff)
-    {
-        if (!onOff)
-        {
-            endingSelectObj[0].SetActive(false);
-        }
-        else
-        {
-            endingSelectObj[0].SetActive(true);
-            endingSelectText[0].text = TalkManager.Instance.getDesc(279);
-            endingSelectText[1].text = TalkManager.Instance.getDesc(280);
-        }
-    }
+   
 
     void Start()
     {
-        onOffEndingSelect(false);
+        endingManager.Instance.onOffEndingSelect(false);
 
         diceLineActive = true;
         rerollNeedGold = 10;

@@ -804,7 +804,6 @@ public class jsonDataManager : MonoBehaviour
             witchMeet = 0;
             battleOttogi = 0;
 
-            Debug.Log("costChange");
             for (int i=0;i<6;i++)
             {
                 changeDiceCost0[i] = 0;

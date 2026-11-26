@@ -361,6 +361,7 @@ public abstract class Character
     }
     public int TakeSkillPacket(TakeSkillPacket takeSkillPacket) //return -2 : state변화만  -1 : 아무것도 해당 X 0 : 타격성공+생존 1 : 사망 2: 회피 3:버프 4: 방어구로 가드
     {
+
         if (takeSkillPacket.getSkillType() == 0 )//|| takeSkillPacket.getSkillType() == 1000)
         {
             if (this.getSpeed() >= Random.Range(1, 101)) { return 2; }

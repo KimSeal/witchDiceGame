@@ -85,7 +85,10 @@ public class TakeSkillPacket //각각이 공격 하나하나에 대한 Packet
     {
         this.useCharacterIdx = idx;
     }
-
+    public int getUseCharacterIdx()
+    {
+        return this.useCharacterIdx;
+    }
     public int getTargetIdx()
     {
         return targetIdx;
