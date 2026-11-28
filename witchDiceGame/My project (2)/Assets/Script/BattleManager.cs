@@ -4762,7 +4762,7 @@ public class BattleManager : MonoBehaviour
                 TalkManager.Instance.setDescClickLock(false);
                 TalkManager.Instance.setLostChk(true);
                 TalkManager.Instance.setDescIdx(126);
-                CameraManager.Instance.resultScreenActive(0);
+                CameraManager.Instance.resultScreenActive(0, AdventureManager.Instance.getStageDepthMax());
             }
             getLoseChk = true;
             yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));

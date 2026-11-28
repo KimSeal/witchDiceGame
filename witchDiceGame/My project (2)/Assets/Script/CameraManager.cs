@@ -35,6 +35,7 @@ public class CameraManager : MonoBehaviour
     float ShakeTime;
     Vector3 initialPosition;
     GameObject loseUI;
+    
     GameObject[] characterPart = new GameObject[4];
     TextMeshPro money;
     TextMeshPro partGet;
@@ -46,6 +47,10 @@ public class CameraManager : MonoBehaviour
     public float zoomSpeedInput;
     public GameObject goHomeButton;
     public Sprite[] goHomeButtonSprite;
+
+    [SerializeField]
+    public GameObject lostUIImage;
+    public Sprite[] lostUISprite = new Sprite[8];
 
     // Start is called before the first frame update
     public void VibrateForeTime(float time) {
@@ -309,7 +314,7 @@ public class CameraManager : MonoBehaviour
         FadeUIScript.fadeIn();
     }
     bool loseChk = false;
-    public void resultScreenActive(int caseVal)
+    public void resultScreenActive(int caseVal, int chapterLimit)
     {
         goHomeButtonClicked = false;
         hoverOutGoHomeButton();
@@ -335,10 +340,50 @@ public class CameraManager : MonoBehaviour
             money.text += AdventureManager.Instance.getAdventureGold().ToString();
         }
         */
-        if(caseVal == 0) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_lose");
-        if(caseVal == 1) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_giveUp");
-        if (caseVal == 2) loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
-
+        if (caseVal == 0)
+        {
+            loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_lose");
+            if(chapterLimit < 6)
+            {
+                lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[6];
+            }
+            else {
+                lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[7];
+            }
+        }
+        if (caseVal == 1)
+        {
+            loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_giveUp");
+            if (chapterLimit < 6)
+            {
+                lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[6];
+            }
+            else
+            {
+                lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[7];
+            }
+        }
+        if (caseVal == 2)
+        {
+            loseUI.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("sprite/TestSprite/design_ui_stageClear");
+            if(chapterLimit < 4) {
+                lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[0];
+            }
+            if(chapterLimit == 4) { lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[1];}
+            if(chapterLimit == 5) { lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[2]; }
+            if (chapterLimit == 6) { lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[3]; }
+            if (chapterLimit == 7)
+            {
+                if (endingManager.Instance.getEndingSelect()) //happy end
+                {
+                    lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[4];
+                }
+                else //bad end
+                {
+                    lostUIImage.GetComponent<SpriteRenderer>().sprite = lostUISprite[5];
+                }
+            }
+        }
         for (int i = 0; i < 4; i++) {
             
             int destinyIdx = AdventureManager.Instance.getLastCharacter(i); //마지막으로 전투했던 캐릭터들 정보 얻기.

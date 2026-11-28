@@ -167,7 +167,10 @@ public class AdventureManager : MonoBehaviour
     {
         return deadEnemyCount;
     }
-
+    public int getStageDepthMax()
+    {
+        return stageDepthMax;
+    }
     public Sprite getAdventureNPCImage(string input)
     {
         for (int i=5;i<20;i++)
@@ -2457,12 +2460,12 @@ public class AdventureManager : MonoBehaviour
 
                 if (giveUpChk && !battleEventTrigger)
                 { //항복한 경우
-                    CameraManager.Instance.resultScreenActive(1);
+                    CameraManager.Instance.resultScreenActive(1, stageDepthMax);
                     yield return new WaitUntil(() => !(CameraManager.Instance.getLoseScreenActive()));
                 }
                 else if (stageDepth == stageDepthMax)    //스테이지가 Max까지 도달한 경우
                 {
-                    CameraManager.Instance.resultScreenActive(2);
+                    CameraManager.Instance.resultScreenActive(2, stageDepthMax);
                     if (demoEndChk == 8) { SoundManager_Main.Instance.stopSound(3); } //기본 브금 제거
                     if (demoEndChk == 2)
                     { //튜토리얼 종료
@@ -2525,7 +2528,7 @@ public class AdventureManager : MonoBehaviour
                 demoEndChk = 0;
             }
             else if(!gameOverAtBattle){
-                CameraManager.Instance.resultScreenActive(0);
+                CameraManager.Instance.resultScreenActive(0, stageDepthMax);
 
                 if (!jsonDataManager.Instance.getFirstGetCharacterPart())
                 {

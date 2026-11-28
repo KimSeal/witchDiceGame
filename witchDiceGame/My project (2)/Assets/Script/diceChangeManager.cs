@@ -151,6 +151,20 @@ public class diceChangeManager : MonoBehaviour
 
     }
 
+    public void hoverInCharacter(int idx)
+    {
+
+    }
+    public void hoverOutCharacter()
+    {
+
+    }
+
+    public void clickCharacter(int idx)
+    {
+
+    }
+
     public void hoverInCharacterChangeButton()
     {
         characterChangeButton.GetComponent<SpriteRenderer>().material.SetInt("_Radius", 1);
